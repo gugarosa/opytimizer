@@ -23,4 +23,4 @@ class Agent(object):
                 x[i] = LB[i]
             elif x[i] > UB[i]:
                 x[i] = UB[i]
-		return x
+	return x
