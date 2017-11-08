@@ -1,23 +1,26 @@
 import numpy as np
 
 class Agent(object):
-    """
-    A agent class for all meta-heuristic optimization techniques. Agents have the following properties:
-        n: number of decision variables
-        x: n-dimensional array of position values
-        fit: agent's fitness value
+    """A agent class for all meta-heuristic optimization techniques.
+	
+		# Arguments
+        	n: number of decision variables
+        	x: n-dimensional array of position values
+        	fit: agent's fitness value
     """
 
-    def __init__(self, n):
-        # Return an Agent object with n-dimensions
+    def __init__(self, n=1,
+				 **kwargs):
+		super(Agent, self).__init__(**kwargs)
         self.n = n
         self.x = np.zeros(n)
         self.fit = 0
 
-    def CheckLimits(self, LB, UB):
-        # Check an Agent limits based on lower and upper bounds
+    def check_limits(self, LB, UB):
+		x = self.x
         for i in range(self.n):
-            if self.x[i] < LB[i]:
-                self.x[i] = LB[i]
-            elif self.x[i] > UB[i]:
-                self.x[i] = UB[i]
+            if x[i] < LB[i]:
+                x[i] = LB[i]
+            elif x[i] > UB[i]:
+                x[i] = UB[i]
+		return x
