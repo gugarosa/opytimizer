@@ -13,4 +13,4 @@ for i in range(a.n_variables):
     UB[i] = 3
     
 a.check_limits(LB, UB)
-print(a.x)
+print(a.position)
