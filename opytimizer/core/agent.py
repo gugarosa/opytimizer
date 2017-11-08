@@ -14,14 +14,15 @@ class Agent(object):
             fit: agent's fitness value.
 
         # Methods
-            check_limits(position, lower_bound, upper_bound): Check if vector 'position' is between lower and upper bounds.
+            check_limits(position, lower_bound, upper_bound): Check if vector 'position'
+            is between lower and upper bounds.
     """
 
     def __init__(self, **kwargs):
         # These properties should be set by the user via keyword arguments.
         allowed_kwargs = {'n_variables',
                           'n_dimensions',
-                          }
+                         }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
