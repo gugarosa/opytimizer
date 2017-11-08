@@ -17,10 +17,8 @@ class Agent(object):
         self.fit = 0
 
     def check_limits(self, LB, UB):
-	x = self.x
         for i in range(self.n):
-            if x[i] < LB[i]:
-                x[i] = LB[i]
-            elif x[i] > UB[i]:
-                x[i] = UB[i]
-	return x
+            if self.x[i] < LB[i]:
+                self.x[i] = LB[i]
+            elif self.x[i] > UB[i]:
+                self.x[i] = UB[i]
