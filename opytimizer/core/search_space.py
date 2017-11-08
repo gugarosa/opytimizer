@@ -12,36 +12,35 @@ class SearchSpace(object):
 
         # Methods
         call(): search space's pure logic
-        
+
         # Class Methods
 
         # Internal Methods
         build(input_shape)
     """
 
-    def __init__(self, n_agents=1, 
-                n_variables=1,
-                **kwargs):
+    def __init__(self, **kwargs):
         # These properties will be set upon call of self.build()
         self._built = False
 
         allowed_kwargs = {'n_agents',
-                            'n_variables'}
+                            'n_agents'
+                        }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
-                
-        if 'n_agents' in kwargs and 'n_variables' in kwargs:
-            self.a = [Agent.Agent(n_variables) for _ in range(n_agents) 
 
-        
+        if 'n_agents' in kwargs:
+            self.a = [Agent.Agent(n_variables) for _ in range(n_agents)
+
+
     @property
     def built(self):
         return self._built
 
     @built.setter
     def built(self, value):
-        self._built = value
+        self._built= value
 
     def call(self, inputs, **kwargs):
     """Search space's pure logic.
@@ -73,4 +72,4 @@ class SearchSpace(object):
         input_shape: opytimizer tensor or list/tuple of opytimizer
         tensors for future reference.
     """
-        self.built = True
+        self.built= True
