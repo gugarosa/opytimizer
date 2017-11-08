@@ -44,7 +44,6 @@ class SearchSpace(object):
         self._built = value
 
     def call(self, inputs, **kwargs):
-
     """Search space's pure logic.
 
         # Arguments
