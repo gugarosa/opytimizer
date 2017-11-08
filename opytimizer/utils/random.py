@@ -2,7 +2,7 @@
    Differents distributions are used in order to generate numbers.
 """
 
-import numpy.random as np
+import numpy as np
 
 
 def generate_uniform_random_number(low, high, size=None):
