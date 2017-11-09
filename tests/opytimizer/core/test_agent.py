@@ -1,16 +1,16 @@
-import opytimizer.core.agent as Agent
 import numpy as np
+import pytest
 
-# Instanciate a new agent
-a = Agent.Agent(n_variables=2, n_dimensions=1)
+from opytimizer.core import agent
 
-# Test check_limits method
-LB = np.zeros(a.n_variables)
-UB = np.zeros(a.n_variables)
 
-for i in range(a.n_variables):
-    LB[i] = 1
-    UB[i] = 3
-    
-a.check_limits(LB, UB)
-print(a.position)
+def test_agent_creation():
+    new_agent = agent.Agent(n_variables=5, n_dimensions=4)
+    assert new_agent.position.shape == (5, 4)
+
+def test_check_limits():
+    new_agent = agent.Agent(n_variables=5, n_dimensions=4)
+    lower_bound = np.ones(new_agent.n_variables)
+    upper_bound = 2 * np.ones(new_agent.n_variables)
+    new_agent.check_limits(lower_bound, upper_bound)
+    assert np.all(new_agent.position == 1)
