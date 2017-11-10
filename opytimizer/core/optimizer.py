@@ -9,7 +9,7 @@ class Optimizer(object):
 
         # Properties
             algorithm: Optimization algorithm.
-            hyperparams_path: JSON file containing hyperparams.
+            hyperparams: JSON object containing hyperparams from hyperparam_path.
 
         # Methods
     """
@@ -18,17 +18,21 @@ class Optimizer(object):
         # These properties should be set by the user via keyword arguments.
         allowed_kwargs = {'algorithm',
                           'hyperparams_path',
-                         }
+                          }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
 
         # Iterate through all properties and set the remaining ones.
-        if 'algorithm' in kwargs and 'hyperparams_path' in kwargs:
-            algorithm = kwargs['algorithm']
-            hyperparams_path = kwargs['hyperparams_path']
-            self.algorithm = algorithm
+        self.algorithm = None
+        self.hyperparams = None
 
+        # Check if arguments are supplied
+        if 'algorithm' in kwargs:
+            algorithm = kwargs['algorithm']
+            self.algorithm = algorithm
+        if 'hyperparams_path' in kwargs:
+            hyperparams_path = kwargs['hyperparams_path']
             # Loads hyperparams JSON
             with open(hyperparams_path) as json_file:
                 hyperparams = json.load(json_file)
