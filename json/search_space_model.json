@@ -1,0 +1,16 @@
+{
+    "n_agents": 5,
+    "agent": {
+        "n_variables": 2,
+        "n_dimensions": 3
+    },
+    "optimizer": {
+        "algorithm": "PSO",
+        "hyperparams": {
+            "w_min": 1.5,
+            "w_max": 3.0
+        }
+    },
+    "hyperparams": {
+    }
+}

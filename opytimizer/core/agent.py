@@ -7,6 +7,10 @@ import numpy as np
 class Agent(object):
     """A agent class for all meta-heuristic optimization techniques.
 
+        # Arguments
+            n_variables: number of decision variables.
+            n_dimensions: dimension of search space.
+
         # Properties
             n_variables: number of decision variables.
             n_dimensions: dimension of search space.
@@ -22,7 +26,7 @@ class Agent(object):
         # These properties should be set by the user via keyword arguments.
         allowed_kwargs = {'n_variables',
                           'n_dimensions',
-                          }
+                         }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
