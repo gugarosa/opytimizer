@@ -7,9 +7,12 @@ from opytimizer.core.optimizer import Optimizer
 class PSO(Optimizer):
     """A particle swarm optimization class.
 
+        # Arguments:
+            hyperparams: PSO-related hyperparams.
+
         # Properties
             algorithm: Algorithm identifier (PSO).
-            hyperparams: JSON object containing hyperparams from hyperparam_path.
+            hyperparams: PSO-related hyperparams.
 
         # Methods
     """
