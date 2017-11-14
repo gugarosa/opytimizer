@@ -1,11 +1,11 @@
-"""This is PSO's structure and its basic functions module.
+""" This is PSO's structure and its basic functions module.
 """
 
 from opytimizer.core.optimizer import Optimizer
 
 
 class PSO(Optimizer):
-    """A particle swarm optimization class.
+    """ A particle swarm optimization class.
 
         # Arguments:
             hyperparams: PSO-related hyperparams.

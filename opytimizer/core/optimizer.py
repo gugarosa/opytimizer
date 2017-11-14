@@ -1,12 +1,12 @@
-"""This is the optimizer's structure and its basic functions module.
+""" This is the optimizer's structure and its basic functions module.
 """
 
 class Optimizer(object):
-    """A optimizer class for all meta-heuristic optimization techniques.
+    """ An optimizer class for all meta-heuristic optimization techniques.
 
         # Arguments
             hyperparams: Optimizer-related hyperparams.
-            
+
         # Properties
             hyperparams: Optimizer-related hyperparams.
 
