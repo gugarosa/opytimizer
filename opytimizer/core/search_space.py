@@ -53,7 +53,9 @@ class SearchSpace(object):
         n_dimensions = model['agent']['n_dimensions']
         optimizer = model['optimizer']['algorithm']
         optimizer_hyperparams = model['optimizer']['hyperparams']
-        function = model['function']
+        function = model['function']['expression']
+        lower_bound = model['function']['lower_bound']
+        upper_bound = model['function']['upper_bound']
         hyperparams = model['hyperparams']
 
         # Applying variables to their corresponding creations
@@ -61,5 +63,5 @@ class SearchSpace(object):
                                   n_dimensions=n_dimensions) for _ in range(n_agents)]
         if optimizer == 'PSO':
             self.optimizer = PSO.PSO(hyperparams=optimizer_hyperparams)
-        self.function = Function.Function(expression=function)
+        self.function = Function.Function(expression=function, lower_bound=lower_bound, upper_bound=upper_bound)
         self.hyperparams = hyperparams

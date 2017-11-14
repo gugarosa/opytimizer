@@ -27,7 +27,7 @@ class Agent(object):
         # These properties should be set by the user via keyword arguments.
         allowed_kwargs = {'n_variables',
                           'n_dimensions',
-                         }
+                          }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
@@ -54,6 +54,7 @@ class Agent(object):
         """
         # Iterate through all dimensions, i for number of variables and j for number of dimensions
         for i in range(self.n_variables):
+            # If agent's dimension is equal to 1, variables must be within lower and upper bounds
             if self.n_dimensions == 1:
                 for j in range(self.n_dimensions):
                     # Check if current position is smaller than lower bound
@@ -62,6 +63,7 @@ class Agent(object):
                     # Else, check if current position is bigger than upper bound
                     elif self.position[i][j] > upper_bound[i]:
                         self.position[i][j] = upper_bound[i]
+            # If agent's dimension is greater than 1, variables' components must be within 0 and 1
             if self.n_dimensions > 1:
                 for j in range(self.n_dimensions):
                     # Check if current position is smaller than 0
@@ -71,11 +73,13 @@ class Agent(object):
                     elif self.position[i][j] > 1:
                         self.position[i][j] = 1
 
-    def norm(self, variable_index):
+    def norm(self, variable_index, lower_bound, upper_bound):
         """ Calculates the norm over a chosen variable.
 
             # Arguments
             variable_index: Index identifier of chosen variable.
+            lower_bound: Variable's lower bound.
+            upper_bound: Variable's upper bound.
 
             # Returns
             total: Total value of norm function over the chosen variable.
@@ -86,7 +90,13 @@ class Agent(object):
         for i in range(len(self.position[variable_index])):
             # Add to sum the corresponding value
             somatory += (self.position[variable_index][i] ** 2)
-        # Apply square root to get the final value
-        total = np.sqrt(somatory)
-        return total
-        
+        # Apply square root to get the partial value
+        partial = np.sqrt(somatory)
+        # If agent's number of dimensions is 1, returns only the norm
+        if self.n_dimensions == 1:
+            return partial
+        # If agent's number of dimensions is greater than 1, span the value between lower and upper bounds
+        if self.n_dimensions > 1:
+            total = (upper_bound[variable_index] - lower_bound[variable_index]) * (
+                partial / np.sqrt(self.n_dimensions)) + lower_bound[variable_index]
+            return total
