@@ -11,10 +11,14 @@ class Function(object):
             expression: Mathematical expression to be evaluated. Please define variables as {
                 x0, x1, x2, ..., xn}.
             }
+            lower_bound: Lower bound of expression's variables.
+            upper_bound: Upper bound of expression's variables.
 
         # Properties
             expression: Mathematical expression to be evaluated.
             variables: Dictionary contaning (variable, value) of parsed expression.
+            lower_bound: Lower bound of expression's variables.
+            upper_bound: Upper bound of expression's variables.
 
         # Methods
             instanciate():
@@ -24,6 +28,8 @@ class Function(object):
     def __init__(self, **kwargs):
         # These properties should be set by the user via keyword arguments.
         allowed_kwargs = {'expression',
+                            'lower_bound',
+                            'upper_bound'
                           }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
@@ -31,14 +37,26 @@ class Function(object):
 
         # Iterate through all properties and set the remaining ones.
         self.expression = None
+        self.lower_bound = None
+        self.upper_bound = None
         self.variables = None
 
         # Check if arguments are supplied
         if 'expression' not in kwargs:
             raise TypeError('You must input an expression to this object.')
+        if 'lower_bound' not in kwargs:
+            raise TypeError('You must input the expression variables lower bound.')
+        if 'upper_bound' not in kwargs:
+            raise TypeError('You must input the expression variables upper bound.')
         if 'expression' in kwargs:
             expression = kwargs['expression']
             self.expression = expression
+        if 'lower_bound' in kwargs:
+            lower_bound = kwargs['lower_bound']
+            self.lower_bound = lower_bound
+        if 'upper_bound' in kwargs:
+            upper_bound = kwargs['upper_bound']
+            self.upper_bound = upper_bound
 
     def instanciate(self):
         """ Instanciate a function object.
@@ -72,10 +90,7 @@ class Function(object):
         # iterate through all variables and stores the norm function of corresponding variable
         if len(self.variables) == agent.n_variables:
             for i, (key, value) in enumerate(self.variables.items()):
-                if agent.n_dimensions == 1:
-                    self.variables[key] = agent.norm(i)
-                if agent.n_dimensions > 1:
-                    self.variables[key] = agent.span(i)
+                    self.variables[key] = agent.norm(i, self.lower_bound, self.upper_bound)
         # Creates a parser object
         parser = math_parser.Parser()
         # Evaluate the agent's variables and store in its fit's property
