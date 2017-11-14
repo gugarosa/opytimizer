@@ -1,12 +1,12 @@
-"""A random numbers generate module.
-   Differents distributions are used in order to generate numbers.
+""" A random numbers generate module.
+    Differents distributions are used in order to generate numbers.
 """
 
 import numpy as np
 
 
 def generate_uniform_random_number(low, high, size=None):
-    """Generates a random number based on an uniform distribution.
+    """ Generates a random number based on an uniform distribution.
 
         # Arguments
             low: lower interval
@@ -21,7 +21,7 @@ def generate_uniform_random_number(low, high, size=None):
 
 
 def generate_gaussian_random_number(mean, variance, size=None):
-    """Generates a random number based on a gaussian distribution.
+    """ Generates a random number based on a gaussian distribution.
 
         # Arguments
             mean: gaussian's mean value

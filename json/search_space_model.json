@@ -11,6 +11,7 @@
             "w_max": 3.0
         }
     },
+    "function": "x0 + x1",
     "hyperparams": {
     }
 }

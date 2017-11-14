@@ -1,11 +1,10 @@
-"""This is the search space's structure and its basic functions module.
+""" This is the search space's structure and its basic functions module.
 """
 
 import json
 
-import numpy as np
-
 import opytimizer.core.agent as Agent
+import opytimizer.core.function as Function
 import opytimizer.optimizers.pso as PSO
 
 
@@ -20,6 +19,7 @@ class SearchSpace(object):
         # Properties
             agent: List of agents.
             optimizer: Choosen optimizer algorithm.
+            function: Function object to be evaluated.
             hyperparams: Search space-related hyperparams.
 
         # Methods
@@ -53,6 +53,7 @@ class SearchSpace(object):
         n_dimensions = model['agent']['n_dimensions']
         optimizer = model['optimizer']['algorithm']
         optimizer_hyperparams = model['optimizer']['hyperparams']
+        function = model['function']
         hyperparams = model['hyperparams']
 
         # Applying variables to their corresponding creations
@@ -60,4 +61,5 @@ class SearchSpace(object):
                                   n_dimensions=n_dimensions) for _ in range(n_agents)]
         if optimizer == 'PSO':
             self.optimizer = PSO.PSO(hyperparams=optimizer_hyperparams)
+        self.function = Function.Function(expression=function)
         self.hyperparams = hyperparams
