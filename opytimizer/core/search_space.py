@@ -17,6 +17,7 @@ class SearchSpace(object):
             to create a Search Space.
 
         # Properties
+            n_agents: Number of agents in the search space.
             agent: List of agents.
             optimizer: Choosen optimizer algorithm.
             function: Function object to be evaluated.
@@ -34,7 +35,7 @@ class SearchSpace(object):
         self._built = False
 
         allowed_kwargs = {'model_path'
-                         }
+                          }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
@@ -59,9 +60,16 @@ class SearchSpace(object):
         hyperparams = model['hyperparams']
 
         # Applying variables to their corresponding creations
+        self.n_agents = n_agents
         self.agent = [Agent.Agent(n_variables=n_variables,
                                   n_dimensions=n_dimensions) for _ in range(n_agents)]
         if optimizer == 'PSO':
             self.optimizer = PSO.PSO(hyperparams=optimizer_hyperparams)
-        self.function = Function.Function(expression=function, lower_bound=lower_bound, upper_bound=upper_bound)
+        self.function = Function.Function(
+            expression=function, lower_bound=lower_bound, upper_bound=upper_bound)
         self.hyperparams = hyperparams
+
+    def evaluate(self):
+        for i in range(self.n_agents):
+            fitness = self.function.evaluate(self.agent[i])
+        

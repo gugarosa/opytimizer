@@ -2,7 +2,7 @@
     "n_agents": 5,
     "agent": {
         "n_variables": 2,
-        "n_dimensions": 3
+        "n_dimensions": 1
     },
     "optimizer": {
         "algorithm": "PSO",

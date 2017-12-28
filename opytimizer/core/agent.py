@@ -72,31 +72,4 @@ class Agent(object):
                     # Else, check if current position is bigger than 1
                     elif self.position[i][j] > 1:
                         self.position[i][j] = 1
-
-    def norm(self, variable_index, lower_bound, upper_bound):
-        """ Calculates the norm over a chosen variable.
-
-            # Arguments
-            variable_index: Index identifier of chosen variable.
-            lower_bound: Variable's lower bound.
-            upper_bound: Variable's upper bound.
-
-            # Returns
-            total: Total value of norm function over the chosen variable.
-        """
-        # Initialize sum variable with 0
-        somatory = 0.0
-        # Iterate through all components (n_dimensions) from a chosen variable
-        for i in range(len(self.position[variable_index])):
-            # Add to sum the corresponding value
-            somatory += (self.position[variable_index][i] ** 2)
-        # Apply square root to get the partial value
-        partial = np.sqrt(somatory)
-        # If agent's number of dimensions is 1, returns only the norm
-        if self.n_dimensions == 1:
-            return partial
-        # If agent's number of dimensions is greater than 1, span the value between lower and upper bounds
-        if self.n_dimensions > 1:
-            total = (upper_bound[variable_index] - lower_bound[variable_index]) * (
-                partial / np.sqrt(self.n_dimensions)) + lower_bound[variable_index]
-            return total
+                        
