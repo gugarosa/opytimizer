@@ -95,10 +95,12 @@ class Function(object):
                 'The number of expression variables must match to the number of input variables.')
         # Check the input data type and call the corresponding function
         if data_type == 'vector':
+            position = math.check_bounds(vector=position, lower_bound=self.lower_bound, upper_bound=self.upper_bound)
             for i, (key, value) in enumerate(self.variables.items()):
                 self.variables[key] = position[i]
         elif data_type == 'tensor':
             for i, (key, value) in enumerate(self.variables.items()):
+                position[i] = math.check_unitary(position[i])
                 self.variables[key] = math.span(
                     vector=position[i], lower_bound=self.lower_bound[i], upper_bound=self.upper_bound[i])
         # Creates a parser object
