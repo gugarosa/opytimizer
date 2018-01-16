@@ -2,6 +2,7 @@
 """
 
 import py_expression_eval as math_parser
+import opytimizer.utils.math as math
 
 
 class Function(object):
@@ -22,7 +23,9 @@ class Function(object):
 
         # Methods
             instanciate(): Instanciate a function object.
-            evaluate(agent): Evaluates a function object.
+            evaluate(agent): Evaluates an agent object.
+            check_limits(position, lower_bound, upper_bound): Check if vector 'position'
+            is between lower and upper bounds.
     """
 
     def __init__(self, **kwargs):
@@ -76,29 +79,29 @@ class Function(object):
         # Stores the dictionary into function's object
         self.variables = variables
 
-    def evaluate(self, agent):
-        """ Evaluates a function object.
-            It applies the norm function over a agent's variable components
-            and stores to the function's dictionary, then it evaluates these dictionary
+    def evaluate(self, data_type=None, position=None):
+        """ Evaluates an input position vector or tensor
+            It stores the input variables to the function's dictionary, then it evaluates these dictionary
             based on the expression's mathematical function.
 
             # Arguments
-            agent: Agent object contaning variables to be evaluated.
+            type: 'vector' or 'tensor'
+            position: position vector or tensor to be evaluated
         """
         # Check if the amount of function variables is equal to agent's number of variables
-        if len(self.variables) != agent.n_variables:
+        if len(self.variables) != position.size:
             raise Exception(
-                'The number of expression variables must match to the number of agent variables.')
-        # If that assumption is true,
-        # iterate through all variables and stores the norm function of corresponding variable
-        if len(self.variables) == agent.n_variables:
+                'The number of expression variables must match to the number of input variables.')
+        # Check the input data type and call the corresponding function
+        if data_type == 'vector':
             for i, (key, value) in enumerate(self.variables.items()):
-                self.variables[key] = agent.norm(
-                    i, self.lower_bound, self.upper_bound)
+                self.variables[key] = position[i]
+        elif data_type == 'tensor':
+            for i, (key, value) in enumerate(self.variables.items()):
+                self.variables[key] = math.span(vector=position[i], lower_bound=self.lower_bound[i], upper_bound=self.upper_bound[i])
         # Creates a parser object
         parser = math_parser.Parser()
         # Evaluate the agent's variables and store in its fit's property
-        fitness = parser.parse(self.expression).evaluate(self.variables)
-        agent.fit = fitness
+        fitness = float(parser.parse(self.expression).evaluate(self.variables))
 
         return fitness
