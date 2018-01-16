@@ -14,7 +14,7 @@ class Agent(object):
         # Properties
             n_variables: number of decision variables.
             n_dimensions: dimension of search space.
-            position: n_variables x n_dimensions matrix of position values.
+            position: [n_variables x n_dimensions] matrix of position values.
             fit: agent's fitness value.
 
         # Methods

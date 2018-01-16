@@ -33,7 +33,7 @@ class Function(object):
         allowed_kwargs = {'expression',
                           'lower_bound',
                           'upper_bound'
-                         }
+                          }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
@@ -46,7 +46,8 @@ class Function(object):
 
         # Check if arguments are supplied
         if 'expression' not in kwargs:
-            raise TypeError('You must input an expression to this object.')
+            raise TypeError(
+                'You must input an expression to this object.')
         if 'lower_bound' not in kwargs:
             raise TypeError(
                 'You must input the expression variables lower bound.')
@@ -80,15 +81,15 @@ class Function(object):
         self.variables = variables
 
     def evaluate(self, data_type=None, position=None):
-        """ Evaluates an input position vector or tensor
+        """ Evaluates an input position vector or tensor.
             It stores the input variables to the function's dictionary, then it evaluates these dictionary
             based on the expression's mathematical function.
 
             # Arguments
-            type: 'vector' or 'tensor'
-            position: position vector or tensor to be evaluated
+            data_type: 'vector' or 'tensor'.
+            position: vector or tensor to be evaluated.
         """
-        # Check if the amount of function variables is equal to agent's number of variables
+        # Check if the amount of function variables is equal to input number of variables
         if len(self.variables) != position.shape[0]:
             raise Exception(
                 'The number of expression variables must match to the number of input variables.')
@@ -98,10 +99,11 @@ class Function(object):
                 self.variables[key] = position[i]
         elif data_type == 'tensor':
             for i, (key, value) in enumerate(self.variables.items()):
-                self.variables[key] = math.span(vector=position[i], lower_bound=self.lower_bound[i], upper_bound=self.upper_bound[i])
+                self.variables[key] = math.span(
+                    vector=position[i], lower_bound=self.lower_bound[i], upper_bound=self.upper_bound[i])
         # Creates a parser object
         parser = math_parser.Parser()
-        # Evaluate the agent's variables and store in its fit's property
+        # Evaluate the input variables and returns to a fitness variable
         fitness = float(parser.parse(self.expression).evaluate(self.variables))
 
         return fitness
