@@ -68,8 +68,12 @@ class SearchSpace(object):
         self.function = Function.Function(
             expression=function, lower_bound=lower_bound, upper_bound=upper_bound)
         self.hyperparams = hyperparams
+        if n_dimensions == 1:
+            self.data_type = 'vector'
+        elif n_dimensions > 1:
+            self.data_type = 'tensor'
 
     def evaluate(self):
         for i in range(self.n_agents):
-            fitness = self.function.evaluate(self.agent[i])
+            self.agent[i].fit = self.function.evaluate(data_type=self.data_type, position=self.agent[i].position)
         
