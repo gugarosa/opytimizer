@@ -4,6 +4,7 @@
     # Methods
     norm(vector): Calculates the norm over a vector.
     span(vector, lower_bound, upper_bound): Spans a value between lower and upper bound.
+    check_limit()
 """
 
 import numpy as np
