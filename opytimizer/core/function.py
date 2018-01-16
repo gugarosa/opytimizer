@@ -89,7 +89,7 @@ class Function(object):
             position: position vector or tensor to be evaluated
         """
         # Check if the amount of function variables is equal to agent's number of variables
-        if len(self.variables) != position.size:
+        if len(self.variables) != position.shape[0]:
             raise Exception(
                 'The number of expression variables must match to the number of input variables.')
         # Check the input data type and call the corresponding function
