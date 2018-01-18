@@ -72,8 +72,6 @@ class SearchSpace(object):
             self.data_type = 'vector'
         elif n_dimensions > 1:
             self.data_type = 'tensor'
-
-    def evaluate(self):
-        for i in range(self.n_agents):
-            self.agent[i].fit = self.function.evaluate(data_type=self.data_type, position=self.agent[i].position)
         
+    def run(self):
+        self.optimizer.call(self.n_agents, self.agent)
