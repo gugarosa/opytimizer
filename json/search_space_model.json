@@ -7,8 +7,7 @@
     "optimizer": {
         "algorithm": "PSO",
         "hyperparams": {
-            "w_min": 1.5,
-            "w_max": 3.0
+            "w": 2
         }
     },
     "function": {
