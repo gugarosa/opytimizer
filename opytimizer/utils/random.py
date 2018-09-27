@@ -1,35 +1,39 @@
-""" A random numbers generate module.
-    Differents distributions are used in order to generate numbers.
-"""
-
 import numpy as np
 
 
-def generate_uniform_random_number(low, high, size=None):
-    """ Generates a random number based on an uniform distribution.
+def generate_uniform_random_number(low=0.0, high=1.0, size=1):
+    """Generates a random number or array based on an uniform distribution.
 
-        # Arguments
-            low: lower interval
-            high: higher interval
-            size: size of array
+    Args:
+        low (float): lower interval.
+        high (float): higher interval.
+        size (int): size of array.
 
-        # Returns
-            uniform_array: uniform random array
+    Returns:
+        An uniform random number or array.
+
     """
+
+    # Generates a random uniform number or array
     uniform_array = np.random.uniform(low, high, size)
+
     return uniform_array
 
 
-def generate_gaussian_random_number(mean, variance, size=None):
-    """ Generates a random number based on a gaussian distribution.
+def generate_gaussian_random_number(mean=0.0, variance=1.0, size=1):
+    """Generates a random number or array based on a gaussian distribution.
 
-        # Arguments
-            mean: gaussian's mean value
-            variance: gaussian's variance value
-            size: size of array
+    Args:
+        mean (float): gaussian's mean value.
+        variance (float): gaussian's variance value.
+        size (int): size of array.
 
-        # Returns
-            gaussian_array: gaussian random array
+    Returns:
+        A gaussian random number or array.
+
     """
+
+    # Generates a random gaussian number or array
     gaussian_array = np.random.normal(mean, variance, size)
+
     return gaussian_array

@@ -1,0 +1,2 @@
+numpy>=1.13.3
+py_expression_eval>=0.3.4
