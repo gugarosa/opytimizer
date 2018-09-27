@@ -2,8 +2,4 @@
     of several modules and sub-modules.
 """
 
-from . import core
-from . import optimizers
-from . import utils
-
-__version__ = '1.0.30'
+__version__ = '1.0.0'

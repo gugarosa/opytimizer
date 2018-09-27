@@ -1,6 +1,4 @@
-from setuptools import setup
-from setuptools import find_packages
-
+from setuptools import find_packages, setup
 
 setup(name='opytimizer',
       version='1.0.0',
@@ -8,7 +6,6 @@ setup(name='opytimizer',
       author='Gustavo Rosa',
       author_email='gth.rosa@uol.com.br',
       url='https://github.com/gugarosa/opytimizer',
-      #download_url='https://github.com/gugarosa/opytimizer/tarball/1.0.0',
       license='Apache-2.0',
       install_requires=['numpy>=1.13.3',
                         'py_expression_eval>=0.3.4',
