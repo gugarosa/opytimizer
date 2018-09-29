@@ -1,2 +1,2 @@
-"""A data stream package for all common feelyng modules.
+"""An agents package for all common opytimizer modules.
 """
