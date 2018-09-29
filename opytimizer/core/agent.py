@@ -1,52 +1,42 @@
-""" This is the agent's structure and its basic functions module.
-"""
-
 import numpy as np
+import opytimizer.utils.logging as l
 
-from opytimizer.utils.exception import ArgumentException
+logger = l.get_logger(__name__)
 
 
-class Agent(object):
-    """ An agent class for all meta-heuristic optimization techniques.
+class Agent:
+    """An agent class for all meta-heuristic optimization techniques.
 
-        # Arguments
-            n_variables: number of decision variables.
-            n_dimensions: dimension of search space.
+    Properties:
+        n_variables (int): Number of decision variables.
+        n_dimensions (int): Dimension of search space.
+        position (np.array): [n_variables x n_dimensions] matrix of position values.
+        fit (float): Fitness value.
 
-        # Properties
-            n_variables: number of decision variables.
-            n_dimensions: dimension of search space.
-            position: [n_variables x n_dimensions matrix of position values.
-            fit: agent's fitness value.
     """
 
-    def __init__(self, **kwargs):
-        # These properties should be set by the user via keyword arguments.
-        allowed_kwargs = {'n_variables',
-                          'n_dimensions',
-                         }
-        for kwarg in kwargs:
-            if kwarg not in allowed_kwargs:
-                raise TypeError('Keyword argument not understood:', kwarg)
+    def __init__(self, n_variables=2, n_dimensions=1):
+        """Initialization method.
 
-        # Define all class variables as 'None'
-        self.n_variables = None
-        self.n_dimensions = None
-        self.position = None
-        self.fit = None
+        Args:
+            n_variables (int): Number of decision variables.
+            n_dimensions (int): Dimension of search space.
 
-        # Check if arguments are supplied
-        if 'n_variables' not in kwargs:
-            raise ArgumentException('n_variables')
-        if 'n_dimensions' not in kwargs:
-            raise ArgumentException('n_dimensions')
+        """
 
-        # Apply arguments to class variables
-        self.n_variables = kwargs['n_variables']
-        self.n_dimensions = kwargs['n_dimensions']
+        logger.info('Initializing Agent ...')
 
-        # Create the position vector based on number of variables and dimensions.
+        # Initially, an Agent needs its number of variables and dimensions
+        self.n_variables = n_variables
+        self.n_dimensions = n_dimensions
+
+        # Create the position vector based on number of variables and dimensions
         self.position = np.zeros((self.n_variables, self.n_dimensions))
 
-        # Fitness value is initialized with zero.
+        # Fitness value is initialized with zero
         self.fit = 0
+
+        # We will log some important information
+        logger.info('Agent created.')
+        logger.info('Agent size: (' + str(self.n_variables) +
+                    ',' + str(self.n_dimensions) + ')')
