@@ -1,7 +1,21 @@
-from opytimizer.core.function import Function
+from opytimizer.functions.internal import Internal
 
-f = Function(type='internal')
+# One should declare a function of x
+# and it should return a value
+def test_function(x):
+    return x + 2
 
-f.build('x_0 + x1')
+# Declaring x variable for further use
+x = 0
 
-print(f.function)
+# Internal functions can be used if your objective
+# function is an internal python code
+f = Internal()
+
+# Prior to use the Internal class, you need to build it,
+# passing the desired function as a parameter
+f.build(test_function)
+
+# Testing out your new Internal class
+print('x value: ' + str(x))
+print('f(x) value: ' + str(f.function(x)))
