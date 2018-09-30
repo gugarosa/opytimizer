@@ -1,26 +1,29 @@
 import opytimizer.utils.logging as l
 import py_expression_eval as math_parser
 
+from opytimizer.core.function import Function
+
 logger = l.get_logger(__name__)
 
+class Internal(Function):
 
+    def __init__(self):
 
-def build_internal(expression='x + 2'):
-    """
-    """
+        logger.info('Overriding with Internal ...')
 
-    logger.info('Learning Internal ...')
+        super(Internal, self).__init__(type='internal')
 
-    # Creates a parser object
-    parser = math_parser.Parser()
+        logger.info('Internal created.')
 
-    # Gathers all current variables
-    expression_variables = parser.parse(expression).variables()
+    
+    def build(self, function):
+        """
+        """
 
-    # Creates a dictionary and iterate through it, setting everyone to 0
-    variables = {}
-    for expression_variable in expression_variables:
-        variables[expression_variable] = 0
+        logger.debug('Running method: build()')
 
-    # Stores the dictionary into function's object
-    return variables
+        # Internal functions
+        self.function = function
+
+        # Set internal built variable to 'True'
+        self._built = True
