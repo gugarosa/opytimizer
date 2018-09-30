@@ -26,6 +26,7 @@ class Space:
 
         # We will log some important information
         logger.info('Space created.')
+        logger.info('Number of agents: ' + str(n_agents))
 
     def build(self, n_variables=2, n_dimensions=1):
         """
@@ -37,9 +38,6 @@ class Space:
             self.agents.append(Agent(n_variables=n_variables, n_dimensions=n_dimensions))
 
         self._built = True
-
-        logger.info('Space size: (' + str(self.n_agents) + ',' + str(n_variables) +
-                    ',' + str(n_dimensions) + ')')
 
     def call(self):
         """
