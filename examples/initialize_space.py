@@ -7,6 +7,7 @@ n_dimensions = 1
 n_iterations = 5
 
 # Bounds parameters
+# Note that it has to have the same size as n_variables
 lower_bound = [0.1, 0.3, 0.5, 0.5, 0.5]
 upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 
@@ -14,10 +15,10 @@ upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 s = Space(n_agents=n_agents, n_variables=n_variables,
           n_dimensions=n_dimensions, n_iterations=n_iterations)
 
-# Prior to use the Space, you need to build so,
-# its agents are disponible for further use
+# Prior using the Space, you need to build it,
+# so its initialized and ready for use
 s.build(lower_bound=lower_bound, upper_bound=upper_bound)
 
-# You can print out the whole Space or acess
+# You can print out the whole Space or access
 # individual agents and its properties
 print(s.agents[0].position)

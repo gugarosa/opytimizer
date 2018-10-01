@@ -9,7 +9,7 @@ class Internal(Function):
 
     def __init__(self):
 
-        logger.info('Overriding Function with Internal ...')
+        logger.info('Overriding Function with class: Internal')
 
         super(Internal, self).__init__(type='internal')
 
@@ -27,3 +27,5 @@ class Internal(Function):
 
         # Set internal built variable to 'True'
         self._built = True
+
+        logger.debug('Internal built with: ' + str(self.function))

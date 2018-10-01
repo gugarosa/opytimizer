@@ -15,7 +15,7 @@ class Space:
         """
         """
 
-        logger.info('Initializing Space ...')
+        logger.info('Initializing class: Space')
 
         # Space useful variables
         self.n_agents = n_agents
@@ -38,9 +38,7 @@ class Space:
         self._create_agents(n_variables, n_dimensions)
 
         # We will log some important information
-        logger.info('Space created.')
-        logger.info('Number of agents: ' + str(n_agents))
-        logger.info('Number of iterations: ' + str(n_iterations))
+        logger.info('Space created with: ' + str(n_agents) + ' agents and ' + str(n_iterations) + ' iterations')
 
     def _create_agents(self, n_variables, n_dimensions):
         """
@@ -51,6 +49,8 @@ class Space:
         for i in range(self.n_agents):
             self.agents.append(
                 Agent(n_variables=n_variables, n_dimensions=n_dimensions))
+        
+        logger.debug('Agents were created.')
 
     def _initialize_agents(self):
         """
@@ -61,7 +61,7 @@ class Space:
         for i in range(self.n_agents):
             for j in range(self.n_variables):
                 self.agents[i].position[j] = r.generate_uniform_random_number(
-                        self.lb[j], self.ub[j], size=self.n_dimensions)
+                    self.lb[j], self.ub[j], size=self.n_dimensions)
 
         logger.debug('Agents were initialized.')
 
@@ -76,7 +76,7 @@ class Space:
             logger.error(e)
             raise RuntimeError(e)
         else:
-            logger.debug('Bounds were checked without errors.')
+            logger.debug('Bound was checked without any errors.')
             return True
 
     def build(self, lower_bound=None, upper_bound=None):

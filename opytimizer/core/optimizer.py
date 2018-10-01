@@ -11,7 +11,7 @@ class Optimizer:
         """
         """
 
-        logger.info('Initializing Optimizer ...')
+        logger.info('Initializing class: Optimizer')
 
         # Apply arguments to internal variables
         self.hyperparams = hyperparams
@@ -24,3 +24,13 @@ class Optimizer:
 
         # We will log some important information
         logger.info('Optimizer created.')
+
+    def build(self):
+        """
+        """
+
+        logger.debug('Running method: build()')
+
+        self._built = True
+
+        logger.debug('Optimizer was successfully built.')
