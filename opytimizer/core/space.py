@@ -38,7 +38,8 @@ class Space:
         self._create_agents()
 
         # We will log some important information
-        logger.info('Space created with: ' + str(n_agents) + ' agents and ' + str(n_iterations) + ' iterations')
+        logger.info('Space created with: ' + str(n_agents) +
+                    ' agents and ' + str(n_iterations) + ' iterations')
 
     def _create_agents(self):
         """
@@ -46,10 +47,15 @@ class Space:
 
         logger.debug('Running private method: _create_agents()')
 
+        # Iterate through number of agents
         for i in range(self.n_agents):
+            # Appends new agent to list
             self.agents.append(
                 Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions))
-        
+
+        # Apply a random agent as the best one
+        self.best_agent = self.agents[0]
+
         logger.debug('Agents were created.')
 
     def _initialize_agents(self):
@@ -58,10 +64,10 @@ class Space:
 
         logger.debug('Running private method: _initialize_agents()')
 
-        for i in range(self.n_agents):
-            for j in range(self.n_variables):
-                self.agents[i].position[j] = r.generate_uniform_random_number(
-                    self.lb[j], self.ub[j], size=self.n_dimensions)
+        for agent in self.agents:
+            for var in range(self.n_variables):
+                agent.position[var] = r.generate_uniform_random_number(
+                    self.lb[var], self.ub[var], size=self.n_dimensions)
 
         logger.debug('Agents were initialized.')
 

@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import opytimizer.utils.logging as l
 
@@ -34,7 +36,7 @@ class Agent:
         self.position = np.zeros((self.n_variables, self.n_dimensions))
 
         # Fitness value is initialized with zero
-        self.fit = 0
+        self.fit = sys.float_info.max
 
         # We will log some important information
         logger.info('Agent created with size: ('  + str(self.n_variables) +

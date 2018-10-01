@@ -43,9 +43,24 @@ class Opytimizer:
         logger.info('Function: ' + str(self.function))
         logger.info('Opytimizer created.')
 
+    def _is_best_agent(self, agent):
+        """
+        """
+        
+        if agent.fit < self.space.best_agent.fit:
+            self.space.best_agent = agent
+
     def evaluate(self):
         """
         """
 
-        for i in range(self.space.n_agents):
-            print(self.function.function(self.space.agents[i].position))
+        for agent in self.space.agents:
+            # Calculate fitness value over function
+            fit = self.function.function(agent.position)
+            
+            # Check if fit is better than current agent's fit
+            if fit < agent.fit:
+                agent.fit = fit
+
+            # Check if this newly agent is the best Space's agent
+            self._is_best_agent(agent)
