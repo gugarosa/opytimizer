@@ -18,7 +18,3 @@ s = Space(n_agents=n_agents, n_variables=n_variables,
 # Prior using the Space, you need to build it,
 # so its initialized and ready for use
 s.build(lower_bound=lower_bound, upper_bound=upper_bound)
-
-# You can print out the whole Space or access
-# individual agents and its properties
-print(s.agents[0].position)

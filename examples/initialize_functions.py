@@ -12,7 +12,7 @@ x = 0
 # function is an internal python code
 f = Internal()
 
-# Prior to use the Internal class, you need to build it,
+# Prior using the Internal class, you need to build it,
 # passing the desired function as a parameter
 f.build(test_function)
 

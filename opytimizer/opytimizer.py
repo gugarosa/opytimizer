@@ -7,16 +7,11 @@ class Opytimizer:
     """
     """
 
-    def __init__(self, space=None, optimizer=None, function=None):
+    def __init__(self, space, optimizer, function):
         """
         """
 
         logger.info('Initializing class: Opytimizer')
-
-        # Initial variables declared as None
-        self.space = None
-        self.optimizer = None
-        self.function = None
 
         # Space-related assignment
         if space._built:
