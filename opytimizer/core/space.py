@@ -23,11 +23,11 @@ class Space:
         self.n_dimensions = n_dimensions
         self.n_iterations = n_iterations
 
-        # Space agents variables
+        # Space's agents variables
         self.agents = []
         self.best_agent = None
 
-        # Space bounds variables
+        # Space's bounds variables
         self.lb = np.zeros(n_variables)
         self.ub = np.ones(n_variables)
 
@@ -35,12 +35,12 @@ class Space:
         self._built = False
 
         # Creating space's agents
-        self._create_agents(n_variables, n_dimensions)
+        self._create_agents()
 
         # We will log some important information
         logger.info('Space created with: ' + str(n_agents) + ' agents and ' + str(n_iterations) + ' iterations')
 
-    def _create_agents(self, n_variables, n_dimensions):
+    def _create_agents(self):
         """
         """
 
@@ -48,7 +48,7 @@ class Space:
 
         for i in range(self.n_agents):
             self.agents.append(
-                Agent(n_variables=n_variables, n_dimensions=n_dimensions))
+                Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions))
         
         logger.debug('Agents were created.')
 
@@ -65,7 +65,7 @@ class Space:
 
         logger.debug('Agents were initialized.')
 
-    def _check_bound_size(self, size, bound):
+    def _check_bound_size(self, bound, size):
         """
         """
 
@@ -89,14 +89,14 @@ class Space:
         if lower_bound:
             # We also need to check if its size matches to our
             # actual number of variables
-            if self._check_bound_size(self.n_variables, lower_bound):
+            if self._check_bound_size(lower_bound, self.n_variables):
                 self.lb = lower_bound
 
         # Checking if upper bound is avaliable
         if upper_bound:
             # We also need to check if its size matches to our
             # actual number of variables
-            if self._check_bound_size(self.n_variables, upper_bound):
+            if self._check_bound_size(upper_bound, self.n_variables):
                 self.ub = upper_bound
 
         # As now we can assume the bounds are correct, we need to
@@ -107,14 +107,3 @@ class Space:
         self._built = True
 
         logger.debug('Space was successfully built.')
-
-    def call(self):
-        """
-        """
-
-        if not self._built:
-            e = 'You need to call build() prior to call() method.'
-            logger.error(e)
-            raise RuntimeError(e)
-
-        logger.debug('Running method: call()')
