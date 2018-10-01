@@ -1,30 +1,26 @@
-""" This is the optimizer's structure and its basic functions module.
-"""
+import opytimizer.utils.logging as l
 
-class Optimizer(object):
-    """ An optimizer class for all meta-heuristic optimization techniques.
+logger = l.get_logger(__name__)
 
-        # Arguments
-            hyperparams: Optimizer-related hyperparams.
 
-        # Properties
-            hyperparams: Optimizer-related hyperparams.
-
-        # Methods
+class Optimizer:
+    """
     """
 
-    def __init__(self, **kwargs):
-        # These properties should be set by the user via keyword arguments.
-        allowed_kwargs = {'hyperparams',
-                         }
-        for kwarg in kwargs:
-            if kwarg not in allowed_kwargs:
-                raise TypeError('Keyword argument not understood:', kwarg)
+    def __init__(self, hyperparams=None):
+        """
+        """
 
-        # Iterate through all properties and set the remaining ones.
-        self.hyperparams = None
+        logger.info('Initializing Optimizer ...')
 
-        # Check if arguments are supplied
-        if 'hyperparams' in kwargs:
-            hyperparams = kwargs['hyperparams']
-            self.hyperparams = hyperparams
+        # Apply arguments to internal variables
+        self.hyperparams = hyperparams
+
+        # Variables that can be accessed from outside
+        self.algorithm = None
+
+        # Internal use only
+        self._built = False
+
+        # We will log some important information
+        logger.info('Optimizer created.')
