@@ -9,7 +9,7 @@ class Internal(Function):
 
     def __init__(self):
 
-        logger.info('Overriding with Internal ...')
+        logger.info('Overriding Function with Internal ...')
 
         super(Internal, self).__init__(type='internal')
 

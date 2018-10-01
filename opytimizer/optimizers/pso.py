@@ -1,35 +1,29 @@
-""" This is PSO's structure and its basic functions module.
-"""
-
+import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
-from opytimizer.utils.exception import ParameterException
+
+logger = l.get_logger(__name__)
 
 
 class PSO(Optimizer):
-    """ A particle swarm optimization class.
 
-        # Arguments:
-            hyperparams: PSO-related hyperparams.
+    def __init__(self, hyperparams=None):
 
-        # Properties
-            algorithm: Algorithm identifier (PSO).
-            hyperparams: PSO-related hyperparams.
+        logger.info('Overriding Optimizer with PSO ...')
 
-        # Methods
-    """
+        # Override its parent class with the receiving hyperparams
+        super(PSO, self).__init__(hyperparams=hyperparams)
 
-    def __init__(self, **kwargs):
-        super(PSO, self).__init__(**kwargs)
+        # Define its algorithm attribute based on whatever it is
         self.algorithm = 'PSO'
-        if 'w' not in self.hyperparams:
-            raise ParameterException('w')
-        self.w = self.hyperparams['w']
 
-    def updateVelocity(self, vector=None):
-        for i in range(vector.size):
-            vector[i] = self.w
+        # Default algorithm hyperparams
+        self.w = 2.0
 
-    def call(self, n_agents=None, agent=None):
-        for i in range(n_agents):
-            self.updateVelocity(vector=agent[i].position)
-            agent[i].fit = self.function.evaluate(data_type=self.data_type, position=self.agent[i].position)
+        # If one can find any hyperparam inside its object,
+        # set them as the ones that will be used
+        if self.hyperparams:
+            if 'w' in self.hyperparams:
+                self.w = self.hyperparams['w']
+
+        # We will log some important information
+        logger.info('PSO created.')
