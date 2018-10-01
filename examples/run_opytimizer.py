@@ -5,11 +5,16 @@ from opytimizer.optimizers.pso import PSO
 
 
 def test(x):
-    return x
+    sum = 0
+
+    for value in x:
+        sum += value
+    
+    return sum
 
 
 # Input parameters
-n_agents = 2
+n_agents = 5
 n_variables = 5
 n_dimensions = 1
 n_iterations = 5
@@ -34,3 +39,14 @@ f.build(test)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
+
+o.evaluate()
+
+print(o.space.best_agent.position)
+print(o.space.best_agent.fit)
+print('\n')
+
+for agent in o.space.agents:
+    print(agent.position)
+    print(agent.fit)
+    print('\n')
