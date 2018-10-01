@@ -8,7 +8,7 @@ class PSO(Optimizer):
 
     def __init__(self, hyperparams=None):
 
-        logger.info('Overriding Optimizer with PSO ...')
+        logger.info('Overriding Optimizer with class: PSO')
 
         # Override its parent class with the receiving hyperparams
         super(PSO, self).__init__(hyperparams=hyperparams)
@@ -26,4 +26,4 @@ class PSO(Optimizer):
                 self.w = self.hyperparams['w']
 
         # We will log some important information
-        logger.info('PSO created.')
+        logger.info('PSO created with: w = ' + str(self.w))

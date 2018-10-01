@@ -5,14 +5,28 @@ from opytimizer.optimizers.pso import PSO
 
 
 def test(x):
-    return x + 1
+    return x
+
+
+# Input parameters
+n_agents = 2
+n_variables = 5
+n_dimensions = 1
+n_iterations = 5
+
+# Bounds parameters
+# Note that it has to have the same size as n_variables
+lower_bound = [0.1, 0.3, 0.5, 0.5, 0.5]
+upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 
 # Building up Space
-s = Space(n_agents=2)
-s.build(n_variables=5, n_dimensions=1)
+s = Space(n_agents=n_agents, n_variables=n_variables,
+          n_dimensions=n_dimensions, n_iterations=n_iterations)
+s.build(lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Building up PSO's optimizer
 p = PSO()
+p.build()
 
 # Building up Internal function
 f = Internal()
@@ -20,5 +34,3 @@ f.build(test)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
-
-o.evaluate()

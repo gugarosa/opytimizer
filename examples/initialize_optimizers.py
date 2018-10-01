@@ -8,6 +8,3 @@ hyperparams = {
 
 # Instanciates a PSO optimizer
 p = PSO(hyperparams=hyperparams)
-
-# Prints important information about it
-print(p.hyperparams)

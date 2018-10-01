@@ -11,7 +11,7 @@ class Function:
         """
         """
 
-        logger.info('Initializing Function ...')
+        logger.info('Initializing class: Function')
 
         # Apply arguments to internal variables
         self.type = type
