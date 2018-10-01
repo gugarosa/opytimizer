@@ -8,3 +8,6 @@ hyperparams = {
 
 # Instanciates a PSO optimizer
 p = PSO(hyperparams=hyperparams)
+
+# Prior using any Optimizer class childs, you need to build it
+p.build()
