@@ -23,10 +23,12 @@ class Space:
         _built (bool): A boolean to indicate whether the function is built.
 
     Methods:
-        _create_agents():
-        _initialize_agents():
-        _check_bound_size():
-        build():
+        _create_agents(): Creates a list of agents.
+        _initialize_agents(): Initialize the Space agents, setting random numbers
+        to their position.
+        _check_bound_size(bound, size): Checks whether the bound's length
+        is equal to size parameter.
+        build(): An object building method.
     """
 
     def __init__(self, n_agents=1, n_variables=2, n_dimensions=1, n_iterations=10):
