@@ -47,8 +47,14 @@ class PSO(Optimizer):
         # We will log some important information
         logger.info('PSO created with: w = ' + str(self.w))
 
-    def evaluate(self):
+    def evaluate(self, agents, function):
         """
         """
 
         logger.info('Running method: evaluate()')
+
+        for agent in agents:
+            fit = function.pointer(agent.position)
+            
+            if fit < agent.fit:
+                agent.fit = fit

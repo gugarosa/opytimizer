@@ -9,7 +9,7 @@ class Opytimizer:
     Properties:
 
     Methods:
-    
+
     """
 
     def __init__(self, space, optimizer, function):
@@ -57,7 +57,7 @@ class Opytimizer:
         """
         """
 
-        self.optimizer.evaluate()
+        self.optimizer.evaluate(self.space.agents, self.function)
 
         # for agent in self.space.agents:
         #     # Calculate fitness value over function
