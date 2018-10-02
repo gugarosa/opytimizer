@@ -23,9 +23,9 @@ class Internal(Function):
         logger.debug('Running method: build()')
 
         # Internal functions
-        self.function = function
+        self.call = function
 
         # Set internal built variable to 'True'
         self._built = True
 
-        logger.debug('Internal built with: ' + str(self.function))
+        logger.debug('Internal built with: ' + str(self.call))

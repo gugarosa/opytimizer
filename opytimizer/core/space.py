@@ -8,11 +8,36 @@ logger = l.get_logger(__name__)
 
 
 class Space:
-    """
+    """A Space class that will hold agents, variables and methods
+    related to the search space.
+
+    Properties:
+        n_agents (int): Number of agents.
+        n_variables (int): Number of decision variables.
+        n_dimensions (int): Dimension of search space.
+        n_iterations (int): Number of iterations.
+        agents (list): List of agents that belongs to Space.
+        best_agent (Agent): A best agent object from Agent class.
+        lb (np.array): Lower bound array with the minimum possible values.
+        ub (np.array): Upper bound array with the maximum possible values.
+        _built (bool): A boolean to indicate whether the function is built.
+
+    Methods:
+        _create_agents():
+        _initialize_agents():
+        _check_bound_size():
+        build():
     """
 
     def __init__(self, n_agents=1, n_variables=2, n_dimensions=1, n_iterations=10):
-        """
+        """Initialization method.
+
+        Args:
+            n_agents (int): Number of agents.
+            n_variables (int): Number of decision variables.
+            n_dimensions (int): Dimension of search space.
+            n_iterations (int): Number of iterations.
+
         """
 
         logger.info('Initializing class: Space')

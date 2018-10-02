@@ -4,11 +4,24 @@ logger = l.get_logger(__name__)
 
 
 class Optimizer:
-    """
+    """An Optimizer class that will serve as meta-heuristic
+    techniques' parent.
+
+    Properties:
+        hyperparams (dict): An hyperparams dictionary containing key-value
+        parameters to meta-heuristics.
+        algorithm (str): A string indicating the algorithm name.
+        _built (bool): A boolean to indicate whether the function is built.
+
     """
 
     def __init__(self, hyperparams=None):
-        """
+        """Initialization method.
+
+        Args:
+            hyperparams (dict): An hyperparams dictionary containing key-value
+            parameters to meta-heuristics.
+
         """
 
         logger.info('Initializing class: Optimizer')
@@ -26,7 +39,10 @@ class Optimizer:
         logger.info('Optimizer created.')
 
     def build(self):
-        """
+        """This method will serve as the object building process.
+        One can define several functions here that does not necessarily
+        needs to be on its initialization.
+
         """
 
         logger.debug('Running method: build()')
@@ -34,3 +50,11 @@ class Optimizer:
         self._built = True
 
         logger.debug('Optimizer was successfully built.')
+
+    def call(self):
+        """A call method that will be overrided by an Optimizer
+        child. 
+
+        """
+
+        pass

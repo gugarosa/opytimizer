@@ -18,4 +18,4 @@ f.build(test_function)
 
 # Testing out your new Internal class
 print('x value: ' + str(x))
-print('f(x) value: ' + str(f.function(x)))
+print('f(x) value: ' + str(f.call(x)))

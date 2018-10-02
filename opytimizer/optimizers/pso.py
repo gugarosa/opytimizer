@@ -5,8 +5,12 @@ logger = l.get_logger(__name__)
 
 
 class PSO(Optimizer):
+    """
+    """
 
     def __init__(self, hyperparams=None):
+        """
+        """
 
         logger.info('Overriding Optimizer with class: PSO')
 
@@ -27,3 +31,9 @@ class PSO(Optimizer):
 
         # We will log some important information
         logger.info('PSO created with: w = ' + str(self.w))
+
+    def call(self):
+        """
+        """
+
+        logger.info('Running method: call()')

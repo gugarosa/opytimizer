@@ -2,6 +2,9 @@
 **/*.DS_Store
 .vscode/
 
+# Logs
+opytimizer.log.*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -13,29 +13,17 @@ class Opytimizer:
 
         logger.info('Initializing class: Opytimizer')
 
-        # Space-related assignment
-        if space._built:
+        # Checking if Space object is built
+        if self._is_built(space):
             self.space = space
-        else:
-            e = 'You are missing a built Space object.'
-            logger.error(e)
-            raise RuntimeError(e)
 
-        # Optimizer-related assignment
-        if optimizer._built:
+        # Checking if Optimizer object is built
+        if self._is_built(optimizer):
             self.optimizer = optimizer
-        else:
-            e = 'You are missing a built Optimizer object.'
-            logger.error(e)
-            raise RuntimeError(e)
 
-        # Function-related assignment
-        if function._built:
+        # Checking if Function object is built
+        if self._is_built(function):
             self.function = function
-        else:
-            e = 'You are missing a built Function object.'
-            logger.error(e)
-            raise RuntimeError(e)
 
         # We will log some important information
         logger.info('Space: ' + str(self.space))
@@ -43,24 +31,30 @@ class Opytimizer:
         logger.info('Function: ' + str(self.function))
         logger.info('Opytimizer created.')
 
-    def _is_best_agent(self, agent):
+    def _is_built(self, obj):
         """
         """
-        
-        if agent.fit < self.space.best_agent.fit:
-            self.space.best_agent = agent
+
+        if obj._built:
+            return True
+        else:
+            e = 'You are missing a built ' + obj.__class__.__name__ + ' object.'
+            logger.error(e)
+            raise RuntimeError(e)
 
     def evaluate(self):
         """
         """
 
-        for agent in self.space.agents:
-            # Calculate fitness value over function
-            fit = self.function.function(agent.position)
-            
-            # Check if fit is better than current agent's fit
-            if fit < agent.fit:
-                agent.fit = fit
+        self.optimizer.call()
 
-            # Check if this newly agent is the best Space's agent
-            self._is_best_agent(agent)
+        # for agent in self.space.agents:
+        #     # Calculate fitness value over function
+        #     fit = self.function.function(agent.position)
+
+        #     # Check if fit is better than current agent's fit
+        #     if fit < agent.fit:
+        #         agent.fit = fit
+
+        #     # Check if this newly agent is the best Space's agent
+        #     self._is_best_agent(agent)
