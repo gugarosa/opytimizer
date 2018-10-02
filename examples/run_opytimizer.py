@@ -40,7 +40,7 @@ f.build(test)
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
 
-o.evaluate()
+o.run()
 
 print(o.space.best_agent.position)
 print(o.space.best_agent.fit)

@@ -5,11 +5,26 @@ logger = l.get_logger(__name__)
 
 
 class PSO(Optimizer):
-    """
+    """A PSO class, inherited from Optimizer.
+    This will be the designed class to define PSO-related
+    variables and methods.
+
+    Properties:
+        w (float): Inertia weight parameter.
+
+    Methods:
+        evaluate(): This method will hold the meta-heuristic
+        technique evaluation.
+
     """
 
     def __init__(self, hyperparams=None):
-        """
+        """Initialization method.
+
+        Args:
+            hyperparams (dict): An hyperparams dictionary containing key-value
+            parameters to meta-heuristics.
+
         """
 
         logger.info('Overriding Optimizer with class: PSO')
@@ -32,8 +47,8 @@ class PSO(Optimizer):
         # We will log some important information
         logger.info('PSO created with: w = ' + str(self.w))
 
-    def call(self):
+    def evaluate(self):
         """
         """
 
-        logger.info('Running method: call()')
+        logger.info('Running method: evaluate()')
