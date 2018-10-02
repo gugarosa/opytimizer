@@ -6,4 +6,6 @@ Opytimizer is a Python library consisting of meta-heuristic optimization techniq
 ## Installation
 
 To install ```opytimizer``` is really easy, just activate your conda environment and type in the following command:
-  * ```pip install -e .```
+  * ```pip install .```
+
+## Under construction
