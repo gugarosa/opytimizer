@@ -1,4 +1,6 @@
+import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
+import opytimizer.utils.random as r
 from opytimizer.core.optimizer import Optimizer
 
 logger = l.get_logger(__name__)
@@ -47,14 +49,22 @@ class PSO(Optimizer):
         # We will log some important information
         logger.info('PSO created with: w = ' + str(self.w))
 
-    def evaluate(self, agents, function):
+    def _update_position(self, agent):
+        for var in range(agent.n_variables):
+            agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
+
+    def update(self, space):
+        for agent in space.agents:
+            self._update_position(agent)
+
+    def evaluate(self, space, function):
         """
         """
 
         logger.info('Running method: evaluate()')
 
-        for agent in agents:
+        for agent in space.agents:
             fit = function.pointer(agent.position)
-            
             if fit < agent.fit:
                 agent.fit = fit
+            c.is_best_agent(space, agent)

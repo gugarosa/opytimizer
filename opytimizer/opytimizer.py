@@ -57,7 +57,9 @@ class Opytimizer:
         """
         """
 
-        self.optimizer.evaluate(self.space.agents, self.function)
+        for t in range(self.space.n_iterations):
+            self.optimizer.update(self.space)
+            self.optimizer.evaluate(self.space, self.function)
 
         # for agent in self.space.agents:
         #     # Calculate fitness value over function
