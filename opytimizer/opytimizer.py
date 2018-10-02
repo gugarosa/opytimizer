@@ -5,10 +5,21 @@ logger = l.get_logger(__name__)
 
 class Opytimizer:
     """
+
+    Properties:
+
+    Methods:
+    
     """
 
     def __init__(self, space, optimizer, function):
-        """
+        """Initialization method.
+
+        Args:
+            space (Space):
+            optimizer (Optimizer):
+            function (Function):
+
         """
 
         logger.info('Initializing class: Opytimizer')
@@ -42,11 +53,11 @@ class Opytimizer:
             logger.error(e)
             raise RuntimeError(e)
 
-    def evaluate(self):
+    def run(self):
         """
         """
 
-        self.optimizer.call()
+        self.optimizer.evaluate()
 
         # for agent in self.space.agents:
         #     # Calculate fitness value over function
