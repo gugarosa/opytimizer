@@ -9,9 +9,12 @@ class Function:
 
     Properties:
         type (str): Type of function (internal or external).
-        call (*func): This should be a pointer to a function that will
+        pointer (*func): This should be a pointer to a function that will
         return the fitness value.
         _built (bool): A boolean to indicate whether the function is built.
+
+    Methods:
+        build(): This will be overrided by an Function child. 
 
     """
 
@@ -29,10 +32,18 @@ class Function:
         self.type = type
 
         # Variables that can be accessed from outside
-        self.call = None
+        self.pointer = None
 
         # Internal use only
         self._built = False
 
         # We will log some important information
         logger.info('Function created.')
+
+    def build(self):
+        """A build method that will be overrided by an Function
+        child. 
+
+        """
+
+        pass

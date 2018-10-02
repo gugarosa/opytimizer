@@ -13,6 +13,10 @@ class Optimizer:
         algorithm (str): A string indicating the algorithm name.
         _built (bool): A boolean to indicate whether the function is built.
 
+    Methods:
+        build(): An object building method.
+        call(): This will be overrided by an Optimizer child. 
+
     """
 
     def __init__(self, hyperparams=None):

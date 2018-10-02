@@ -39,5 +39,5 @@ class Agent:
         self.fit = sys.float_info.max
 
         # We will log some important information
-        logger.info('Agent created with size: ('  + str(self.n_variables) +
+        logger.info('Agent created with size: (' + str(self.n_variables) +
                     ',' + str(self.n_dimensions) + ')')
