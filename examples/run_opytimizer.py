@@ -39,7 +39,7 @@ hyperparams = {
 p = PSO(hyperparams=hyperparams)
 
 # Creating Internal's function
-f = Internal(function=test)
+f = Internal(pointer=test)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

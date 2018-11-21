@@ -119,7 +119,7 @@ class Space:
         logger.debug('Running private method: check_bound_size()')
 
         if len(bound) != size:
-            e = 'Bound needs to be the same size of number of variables.'
+            e = f'Expected size is {size}. Got {len(bound)}.'
             logger.error(e)
             raise RuntimeError(e)
         else:
@@ -130,6 +130,11 @@ class Space:
         """This method will serve as the object building process.
         One can define several commands here that does not necessarily
         needs to be on its initialization.
+
+        Args:
+            lower_bound (np.array): Lower bound array with the minimum possible values.
+            upper_bound (np.array): Upper bound array with the maximum possible values.
+        
         """
 
         logger.debug('Running private method: build()')
@@ -139,11 +144,19 @@ class Space:
         if lower_bound:
             if self.__check_bound_size(lower_bound, self.n_variables):
                 self.lb = lower_bound
+        else:
+            e = f"Property 'lower_bound' cannot be {lower_bound}."
+            logger.error(e)
+            raise RuntimeError(e)
 
         # We need to check upper bounds as well
         if upper_bound:
             if self.__check_bound_size(upper_bound, self.n_variables):
                 self.ub = upper_bound
+        else:
+            e = f"Property 'upper_bound' cannot be {upper_bound}."
+            logger.error(e)
+            raise RuntimeError(e)
 
         # As now we can assume the bounds are correct, we need to
         # create and initialize our agents

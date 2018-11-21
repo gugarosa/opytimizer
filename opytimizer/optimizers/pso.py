@@ -20,7 +20,7 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, hyperparams):
+    def __init__(self, hyperparams=None):
         """Initialization method.
 
         Args:
@@ -35,7 +35,7 @@ class PSO(Optimizer):
         super(PSO, self).__init__(algorithm='PSO')
 
         # Default algorithm hyperparameters
-        self.w = 0
+        self.w = 2.0
 
         # Now, we need to build this class up
         self._build(hyperparams)

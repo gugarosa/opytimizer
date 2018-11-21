@@ -15,7 +15,7 @@ class Internal(Function):
 
     """
 
-    def __init__(self, function):
+    def __init__(self, pointer=None):
         """Initialization method.
 
         Args:
@@ -30,11 +30,11 @@ class Internal(Function):
         super(Internal, self).__init__(type='internal')
 
         # Now, we need to build this class up
-        self._build(function)
+        self._build(pointer)
 
         logger.info('Class overrided.')
 
-    def _build(self, function):
+    def _build(self, pointer):
         """This method will serve as the object building process.
         One can define several commands here that does not necessarily
         needs to be on its initialization.
@@ -48,7 +48,12 @@ class Internal(Function):
         logger.debug('Running private method: build()')
 
         # We apply to class pointer's the desired function
-        self.pointer = function
+        if pointer:
+            self.pointer = pointer
+        else:
+            e = f"Property 'pointer' cannot be {pointer}."
+            logger.error(e)
+            raise RuntimeError(e)
 
         # Set built variable to 'True'
         self.built = True
