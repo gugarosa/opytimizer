@@ -25,8 +25,9 @@ lower_bound = [0.1, 0.3, 0.5, 0.5, 0.5]
 upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 
 # Creating Space
-s = Space(n_agents=n_agents, n_variables=n_variables,
-          n_dimensions=n_dimensions, n_iterations=n_iterations)
+s = Space(n_agents=n_agents, n_iterations=n_iterations,
+          n_variables=n_variables, n_dimensions=n_dimensions,
+          lower_bound=lower_bound, upper_bound=upper_bound)
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
