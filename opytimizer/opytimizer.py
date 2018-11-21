@@ -42,7 +42,9 @@ class Opytimizer:
             self.function = function
 
         # We will log some important information
-        logger.debug(f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}')
+        logger.debug(
+            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}')
+            
         logger.info('Class created.')
 
     def _is_built(self, entity):
