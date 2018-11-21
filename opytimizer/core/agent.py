@@ -10,10 +10,10 @@ class Agent:
     """An agent class for all meta-heuristic optimization techniques.
 
     Properties:
-        n_variables (int): Number of decision variables.
-        n_dimensions (int): Dimension of search space.
-        position (np.array): [n_variables x n_dimensions] matrix of position values.
         fit (float): Fitness value.
+        n_dimensions (int): Dimension of search space.
+        n_variables (int): Number of decision variables.
+        position (np.array): [n_variables x n_dimensions] matrix of position values.
 
     """
 
@@ -21,12 +21,12 @@ class Agent:
         """Initialization method.
 
         Args:
-            n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
+            n_variables (int): Number of decision variables.
 
         """
 
-        logger.info('Initializing class: Agent')
+        logger.info('Creating class: Agent')
 
         # Initially, an Agent needs its number of variables and dimensions
         self.n_variables = n_variables
@@ -39,5 +39,5 @@ class Agent:
         self.fit = sys.float_info.max
 
         # We will log some important information
-        logger.info('Agent created with size: (' + str(self.n_variables) +
-                    ',' + str(self.n_dimensions) + ')')
+        logger.debug(f'Size: ({self.n_variables}, {self.n_dimensions}) | Fitness: {self.fit}')
+        logger.info('Class created.')

@@ -8,38 +8,50 @@ class Internal(Function):
     """An Internal class, inherited from Function.
     It will server as the basis class for holding in-code related
     objective functions.
-
+    
     Methods:
-        build(function): Sets an external function point to a class
+        _build(function): Sets an external function point to a class
         attribute.
 
     """
 
-    def __init__(self):
+    def __init__(self, function):
         """Initialization method.
+
+        Args:
+            function (*func): This should be a pointer to a function that will
+            return the fitness value.
 
         """
 
-        logger.info('Overriding Function with class: Internal')
+        logger.info('Overriding class: Function -> Internal')
 
         # Overrides parent class with its own type
         super(Internal, self).__init__(type='internal')
 
-        logger.info('Internal created.')
+        # Now, we need to build this class up
+        self._build(function)
 
-    def build(self, function):
+        logger.info('Class overrided.')
+
+    def _build(self, function):
         """This method will serve as the object building process.
-        One can define several functions here that does not necessarily
+        One can define several commands here that does not necessarily
         needs to be on its initialization.
+
+        Args:
+            function (*func): This should be a pointer to a function that will
+            return the fitness value.
 
         """
 
         logger.debug('Running method: build()')
 
-        # Internal functions
+        # We apply to class pointer's the desired function
         self.pointer = function
 
-        # Set internal built variable to 'True'
-        self._built = True
+        # Set built variable to 'True'
+        self.built = True
 
-        logger.debug('Internal built with: ' + str(self.pointer))
+        # Logging attributes
+        logger.debug(f'Type: {self.type} | Pointer: {self.pointer} | Built: {self.built}')
