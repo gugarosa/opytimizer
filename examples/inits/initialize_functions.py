@@ -10,12 +10,8 @@ x = 0
 
 # Internal functions can be used if your objective
 # function is an internal python code
-f = Internal()
-
-# Prior using the Internal class, you need to build it,
-# passing the desired function as a parameter
-f.build(test_function)
+f = Internal(function=test_function)
 
 # Testing out your new Internal class
-print('x value: ' + str(x))
-print('f(x) value: ' + str(f.pointer(x)))
+print(f'x: {x}')
+print(f'f(x): {f.pointer(x)}')
