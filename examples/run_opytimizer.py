@@ -9,7 +9,7 @@ def test(x):
 
     for value in x:
         sum += value
-    
+
     return sum
 
 
@@ -24,29 +24,21 @@ n_iterations = 5
 lower_bound = [0.1, 0.3, 0.5, 0.5, 0.5]
 upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 
-# Building up Space
+# Creating Space
 s = Space(n_agents=n_agents, n_variables=n_variables,
           n_dimensions=n_dimensions, n_iterations=n_iterations)
-s.build(lower_bound=lower_bound, upper_bound=upper_bound)
 
-# Building up PSO's optimizer
-p = PSO()
-p.build()
+# One should declare a hyperparameters object based
+# on the desired algorithm that will be used
+hyperparams = {
+    'w': 2.5
+}
 
-# Building up Internal function
-f = Internal()
-f.build(test)
+# Creating PSO's optimizer
+p = PSO(hyperparams=hyperparams)
+
+# Creating Internal's function
+f = Internal(function=test)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
-
-o.run()
-
-print(o.space.best_agent.position)
-print(o.space.best_agent.fit)
-print('\n')
-
-for agent in o.space.agents:
-    print(agent.position)
-    print(agent.fit)
-    print('\n')

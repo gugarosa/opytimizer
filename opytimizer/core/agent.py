@@ -21,8 +21,8 @@ class Agent:
         """Initialization method.
 
         Args:
-            n_dimensions (int): Dimension of search space.
             n_variables (int): Number of decision variables.
+            n_dimensions (int): Dimension of search space.
 
         """
 
@@ -39,5 +39,6 @@ class Agent:
         self.fit = sys.float_info.max
 
         # We will log some important information
-        logger.debug(f'Size: ({self.n_variables}, {self.n_dimensions}) | Fitness: {self.fit}')
+        logger.debug(
+            f'Size: ({self.n_variables}, {self.n_dimensions}) | Fitness: {self.fit}')
         logger.info('Class created.')

@@ -8,7 +8,7 @@ class Internal(Function):
     """An Internal class, inherited from Function.
     It will server as the basis class for holding in-code related
     objective functions.
-    
+
     Methods:
         _build(function): Sets an external function point to a class
         attribute.
@@ -45,7 +45,7 @@ class Internal(Function):
 
         """
 
-        logger.debug('Running method: build()')
+        logger.debug('Running private method: build()')
 
         # We apply to class pointer's the desired function
         self.pointer = function
@@ -54,4 +54,5 @@ class Internal(Function):
         self.built = True
 
         # Logging attributes
-        logger.debug(f'Type: {self.type} | Pointer: {self.pointer} | Built: {self.built}')
+        logger.debug(
+            f'Type: {self.type} | Pointer: {self.pointer} | Built: {self.built}')

@@ -5,6 +5,7 @@ from opytimizer.functions.internal import Internal
 def test_function(x):
     return x + 2
 
+
 # Declaring x variable for further use
 x = 0
 

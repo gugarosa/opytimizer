@@ -17,8 +17,6 @@ class PSO(Optimizer):
     Methods:
         _build(hyperparams): Sets an external function point to a class
         attribute.
-        evaluate(): This method will hold the meta-heuristic
-        technique evaluation.
 
     """
 
@@ -55,7 +53,7 @@ class PSO(Optimizer):
 
         """
 
-        logger.debug('Running method: build()')
+        logger.debug('Running private method: build()')
 
         # We need to save the hyperparams object for faster
         # looking up
@@ -70,7 +68,7 @@ class PSO(Optimizer):
         # Set built variable to 'True'
         self.built = True
 
-        # We will log some important information
+        # Logging attributes
         logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w} | Built: {self.built}')
 
     # def _update_position(self, agent):
