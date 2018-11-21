@@ -12,26 +12,27 @@ class Space:
     related to the search space.
 
     Properties:
-        n_agents (int): Number of agents.
-        n_variables (int): Number of decision variables.
-        n_dimensions (int): Dimension of search space.
-        n_iterations (int): Number of iterations.
         agents (list): List of agents that belongs to Space.
         best_agent (Agent): A best agent object from Agent class.
+        built (bool): A boolean to indicate whether the space is built.
+        n_agents (int): Number of agents.
+        n_dimensions (int): Dimension of search space.
+        n_iterations (int): Number of iterations.
+        n_variables (int): Number of decision variables.
         lb (np.array): Lower bound array with the minimum possible values.
         ub (np.array): Upper bound array with the maximum possible values.
-        _built (bool): A boolean to indicate whether the function is built.
 
     Methods:
-        _create_agents(): Creates a list of agents.
-        _initialize_agents(): Initialize the Space agents, setting random numbers
+        __create_agents(): Creates a list of agents.
+        __initialize_agents(): Initialize the Space agents, setting random numbers
         to their position.
-        _check_bound_size(bound, size): Checks whether the bound's length
+        __check_bound_size(bound, size): Checks whether the bound's length
         is equal to size parameter.
-        build(): An object building method.
+        _build(lower_bound, upper_bound): An object building method.
+
     """
 
-    def __init__(self, n_agents=1, n_variables=2, n_dimensions=1, n_iterations=10):
+    def __init__(self, n_agents=1, n_iterations=10, n_variables=2, n_dimensions=1, lower_bound=None, upper_bound=None):
         """Initialization method.
 
         Args:
@@ -39,40 +40,43 @@ class Space:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
             n_iterations (int): Number of iterations.
+            lower_bound (np.array): Lower bound array with the minimum possible values.
+            upper_bound (np.array): Upper bound array with the maximum possible values.
 
         """
 
-        logger.info('Initializing class: Space')
+        logger.info('Creating class: Space')
 
-        # Space useful variables
+        # Defining basic Space's variables
         self.n_agents = n_agents
+        self.n_iterations = n_iterations
         self.n_variables = n_variables
         self.n_dimensions = n_dimensions
-        self.n_iterations = n_iterations
 
-        # Space's agents variables
+        # Space's agent-related variables
         self.agents = []
         self.best_agent = None
 
-        # Space's bounds variables
+        # Space's bound-related variables
         self.lb = np.zeros(n_variables)
         self.ub = np.ones(n_variables)
 
-        # Internal use variables
-        self._built = False
+        # Indicates whether the space is built or not
+        self.built = False
 
-        # Creating space's agents
-        self._create_agents()
+        # Now, we need to build this class up
+        self._build(lower_bound, upper_bound)
 
         # We will log some important information
-        logger.info('Space created with: ' + str(n_agents) +
-                    ' agents and ' + str(n_iterations) + ' iterations')
+        logger.info('Class created.')
 
-    def _create_agents(self):
-        """
+    def __create_agents(self):
+        """Creates and populates the agents array.
+        Also defines a random best agent, only for initialization purposes.
+
         """
 
-        logger.debug('Running private method: _create_agents()')
+        logger.debug('Running private method: create_agents()')
 
         # Iterate through number of agents
         for i in range(self.n_agents):
@@ -83,60 +87,74 @@ class Space:
         # Apply a random agent as the best one
         self.best_agent = self.agents[0]
 
-        logger.debug('Agents were created.')
+        logger.debug('Agents created.')
 
-    def _initialize_agents(self):
+    def __initialize_agents(self):
+        """Initialize agents' position array with
+        uniform random numbers.
+
         """
-        """
 
-        logger.debug('Running private method: _initialize_agents()')
+        logger.debug('Running private method: initialize_agents()')
 
+        # Iterate through number of agents
         for agent in self.agents:
+            # For every variable, we generate uniform random numbers
             for var in range(self.n_variables):
                 agent.position[var] = r.generate_uniform_random_number(
                     self.lb[var], self.ub[var], size=self.n_dimensions)
 
-        logger.debug('Agents were initialized.')
+        logger.debug('Agents initialized.')
 
-    def _check_bound_size(self, bound, size):
-        """
+    def __check_bound_size(self, bound, size):
+        """Checks if the bounds' size are the same of
+        variables size.
+
+        Args:
+            bound(np.array): bounds array.
+            size(int): size to be checked.
+
         """
 
-        logger.debug('Running private method: _check_bound_size()')
+        logger.debug('Running private method: check_bound_size()')
 
         if len(bound) != size:
             e = 'Bound needs to be the same size of number of variables.'
             logger.error(e)
             raise RuntimeError(e)
         else:
-            logger.debug('Bound was checked without any errors.')
+            logger.debug('Bound checked.')
             return True
 
-    def build(self, lower_bound=None, upper_bound=None):
-        """
+    def _build(self, lower_bound, upper_bound):
+        """This method will serve as the object building process.
+        One can define several commands here that does not necessarily
+        needs to be on its initialization.
         """
 
-        logger.debug('Running method: build()')
+        logger.debug('Running private method: build()')
 
-        # Checking if lower bound is avaliable
+        # Checking if lower bound is avaliable and if its size
+        # matches to our actual number of variables
         if lower_bound:
-            # We also need to check if its size matches to our
-            # actual number of variables
-            if self._check_bound_size(lower_bound, self.n_variables):
+            if self.__check_bound_size(lower_bound, self.n_variables):
                 self.lb = lower_bound
 
-        # Checking if upper bound is avaliable
+        # We need to check upper bounds as well
         if upper_bound:
-            # We also need to check if its size matches to our
-            # actual number of variables
-            if self._check_bound_size(upper_bound, self.n_variables):
+            if self.__check_bound_size(upper_bound, self.n_variables):
                 self.ub = upper_bound
 
         # As now we can assume the bounds are correct, we need to
-        # initialize our agents
-        self._initialize_agents()
+        # create and initialize our agents
+        self.__create_agents()
+        self.__initialize_agents()
 
         # If no errors were shown, we can declared the Space as built
-        self._built = True
+        self.built = True
 
-        logger.debug('Space was successfully built.')
+        # Logging attributes
+        logger.debug(
+            f'Agents: {self.n_agents} | Iterations: {self.n_iterations}'
+            + f' | Size: ({self.n_variables}, {self.n_dimensions}) | Lower Bound: {self.lb}'
+            + f' | Upper Bound: {self.ub} | Built: {self.built}')
