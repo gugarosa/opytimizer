@@ -74,31 +74,68 @@ class PSO(Optimizer):
         logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w} | Built: {self.built}')
 
     def __update_position(self, agent, var):
+        """Updates the actual position of a agent's decision variable.
+
+        Args:
+            agent (Agent): Agent to be updated.
+            var (int): Index of decision variable.
         """
-        """
+
+        # One can find this equation on Kennedy & Eberhart PSO paper
+        # Not the true one yet!
         agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
 
     def _update(self, agents):
+        """Updates the agents' position array.
+
+        Args:
+            agents ([Agents]): A list of agents that will be updated.
+
         """
-        """
+
+        # We need to update every agent
         for agent in agents:
+            # And also every decision variable of this agent
             for var in range(agent.n_variables):
+                # For PSO, we need to update its position
                 self.__update_position(agent, var)
-        pass
+                # And its velocity
 
 
     def _evaluate(self, space, function):
+        """Evaluates the search space according to the objective function.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+        
         """
-        """
+
+        # We need to evaluate every agent
         for agent in space.agents:
+            # We apply agent's values as the function's input
             fit = function.pointer(agent.position)
+
+            # If current fitness is better than previous agent's fitness
             if (fit < agent.fit):
-                agent.fit = fit
+                # Still missing on updating local position
+                pass
+
+            # Finally, we can update current agent's fitness
+            agent.fit = fit
+
+            # If agent's fitness is the best among the space
             if (agent.fit < space.best_agent.fit):
+                # We update space's best agent
                 space.best_agent = agent
 
     def run(self, space, function):
-        """
+        """Runs the optimization pipeline.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
         """
 
         # Initial search space evaluation 

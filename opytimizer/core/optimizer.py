@@ -32,17 +32,46 @@ class Optimizer:
         self.built = False
 
     def _update(self, agents):
+        """Updates the agents' position array.
+
+        As each optimizer child can have a different
+        procedure of update, you will need to implement
+        it directly on child's class.
+
+        Args:
+            agents ([Agents]): A list of agents that will be updated.
+
         """
-        """
+
         raise NotImplementedError
 
     def _evaluate(self, space, function):
+        """Evaluates the search space according to the objective function.
+
+        As each optimizer child can have a different
+        procedure of evaluation, you will need to implement
+        it directly on child's class.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+        
         """
-        """
+
         raise NotImplementedError
 
 
     def run(self, space, function):
+        """Runs the optimization pipeline.
+
+        As each optimizer child can have a different
+        pipeline, you will need to implement it directly
+        on child's class.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
         """
-        """
+
         raise NotImplementedError
