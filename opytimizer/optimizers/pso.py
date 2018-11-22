@@ -71,9 +71,26 @@ class PSO(Optimizer):
         # Logging attributes
         logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w} | Built: {self.built}')
 
-    # def _update_position(self, agent):
-    #     for var in range(agent.n_variables):
-    #         agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
+    def _evaluate(self, space, function):
+        for agent in space.agents:
+            fit = function.pointer(agent.position)
+            if (fit < agent.fit):
+                agent.fit = fit
+            if (agent.fit < space.best_agent.fit):
+                space.best_agent = agent
+
+    def run(self, space, function):
+        self._evaluate(space, function)
+        for t in range(space.n_iterations):
+            self._update_position(space.agents)
+            self._evaluate(space, function)
+            print(space.best_agent.position)
+            print(space.best_agent.fit)
+
+    def _update_position(self, agents):
+        for agent in agents:
+            for var in range(agent.n_variables):
+                agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
 
     # def update(self, space):
     #     for agent in space.agents:

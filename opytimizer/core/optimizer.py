@@ -30,3 +30,6 @@ class Optimizer:
 
         # Indicates whether the optimizer is built or not
         self.built = False
+
+    def run(self):
+        raise NotImplementedError
