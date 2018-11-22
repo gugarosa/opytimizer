@@ -82,10 +82,10 @@ class PSO(Optimizer):
     def run(self, space, function):
         self._evaluate(space, function)
         for t in range(space.n_iterations):
+            logger.info(f'Iteration {t+1} out of {space.n_iterations}')
             self._update_position(space.agents)
             self._evaluate(space, function)
-            print(space.best_agent.position)
-            print(space.best_agent.fit)
+            logger.info(f'Fitness: {space.best_agent.fit}')
 
     def _update_position(self, agents):
         for agent in agents:

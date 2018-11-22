@@ -8,7 +8,7 @@ def test(x):
     sum = 0
 
     for value in x:
-        sum += value
+        sum += value ** 2
 
     return sum
 
@@ -17,7 +17,7 @@ def test(x):
 n_agents = 5
 n_variables = 5
 n_dimensions = 1
-n_iterations = 5
+n_iterations = 10
 
 # Bounds parameters
 # Note that it has to have the same size as n_variables
