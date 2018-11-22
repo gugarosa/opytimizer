@@ -62,6 +62,9 @@ class Opytimizer:
             logger.error(e)
             raise RuntimeError(e)
 
+    def run(self):
+        self.optimizer.run(self.space, self.function)
+
     # def run(self):
     #     """
     #     """

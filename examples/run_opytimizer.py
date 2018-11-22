@@ -43,3 +43,6 @@ f = Internal(pointer=test)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
+
+# Running
+o.run()
