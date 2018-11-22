@@ -31,5 +31,18 @@ class Optimizer:
         # Indicates whether the optimizer is built or not
         self.built = False
 
-    def run(self):
+    def _update(self, agents):
+        """
+        """
+        raise NotImplementedError
+
+    def _evaluate(self, space, function):
+        """
+        """
+        raise NotImplementedError
+
+
+    def run(self, space, function):
+        """
+        """
         raise NotImplementedError

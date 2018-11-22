@@ -3,11 +3,14 @@ from opytimizer.core.space import Space
 from opytimizer.functions.internal import Internal
 from opytimizer.optimizers.pso import PSO
 
+import numpy as np
+
 
 def test(x):
     sum = 0
 
-    for value in x:
+    for array in x:
+        value = np.linalg.norm(array)
         sum += value ** 2
 
     return sum
@@ -45,4 +48,4 @@ f = Internal(pointer=test)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running
-o.run()
+o.start()
