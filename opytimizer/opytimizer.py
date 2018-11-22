@@ -62,24 +62,7 @@ class Opytimizer:
             logger.error(e)
             raise RuntimeError(e)
 
-    def run(self):
+    def start(self):
+        """
+        """
         self.optimizer.run(self.space, self.function)
-
-    # def run(self):
-    #     """
-    #     """
-
-    #     for t in range(self.space.n_iterations):
-    #         self.optimizer.update(self.space)
-    #         self.optimizer.evaluate(self.space, self.function)
-
-        # for agent in self.space.agents:
-        #     # Calculate fitness value over function
-        #     fit = self.function.function(agent.position)
-
-        #     # Check if fit is better than current agent's fit
-        #     if fit < agent.fit:
-        #         agent.fit = fit
-
-        #     # Check if this newly agent is the best Space's agent
-        #     self._is_best_agent(agent)

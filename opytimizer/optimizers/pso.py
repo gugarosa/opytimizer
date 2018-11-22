@@ -45,7 +45,7 @@ class PSO(Optimizer):
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -73,7 +73,23 @@ class PSO(Optimizer):
         # Logging attributes
         logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w} | Built: {self.built}')
 
+    def __update_position(self, agent, var):
+        """
+        """
+        agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
+
+    def _update(self, agents):
+        """
+        """
+        for agent in agents:
+            for var in range(agent.n_variables):
+                self.__update_position(agent, var)
+        pass
+
+
     def _evaluate(self, space, function):
+        """
+        """
         for agent in space.agents:
             fit = function.pointer(agent.position)
             if (fit < agent.fit):
@@ -82,30 +98,20 @@ class PSO(Optimizer):
                 space.best_agent = agent
 
     def run(self, space, function):
+        """
+        """
+
+        # Initial search space evaluation 
         self._evaluate(space, function)
+        
+        # These are the number of iterations to converge
         for t in range(space.n_iterations):
             logger.info(f'Iteration {t+1} out of {space.n_iterations}')
-            self._update_position(space.agents)
+
+            # Updating agents' position
+            self._update(space.agents)
+
+            # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
+
             logger.info(f'Fitness: {space.best_agent.fit}')
-
-    def _update_position(self, agents):
-        for agent in agents:
-            for var in range(agent.n_variables):
-                agent.position[var] = agent.position[var] * r.generate_uniform_random_number(0, 1)
-
-    # def update(self, space):
-    #     for agent in space.agents:
-    #         self._update_position(agent)
-
-    # def evaluate(self, space, function):
-    #     """
-    #     """
-
-    #     logger.info('Running method: evaluate()')
-
-    #     for agent in space.agents:
-    #         fit = function.pointer(agent.position)
-    #         if fit < agent.fit:
-    #             agent.fit = fit
-    #         c.is_best_agent(space, agent)
