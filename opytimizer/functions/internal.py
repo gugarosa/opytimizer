@@ -6,6 +6,7 @@ logger = l.get_logger(__name__)
 
 class Internal(Function):
     """An Internal class, inherited from Function.
+
     It will server as the basis class for holding in-code related
     objective functions.
 
@@ -36,6 +37,7 @@ class Internal(Function):
 
     def _build(self, pointer):
         """This method will serve as the object building process.
+        
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
