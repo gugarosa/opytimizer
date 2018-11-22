@@ -18,14 +18,14 @@ def test(x):
 
 # Input parameters
 n_agents = 5
-n_variables = 5
+n_variables = 2
 n_dimensions = 1
-n_iterations = 10
+n_iterations = 100
 
 # Bounds parameters
 # Note that it has to have the same size as n_variables
-lower_bound = [0.1, 0.3, 0.5, 0.5, 0.5]
-upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
+lower_bound = [-10, -10]
+upper_bound = [10, 10]
 
 # Creating Space
 s = Space(n_agents=n_agents, n_iterations=n_iterations,
@@ -35,7 +35,7 @@ s = Space(n_agents=n_agents, n_iterations=n_iterations,
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
 hyperparams = {
-    'w': 2.5
+    'w': 0.7
 }
 
 # Creating PSO's optimizer
