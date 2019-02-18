@@ -9,9 +9,15 @@ class Optimizer:
 
     Properties:
         algorithm (str): A string indicating the algorithm name.
-        built (bool): A boolean to indicate whether the optimizer is built.
         hyperparams (dict): An hyperparams dictionary containing key-value
         parameters to meta-heuristics.
+        built (boolean): A boolean to indicate whether the optimizer is built.
+
+    Methods:
+        _update(agents): Updates the agents' position array.
+        _evaluate(space, function): Evaluates the search space according to the objective function.
+        run(space, function): Runs the optimization pipeline.
+
     """
 
     def __init__(self, algorithm='PSO'):
@@ -23,23 +29,43 @@ class Optimizer:
         """
 
         # We define the algorithm's name
-        self.algorithm = algorithm
+        self._algorithm = algorithm
 
         # Also, we need a dict of desired hyperparameters
-        self.hyperparams = None
+        self._hyperparams = None
 
         # Indicates whether the optimizer is built or not
-        self.built = False
+        self._built = False
+
+    @property
+    def algorithm(self):
+        """A string indicating the algorithm name.
+        """
+
+        return self._algorithm
+
+    @property
+    def hyperparams(self):
+        """A dictionary containing key-value parameters to meta-heuristics.
+        """
+
+        return self._hyperparams
+
+    @property
+    def built(self):
+        """A boolean to indicate whether the optimizer is built.
+        """
+
+        return self._built
 
     def _update(self, agents):
         """Updates the agents' position array.
-
         As each optimizer child can have a different
         procedure of update, you will need to implement
         it directly on child's class.
 
         Args:
-            agents ([Agents]): A list of agents that will be updated.
+            agents (list): A list of agents that will be updated.
 
         """
 
@@ -47,7 +73,6 @@ class Optimizer:
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
-
         As each optimizer child can have a different
         procedure of evaluation, you will need to implement
         it directly on child's class.
@@ -55,15 +80,13 @@ class Optimizer:
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-        
+
         """
 
         raise NotImplementedError
 
-
     def run(self, space, function):
         """Runs the optimization pipeline.
-
         As each optimizer child can have a different
         pipeline, you will need to implement it directly
         on child's class.

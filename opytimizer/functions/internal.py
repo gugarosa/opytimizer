@@ -6,7 +6,6 @@ logger = l.get_logger(__name__)
 
 class Internal(Function):
     """An Internal class, inherited from Function.
-
     It will server as the basis class for holding in-code related
     objective functions.
 
@@ -28,7 +27,7 @@ class Internal(Function):
         logger.info('Overriding class: Function -> Internal')
 
         # Overrides parent class with its own type
-        super(Internal, self).__init__(type='internal')
+        super(Internal, self).__init__(function_type='internal')
 
         # Now, we need to build this class up
         self._build(pointer)
@@ -37,7 +36,6 @@ class Internal(Function):
 
     def _build(self, pointer):
         """This method will serve as the object building process.
-        
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -58,8 +56,8 @@ class Internal(Function):
             raise RuntimeError(e)
 
         # Set built variable to 'True'
-        self.built = True
+        self._built = True
 
         # Logging attributes
         logger.debug(
-            f'Type: {self.type} | Pointer: {self.pointer} | Built: {self.built}')
+            f'Type: {self._type} | Pointer: {self.pointer} | Built: {self._built}')
