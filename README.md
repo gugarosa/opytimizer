@@ -24,7 +24,7 @@ Opytimizer is compatible with: **Python 2.7-3.6**.
 
 ---
 
-## Getting started: 60 seconds with NALP
+## Getting started: 60 seconds with Opytimizer
 
 First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage and follow the example. We have high-level examples for most tasks we could think of.
 
