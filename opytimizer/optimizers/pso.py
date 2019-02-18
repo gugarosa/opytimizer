@@ -35,7 +35,7 @@ class PSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> PSO')
+        logger.info('Overriding class: Optimizer -> PSO.')
 
         # Override its parent class with the receiving hyperparams
         super(PSO, self).__init__(algorithm='PSO')
