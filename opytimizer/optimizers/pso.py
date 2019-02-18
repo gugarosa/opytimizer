@@ -17,6 +17,8 @@ class PSO(Optimizer):
         w (float): Inertia weight.
         c1 (float): First learning factor.
         c2 (float): Second learning factor.
+        local_position (np.array): An array holding particle's local positions.
+        velocity (np.array): An array holding particles' velocities.
 
     Methods:
         _build(hyperparams): Sets an external function point to a class
@@ -47,8 +49,11 @@ class PSO(Optimizer):
         # Second learning factor
         self._c2 = 1.7
 
-        self.local_position = None
-        self.velocity = None
+        # Particles' local positions
+        self._local_position = None
+
+        # Particles' velocities
+        self._velocity = None
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -75,6 +80,20 @@ class PSO(Optimizer):
         """
 
         return self._c2
+
+    @property
+    def local_position(self):
+        """Particles' local positions.
+        """
+
+        return self._local_position
+
+    @property
+    def velocity(self):
+        """Particles' velocities.
+        """
+
+        return self._velocity
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
