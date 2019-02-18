@@ -1,9 +1,9 @@
+import numpy as np
+
 from opytimizer import Opytimizer
 from opytimizer.core.space import Space
 from opytimizer.functions.internal import Internal
 from opytimizer.optimizers.pso import PSO
-
-import numpy as np
 
 
 def test(x):
@@ -16,36 +16,42 @@ def test(x):
     return sum
 
 
-# Input parameters
+# Creating Internal's function
+f = Internal(pointer=test)
+
+# Number of agents
 n_agents = 5
+
+# Number of decision variables
 n_variables = 2
+
+# Number of dimensions
 n_dimensions = 1
+
+# Number of running iterations
 n_iterations = 100
 
-# Bounds parameters
-# Note that it has to have the same size as n_variables
+# Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creating Space
+# Creating the Space class
 s = Space(n_agents=n_agents, n_iterations=n_iterations,
           n_variables=n_variables, n_dimensions=n_dimensions,
           lower_bound=lower_bound, upper_bound=upper_bound)
 
-# One should declare a hyperparameters object based
-# on the desired algorithm that will be used
+# Hyperparameters for the optimizer
 hyperparams = {
-    'w': 0.7
+    'w': 0.7,
+    'c1': 1.7,
+    'c2': 1.7
 }
 
 # Creating PSO's optimizer
 p = PSO(hyperparams=hyperparams)
 
-# Creating Internal's function
-f = Internal(pointer=test)
-
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
 
-# Running
+# Running the optimization task
 o.start()

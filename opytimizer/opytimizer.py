@@ -14,6 +14,7 @@ class Opytimizer:
 
     Methods:
         _is_built(entity): Checks whether a miscellaneous entity is built or not.
+        start(): Starts the optimization task.
 
     """
 
@@ -27,31 +28,55 @@ class Opytimizer:
 
         """
 
-        logger.info('Creating class: Opytimizer')
+        logger.info('Creating class: Opytimizer.')
 
         # Checks if Space is built
         if self._is_built(space):
-            self.space = space
+            self._space = space
 
         # Checks if Optimizer is built
         if self._is_built(optimizer):
-            self.optimizer = optimizer
+            self._optimizer = optimizer
 
         # Checks if Function is built
         if self._is_built(function):
-            self.function = function
+            self._function = function
 
         # We will log some important information
         logger.debug(
-            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}')
-            
+            f'Space: {self._space} | Optimizer: {self._optimizer} | Function: {self._function}')
+
         logger.info('Class created.')
+
+    @property
+    def space(self):
+        """A Space's object.
+        """
+
+        return self._space
+
+    @property
+    def optimizer(self):
+        """An Optimizer's object, where it can be a child (PSO, BA, etc).
+        """
+
+        return self._optimizer
+
+    @property
+    def function(self):
+        """A Function's object, where it can be a child (External or Internal).
+        """
+
+        return self._function
 
     def _is_built(self, entity):
         """Checks whether a miscellaneous entity is built or not.
 
         Args:
             entity (obj): A miscellaneous entity that has the built attribute.
+
+        Returns:
+            True, if entity is built.
 
         """
 
@@ -63,6 +88,9 @@ class Opytimizer:
             raise RuntimeError(e)
 
     def start(self):
+        """Starts the optimization task.
+
         """
-        """
+
+        # Starting optimizer
         self.optimizer.run(self.space, self.function)
