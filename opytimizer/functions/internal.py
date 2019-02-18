@@ -24,7 +24,7 @@ class Internal(Function):
 
         """
 
-        logger.info('Overriding class: Function -> Internal')
+        logger.info('Overriding class: Function -> Internal.')
 
         # Overrides parent class with its own type
         super(Internal, self).__init__(function_type='internal')
@@ -45,7 +45,7 @@ class Internal(Function):
 
         """
 
-        logger.debug('Running private method: build()')
+        logger.debug('Running private method: build().')
 
         # We apply to class pointer's the desired function
         if pointer:
