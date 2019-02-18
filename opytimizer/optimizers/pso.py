@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 import opytimizer.math.random as r
 import opytimizer.utils.common as c
@@ -23,6 +24,8 @@ class PSO(Optimizer):
     Methods:
         _build(hyperparams): Sets an external function point to a class
         attribute.
+        _update_velocity():
+        _update_position():
 
     """
 
@@ -128,44 +131,39 @@ class PSO(Optimizer):
         logger.debug(
             f'Algorithm: {self._algorithm} | Hyperparameters: w = {self._w}, c1 = {self._c1}, c2 = {self._c2} | Built: {self._built}')
 
-    def __update_velocity(self, agent, best_agent, local_position, velocity):
+    def _update_velocity(self, agent_position, best_position, local_position, current_velocity):
+        """
+        """
 
+        # Generating first random number
         r1 = r.generate_uniform_random_number(0, 1)
+
+        # Generating second random number
         r2 = r.generate_uniform_random_number(0, 1)
 
-        for v in range(agent.n_variables):
-            velocity[v] = self.w * velocity[v] + self.c1 * r1 * \
-                (local_position[v] - agent.position[v]) + self.c2 * \
-                r2 * (best_agent.position[v] - agent.position[v])
+        new_velocity = self.w * current_velocity + self.c1 * r1 * (local_position - agent_position) + self.c2 * r2 * (best_position - agent_position)
 
-    def __update_position(self, agent, velocity):
-        """Updates the actual position of a agent's decision variable.
+        return new_velocity
 
-        Args:
-            agent (Agent): Agent to be updated.
-            var (int): Index of decision variable.
+    def _update_position(self, agent_position, current_velocity):
+        """
         """
 
-        # One can find this equation on Kennedy & Eberhart PSO paper
-        # Not the true one yet!
-        for v in range(agent.n_variables):
-            agent.position[v] = agent.position[v] + velocity[v]
+        new_position = agent_position + current_velocity
 
-    def _update(self, agents, best_agent):
-        """Updates the agents' position array.
+        return new_position
 
-        Args:
-            agents ([Agents]): A list of agents that will be updated.
-
+    def _update(self, agents, best_agent, local_position, velocity):
+        """
         """
 
-        # We need to update every agent
-        for agent, local_position, velocity in zip(agents, self.local_position, self.velocity):
-            # For PSO, we need to update its position
-            self.__update_velocity(agent, best_agent, local_position, velocity)
-            self.__update_position(agent, velocity)
+        for i, agent in enumerate(agents):
+            for var in range(agent.n_variables):
+                velocity[i][var] = self._update_velocity(agent._position[var], best_agent._position[var], local_position[i][var], velocity[i][var])
+                agent._position[var] = self._update_position(agent._position[var], velocity[i][var])
+                
 
-    def _evaluate(self, space, function):
+    def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -174,24 +172,33 @@ class PSO(Optimizer):
 
         """
 
-        # We need to evaluate every agent
-        for agent, local_position in zip(space.agents, self.local_position):
-            # We apply agent's values as the function's input
-            fit = function.pointer(agent.position)
+        for i, agent in enumerate(space.agents):
+            fit = function.pointer(agent._position)
+            if fit < agent._fit:
+                agent._fit = fit
+                local_position[i] = copy.deepcopy(agent._position)
+            if agent._fit < space._best_agent._fit:
+                print('Yes')
+                space._best_agent = copy.deepcopy(agent)
+                space._best_agent._position = copy.deepcopy(local_position[i])
 
-            # If current fitness is better than previous agent's fitness
-            if (fit < agent.fit):
-                agent.fit = fit
-                # Still missing on updating local position
-                for v in range(space.n_variables):
-                    local_position[v] = agent.position[v]
+        # # We need to evaluate every agent
+        # for agent, local_position in zip(space.agents, self.local_position):
+        #     # We apply agent's values as the function's input
+        #     fit = function.pointer(agent.position)
 
-            # Finally, we can update current agent's fitness
+        #     # If current fitness is better than previous agent's fitness
+        #     if (fit < agent.fit):
+        #         agent.fit = fit
+        #         # Still missing on updating local position
+        #         local_position = copy.deepcopy(agent.position)
 
-            # If agent's fitness is the best among the space
-            if (agent.fit < space.best_agent.fit):
-                # We update space's best agent
-                space.best_agent = agent
+        #     # Finally, we can update current agent's fitness
+
+        #     # If agent's fitness is the best among the space
+        #     if (agent.fit < space.best_agent.fit):
+        #         # We update space's best agent
+        #         space.best_agent = agent
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -202,23 +209,30 @@ class PSO(Optimizer):
 
         """
 
-        self.local_position = np.zeros((space.n_agents, space.n_variables))
-        self.velocity = np.zeros((space.n_agents, space.n_variables))
+        # Instanciating array of local positions
+        self._local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
+        # And also an array of velocities
+        self._velocity = np.zeros((space.n_agents, space.n_variables))
 
         # Initial search space evaluation
-        self._evaluate(space, function)
+        self._evaluate(space, function, self._local_position)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
             logger.info(f'Iteration {t+1} out of {space.n_iterations}')
 
-            # Updating agents' position
-            self._update(space.agents, space.best_agent)
-
-            # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function)
+            self._update(space._agents, space._best_agent, self._local_position, self._velocity)
 
             c.check_bound_limits(space.agents, space.lb, space.ub)
+            # Updating agents' position
+            # self._update(space.agents, space.best_agent, self._local_position, self._velocity)
+
+            # After the update, we need to re-evaluate the search space
+            self._evaluate(space, function, self._local_position)
+
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             print(f'Position: {space.best_agent.position}')
+
+
