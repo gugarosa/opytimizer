@@ -1,7 +1,8 @@
 import numpy as np
+
+import opytimizer.math.random as r
 import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
-import opytimizer.utils.random as r
 from opytimizer.core.optimizer import Optimizer
 
 logger = l.get_logger(__name__)
@@ -9,12 +10,13 @@ logger = l.get_logger(__name__)
 
 class PSO(Optimizer):
     """A PSO class, inherited from Optimizer.
-
     This will be the designed class to define PSO-related
     variables and methods.
 
     Properties:
-        w (float): Inertia weight parameter.
+        w (float): Inertia weight.
+        c1 (float): First learning factor.
+        c2 (float): Second learning factor.
 
     Methods:
         _build(hyperparams): Sets an external function point to a class
@@ -36,10 +38,14 @@ class PSO(Optimizer):
         # Override its parent class with the receiving hyperparams
         super(PSO, self).__init__(algorithm='PSO')
 
-        # Default algorithm hyperparameters
-        self.w = 0.7
-        self.c1 = 1.7
-        self.c2 = 1.7
+        # Inertia weight
+        self._w = 0.7
+
+        # First learning factor
+        self._c1 = 1.7
+
+        # Second learning factor
+        self._c2 = 1.7
 
         self.local_position = None
         self.velocity = None
@@ -49,9 +55,29 @@ class PSO(Optimizer):
 
         logger.info('Class overrided.')
 
+    @property
+    def w(self):
+        """Inertia weight.
+        """
+
+        return self._w
+
+    @property
+    def c1(self):
+        """First learning factor.
+        """
+
+        return self._c1
+
+    @property
+    def c2(self):
+        """Second learning factor.
+        """
+
+        return self._c2
+
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -63,21 +89,25 @@ class PSO(Optimizer):
 
         logger.debug('Running private method: build()')
 
-        # We need to save the hyperparams object for faster
-        # looking up
-        self.hyperparams = hyperparams
+        # We need to save the hyperparams object for faster looking up
+        self._hyperparams = hyperparams
 
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
-        if self.hyperparams:
-            if 'w' in self.hyperparams:
-                self.w = self.hyperparams['w']
+        if hyperparams:
+            if 'w' in hyperparams:
+                self._w = hyperparams['w']
+            if 'c1' in hyperparams:
+                self._c1 = hyperparams['c1']
+            if 'c2' in hyperparams:
+                self._c2 = hyperparams['c2']
 
         # Set built variable to 'True'
-        self.built = True
+        self._built = True
 
         # Logging attributes
-        logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w} | Built: {self.built}')
+        logger.debug(
+            f'Algorithm: {self._algorithm} | Hyperparameters: w = {self._w}, c1 = {self._c1}, c2 = {self._c2} | Built: {self._built}')
 
     def __update_velocity(self, agent, best_agent, local_position, velocity):
 
@@ -85,8 +115,9 @@ class PSO(Optimizer):
         r2 = r.generate_uniform_random_number(0, 1)
 
         for v in range(agent.n_variables):
-            velocity[v] = self.w * velocity[v] + self.c1 * r1 * (local_position[v] - agent.position[v]) + self.c2 * r2 * (best_agent.position[v] - agent.position[v])
-
+            velocity[v] = self.w * velocity[v] + self.c1 * r1 * \
+                (local_position[v] - agent.position[v]) + self.c2 * \
+                r2 * (best_agent.position[v] - agent.position[v])
 
     def __update_position(self, agent, velocity):
         """Updates the actual position of a agent's decision variable.
@@ -115,16 +146,14 @@ class PSO(Optimizer):
             self.__update_velocity(agent, best_agent, local_position, velocity)
             self.__update_position(agent, velocity)
 
-
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-        
-        """
 
+        """
 
         # We need to evaluate every agent
         for agent, local_position in zip(space.agents, self.local_position):
@@ -139,7 +168,6 @@ class PSO(Optimizer):
                     local_position[v] = agent.position[v]
 
             # Finally, we can update current agent's fitness
-            
 
             # If agent's fitness is the best among the space
             if (agent.fit < space.best_agent.fit):
@@ -158,9 +186,9 @@ class PSO(Optimizer):
         self.local_position = np.zeros((space.n_agents, space.n_variables))
         self.velocity = np.zeros((space.n_agents, space.n_variables))
 
-        # Initial search space evaluation 
+        # Initial search space evaluation
         self._evaluate(space, function)
-        
+
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
             logger.info(f'Iteration {t+1} out of {space.n_iterations}')
@@ -175,5 +203,3 @@ class PSO(Optimizer):
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             print(f'Position: {space.best_agent.position}')
-
-        

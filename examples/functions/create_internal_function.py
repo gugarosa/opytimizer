@@ -1,7 +1,6 @@
 from opytimizer.functions.internal import Internal
 
-# One should declare a function of x
-# and it should return a value
+# One should declare a function of x, where it should return a value
 def test_function(x):
     return x + 2
 
@@ -11,7 +10,7 @@ x = 0
 
 # Internal functions can be used if your objective
 # function is an internal python code
-f = Internal(function=test_function)
+f = Internal(pointer=test_function)
 
 # Testing out your new Internal class
 print(f'x: {x}')

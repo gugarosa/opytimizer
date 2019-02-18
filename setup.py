@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(name='opytimizer',
       version='1.0.0',
-      description='Meta-Heuristics Optimization for Python',
+      description='Meta-Inspired Python Optimizer',
       author='Gustavo Rosa',
       author_email='gth.rosa@uol.com.br',
       url='https://github.com/gugarosa/opytimizer',
