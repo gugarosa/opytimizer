@@ -14,10 +14,13 @@ class PSO(Optimizer):
     This will be the designed class to define PSO-related
     variables and methods.
 
+    References:
+        Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
+
     Properties:
         w (float): Inertia weight.
-        c1 (float): First learning factor.
-        c2 (float): Second learning factor.
+        c1 (float): Cognitive constant.
+        c2 (float): Social constant.
         local_position (np.array): An array holding particle's local positions.
         velocity (np.array): An array holding particles' velocities.
 
@@ -46,10 +49,10 @@ class PSO(Optimizer):
         # Inertia weight
         self._w = 0.7
 
-        # First learning factor
+        # Cognitive constant
         self._c1 = 1.7
 
-        # Second learning factor
+        # Social constant
         self._c2 = 1.7
 
         # Particles' local positions
@@ -76,7 +79,7 @@ class PSO(Optimizer):
 
     @property
     def c1(self):
-        """First learning factor.
+        """Cognitive constant.
         """
 
         return self._c1
@@ -87,7 +90,7 @@ class PSO(Optimizer):
 
     @property
     def c2(self):
-        """Second learning factor.
+        """Social constant.
         """
 
         return self._c2
