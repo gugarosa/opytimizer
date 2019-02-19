@@ -27,7 +27,7 @@ class Function:
         self._type = function_type
 
         # Also, we need a pointer to point to our actual function
-        self.pointer = None
+        self._pointer = None
 
         # Indicates whether the function is built or not
         self._built = False
@@ -38,6 +38,17 @@ class Function:
         """
 
         return self._type
+
+    @property
+    def pointer(self):
+        """A pointer to point to our actual function.
+        """
+
+        return self._pointer
+
+    @pointer.setter
+    def pointer(self, pointer):
+        self._pointer = pointer
 
     @property
     def built(self):
