@@ -1,3 +1,5 @@
+import time
+
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -106,7 +108,13 @@ class Opytimizer:
 
         logger.info('Starting optimization task.')
 
+        # Starting timer to count optimization task
+        start = time.time()
+
         # Starting optimizer
         self.optimizer.run(self.space, self.function)
 
+        end = time.time()
+
         logger.info('Optimization task ended.')
+        logger.info(f'It took {(end - start) % 60} seconds.')

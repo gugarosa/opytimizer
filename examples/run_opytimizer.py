@@ -20,7 +20,7 @@ def test(x):
 f = Internal(pointer=test)
 
 # Number of agents
-n_agents = 20
+n_agents = 2
 
 # Number of decision variables
 n_variables = 2
@@ -29,7 +29,7 @@ n_variables = 2
 n_dimensions = 1
 
 # Number of running iterations
-n_iterations = 100
+n_iterations = 10
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
