@@ -56,29 +56,29 @@ Core is the core. Essentially, it is the parent of everything. You should find p
 
 ```agent```: Submodule responsible for handling Agent's class. This can be referred as the particle, the individual or any single instance that corresponds to the basis of an optimization task.
 
-2. function: When working with optimization, we need to evaluate our task into something. Function is the module ready-to-go to evaluate internal or external libraries functions.
+```function```: When working with optimization, we need to evaluate our task into something. Function is the module ready-to-go to evaluate internal or external libraries functions.
 
-3. optimizer: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
+```optimizer```: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
 
-4. space: The space can be understood as the search space. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
+```space```: The space can be understood as the search space. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
 
 ### Functions
 
-1. internal: Package that handles internal python function representations.
+```internal```: Package that handles internal python function representations.
 
 ### Math
 
-1. random: Package used to handle random number generation.
+```random```: Package used to handle random number generation.
 
 ### Optimizers
 
-1. pso: Particle Swarm Optimization implementation. More details can be found inside this module.
+```pso```: Particle Swarm Optimization implementation. More details can be found inside this module.
 
 ### Utils
 
-1. common: Common methods that can be used for different parts of Opytimizer.
+```common```: Common methods that can be used for different parts of Opytimizer.
 
-2. logging: Logging tools to track the progress of the optimization task.
+```logging```: Logging tools to track the progress of the optimization task.
 
 
 ---
