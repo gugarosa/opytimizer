@@ -145,7 +145,7 @@ class PSO(Optimizer):
                 self.c2 = hyperparams['c2']
 
         # Set built variable to 'True'
-        self._built = True
+        self.built = True
 
         # Logging attributes
         logger.debug(
@@ -261,7 +261,7 @@ class PSO(Optimizer):
         self._velocity = np.zeros((space.n_agents, space.n_variables))
 
         # Initial search space evaluation
-        self._evaluate(space, function, self._local_position)
+        self._evaluate(space, function, self.local_position)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
