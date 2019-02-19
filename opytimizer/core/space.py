@@ -113,12 +113,20 @@ class Space:
 
         return self._agents
 
+    @agents.setter
+    def agents(self, agents):
+        self._agents = agents
+
     @property
     def best_agent(self):
         """A best agent object from Agent class.
         """
 
         return self._best_agent
+
+    @best_agent.setter
+    def best_agent(self, best_agent):
+        self._best_agent = best_agent
 
     @property
     def lb(self):
@@ -127,6 +135,10 @@ class Space:
 
         return self._lb
 
+    @lb.setter
+    def lb(self, lb):
+        self._lb = lb
+
     @property
     def ub(self):
         """Upper bound array with the maximum possible values.
@@ -134,12 +146,20 @@ class Space:
 
         return self._ub
 
+    @ub.setter
+    def ub(self, ub):
+        self._ub = ub
+
     @property
     def built(self):
         """A boolean to indicate whether the space is built.
         """
 
         return self._built
+
+    @built.setter
+    def built(self, built):
+        self._built = built
 
     def _check_bound_size(self, bound, size):
         """Checks if the bounds' size are the same of
@@ -205,9 +225,9 @@ class Space:
         # Iterate through number of agents
         for agent in agents:
             # For every variable
-            for var in range(agent._n_variables):
+            for var in range(agent.n_variables):
                 # we generate uniform random numbers
-                agent._position[var] = r.generate_uniform_random_number(
+                agent.position[var] = r.generate_uniform_random_number(
                     lower_bound[var], upper_bound[var], size=agent._n_dimensions)
 
     def _build(self, lower_bound, upper_bound):
@@ -227,8 +247,8 @@ class Space:
         # Checking if lower bound is avaliable
         if lower_bound:
             # Check if its size matches to our actual number of variables
-            if self._check_bound_size(lower_bound, self._n_variables):
-                self._lb = lower_bound
+            if self._check_bound_size(lower_bound, self.n_variables):
+                self.lb = lower_bound
         else:
             e = f"Property 'lower_bound' cannot be {lower_bound}."
             logger.error(e)
@@ -236,25 +256,25 @@ class Space:
 
         # We need to check upper bounds as well
         if upper_bound:
-            if self._check_bound_size(upper_bound, self._n_variables):
-                self._ub = upper_bound
+            if self._check_bound_size(upper_bound, self.n_variables):
+                self.ub = upper_bound
         else:
             e = f"Property 'upper_bound' cannot be {upper_bound}."
             logger.error(e)
             raise RuntimeError(e)
 
         # Creating agents
-        self._agents, self._best_agent = self._create_agents(
-            self._n_agents, self._n_variables, self._n_dimensions)
+        self.agents, self.best_agent = self._create_agents(
+            self.n_agents, self.n_variables, self.n_dimensions)
 
         # Initializing agents
-        self._initialize_agents(self._agents, self._lb, self._ub)
+        self._initialize_agents(self.agents, self.lb, self.ub)
 
         # If no errors were shown, we can declared the Space as built
-        self._built = True
+        self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Agents: {self._n_agents} | Size: ({self._n_variables}, {self._n_dimensions})'
-            + f' | Iterations: {self._n_iterations} | Lower Bound: {self._lb}'
-            + f' | Upper Bound: {self._ub} | Built: {self._built}')
+            f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions})'
+            + f' | Iterations: {self.n_iterations} | Lower Bound: {self.lb}'
+            + f' | Upper Bound: {self.ub} | Built: {self.built}')

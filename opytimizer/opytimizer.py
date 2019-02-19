@@ -32,19 +32,19 @@ class Opytimizer:
 
         # Checks if Space is built
         if self._is_built(space):
-            self._space = space
+            self.space = space
 
         # Checks if Optimizer is built
         if self._is_built(optimizer):
-            self._optimizer = optimizer
+            self.optimizer = optimizer
 
         # Checks if Function is built
         if self._is_built(function):
-            self._function = function
+            self.function = function
 
         # We will log some important information
         logger.debug(
-            f'Space: {self._space} | Optimizer: {self._optimizer} | Function: {self._function}')
+            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}')
 
         logger.info('Class created.')
 
@@ -55,6 +55,10 @@ class Opytimizer:
 
         return self._space
 
+    @space.setter
+    def space(self, space):
+        self._space = space
+
     @property
     def optimizer(self):
         """An Optimizer's object, where it can be a child (PSO, BA, etc).
@@ -62,12 +66,20 @@ class Opytimizer:
 
         return self._optimizer
 
+    @optimizer.setter
+    def optimizer(self, optimizer):
+        self._optimizer = optimizer
+
     @property
     def function(self):
         """A Function's object, where it can be a child (External or Internal).
         """
 
         return self._function
+
+    @function.setter
+    def function(self, function):
+        self._function = function
 
     def _is_built(self, entity):
         """Checks whether a miscellaneous entity is built or not.
@@ -92,5 +104,9 @@ class Opytimizer:
 
         """
 
+        logger.info('Starting optimization task.')
+
         # Starting optimizer
         self.optimizer.run(self.space, self.function)
+
+        logger.info('Optimization task ended.')

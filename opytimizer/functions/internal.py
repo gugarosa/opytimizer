@@ -56,8 +56,8 @@ class Internal(Function):
             raise RuntimeError(e)
 
         # Set built variable to 'True'
-        self._built = True
+        self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Type: {self._type} | Pointer: {self.pointer} | Built: {self._built}')
+            f'Type: {self.type} | Pointer: {self.pointer} | Built: {self.built}')

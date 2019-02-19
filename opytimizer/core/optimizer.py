@@ -51,12 +51,20 @@ class Optimizer:
 
         return self._hyperparams
 
+    @hyperparams.setter
+    def hyperparams(self, hyperparams):
+        self._hyperparams = hyperparams
+
     @property
     def built(self):
         """A boolean to indicate whether the optimizer is built.
         """
 
         return self._built
+
+    @built.setter
+    def built(self, built):
+        self._built = built
 
     def _update(self, agents):
         """Updates the agents' position array.

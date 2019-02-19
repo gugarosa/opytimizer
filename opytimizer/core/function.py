@@ -45,3 +45,7 @@ class Function:
         """
 
         return self._built
+
+    @built.setter
+    def built(self, built):
+        self._built = built
