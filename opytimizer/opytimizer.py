@@ -113,7 +113,8 @@ class Opytimizer:
 
         # Starting optimizer
         self.optimizer.run(self.space, self.function)
-
+        
+        # Ending timer, still needs to get the diff % 60 for real seconds
         end = time.time()
 
         logger.info('Optimization task ended.')
