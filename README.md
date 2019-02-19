@@ -40,30 +40,46 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - optimizer
         - space
     - functions
+        - internal
+    - math
+        - random
     - optimizers
-    - stream
+        - pso
     - utils
+        - common
+        - logging
 ```
 
 ### Core
 
-Core is the core. Essentially, it is the parent of everything. You should find parent classes defining the basic of our structure. They should provide variables and methods that will help to construct other modules. It is composed by the following classes:
+Core is the core. Essentially, it is the parent of everything. You should find parent classes defining the basic of our structure. They should provide variables and methods that will help to construct other modules. It is composed by the following submodules:
 
-1. Agent ()
+1. agent: Submodule responsible for handling Agent's class. This can be referred as the particle, the individual or any single instance that corresponds to the basis of an optimization task.
 
-2. Function ()
+2. function: When working with optimization, we need to evaluate our task into something. Function is the module ready-to-go to evaluate internal or external libraries functions.
 
-3. Optimizer ()
+3. optimizer: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
 
-4. Space ()
+4. space: The space can be understood as the search space. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
 
 ### Functions
 
+1. internal: Package that handles internal python function representations.
+
+### Math
+
+1. random: Package used to handle random number generation.
+
 ### Optimizers
 
-### Stream
+1. pso: Particle Swarm Optimization implementation. More details can be found inside this module.
 
 ### Utils
+
+1. common: Common methods that can be used for different parts of Opytimizer.
+
+2. logging: Logging tools to track the progress of the optimization task.
+
 
 ---
 
