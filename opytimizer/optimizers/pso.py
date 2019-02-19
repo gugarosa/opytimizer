@@ -24,8 +24,8 @@ class PSO(Optimizer):
     Methods:
         _build(hyperparams): Sets an external function point to a class
         attribute.
-        _update_velocity():
-        _update_position():
+        _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle velocity (over a single variable).
+        _update_position(agent_position, current_velocity): Updates a single particle position (over a single variable).
 
     """
 
