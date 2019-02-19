@@ -41,7 +41,7 @@ class Agent:
 
         # We will log some important information
         logger.debug(
-            f'Size: ({self.n_variables}, {self.n_dimensions}) | Fitness: {self.fit}.')
+            f'Size: ({self._n_variables}, {self._n_dimensions}) | Fitness: {self._fit}.')
 
         logger.info('Class created.')
 
@@ -66,9 +66,17 @@ class Agent:
 
         return self._position
 
+    @position.setter
+    def position(self, position):
+        self._position = position
+
     @property
     def fit(self):
         """Agent's fitness value.
         """
 
         return self._fit
+
+    @fit.setter
+    def fit(self, fit):
+        self._fit = fit
