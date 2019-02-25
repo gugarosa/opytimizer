@@ -1,3 +1,5 @@
+import copy
+
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -81,9 +83,7 @@ class Optimizer:
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
-        As each optimizer child can have a different
-        procedure of evaluation, you will need to implement
-        it directly on child's class.
+        If you need a specific evaluate method, please re-implement it on child's class.
 
         Args:
             space (Space): A Space object that will be evaluated.
@@ -91,7 +91,20 @@ class Optimizer:
 
         """
 
-        raise NotImplementedError
+        # Iterate through all agents
+        for agent in space.agents:
+            # Calculate the fitness value of current agent
+            fit = function.pointer(agent.position)
+
+            # If fitness is better than agent's best fit
+            if fit < agent.fit:
+                # Updates its current fitness to the newer one
+                agent.fit = fit
+
+            # If agent's fitness is better than global fitness
+            if agent.fit < space.best_agent.fit:
+                # Makes a depp copy of current agent to the best agent
+                space.best_agent = copy.deepcopy(agent)
 
     def run(self, space, function):
         """Runs the optimization pipeline.

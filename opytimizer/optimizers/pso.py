@@ -209,12 +209,12 @@ class PSO(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Iterate through all variables
-            for var in range(agent.n_variables):
+            for j, _ in enumerate(agent.position):
                 # Updates current agent and current variable velocity value
-                velocity[i][var] = self._update_velocity(agent.position[var], best_agent.position[var], local_position[i][var], velocity[i][var])
+                velocity[i][j] = self._update_velocity(agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
 
                 # Updates current agent and current variable position value
-                agent.position[var] = self._update_position(agent.position[var], velocity[i][var])
+                agent.position[j] = self._update_position(agent.position[j], velocity[i][j])
                 
 
     def _evaluate(self, space, function, local_position):
@@ -233,7 +233,7 @@ class PSO(Optimizer):
             fit = function.pointer(agent.position)
 
             # If fitness is better than agent's best fit
-            if fit < agent._fit:
+            if fit < agent.fit:
                 # Updates its current fitness to the newer one
                 agent.fit = fit
 

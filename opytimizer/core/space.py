@@ -65,8 +65,10 @@ class Space:
         # Best agent object
         self._best_agent = None
 
-        # Lower and upper bounds
+        # Lower bounds
         self._lb = np.zeros(n_variables)
+
+        # Upper bounds
         self._ub = np.ones(n_variables)
 
         # Indicates whether the space is built or not
@@ -218,17 +220,22 @@ class Space:
         """Initialize agents' position array with
         uniform random numbers.
 
+        Args:
+            agents (list): List of agents.
+            lower_bound (np.array): Lower bound array with the minimum possible values.
+            upper_bound (np.array): Upper bound array with the maximum possible values.
+
         """
 
         logger.debug('Running private method: initialize_agents().')
 
-        # Iterate through number of agents
+        # Iterate through all agents
         for agent in agents:
-            # For every variable
-            for var in range(agent.n_variables):
-                # we generate uniform random numbers
-                agent.position[var] = r.generate_uniform_random_number(
-                    lower_bound[var], upper_bound[var], size=agent._n_dimensions)
+            # Iterate through all decision variables
+            for i, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+                # For each decision variable, we generate uniform random numbers
+                agent.position[i] = r.generate_uniform_random_number(
+                    lb, ub, size=agent.n_dimensions)
 
     def _build(self, lower_bound, upper_bound):
         """This method will serve as the object building process.
