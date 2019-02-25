@@ -215,7 +215,7 @@ class PSO(Optimizer):
                 # Updates current agent and current variable velocity value
                 velocity[i][j] = self._update_velocity(
                     agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
-
+                    
                 # Updates current agent and current variable position value
                 agent.position[j] = self._update_position(
                     agent.position[j], velocity[i][j])
