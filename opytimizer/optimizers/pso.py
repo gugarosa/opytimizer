@@ -1,5 +1,6 @@
-import numpy as np
 import copy
+
+import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.common as c
@@ -25,8 +26,7 @@ class PSO(Optimizer):
         velocity (np.array): An array holding particles' velocities.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class
-        attribute.
+        _build(hyperparams): Sets an external function point to a class attribute.
         _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle velocity (over a single variable).
         _update_position(agent_position, current_velocity): Updates a single particle position (over a single variable).
 
@@ -164,7 +164,7 @@ class PSO(Optimizer):
             current_velocity (float): Agent's current velocity.
 
         Returns:
-            A new velocity based on Equation ?? from PSO's paper.
+            A new velocity based on PSO's paper velocity update equation.
         """
 
         # Generating first random number
@@ -174,7 +174,9 @@ class PSO(Optimizer):
         r2 = r.generate_uniform_random_number(0, 1)
 
         # Calculates new velocity
-        new_velocity = self.w * current_velocity + self.c1 * r1 * (local_position - agent_position) + self.c2 * r2 * (best_position - agent_position)
+        new_velocity = self.w * current_velocity + self.c1 * r1 * \
+            (local_position - agent_position) + self.c2 * \
+            r2 * (best_position - agent_position)
 
         return new_velocity
 
@@ -186,7 +188,7 @@ class PSO(Optimizer):
             current_velocity (float): Agent's current velocity.
 
         Returns:
-            A new position based on Equation ?? from PSO's paper.
+            A new position based PSO's paper position update equation.
 
         """
 
@@ -211,11 +213,12 @@ class PSO(Optimizer):
             # Iterate through all variables
             for j, _ in enumerate(agent.position):
                 # Updates current agent and current variable velocity value
-                velocity[i][j] = self._update_velocity(agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
+                velocity[i][j] = self._update_velocity(
+                    agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
 
                 # Updates current agent and current variable position value
-                agent.position[j] = self._update_position(agent.position[j], velocity[i][j])
-                
+                agent.position[j] = self._update_position(
+                    agent.position[j], velocity[i][j])
 
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
@@ -258,7 +261,8 @@ class PSO(Optimizer):
         """
 
         # Instanciating array of local positions
-        self._local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self._local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
         self._velocity = np.zeros((space.n_agents, space.n_variables))
@@ -271,7 +275,8 @@ class PSO(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, self.local_position, self.velocity)
+            self._update(space.agents, space.best_agent,
+                         self.local_position, self.velocity)
 
             # Checking if agents meets the bounds limits
             c.check_bound_limits(space.agents, space.lb, space.ub)
@@ -281,4 +286,3 @@ class PSO(Optimizer):
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
-
