@@ -16,7 +16,7 @@ class PSO(Optimizer):
     variables and methods.
 
     References:
-        Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
+        J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
 
     Properties:
         w (float): Inertia weight.

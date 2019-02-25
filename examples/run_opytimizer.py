@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.space import Space
 from opytimizer.functions.internal import Internal
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.fpa import FPA
 
 
 def test(x):
@@ -48,7 +48,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = FPA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

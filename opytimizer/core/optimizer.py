@@ -1,5 +1,6 @@
 import copy
 
+import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -68,7 +69,7 @@ class Optimizer:
     def built(self, built):
         self._built = built
 
-    def _update(self, agents):
+    def _update(self, agents, best_agent):
         """Updates the agents' position array.
         As each optimizer child can have a different
         procedure of update, you will need to implement
@@ -76,6 +77,7 @@ class Optimizer:
 
         Args:
             agents (list): A list of agents that will be updated.
+            best_agent (Agent): Global best agent.
 
         """
 
@@ -108,9 +110,7 @@ class Optimizer:
 
     def run(self, space, function):
         """Runs the optimization pipeline.
-        As each optimizer child can have a different
-        pipeline, you will need to implement it directly
-        on child's class.
+        If you need a specific run method, please re-implement it on child's class.
 
         Args:
             space (Space): A Space object that will be evaluated.
@@ -118,4 +118,21 @@ class Optimizer:
 
         """
 
-        raise NotImplementedError
+        # Initial search space evaluation
+        self._evaluate(space, function)
+
+        # These are the number of iterations to converge
+        for t in range(space.n_iterations):
+            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+
+            # Updating agents
+            self._update(space.agents, space.best_agent)
+
+            # Checking if agents meets the bounds limits
+            c.check_bound_limits(space.agents, space.lb, space.ub)
+
+            # After the update, we need to re-evaluate the search space
+            self._evaluate(space, function)
+
+            logger.info(f'Fitness: {space.best_agent.fit}')
+            logger.info(f'Position: {space.best_agent.position}')
