@@ -4,6 +4,7 @@ from opytimizer import Opytimizer
 from opytimizer.core.space import Space
 from opytimizer.functions.internal import Internal
 from opytimizer.optimizers.fpa import FPA
+from opytimizer.optimizers.pso import PSO
 
 
 def test(x):

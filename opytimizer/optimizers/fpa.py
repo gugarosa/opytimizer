@@ -28,6 +28,8 @@ class FPA(Optimizer):
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
+        _levy_flight():
+        _local_pollination():
 
     """
 
