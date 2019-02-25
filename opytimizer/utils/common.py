@@ -1,3 +1,5 @@
+import numpy as np
+
 def check_bound_limits(agents, lower_bound, upper_bound):
     """Checks bounds limists of all agents and variables.
 
@@ -10,13 +12,7 @@ def check_bound_limits(agents, lower_bound, upper_bound):
 
     # Iterate through all agents
     for agent in agents:
-        # Iterating through all variables
-        for v in range(agent.n_variables):
-            # If current position is lower than lower bound
-            if agent.position[v] < lower_bound[v]:
-                # Bring it back to minimum bound value
-                agent.position[v] = lower_bound[v]
-            # If current position is greater than upper bound
-            elif agent.position[v] > upper_bound[v]:
-                # Bring it back to maximum bound value
-                agent.position[v] = upper_bound[v]
+        # Iterate through all decision variables
+        for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+            # Clip the array based on variables' lower and upper bounds
+            agent.position[j] = np.clip(agent.position[j], lb, ub)
