@@ -13,6 +13,6 @@ def check_bound_limits(agents, lower_bound, upper_bound):
     # Iterate through all agents
     for agent in agents:
         # Iterate through all decision variables
-        for i, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+        for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
             # Clip the array based on variables' lower and upper bounds
-            agent.position[i] = np.clip(agent.position[i], lb, ub)
+            agent.position[j] = np.clip(agent.position[j], lb, ub)
