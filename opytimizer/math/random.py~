@@ -57,6 +57,7 @@ def generate_levy_distribution(n_variables, beta):
     sigma_u = (num/den)**(1/beta)
     u = np.random.normal(0, sigma_u**2, n_variables)
     v = np.random.normal(0, 1, n_variables)
+    print(v)
     step = u / np.abs(v) ** (1 / beta)
 
-    return step
+    #return step
