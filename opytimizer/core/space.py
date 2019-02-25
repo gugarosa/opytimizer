@@ -232,9 +232,9 @@ class Space:
         # Iterate through all agents
         for agent in agents:
             # Iterate through all decision variables
-            for i, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+            for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[i] = r.generate_uniform_random_number(
+                agent.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=agent.n_dimensions)
 
     def _build(self, lower_bound, upper_bound):
