@@ -5,9 +5,9 @@ def generate_uniform_random_number(low=0.0, high=1.0, size=1):
     """Generates a random number or array based on an uniform distribution.
 
     Args:
-        low (float): lower interval.
-        high (float): higher interval.
-        size (int): size of array.
+        low (float): Lower interval.
+        high (float): Higher interval.
+        size (int): Size of array.
 
     Returns:
         An uniform random number or array.
@@ -24,9 +24,9 @@ def generate_gaussian_random_number(mean=0.0, variance=1.0, size=1):
     """Generates a random number or array based on a gaussian distribution.
 
     Args:
-        mean (float): gaussian's mean value.
-        variance (float): gaussian's variance value.
-        size (int): size of array.
+        mean (float): Gaussian's mean value.
+        variance (float): Gaussian's variance value.
+        size (int): Size of array.
 
     Returns:
         A gaussian random number or array.

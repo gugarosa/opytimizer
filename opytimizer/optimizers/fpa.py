@@ -28,8 +28,8 @@ class FPA(Optimizer):
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
-        _levy_flight():
-        _local_pollination():
+        _levy_flight(): Updates the agent's position based on a Lévy's flight.
+        _local_pollination(): Updates the agent's position based on a local pollination.
 
     """
 
@@ -126,6 +126,9 @@ class FPA(Optimizer):
             f'Algorithm: {self.algorithm} | Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | Built: {self.built}')
 
     def _levy_flight(self, agent_position, best_position):
+        """
+        """
+
         step = d.generate_levy_distribution(self.beta, len(agent_position))
         eta_step = list(map(lambda x: x*self.eta, step))
         aux = list(map(operator.mul, eta_step, map(
@@ -135,6 +138,9 @@ class FPA(Optimizer):
         return levy_flight
 
     def _local_pollination(self, agents, agent_position):
+        """
+        """
+
         epsilon = r.generate_uniform_random_number(0, 1)
         flowers = random.sample(agents, 2)
         sub = list(map(operator.sub, flowers[0].position, flowers[1].position))
@@ -145,6 +151,9 @@ class FPA(Optimizer):
         return local_pollination
 
     def _update(self, agents, best_agent):
+        """
+        """
+        
         # Iterate through all agents
         for i, agent in enumerate(agents):
             if r.generate_uniform_random_number(0, 1) > self.p:
