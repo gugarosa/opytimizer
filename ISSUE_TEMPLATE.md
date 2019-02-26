@@ -1,3 +1,5 @@
+## Template when making a new issue
+
 Please, make sure that the following boxes are checked before submitting a new issue. There is a small chance that you can solve it by your own or even that it was already addressed by someone.
 
 Thank you!
