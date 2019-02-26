@@ -21,7 +21,7 @@ def test(x):
 f = Internal(pointer=test)
 
 # Number of agents
-n_agents = 2
+n_agents = 20
 
 # Number of decision variables
 n_variables = 2

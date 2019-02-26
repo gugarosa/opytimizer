@@ -1,6 +1,4 @@
 import copy
-import operator
-import random
 
 import numpy as np
 
@@ -28,8 +26,8 @@ class FPA(Optimizer):
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
-        _levy_flight(): Updates the agent's position based on a Lévy's flight.
-        _local_pollination(): Updates the agent's position based on a local pollination.
+        _global_pollination(agent_position, best_position): Updates the agent's position based on a global pollination (Lévy's flight).
+        _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position based on a local pollination.
 
     """
 
@@ -125,40 +123,84 @@ class FPA(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | Built: {self.built}')
 
-    def _levy_flight(self, agent_position, best_position):
-        """
-        """
+    def _global_pollination(self, agent_position, best_position):
+        """Updates the agent's position based on a global pollination (Lévy's flight).
 
-        step = d.generate_levy_distribution(self.beta, len(agent_position))
-        eta_step = list(map(lambda x: x*self.eta, step))
-        aux = list(map(operator.mul, eta_step, map(
-            operator.sub, best_position, agent_position)))
-        levy_flight = list(map(operator.add, agent_position, aux))
+        Args:
+            agent_position (float): Agent's current position.
+            best_position (float): Best agent's current position.
 
-        return levy_flight
+        Returns:
+            A new position based on FPA's paper global pollination equation.
 
-    def _local_pollination(self, agents, agent_position):
-        """
         """
 
-        epsilon = r.generate_uniform_random_number(0, 1)
-        flowers = random.sample(agents, 2)
-        sub = list(map(operator.sub, flowers[0].position, flowers[1].position))
-        sub_epsilon = list(map(lambda x: x*epsilon, sub))
-        local_pollination = list(
-            map(operator.add, agent_position, sub_epsilon))
+        # Generates a Lévy distribution
+        step = d.generate_levy_distribution(self.beta)
 
-        return local_pollination
+        # Calculates the global pollination
+        global_pollination = self.eta * step * (best_position - agent_position)
+
+        # Calculates the new position based on previous global pollination
+        new_position = agent_position + global_pollination
+
+        return new_position
+
+    def _local_pollination(self, agent_position, k_position, l_position, epsilon):
+        """Updates the agent's position based on a local pollination.
+
+        Args:
+            agent_position (float): Agent's current position.
+            k_position (float): Agent's (index k) current position.
+            l_position (float): Agent's (index l) current position.
+            epsilon (float): An uniform random generated number
+
+        Returns:
+            A new position based on FPA's paper local pollination equation.
+
+        """
+
+        # Calculates the local pollination
+        local_pollination = epsilon * (k_position - l_position)
+
+        # Calculates the new position based on previous local pollination
+        new_position = agent_position + local_pollination
+
+        return new_position
 
     def _update(self, agents, best_agent):
+        """Method that wraps global and local pollination updates over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            best_agent (Agent): Global best agent.
+
         """
-        """
-        
+
         # Iterate through all agents
-        for i, agent in enumerate(agents):
-            if r.generate_uniform_random_number(0, 1) > self.p:
-                agent.position = list(map(operator.add, agent.position, self._levy_flight(
-                    agent.position, best_agent.position)))
+        for agent in agents:
+            # Generating an uniform random number
+            r1 = r.generate_uniform_random_number(0, 1)
+
+            # Check if generated random number is bigger than probability
+            if r1 > self.p:
+                # Iterate through all variables
+                for j, _ in enumerate(agent.position):
+                    # Update each decision variable according to global pollination
+                    agent.position[j] = self._global_pollination(
+                        agent.position[j], best_agent.position[j])
             else:
-                agent.position = list(map(
-                    operator.add, agent.position, self._local_pollination(agents, agent.position)))
+                # Generates an uniform random number
+                epsilon = r.generate_uniform_random_number(0, 1)
+
+                # Generates an index for flower k
+                k = int(r.generate_uniform_random_number(0, len(agents)-1))
+
+                # Generates an index for flower l
+                l = int(r.generate_uniform_random_number(0, len(agents)-1))
+
+                # Iterate through all variables
+                for j, _ in enumerate(agent.position):
+                    # Update each decision variable according to local pollination
+                    agent.position[j] = self._local_pollination(
+                        agent.position[j], agents[k].position[j], agents[l].position[j], epsilon)
