@@ -46,6 +46,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - functions
         - internal
     - math
+        - distribution
         - random
     - optimizers
         - fpa
