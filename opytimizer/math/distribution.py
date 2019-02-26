@@ -10,8 +10,8 @@ def generate_levy_distribution(beta=0.0, size=1):
         X.-S. Yang and S. Deb. Computers & Operations Research. Multiobjective Cuckoo Search for Design Optimization (2013).
 
     Args:
-        beta (float): skewness parameter.
-        size (int): size of array.
+        beta (float): Skewness parameter.
+        size (int): Size of array.
 
     Returns:
         A Lévy distribution n-dimensional array.

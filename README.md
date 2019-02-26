@@ -64,17 +64,29 @@ Core is the core. Essentially, it is the parent of everything. You should find p
 
 ### Functions
 
+Functions are the same as your problems. Basically, here is the package to define fitness functions, internal (implemented as functions in Python) or external (those from other packages that you want to integrate).
+
 ```internal```: Package that handles internal python function representations.
 
 ### Math
+
+Just because we are computing stuff, it does not means that we do not need math. Math is the mathematical package, containing low level math implementations. From random number to distributions generation, you can find your needs on this module.
+
+```distribution```: Package used to handle distributions generation.
 
 ```random```: Package used to handle random number generation.
 
 ### Optimizers
 
-```pso```: Particle Swarm Optimization implementation. More details can be found inside this module.
+This is why we are called Opytimizer. The heart of the heuristics, you can find a broad number of meta-heuristic, optimization heuristic, anything that can be called as an optimizer. Investiga over any module for more information.
+
+```fpa```: Flower Pollination Algorithm implementation.
+
+```pso```: Particle Swarm Optimization implementation.
 
 ### Utils
+
+This is an utilities package. Common things shared across all the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
 
 ```common```: Common methods that can be used for different parts of Opytimizer.
 
