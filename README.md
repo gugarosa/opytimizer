@@ -44,6 +44,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - math
         - random
     - optimizers
+        - fpa
         - pso
     - utils
         - common
@@ -92,7 +93,6 @@ This is an utilities package. Common things shared across all the application sh
 
 ```logging```: Logging tools to track the progress of the optimization task.
 
-
 ---
 
 ## Installation
@@ -125,6 +125,6 @@ No specific additional commands needed.
 
 ## Support
 
-We know that we do our best, but it's inevitable to acknowlodge that we make mistakes. If you every need to report a bug, report a problem, talk to us, please do so! We will be avaliable at our bests at this repository or recogna@fc.unesp.br.
+We know that we do our best, but it's inevitable to acknowlodge that we make mistakes. If you every need to report a bug, report a problem, talk to us, please do so! We will be avaliable at our bests at this repository or recogna@unesp.br.
 
 ---
