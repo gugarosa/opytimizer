@@ -2,9 +2,31 @@ Please, make sure that the following boxes are checked before submitting a new i
 
 Thank you!
 
+### Pre-checkings
+
 - [ ] Check that you are up-to-date with the master branch of Opytimizer. You can update with:
 pip install git+git://github.com/gugarosa/opytimizer.git --upgrade --no-deps
 
 - [ ] Check that you have read all of our [README](https://github.com/gugarosa/opytimizer/blob/master/README.md).
 
 - [ ] Provide a link to a GitHub Gist of a Python script that can reproduce your issue (or just copy the script here if it is short).
+
+### Description
+
+[Description of the issue]
+
+### Steps to Reproduce
+
+1. [First Step]
+2. [Second Step]
+3. [...]
+
+**Expected behavior:** [It should be what you expect to happen]
+
+**Actual behavior:** [What actually happens]
+
+**Reproduces how often:** [How much does it occur? Show us your percentage]
+
+### Additional Information
+
+Any additional information, configuration or data that might be necessary to reproduce the issue.
