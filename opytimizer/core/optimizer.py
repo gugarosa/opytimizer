@@ -71,6 +71,7 @@ class Optimizer:
 
     def _update(self, agents, best_agent):
         """Updates the agents' position array.
+
         As each optimizer child can have a different
         procedure of update, you will need to implement
         it directly on child's class.
@@ -85,6 +86,7 @@ class Optimizer:
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
+
         If you need a specific evaluate method, please re-implement it on child's class.
 
         Args:
@@ -110,6 +112,7 @@ class Optimizer:
 
     def run(self, space, function):
         """Runs the optimization pipeline.
+        
         If you need a specific run method, please re-implement it on child's class.
 
         Args:

@@ -51,6 +51,9 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - optimizers
         - fpa
         - pso
+    - spaces
+        - hyper
+        - search
     - utils
         - common
         - logging
@@ -66,7 +69,7 @@ Core is the core. Essentially, it is the parent of everything. You should find p
 
 ```optimizer```: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
 
-```space```: The space can be understood as the search space. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
+```space```: The space can be understood as the agents' house. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
 
 ### Functions
 
@@ -89,6 +92,14 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
 ```fpa```: Flower Pollination Algorithm.
 
 ```pso```: Particle Swarm Optimization.
+
+### Spaces
+
+One can see the space as the place that agents will update their positions and evaluate a fitness function. However, newest approaches may consider a different type of space. Thinking on that, we are glad to support diverse space implementations.
+
+```hyper```: An hypercomplex space. It's the ideal space when dealing with complex, quaternions or octonions numbers.
+
+```search```: A classic search space. The traditional way we have been optimizing things over the last years.
 
 ### Utils
 

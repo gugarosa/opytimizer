@@ -29,6 +29,9 @@ class PSO(Optimizer):
         _build(hyperparams): Sets an external function point to a class attribute.
         _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle velocity (over a single variable).
         _update_position(agent_position, current_velocity): Updates a single particle position (over a single variable).
+        _update(agents, best_agent, local_position, velocity): Updates the agents' position array.
+        _evaluate(space, function, local_position): Evaluates the search space according to the objective function.
+        run(space, function): Runs the optimization pipeline.
 
     """
 
@@ -211,15 +214,22 @@ class PSO(Optimizer):
 
         # Iterate through all agents
         for i, agent in enumerate(agents):
-            # Iterate through all variables
-            for j, _ in enumerate(agent.position):
-                # Updates current agent and current variable velocity value
-                velocity[i][j] = self._update_velocity(
-                    agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
+            # Updates current agent velocities
+            velocity[i] = self._update_velocity(
+                agent.position, best_agent.position, local_position[i], velocity[i])
 
-                # Updates current agent and current variable position value
-                agent.position[j] = self._update_position(
-                    agent.position[j], velocity[i][j])
+            # Updates current agent positions
+            agent.position = self._update_position(agent.position, velocity[i])
+            
+            # # Iterate through all variables
+            # for j, _ in enumerate(agent.position):
+            #     # Updates current agent and current variable velocity value
+            #     velocity[i][j] = self._update_velocity(
+            #         agent.position[j], best_agent.position[j], local_position[i][j], velocity[i][j])
+
+            #     # Updates current agent and current variable position value
+            #     agent.position[j] = self._update_position(
+            #         agent.position[j], velocity[i][j])
 
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
@@ -262,11 +272,12 @@ class PSO(Optimizer):
         """
 
         # Instanciating array of local positions
-        self._local_position = np.zeros(
+        self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
-        self._velocity = np.zeros((space.n_agents, space.n_variables))
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, self.local_position)

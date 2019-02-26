@@ -2,7 +2,7 @@ import numpy as np
 
 from opytimizer import Opytimizer
 from opytimizer.functions.internal import Internal
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.spaces.hyper import HyperSpace
 from opytimizer.optimizers.pso import PSO
 
 
@@ -22,6 +22,9 @@ n_agents = 2
 # Number of decision variables
 n_variables = 2
 
+# Number of space dimensions
+n_dimensions = 4
+
 # Number of running iterations
 n_iterations = 10
 
@@ -29,10 +32,10 @@ n_iterations = 10
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creating the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creating the HyperSpace class
+s = HyperSpace(n_agents=n_agents, n_iterations=n_iterations,
+                n_variables=n_variables, n_dimensions=n_dimensions,
+                lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
 hyperparams = {

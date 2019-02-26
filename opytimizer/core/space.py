@@ -74,9 +74,6 @@ class Space:
         # Indicates whether the space is built or not
         self._built = False
 
-        # Now, we need to build this class up
-        self._build(lower_bound, upper_bound)
-
         # We will log some important information
         logger.info('Class created.')
 
@@ -188,6 +185,7 @@ class Space:
 
     def _create_agents(self, n_agents, n_variables, n_dimensions):
         """Creates and populates the agents array.
+
         Also defines a random best agent, only for initialization purposes.
 
         Args:
@@ -217,8 +215,10 @@ class Space:
         return agents, best_agent
 
     def _initialize_agents(self, agents, lower_bound, upper_bound):
-        """Initialize agents' position array with
-        uniform random numbers.
+        """Initialize agents' position array with uniform random numbers.
+
+        As each space child can have a different procedure of initializing agents,
+        you will need to implement it directly on child's class.
 
         Args:
             agents (list): List of agents.
@@ -227,15 +227,7 @@ class Space:
 
         """
 
-        logger.debug('Running private method: initialize_agents().')
-
-        # Iterate through all agents
-        for agent in agents:
-            # Iterate through all decision variables
-            for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
-                # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=agent.n_dimensions)
+        raise NotImplementedError
 
     def _build(self, lower_bound, upper_bound):
         """This method will serve as the object building process.
@@ -274,9 +266,6 @@ class Space:
         self.agents, self.best_agent = self._create_agents(
             self.n_agents, self.n_variables, self.n_dimensions)
 
-        # Initializing agents
-        self._initialize_agents(self.agents, self.lb, self.ub)
-
         # If no errors were shown, we can declared the Space as built
         self.built = True
 
@@ -285,3 +274,4 @@ class Space:
             f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions})'
             + f' | Iterations: {self.n_iterations} | Lower Bound: {self.lb}'
             + f' | Upper Bound: {self.ub} | Built: {self.built}')
+
