@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def check_bound_limits(agents, lower_bound, upper_bound):
     """Checks bounds limists of all agents and variables.
 
