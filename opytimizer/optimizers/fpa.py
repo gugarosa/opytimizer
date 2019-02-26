@@ -28,6 +28,7 @@ class FPA(Optimizer):
         _build(hyperparams): Sets an external function point to a class attribute.
         _global_pollination(agent_position, best_position): Updates the agent's position based on a global pollination (Lévy's flight).
         _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position based on a local pollination.
+        _update(agents, best_agent): Updates the agents' position array.
 
     """
 
