@@ -185,11 +185,9 @@ class FPA(Optimizer):
 
             # Check if generated random number is bigger than probability
             if r1 > self.p:
-                # Iterate through all variables
-                for j, _ in enumerate(agent.position):
-                    # Update each decision variable according to global pollination
-                    agent.position[j] = self._global_pollination(
-                        agent.position[j], best_agent.position[j])
+                # Update each decision variable according to global pollination
+                agent.position = self._global_pollination(
+                    agent.position, best_agent.position)
             else:
                 # Generates an uniform random number
                 epsilon = r.generate_uniform_random_number(0, 1)
@@ -200,8 +198,6 @@ class FPA(Optimizer):
                 # Generates an index for flower l
                 l = int(r.generate_uniform_random_number(0, len(agents)-1))
 
-                # Iterate through all variables
-                for j, _ in enumerate(agent.position):
-                    # Update each decision variable according to local pollination
-                    agent.position[j] = self._local_pollination(
-                        agent.position[j], agents[k].position[j], agents[l].position[j], epsilon)
+                # Update each decision variable according to local pollination
+                agent.position = self._local_pollination(
+                    agent.position, agents[k].position, agents[l].position, epsilon)
