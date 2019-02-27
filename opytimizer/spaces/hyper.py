@@ -13,8 +13,7 @@ class HyperSpace(Space):
     related to the hypercomplex search space.
 
     Methods:
-        _initialize_agents(agents): Initialize the Space's agents,
-        setting random numbers [0, 1] to their position.
+        _initialize_agents(agents): Initialize the Space's agents, setting random numbers [0, 1] to their position.
         check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits of all agents and variables.
 
     """

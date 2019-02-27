@@ -13,8 +13,7 @@ class SearchSpace(Space):
     related to the search space.
 
     Methods:
-        _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents,
-        setting random numbers [lower_bound, upper_bound] to their position.
+        _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents, setting random numbers [lower_bound, upper_bound] to their position.
         check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits of all agents and variables.
 
     """
