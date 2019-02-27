@@ -15,6 +15,7 @@ class SearchSpace(Space):
     Methods:
         _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents,
         setting random numbers [lower_bound, upper_bound] to their position.
+        check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits of all agents and variables.
 
     """
 
@@ -34,7 +35,7 @@ class SearchSpace(Space):
 
         # Override its parent class with the receiving arguments
         super(SearchSpace, self).__init__(n_agents=n_agents, n_variables=n_variables,
-                                         n_iterations=n_iterations, lower_bound=lower_bound, upper_bound=upper_bound)
+                                          n_iterations=n_iterations, lower_bound=lower_bound, upper_bound=upper_bound)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -64,3 +65,20 @@ class SearchSpace(Space):
                 # For each decision variable, we generate uniform random numbers
                 agent.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=agent.n_dimensions)
+
+    def check_bound_limits(self, agents, lower_bound, upper_bound):
+        """Checks bounds limits of all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
+
+        """
+
+        # Iterate through all agents
+        for agent in agents:
+            # Iterate through all decision variables
+            for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+                # Clip the array based on variables' lower and upper bounds
+                agent.position[j] = np.clip(agent.position[j], lb, ub)

@@ -1,14 +1,19 @@
 import numpy as np
 
+import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
 from opytimizer.functions.internal import Internal
-from opytimizer.spaces.hyper import HyperSpace
 from opytimizer.optimizers.pso import PSO
+from opytimizer.spaces.hyper import HyperSpace
 
 
 def sphere(x):
+    # When using hypercomplex numbers, we always need to span it
+    # before feeding into the function
+    x_span = h.span(x, lower_bound, upper_bound)
+    
     # Declaring Sphere's function
-    y = x ** 2
+    y = x_span ** 2
 
     return np.sum(y)
 

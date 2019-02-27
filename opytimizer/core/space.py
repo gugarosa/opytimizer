@@ -45,8 +45,6 @@ class Space:
 
         """
 
-        logger.info('Creating class: Space.')
-
         # Number of agents
         self._n_agents = n_agents
 
@@ -73,9 +71,6 @@ class Space:
 
         # Indicates whether the space is built or not
         self._built = False
-
-        # We will log some important information
-        logger.info('Class created.')
 
     @property
     def n_agents(self):
@@ -274,4 +269,3 @@ class Space:
             f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions})'
             + f' | Iterations: {self.n_iterations} | Lower Bound: {self.lb}'
             + f' | Upper Bound: {self.ub} | Built: {self.built}')
-

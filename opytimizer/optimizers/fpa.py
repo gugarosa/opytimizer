@@ -4,7 +4,6 @@ import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
