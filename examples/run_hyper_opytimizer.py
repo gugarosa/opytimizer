@@ -8,7 +8,7 @@ from opytimizer.spaces.hyper import HyperSpace
 
 
 def sphere(x):
-    # When using hypercomplex numbers, we always need to span it
+    # When using hypercomplex numbers, we always need to span them
     # before feeding into the function
     x_span = h.span(x, lower_bound, upper_bound)
     
