@@ -55,7 +55,6 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - hyper
         - search
     - utils
-        - common
         - logging
 ```
 
@@ -104,8 +103,6 @@ One can see the space as the place that agents will update their positions and e
 ### Utils
 
 This is an utilities package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
-
-```common```: Common methods that can be used for different parts of Opytimizer.
 
 ```logging```: Logging tools to track the progress of the optimization task.
 

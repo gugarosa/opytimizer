@@ -1,6 +1,5 @@
 import copy
 
-import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -132,7 +131,7 @@ class Optimizer:
             self._update(space.agents, space.best_agent)
 
             # Checking if agents meets the bounds limits
-            c.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_bound_limits(space.agents, space.lb, space.ub)
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

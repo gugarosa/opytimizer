@@ -3,7 +3,6 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.common as c
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -281,7 +280,7 @@ class PSO(Optimizer):
                          self.local_position, self.velocity)
 
             # Checking if agents meets the bounds limits
-            c.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_bound_limits(space.agents, space.lb, space.ub)
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function, self.local_position)
