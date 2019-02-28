@@ -27,7 +27,7 @@ class Function:
         self._type = function_type
 
         # Also, we need a pointer to point to our actual function
-        self._pointer = None
+        self._pointer = callable
 
         # Indicates whether the function is built or not
         self._built = False
