@@ -52,7 +52,7 @@ def linear_regression(opytimizer):
     momentum = opytimizer[1][0]
 
     # Declaring the loss function
-    loss = torch.nn.MSELoss(reduction='elementwise_mean')
+    loss = torch.nn.MSELoss(reduction='mean')
 
     # Declaring the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
