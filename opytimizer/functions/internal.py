@@ -16,7 +16,7 @@ class Internal(Function):
 
     """
 
-    def __init__(self, pointer=None):
+    def __init__(self, pointer=callable):
         """Initialization method.
 
         Args:
