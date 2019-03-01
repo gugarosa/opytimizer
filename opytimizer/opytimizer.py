@@ -9,7 +9,7 @@ class Opytimizer:
     """An Opytimizer class that will hold all the information needed
     in order to perform an optimization task.
 
-    Properties:
+    Attributes:
         space (Space): A Space's object.
         optimizer (Optimizer): An Optimizer's object, where it can be a child (PSO, BA, etc).
         function (Function): A Function's object, where it can be a child (External or Internal).
@@ -46,7 +46,7 @@ class Opytimizer:
 
         # We will log some important information
         logger.debug(
-            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}')
+            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}.')
 
         logger.info('Class created.')
 
@@ -104,6 +104,9 @@ class Opytimizer:
     def start(self):
         """Starts the optimization task.
 
+        Returns:
+            A History object holding all agents' positions and fitness achieved during the task.
+
         """
 
         logger.info('Starting optimization task.')
@@ -112,10 +115,12 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        self.optimizer.run(self.space, self.function)
+        history = self.optimizer.run(self.space, self.function)
 
         # Ending timer, still needs to get the diff % 60 for real seconds
         end = time.time()
 
         logger.info('Optimization task ended.')
         logger.info(f'It took {(end - start) % 60} seconds.')
+
+        return history

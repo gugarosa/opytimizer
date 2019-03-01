@@ -1,5 +1,6 @@
 from opytimizer.functions.internal import Internal
 
+
 # One should declare a function of x, where it should return a value
 def test_function(x):
     return x + 2

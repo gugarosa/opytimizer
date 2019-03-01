@@ -5,4 +5,4 @@ of several modules and sub-modules.
 from opytimizer.opytimizer import Opytimizer
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.2'

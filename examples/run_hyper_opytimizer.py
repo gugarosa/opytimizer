@@ -1,5 +1,4 @@
 import numpy as np
-
 import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
 from opytimizer.functions.internal import Internal
@@ -56,4 +55,7 @@ p = PSO(hyperparams=hyperparams)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-o.start()
+history = o.start()
+
+# Now, there is a History object holding vital historical information from the optimization task
+# history.show()

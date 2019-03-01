@@ -1,7 +1,6 @@
 import sys
 
 import numpy as np
-
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -10,7 +9,7 @@ logger = l.get_logger(__name__)
 class Agent:
     """An agent class for all meta-heuristic optimization techniques.
 
-    Properties:
+    Attributes:
         n_variables (int): Number of decision variables.
         n_dimensions (int): Dimension of search space.
         position (np.array): [n_variables x n_dimensions] matrix of position values.
@@ -48,6 +47,7 @@ class Agent:
     @property
     def n_variables(self):
         """Number of decision variables.
+
         """
 
         return self._n_variables
@@ -55,6 +55,7 @@ class Agent:
     @property
     def n_dimensions(self):
         """Dimension of search space.
+
         """
 
         return self._n_dimensions
@@ -62,6 +63,7 @@ class Agent:
     @property
     def position(self):
         """A matrix of position values.
+
         """
 
         return self._position
@@ -73,6 +75,7 @@ class Agent:
     @property
     def fit(self):
         """Agent's fitness value.
+
         """
 
         return self._fit

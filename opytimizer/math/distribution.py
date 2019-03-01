@@ -7,7 +7,8 @@ def generate_levy_distribution(beta=0.0, size=1):
     """Generates a n-dimensional array based on a Lévy distribution.
 
     References:
-        X.-S. Yang and S. Deb. Computers & Operations Research. Multiobjective Cuckoo Search for Design Optimization (2013).
+        X.-S. Yang and S. Deb. Computers & Operations Research.
+        Multiobjective Cuckoo Search for Design Optimization (2013).
 
     Args:
         beta (float): Skewness parameter.

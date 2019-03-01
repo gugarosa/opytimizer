@@ -1,5 +1,4 @@
 import numpy as np
-
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
@@ -13,8 +12,10 @@ class HyperSpace(Space):
     related to the hypercomplex search space.
 
     Methods:
-        _initialize_agents(agents): Initialize the Space's agents, setting random numbers [0, 1] to their position.
-        check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits of all agents and variables.
+        _initialize_agents(agents): Initialize the Space's agents by
+            setting random numbers [0, 1] to their position.
+        check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits
+            of all agents and variables.
 
     """
 
