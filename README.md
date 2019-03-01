@@ -55,6 +55,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - hyper
         - search
     - utils
+        - history
         - logging
 ```
 
@@ -103,6 +104,8 @@ One can see the space as the place that agents will update their positions and e
 ### Utils
 
 This is an utilities package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
+
+```history```: A history class in order to save Opytimizer outputs. It servers as an interesting object for futher analysis of your experiment.
 
 ```logging```: Logging tools to track the progress of the optimization task.
 
