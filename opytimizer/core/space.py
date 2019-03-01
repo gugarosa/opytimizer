@@ -1,5 +1,4 @@
 import numpy as np
-
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
@@ -9,9 +8,9 @@ logger = l.get_logger(__name__)
 
 class Space:
     """A Space class that will hold agents, variables and methods
-    related to the search space.
+        related to the search space.
 
-    Properties:
+    Attributes:
         n_agents (int): Number of agents.
         n_variables (int): Number of decision variables.
         n_dimensions (int): Dimension of search space.
@@ -24,10 +23,10 @@ class Space:
 
     Methods:
         _check_bound_size(bound, size): Checks whether the bound's length
-        is equal to size parameter.
+            is equal to size parameter.
         _create_agents(n_agents, n_variables, n_dimensions): Creates a list of agents.
         _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents,
-        setting random numbers to their position.
+            setting random numbers to their position.
         _build(lower_bound, upper_bound): An object building method.
 
     """
@@ -75,6 +74,7 @@ class Space:
     @property
     def n_agents(self):
         """Number of agents.
+
         """
 
         return self._n_agents
@@ -82,6 +82,7 @@ class Space:
     @property
     def n_variables(self):
         """Number of decision variables.
+
         """
 
         return self._n_variables
@@ -89,6 +90,7 @@ class Space:
     @property
     def n_dimensions(self):
         """Dimension of search space.
+
         """
 
         return self._n_dimensions
@@ -96,6 +98,7 @@ class Space:
     @property
     def n_iterations(self):
         """Number of iterations.
+
         """
 
         return self._n_iterations
@@ -103,6 +106,7 @@ class Space:
     @property
     def agents(self):
         """List of agents that belongs to Space.
+
         """
 
         return self._agents
@@ -114,6 +118,7 @@ class Space:
     @property
     def best_agent(self):
         """A best agent object from Agent class.
+
         """
 
         return self._best_agent
@@ -125,6 +130,7 @@ class Space:
     @property
     def lb(self):
         """Lower bound array with the minimum possible values.
+
         """
 
         return self._lb
@@ -136,6 +142,7 @@ class Space:
     @property
     def ub(self):
         """Upper bound array with the maximum possible values.
+
         """
 
         return self._ub
@@ -147,6 +154,7 @@ class Space:
     @property
     def built(self):
         """A boolean to indicate whether the space is built.
+
         """
 
         return self._built
@@ -157,7 +165,7 @@ class Space:
 
     def _check_bound_size(self, bound, size):
         """Checks if the bounds' size are the same of
-        variables size.
+            variables size.
 
         Args:
             bound(np.array): bounds array.
@@ -268,4 +276,4 @@ class Space:
         logger.debug(
             f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions})'
             + f' | Iterations: {self.n_iterations} | Lower Bound: {self.lb}'
-            + f' | Upper Bound: {self.ub} | Built: {self.built}')
+            + f' | Upper Bound: {self.ub} | Built: {self.built}.')

@@ -1,8 +1,8 @@
 import copy
 
 import numpy as np
-
 import opytimizer.math.random as r
+import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -18,7 +18,7 @@ class PSO(Optimizer):
     References:
         J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
 
-    Properties:
+    Attributes:
         w (float): Inertia weight.
         c1 (float): Cognitive constant.
         c2 (float): Social constant.
@@ -27,8 +27,10 @@ class PSO(Optimizer):
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
-        _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle velocity (over a single variable).
-        _update_position(agent_position, current_velocity): Updates a single particle position (over a single variable).
+        _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle
+            velocity (over a single variable).
+        _update_position(agent_position, current_velocity): Updates a single particle
+            position (over a single variable).
         _update(agents, best_agent, local_position, velocity): Updates the agents' position array.
         _evaluate(space, function, local_position): Evaluates the search space according to the objective function.
         run(space, function): Runs the optimization pipeline.
@@ -40,7 +42,7 @@ class PSO(Optimizer):
 
         Args:
             hyperparams (dict): An hyperparams dictionary containing key-value
-            parameters to meta-heuristics.
+                parameters to meta-heuristics.
 
         """
 
@@ -72,6 +74,7 @@ class PSO(Optimizer):
     @property
     def w(self):
         """Inertia weight.
+
         """
 
         return self._w
@@ -83,6 +86,7 @@ class PSO(Optimizer):
     @property
     def c1(self):
         """Cognitive constant.
+
         """
 
         return self._c1
@@ -94,6 +98,7 @@ class PSO(Optimizer):
     @property
     def c2(self):
         """Social constant.
+
         """
 
         return self._c2
@@ -105,6 +110,7 @@ class PSO(Optimizer):
     @property
     def local_position(self):
         """Particles' local best positions.
+
         """
 
         return self._local_position
@@ -116,6 +122,7 @@ class PSO(Optimizer):
     @property
     def velocity(self):
         """Particles' current velocities.
+
         """
 
         return self._velocity
@@ -132,11 +139,11 @@ class PSO(Optimizer):
 
         Args:
             hyperparams (dict): An hyperparams dictionary containing key-value
-            parameters to meta-heuristics.
+                parameters to meta-heuristics.
 
         """
 
-        logger.debug('Running private method: build()')
+        logger.debug('Running private method: build().')
 
         # We need to save the hyperparams object for faster looking up
         self.hyperparams = hyperparams
@@ -156,7 +163,7 @@ class PSO(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | Built: {self.built}')
+            f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | Built: {self.built}.')
 
     def _update_velocity(self, agent_position, best_position, local_position, current_velocity):
         """Updates a single particle velocity (over a single variable).
@@ -260,6 +267,9 @@ class PSO(Optimizer):
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
 
+        Returns:
+            A History object holding all agents' positions and fitness achieved during the task.
+
         """
 
         # Instanciating array of local positions
@@ -272,6 +282,9 @@ class PSO(Optimizer):
 
         # Initial search space evaluation
         self._evaluate(space, function, self.local_position)
+
+        # We will define a History object for further dumping
+        history = h.History()
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
@@ -287,5 +300,11 @@ class PSO(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function, self.local_position)
 
+            # Every iteration, we need to dump the current space agents
+            history.dump(space.agents)
+
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
+
+        
+        return history

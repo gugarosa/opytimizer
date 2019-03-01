@@ -1,9 +1,8 @@
 import numpy as np
-
 from opytimizer import Opytimizer
 from opytimizer.functions.internal import Internal
-from opytimizer.spaces.search import SearchSpace
 from opytimizer.optimizers.pso import PSO
+from opytimizer.spaces.search import SearchSpace
 
 
 def sphere(x):
@@ -48,4 +47,7 @@ p = PSO(hyperparams=hyperparams)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-o.start()
+history = o.start()
+
+# Now, there is a History object holding vital historical information from the optimization task
+# history.show()

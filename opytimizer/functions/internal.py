@@ -11,8 +11,8 @@ class Internal(Function):
     objective functions.
 
     Methods:
-        _build(function): Sets an external function point to a class
-        attribute.
+        _build(function): Sets an external function point
+            to a class attribute.
 
     """
 
@@ -20,8 +20,8 @@ class Internal(Function):
         """Initialization method.
 
         Args:
-            function (*func): This should be a pointer to a function that will
-            return the fitness value.
+            function (*func): This should be a pointer to a function
+                that will return the fitness value.
 
         """
 
@@ -42,8 +42,8 @@ class Internal(Function):
         needs to be on its initialization.
 
         Args:
-            function (*func): This should be a pointer to a function that will
-            return the fitness value.
+            function (*func): This should be a pointer to a function
+                that will return the fitness value.
 
         """
 

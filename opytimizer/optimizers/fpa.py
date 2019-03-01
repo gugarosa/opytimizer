@@ -1,7 +1,6 @@
 import copy
 
 import numpy as np
-
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
@@ -19,15 +18,17 @@ class FPA(Optimizer):
     References:
         Yang, X.-S. Unconventional Computation and Natural Computation (2012). 
 
-    Properties:
+    Attributes:
         beta (float): Lévy flight control parameter.
         eta (float): Lévy flight scaling factor.
         p (float): Probability of local pollination.
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
-        _global_pollination(agent_position, best_position): Updates the agent's position based on a global pollination (Lévy's flight).
-        _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position based on a local pollination.
+        _global_pollination(agent_position, best_position): Updates the agent's position
+            based on a global pollination (Lévy's flight).
+        _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position
+            based on a local pollination.
         _update(agents, best_agent): Updates the agents' position array.
 
     """
@@ -37,7 +38,7 @@ class FPA(Optimizer):
 
         Args:
             hyperparams (dict): An hyperparams dictionary containing key-value
-            parameters to meta-heuristics.
+                parameters to meta-heuristics.
 
         """
 
@@ -61,6 +62,7 @@ class FPA(Optimizer):
     @property
     def beta(self):
         """Lévy flight control parameter.
+
         """
 
         return self._beta
@@ -72,6 +74,7 @@ class FPA(Optimizer):
     @property
     def eta(self):
         """Lévy flight scaling factor.
+
         """
 
         return self._eta
@@ -83,6 +86,7 @@ class FPA(Optimizer):
     @property
     def p(self):
         """Probability of local pollination.
+
         """
 
         return self._p
@@ -99,11 +103,11 @@ class FPA(Optimizer):
 
         Args:
             hyperparams (dict): An hyperparams dictionary containing key-value
-            parameters to meta-heuristics.
+                parameters to meta-heuristics.
 
         """
 
-        logger.debug('Running private method: build()')
+        logger.debug('Running private method: build().')
 
         # We need to save the hyperparams object for faster looking up
         self.hyperparams = hyperparams
@@ -123,7 +127,7 @@ class FPA(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | Built: {self.built}')
+            f'Algorithm: {self.algorithm} | Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | Built: {self.built}.')
 
     def _global_pollination(self, agent_position, best_position):
         """Updates the agent's position based on a global pollination (Lévy's flight).
@@ -155,7 +159,7 @@ class FPA(Optimizer):
             agent_position (float): Agent's current position.
             k_position (float): Agent's (index k) current position.
             l_position (float): Agent's (index l) current position.
-            epsilon (float): An uniform random generated number
+            epsilon (float): An uniform random generated number.
 
         Returns:
             A new position based on FPA's paper local pollination equation.

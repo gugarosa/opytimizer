@@ -4,13 +4,13 @@ logger = l.get_logger(__name__)
 
 
 class Function:
-    """A Function class to hold objective functions that
-    will be further evaluated.
+    """A Function class to hold objective functions
+        that will be further evaluated.
 
-    Properties:
+    Attributes:
         function_type (str): Type of function (internal or external).
         pointer (*func): This should be a pointer to a function that will
-        return the fitness value.
+            return the fitness value.
         built (boolean): A boolean to indicate whether the function is built.
 
     """
@@ -35,6 +35,7 @@ class Function:
     @property
     def type(self):
         """Type of function (internal or external).
+
         """
 
         return self._type
@@ -42,6 +43,7 @@ class Function:
     @property
     def pointer(self):
         """A pointer to point to our actual function.
+
         """
 
         return self._pointer
@@ -53,6 +55,7 @@ class Function:
     @property
     def built(self):
         """A boolean to indicate whether the function is built.
+
         """
 
         return self._built

@@ -7,17 +7,18 @@ logger = l.get_logger(__name__)
 
 class Optimizer:
     """An Optimizer class that will serve as meta-heuristic
-    techniques' parent.
+        techniques' parent.
 
-    Properties:
+    Attributes:
         algorithm (str): A string indicating the algorithm name.
         hyperparams (dict): An hyperparams dictionary containing key-value
-        parameters to meta-heuristics.
+            parameters to meta-heuristics.
         built (boolean): A boolean to indicate whether the optimizer is built.
 
     Methods:
         _update(agents): Updates the agents' position array.
-        _evaluate(space, function): Evaluates the search space according to the objective function.
+        _evaluate(space, function): Evaluates the search space according
+            to the objective function.
         run(space, function): Runs the optimization pipeline.
 
     """
@@ -42,13 +43,16 @@ class Optimizer:
     @property
     def algorithm(self):
         """A string indicating the algorithm name.
+        
         """
 
         return self._algorithm
 
     @property
     def hyperparams(self):
-        """A dictionary containing key-value parameters to meta-heuristics.
+        """A dictionary containing key-value parameters
+            to meta-heuristics.
+
         """
 
         return self._hyperparams
@@ -60,6 +64,7 @@ class Optimizer:
     @property
     def built(self):
         """A boolean to indicate whether the optimizer is built.
+
         """
 
         return self._built
@@ -90,7 +95,8 @@ class Optimizer:
 
         Args:
             space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            function (Function): A Function object that
+                will be used as the objective function.
 
         """
 
@@ -118,10 +124,16 @@ class Optimizer:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
 
+        Returns:
+            A History object holding all agents' positions and fitness achieved during the task.
+
         """
 
         # Initial search space evaluation
         self._evaluate(space, function)
+
+        # We will define a History object for further dumping
+        history = h.History()
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
@@ -135,6 +147,9 @@ class Optimizer:
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
+
+            # Every iteration, we need to dump the current space agents
+            history.dump(space.agents)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
