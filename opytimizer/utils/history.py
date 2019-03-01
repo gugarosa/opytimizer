@@ -1,5 +1,5 @@
-import pandas
 import pickle
+
 
 class History:
     """A History class is responsible for saving each iteration's output.
