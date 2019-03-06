@@ -1,4 +1,4 @@
-from opytimizer.functions.internal import Internal
+from opytimizer.core.function import Function
 
 
 # One should declare a function of x, where it should return a value
@@ -9,10 +9,10 @@ def test_function(x):
 # Declaring x variable for further use
 x = 0
 
-# Internal functions can be used if your objective
+# Functions can be used if your objective
 # function is an internal python code
-f = Internal(pointer=test_function)
+f = Function(pointer=test_function)
 
-# Testing out your new Internal class
+# Testing out your new Function class
 print(f'x: {x}')
 print(f'f(x): {f.pointer(x)}')

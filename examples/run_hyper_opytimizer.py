@@ -1,7 +1,7 @@
 import numpy as np
 import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
-from opytimizer.functions.internal import Internal
+from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.hyper import HyperSpace
 
@@ -17,8 +17,8 @@ def sphere(x):
     return np.sum(y)
 
 
-# Creating Internal's function
-f = Internal(pointer=sphere)
+# Creating Function's object
+f = Function(pointer=sphere)
 
 # Number of agents
 n_agents = 2

@@ -43,8 +43,6 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - function
         - optimizer
         - space
-    - functions
-        - internal
     - math
         - distribution
         - random
@@ -70,12 +68,6 @@ Core is the core. Essentially, it is the parent of everything. You should find p
 ```optimizer```: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
 
 ```space```: The space can be understood as the agents' house. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
-
-### Functions
-
-Functions are the same as your problems. Basically, here is the package to define fitness functions, internal (implemented as functions in Python) or external (those from other packages that you want to integrate).
-
-```internal```: Package that handles internal python function representations.
 
 ### Math
 
