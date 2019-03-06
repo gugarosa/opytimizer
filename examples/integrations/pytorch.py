@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from opytimizer import Opytimizer
-from opytimizer.functions.internal import Internal
+from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 from torch import optim
@@ -78,8 +78,8 @@ def linear_regression(opytimizer):
 
     return final_cost
 
-# Creating Internal's function
-f = Internal(pointer=linear_regression)
+# Creating Function's object
+f = Function(pointer=linear_regression)
 
 # Number of agents
 n_agents = 10

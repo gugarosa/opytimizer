@@ -7,24 +7,30 @@ class Function:
     """A Function class to hold objective functions
         that will be further evaluated.
 
+    It will server as the basis class for holding in-code related
+    objective functions.
+
     Attributes:
-        function_type (str): Type of function (internal or external).
         pointer (*func): This should be a pointer to a function that will
             return the fitness value.
         built (boolean): A boolean to indicate whether the function is built.
 
+    Methods:
+        _build(function): Sets an external function point
+            to a class attribute.
+
     """
 
-    def __init__(self, function_type='internal'):
+    def __init__(self, pointer=callable):
         """Initialization method.
 
         Args:
-            type (str): Type of function (internal or external).
+            function (*func): This should be a pointer to a function
+                that will return the fitness value.
 
         """
 
-        # We define the functions's type
-        self._type = function_type
+        logger.info('Creating class: Function.')
 
         # Also, we need a pointer to point to our actual function
         self._pointer = callable
@@ -32,13 +38,10 @@ class Function:
         # Indicates whether the function is built or not
         self._built = False
 
-    @property
-    def type(self):
-        """Type of function (internal or external).
+        # Now, we need to build this class up
+        self._build(pointer)
 
-        """
-
-        return self._type
+        logger.info('Class created.')
 
     @property
     def pointer(self):
@@ -63,3 +66,32 @@ class Function:
     @built.setter
     def built(self, built):
         self._built = built
+
+    def _build(self, pointer):
+        """This method will serve as the object building process.
+        
+        One can define several commands here that does not necessarily
+        needs to be on its initialization.
+
+        Args:
+            function (*func): This should be a pointer to a function
+                that will return the fitness value.
+
+        """
+
+        logger.debug('Running private method: build().')
+
+        # We apply to class pointer's the desired function
+        if pointer:
+            self.pointer = pointer
+        else:
+            e = f"Property 'pointer' cannot be {pointer}."
+            logger.error(e)
+            raise RuntimeError(e)
+
+        # Set built variable to 'True'
+        self.built = True
+
+        # Logging attributes
+        logger.debug(
+            f'Pointer: {self.pointer} | Built: {self.built}')
