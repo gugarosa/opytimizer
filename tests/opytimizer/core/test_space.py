@@ -57,7 +57,12 @@ def test_space_check_bound_size():
 
     size = 5
 
-    assert new_space._check_bound_size(lb, size)
+    try:
+        new_space._check_bound_size(lb, size-1)
+    except:
+        boolean = new_space._check_bound_size(lb, size)
+
+    assert boolean == True
 
 
 def test_space_create_agents():
@@ -68,13 +73,48 @@ def test_space_create_agents():
     assert len(new_space.agents) == 2
 
 
-def test_space_build():
-    new_space = space.Space()
+def test_space_initialize_agents():
+    new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
 
     lb = [0, 0]
 
     ub = [10, 10]
 
-    new_space._build(lb, ub)
+    try:
+        new_space._initialize_agents(new_space.agents, lb, ub)
+    except:
+        boolean = True
+
+    assert boolean == True
+
+
+def test_space_build():
+    new_space = space.Space()
+
+    try:
+        lb = None
+
+        ub = [10, 10]
+
+        new_space._build(lb, ub)
+    except:
+        lb = [0, 0]
+
+        ub = [10, 10]
+
+        new_space._build(lb, ub)
+
+    try:
+        lb = [0, 0]
+
+        ub = None
+
+        new_space._build(lb, ub)
+    except:
+        lb = [0, 0]
+
+        ub = [10, 10]
+
+        new_space._build(lb, ub)
 
     assert new_space.built == True
