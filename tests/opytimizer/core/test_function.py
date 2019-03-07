@@ -10,14 +10,12 @@ def test_function_pointer():
 
 
 def test_function_pointer_setter():
-    new_function = function.Function()
-
     def square(x):
         return x**2
 
-    new_function.pointer = square
+    new_function = function.Function(pointer=square)
 
-    assert new_function.pointer != None
+    assert new_function.pointer == square
 
 
 def test_function_built():
