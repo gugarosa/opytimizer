@@ -60,17 +60,38 @@ def predict(model, x_val):
     return y_val
 
 
-def logistic_regression(opytimizer):
+def enhanced_neural_network(opytimizer):
     # Instanciating the model
     model = torch.nn.Sequential()
 
     # Some model parameters
     n_features = 64
+    n_hidden = 128
     n_classes = 10
 
-    # Adding linear layer
-    model.add_module("linear", torch.nn.Linear(
-        n_features, n_classes, bias=False))
+    # Adding first linear layer
+    model.add_module("linear_1", torch.nn.Linear(
+        n_features, n_hidden, bias=False))
+
+    # Activated by ReLU
+    model.add_module("relu_1", torch.nn.ReLU())
+
+    # Simple dropout layer
+    model.add_module("dropout_1", torch.nn.Dropout(0.2))
+
+    # Adding secondary linear layer
+    model.add_module("linear_2", torch.nn.Linear(
+        n_hidden, n_hidden, bias=False))
+
+    # Activated by ReLU
+    model.add_module("relu_2", torch.nn.ReLU())
+
+    # Yet another simple dropout layer
+    model.add_module("dropout_2", torch.nn.Dropout(0.2))
+
+    # Final linear layer
+    model.add_module("linear_3", torch.nn.Linear(
+        n_hidden, n_classes, bias=False))
 
     # Input variables
     batch_size = 100
@@ -79,13 +100,15 @@ def logistic_regression(opytimizer):
     # Gathering parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
-    momentum = opytimizer[1][0]
+    eps = opytimizer[1][0]
+    weight_decay = opytimizer[2][0]
 
     # Declaring the loss function
     loss = torch.nn.CrossEntropyLoss(reduction='mean')
 
     # Declaring the optimization algorithm
-    opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+    opt = optim.Adam(model.parameters(), lr=learning_rate,
+                     eps=eps, weight_decay=weight_decay)
 
     # Performing training loop
     for _ in range(epochs):
@@ -114,20 +137,20 @@ def logistic_regression(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=logistic_regression)
+f = Function(pointer=enhanced_neural_network)
 
 # Number of agents
 n_agents = 10
 
 # Number of decision variables
-n_variables = 2
+n_variables = 3
 
 # Number of running iterations
 n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0, 0]
-upper_bound = [1, 1]
+lower_bound = [0, 0, 0]
+upper_bound = [1, 1, 1]
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
