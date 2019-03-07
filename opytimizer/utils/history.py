@@ -104,6 +104,4 @@ class History:
         f = open(file_name, "rb")
 
         # Loads using pickle
-        history = pickle.load(f)
-
-        return history
+        self.history = pickle.load(f)

@@ -7,7 +7,7 @@ from opytimizer.spaces import search
 
 
 def test_optimizer_algorithm():
-    new_optimizer = optimizer.Optimizer()
+    new_optimizer = optimizer.Optimizer(algorithm='PSO')
 
     assert new_optimizer.algorithm == 'PSO'
 

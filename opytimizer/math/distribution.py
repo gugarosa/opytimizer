@@ -3,7 +3,7 @@ from math import gamma, pi, sin
 import numpy as np
 
 
-def generate_levy_distribution(beta=0.0, size=1):
+def generate_levy_distribution(beta=0.1, size=1):
     """Generates a n-dimensional array based on a Lévy distribution.
 
     References:
