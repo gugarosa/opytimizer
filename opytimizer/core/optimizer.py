@@ -1,5 +1,6 @@
 import copy
 
+import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -153,3 +154,5 @@ class Optimizer:
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
+
+        return history
