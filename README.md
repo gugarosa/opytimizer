@@ -15,7 +15,7 @@ Use Opytimizer if you need a library or wish to:
 
 Read the docs at [opytimizer.recogna.tech](opytimizer.recogna.tech).
 
-Opytimizer is compatible with: **Python 2.7-3.6**.
+Opytimizer is compatible with: **Python 3.6-3.7** and **PyPy 3.5**.
 
 ---
 
