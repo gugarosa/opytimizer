@@ -1,6 +1,9 @@
-import pytest
+import sys
 
-from opytimizer.core import optimizer
+import numpy as np
+import pytest
+from opytimizer.core import function, optimizer
+from opytimizer.spaces import search
 
 
 def test_optimizer_algorithm():
@@ -37,3 +40,20 @@ def test_optimizer_built_setter():
     new_optimizer.built = True
 
     assert new_optimizer.built == True
+
+
+def test_optimizer_evaluate():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    new_optimizer = optimizer.Optimizer()
+
+    new_optimizer._evaluate(search_space, new_function)
+
+    assert search_space.best_agent.fit < sys.float_info.max
