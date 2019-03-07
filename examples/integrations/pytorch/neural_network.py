@@ -60,17 +60,24 @@ def predict(model, x_val):
     return y_val
 
 
-def logistic_regression(opytimizer):
+def neural_network(opytimizer):
     # Instanciating the model
     model = torch.nn.Sequential()
 
     # Some model parameters
     n_features = 64
+    n_hidden = 128
     n_classes = 10
 
-    # Adding linear layer
-    model.add_module("linear", torch.nn.Linear(
-        n_features, n_classes, bias=False))
+    # Adding first linear layer
+    model.add_module("linear_1", torch.nn.Linear(
+        n_features, n_hidden, bias=False))
+
+    # Followed by a sigmoid activation
+    model.add_module("sigmoid_1", torch.nn.Sigmoid())
+
+    # And finally a secondary linear layer
+    model.add_module("linear_2", torch.nn.Linear(n_hidden, n_classes, bias=False))
 
     # Input variables
     batch_size = 100
@@ -114,7 +121,7 @@ def logistic_regression(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=logistic_regression)
+f = Function(pointer=neural_network)
 
 # Number of agents
 n_agents = 10
