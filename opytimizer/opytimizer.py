@@ -97,7 +97,7 @@ class Opytimizer:
         if entity.built:
             return True
         else:
-            e = entity.__class__.__name__ + 'is not built yet.'
+            e = entity.__class__.__name__ + ' is not built yet.'
             logger.error(e)
             raise RuntimeError(e)
 

@@ -60,7 +60,7 @@ def test_fpa_local_pollination():
 def test_fpa_update():
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(n_agents=20, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
