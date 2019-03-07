@@ -38,6 +38,8 @@ def test_history_show():
     for _ in range(5):
         agents.append(agent.Agent(n_variables=2, n_dimensions=1))
 
+    new_history.dump(agents)
+
     new_history.show()
 
     assert True == True

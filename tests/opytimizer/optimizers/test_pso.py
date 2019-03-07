@@ -1,6 +1,10 @@
+import sys
+
 import numpy as np
 import pytest
+from opytimizer.core import function
 from opytimizer.optimizers import pso
+from opytimizer.spaces import search
 
 
 def test_pso_hyperparams():
@@ -10,73 +14,109 @@ def test_pso_hyperparams():
         'c2': 1.7
     }
 
-    p = pso.PSO(hyperparams=hyperparams)
+    new_pso = pso.PSO(hyperparams=hyperparams)
 
-    assert p.w == 2
+    assert new_pso.w == 2
 
-    assert p.c1 == 1.7
+    assert new_pso.c1 == 1.7
 
-    assert p.c2 == 1.7
+    assert new_pso.c2 == 1.7
 
 
 def test_pso_hyperparams_setter():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    p.w = 1
-    assert p.w == 1
+    new_pso.w = 1
+    assert new_pso.w == 1
 
-    p.c1 = 1.5
-    assert p.c1 == 1.5
+    new_pso.c1 = 1.5
+    assert new_pso.c1 == 1.5
 
-    p.c2 = 1.5
-    assert p.c2 == 1.5
+    new_pso.c2 = 1.5
+    assert new_pso.c2 == 1.5
 
 
 def test_pso_local_position():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    assert p.local_position == None
+    assert new_pso.local_position == None
 
 
 def test_pso_local_position_setter():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    p.local_position = np.zeros((1, 1))
+    new_pso.local_position = np.zeros((1, 1))
 
-    assert p.local_position.shape == (1, 1)
+    assert new_pso.local_position.shape == (1, 1)
 
 
 def test_pso_velocity():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    assert p.velocity == None
+    assert new_pso.velocity == None
 
 
 def test_pso_velocity_setter():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    p.velocity = np.zeros((1, 1))
+    new_pso.velocity = np.zeros((1, 1))
 
-    assert p.velocity.shape == (1, 1)
+    assert new_pso.velocity.shape == (1, 1)
 
 
 def test_pso_build():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    assert p.built == True
+    assert new_pso.built == True
 
 
 def test_pso_update_velocity():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    velocity = p._update_velocity(1, 1, 1, 1)
+    velocity = new_pso._update_velocity(1, 1, 1, 1)
 
     assert velocity != 0
 
 
 def test_pso_update_position():
-    p = pso.PSO()
+    new_pso = pso.PSO()
 
-    position = p._update_position(1, 1)
+    position = new_pso._update_position(1, 1)
 
     assert position == 2
+
+
+def test_pso_evaluate():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    new_pso = pso.PSO()
+
+    local_position = np.zeros((2, 2, 1))
+
+    new_pso._evaluate(search_space, new_function, local_position)
+
+    assert search_space.best_agent.fit < sys.float_info.max
+
+
+def test_pso_run():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    new_pso = pso.PSO()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    history = new_pso.run(search_space, new_function)
+
+    assert len(history.history) > 0

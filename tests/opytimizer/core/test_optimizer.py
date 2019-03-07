@@ -42,13 +42,26 @@ def test_optimizer_built_setter():
     assert new_optimizer.built == True
 
 
+def test_optimizer_update():
+    new_optimizer = optimizer.Optimizer()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    boolean = new_optimizer._update(
+        search_space.agents, search_space.best_agent)
+
+    assert boolean == True
+
+
 def test_optimizer_evaluate():
     def square(x):
         return np.sum(x**2)
 
     new_function = function.Function(pointer=square)
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=20, n_iterations=10,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -57,3 +70,20 @@ def test_optimizer_evaluate():
     new_optimizer._evaluate(search_space, new_function)
 
     assert search_space.best_agent.fit < sys.float_info.max
+
+
+def test_optimizer_run():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    new_optimizer = optimizer.Optimizer()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    history = new_optimizer.run(search_space, new_function)
+
+    assert len(history.history) > 0

@@ -22,6 +22,13 @@ def test_agent_position():
 
     assert new_agent.position.shape == (5, 4)
 
+def test_agent_position_setter():
+    new_agent = agent.Agent(n_variables=1, n_dimensions=1)
+
+    new_agent.position = 10
+
+    assert new_agent.position == 10
+
 
 def test_agent_fit():
     new_agent = agent.Agent(n_variables=5, n_dimensions=4)

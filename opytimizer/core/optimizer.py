@@ -87,7 +87,7 @@ class Optimizer:
 
         """
 
-        raise NotImplementedError
+        return True
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
