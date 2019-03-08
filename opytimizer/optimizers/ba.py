@@ -313,37 +313,29 @@ class BA(Optimizer):
             # Check if probability is bigger than current pulse rate
             if p > pulse_rate[i]:
                 # Copying a temporary agent based on current agent
-                temp_agent = copy.deepcopy(best_agent)
+                agent = copy.deepcopy(best_agent)
 
                 # Generating new temporary agent's position
                 # Based on BA's paper equation 5
-                temp_agent.position = temp_agent.position + \
+                agent.position = agent.position + \
                     e * np.mean(loudness)
             else:
-                # Copies a temporary agent from the best agent
-                temp_agent = copy.deepcopy(agent)
-
                 # Perform a random walk based on probability
-                temp_agent.position = temp_agent.position + e
+                agent.position = agent.position + e
 
             # Evaluates temporary agent
-            fit = function.pointer(temp_agent.position)
+            agent.fit = function.pointer(agent.position)
 
             # Checks if probability is smaller than loudness and if fit is better
-            if p < loudness[i] and fit < agent.fit:
+            if p < loudness[i] and agent.fit < best_agent.fit:
                 # Copying the new solution to space's agent
-                agent = copy.deepcopy(temp_agent)
+                best_agent = copy.deepcopy(agent)
 
                 # Increasing pulse rate (Equation 6)
                 pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
 
                 # Decreasing loudness (Equation 6)
                 loudness[i] = self.A * alpha
-
-            # Checks if current agent fitness is the best in spce
-            if agent.fit < best_agent.fit:
-                # If yes, we have a new best agent
-                best_agent = copy.deepcopy(agent)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
