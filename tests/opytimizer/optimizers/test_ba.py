@@ -117,7 +117,7 @@ def test_ba_update_velocity():
     assert velocity != 0
 
 
-def test_pso_update_position():
+def test_ba_update_position():
     new_ba = ba.BA()
 
     position = new_ba._update_position(1, 1)
