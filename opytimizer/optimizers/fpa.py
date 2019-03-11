@@ -16,7 +16,7 @@ class FPA(Optimizer):
     variables and methods.
 
     References:
-        Yang, X.-S. Unconventional Computation and Natural Computation (2012). 
+        X.-S. Yang. Flower pollination algorithm for global optimization. International conference on unconventional computing and natural computation (2012).
 
     Attributes:
         beta (float): Lévy flight control parameter.

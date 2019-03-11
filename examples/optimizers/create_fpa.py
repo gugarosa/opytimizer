@@ -9,4 +9,4 @@ hyperparams = {
 }
 
 # Creating a FPA optimizer
-p = FPA(hyperparams=hyperparams)
+o = FPA(hyperparams=hyperparams)
