@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -9,24 +10,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class BA(Optimizer):
-    """A BA class, inherited from Optimizer.
+class CS(Optimizer):
+    """A CS class, inherited from Optimizer.
 
-    This will be the designed class to define BA-related
+    This will be the designed class to define CS-related
     variables and methods.
 
     References:
-        X.-S. Yang. A new metaheuristic bat-inspired algorithm. Nature inspired cooperative strategies for optimization (2010).
-
+        
+        
     Attributes:
-        f_min (float): Minimum frequency range.
-        f_max (float): Maximum frequency range.
-        A (float): Loudness parameter.
-        r (float): Social rate.
-        frequency (np.array): An array holding particles' frequencies.
-        velocity (np.array): An array holding particles' velocities.
-        loudness (np.array): An array holding particles' loudnesses.
-        pulse_rate (np.array): An array holding particles' pulse rates.
+        alpha (float): Step size.
+        beta (float): Used to compute the Lévy distribution.
+        p (float): Probability of replacing worst nests.
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
@@ -50,34 +46,19 @@ class BA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BA.')
+        logger.info('Overriding class: Optimizer -> CS.')
 
         # Override its parent class with the receiving hyperparams
-        super(BA, self).__init__(algorithm='BA')
+        super(CS, self).__init__(algorithm='CS')
 
-        # Minimum frequency range
-        self._f_min = 0
+        # Step size
+        self._alpha = 0.2
 
-        # Maximum frequency range
-        self._f_max = 2
+        # Lévy distribution parameter
+        self._beta = 1.5
 
-        # Loudness parameter
-        self._A = 0.5
-
-        # Pulse rate
-        self._r = 0.5
-
-        # Particles' frequencies
-        self._frequency = None
-
-        # Particles' velocities
-        self._velocity = None
-
-        # Particles' loudnesses
-        self._loudness = None
-
-        # Particles' pulse rates
-        self._pulse_rate = None
+        # Switch probability
+        self._p = 0.3
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -85,104 +66,44 @@ class BA(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def f_min(self):
-        """Minimum frequency range.
+    def alpha(self):
+        """Step size.
 
         """
 
-        return self._f_min
+        return self._alpha
 
-    @f_min.setter
-    def f_min(self, f_min):
-        self._f_min = f_min
+    @alpha.setter
+    def alpha(self, alpha):
+        self._alpha = alpha
 
     @property
-    def f_max(self):
-        """Maximum frequency range.
+    def beta(self):
+        """Lévy distribution parameter.
 
         """
 
-        return self._f_max
+        return self._beta
 
-    @f_max.setter
-    def f_max(self, f_max):
-        self._f_max = f_max
+    @beta.setter
+    def beta(self, beta):
+        self._beta = beta
 
     @property
-    def A(self):
-        """Loudness parameter.
+    def p(self):
+        """Switch probability.
 
         """
 
-        return self._A
+        return self._p
 
-    @A.setter
-    def A(self, A):
-        self._A = A
-
-    @property
-    def r(self):
-        """Pulse rate.
-
-        """
-
-        return self._r
-
-    @r.setter
-    def r(self, r):
-        self._r = r
-
-    @property
-    def frequency(self):
-        """Particles' current frequencies.
-
-        """
-
-        return self._frequency
-
-    @frequency.setter
-    def frequency(self, frequency):
-        self._frequency = frequency
-
-    @property
-    def velocity(self):
-        """Particles' current velocities.
-
-        """
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity):
-        self._velocity = velocity
-
-    @property
-    def loudness(self):
-        """Particles' current loudnesses.
-
-        """
-
-        return self._loudness
-
-    @loudness.setter
-    def loudness(self, loudness):
-        self._loudness = loudness
-
-    @property
-    def pulse_rate(self):
-        """Particles' current pulse rates.
-
-        """
-
-        return self._pulse_rate
-
-    @pulse_rate.setter
-    def pulse_rate(self, pulse_rate):
-        self._pulse_rate = pulse_rate
+    @p.setter
+    def p(self, p):
+        self._p = p
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-
+        
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -200,21 +121,19 @@ class BA(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'f_min' in hyperparams:
-                self.f_min = hyperparams['f_min']
-            if 'f_max' in hyperparams:
-                self.f_max = hyperparams['f_max']
-            if 'A' in hyperparams:
-                self.A = hyperparams['A']
-            if 'r' in hyperparams:
-                self.r = hyperparams['r']
+            if 'alpha' in hyperparams:
+                self.alpha = hyperparams['alpha']
+            if 'beta' in hyperparams:
+                self.beta = hyperparams['beta']
+            if 'p' in hyperparams:
+                self.p = hyperparams['p']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, p = {self.p} | Built: {self.built}.')
 
     def _update_frequency(self, min_frequency, max_frequency):
         """Updates a single particle frequency (over a single variable).
@@ -274,7 +193,15 @@ class BA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
+    def _calculate_nest_loss(self, size, probability):
+        """
+        """
+
+        loss = round(size * (1 - probability))
+
+        return loss
+
+    def _update(self, agents, best_agent, function):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -289,50 +216,55 @@ class BA(Optimizer):
 
         """
 
-        # Declaring alpha constant
-        alpha = 0.9
+        # Generates an index for nest k
+        k = int(r.generate_uniform_random_number(0, len(agents)-1))
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
-            # Updating frequency
-            frequency[i] = self._update_frequency(self.f_min, self.f_max)
+        # Copies agent k to a temporary agent
+        temp_agent = copy.deepcopy(agents[k])
 
-            # Updating velocity
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, frequency[i], velocity[i])
+        # Generates a Lévy distribution
+        step = d.generate_levy_distribution(self.beta, agents[0].n_variables)
 
-            # Updating agent's position
-            agent.position = self._update_position(agent.position, velocity[i])
+        # Expanding its dimension (this is a must as step is a vector)
+        step = np.expand_dims(step, axis=1)
 
-            # Generating a random probability
-            p = r.generate_uniform_random_number(0, 1, 1)
+        # print(step.shape)
+        # print(temp_agent.position.shape)
 
-            # Generating a random number
-            e = r.generate_uniform_random_number(-1, 1, 1)
+        # (Equation 1)
+        temp_agent.position += self.alpha * step
 
-            # Check if probability is bigger than current pulse rate
-            if p > pulse_rate[i]:
-                # Copying a temporary agent based on best agent
-                agent = copy.deepcopy(best_agent)
+        #
+        temp_agent.fit = function.pointer(temp_agent.position)
 
-                # Generating new temporary agent's position
-                # Based on BA's paper equation 5
-                agent.position = agent.position + \
-                    e * np.mean(loudness)
+        # Generates an index for nest l
+        l = int(r.generate_uniform_random_number(0, len(agents)-1))
 
-            # Evaluates temporary agent
-            agent.fit = function.pointer(agent.position)
+        #
+        if (temp_agent.fit < agents[l].fit):
+            #
+            agents[l] = copy.deepcopy(temp_agent)
 
-            # Checks if probability is smaller than loudness and if fit is better
-            if p < loudness[i] and agent.fit < best_agent.fit:
-                # Copying the new solution to space's best agent
-                best_agent = copy.deepcopy(agent)
+        #
+        agents.sort(key = lambda x: x.fit, reverse=True)
 
-                # Increasing pulse rate (Equation 6)
-                pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
+        #
+        loss = self._calculate_nest_loss(len(agents), self.p)
 
-                # Decreasing loudness (Equation 6)
-                loudness[i] = self.A * alpha
+        for i in range(len(agents)-1, loss, -1):
+            temp_agent = copy.deepcopy(best_agent)
+            r1 = r.generate_uniform_random_number(0, 1)
+            k = int(r.generate_uniform_random_number(0, len(agents)-1))
+            l = int(r.generate_uniform_random_number(0, len(agents)-1))
+            temp_agent.position += r1 * (agents[k].position - agents[l].position)
+
+            temp_agent.fit = function.pointer(temp_agent.position)
+
+            if (temp_agent.fit < agents[i].fit):
+                agents[i] = copy.deepcopy(temp_agent)
+
+
+
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -346,22 +278,6 @@ class BA(Optimizer):
 
         """
 
-        # Instanciating array of frequencies
-        self.frequency = r.generate_uniform_random_number(
-            self.f_min, self.f_max, space.n_agents)
-
-        # Instanciating array of velocities
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
-
-        # And also an array of loudnesses
-        self.loudness = r.generate_uniform_random_number(
-            0, self.A, space.n_agents)
-
-        # Finally, an array of pulse rates
-        self.pulse_rate = r.generate_uniform_random_number(
-            0, self.r, space.n_agents)
-
         # Initial search space evaluation
         self._evaluate(space, function)
 
@@ -373,8 +289,7 @@ class BA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function, t,
-                         self.frequency, self.velocity, self.loudness, self.pulse_rate)
+            self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

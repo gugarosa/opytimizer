@@ -9,4 +9,4 @@ hyperparams = {
 }
 
 # Creating a PSO optimizer
-p = PSO(hyperparams=hyperparams)
+o = PSO(hyperparams=hyperparams)
