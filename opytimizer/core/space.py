@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
@@ -212,8 +214,8 @@ class Space:
             agents.append(
                 Agent(n_variables=n_variables, n_dimensions=n_dimensions))
 
-        # Apply a random agent as the best one
-        best_agent = agents[0]
+        # Apply first agent as the best one
+        best_agent = copy.deepcopy(agents[0])
 
         return agents, best_agent
 

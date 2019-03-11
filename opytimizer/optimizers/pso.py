@@ -228,7 +228,7 @@ class PSO(Optimizer):
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
-            
+
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
@@ -254,8 +254,8 @@ class PSO(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a depp copy of current agent to the best agent
-                space.best_agent = copy.deepcopy(agent)
+                # Makes a deep copy of current agent fitness to the best agent
+                space.best_agent.fit = copy.deepcopy(agent.fit)
 
                 # Also copies its position from its local best position
                 space.best_agent.position = copy.deepcopy(local_position[i])
@@ -306,5 +306,4 @@ class PSO(Optimizer):
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
 
-        
         return history

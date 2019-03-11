@@ -189,7 +189,7 @@ class FPA(Optimizer):
             r1 = r.generate_uniform_random_number(0, 1)
 
             # Check if generated random number is bigger than probability
-            if r1 > self.p:
+            if r1 < self.p:
                 # Update each decision variable according to global pollination
                 agent.position = self._global_pollination(
                     agent.position, best_agent.position)

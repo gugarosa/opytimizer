@@ -1,7 +1,7 @@
 import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.cs import CS
+from opytimizer.optimizers.ba import BA
 from opytimizer.spaces.search import SearchSpace
 
 
@@ -35,13 +35,14 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'alpha': 0.3,
-    'beta': 1.5,
-    'p': 0.2
+    'f_min': 0,
+    'f_max': 2,
+    'A': 0.5,
+    'r': 0.5
 }
 
 # Creating PSO's optimizer
-p = CS(hyperparams=hyperparams)
+p = BA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
