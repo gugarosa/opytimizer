@@ -17,7 +17,7 @@ class CS(Optimizer):
     variables and methods.
 
     References:
-        
+        X.-S. Yang and D. Suash. Cuckoo search via Lévy flights. World Congress on Nature & Biologically Inspired Computing (2009).
         
     Attributes:
         alpha (float): Step size.

@@ -308,25 +308,21 @@ class BA(Optimizer):
             p = r.generate_uniform_random_number(0, 1, 1)
 
             # Generating a random number
-            e = r.generate_uniform_random_number(-1, 1, 1)
+            e = r.generate_gaussian_random_number()
 
             # Check if probability is bigger than current pulse rate
             if p > pulse_rate[i]:
-                # Copying a temporary agent based on best agent
-                agent = copy.deepcopy(best_agent)
+                # Performing a local random walk (Equation 5)
+                agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
 
-                # Generating new temporary agent's position
-                # Based on BA's paper equation 5
-                agent.position = agent.position + \
-                    e * np.mean(loudness)
-
-            # Evaluates temporary agent
+            # Evaluates agent
             agent.fit = function.pointer(agent.position)
 
             # Checks if probability is smaller than loudness and if fit is better
             if p < loudness[i] and agent.fit < best_agent.fit:
                 # Copying the new solution to space's best agent
-                best_agent = copy.deepcopy(agent)
+                best_agent.position = copy.deepcopy(agent.position)
+                best_agent.fit = copy.deepcopy(agent.fit)
 
                 # Increasing pulse rate (Equation 6)
                 pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
