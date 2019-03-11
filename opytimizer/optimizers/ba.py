@@ -313,6 +313,7 @@ class BA(Optimizer):
             # Check if probability is bigger than current pulse rate
             if p > pulse_rate[i]:
                 # Performing a local random walk (Equation 5)
+                # We apply 0.001 to limit the step size
                 agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
 
             # Evaluates agent
