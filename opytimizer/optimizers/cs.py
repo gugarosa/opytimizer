@@ -18,7 +18,7 @@ class CS(Optimizer):
 
     References:
         X.-S. Yang and D. Suash. Cuckoo search via Lévy flights. World Congress on Nature & Biologically Inspired Computing (2009).
-        
+
     Attributes:
         alpha (float): Step size.
         beta (float): Used to compute the Lévy distribution.
@@ -26,13 +26,11 @@ class CS(Optimizer):
 
     Methods:
         _build(hyperparams): Sets an external function point to a class attribute.
-        _update_frequency(min, max): Updates a single particle frequency (over a single variable).
-        _update_velocity(agent_position, best_position, frequency, current_velocity): Updates a single particle
-            velocity (over a single variable).
-        _update_position(agent_position, current_velocity): Updates a single particle
-            position (over a single variable).
-        _update(self, agents, best_agent, function, iteration, frequency,
-            velocity, loudness, pulse_rate): Updates the agents according to bat algorithm.
+        _generate_new_nests(self, agents, best_agent): Generate new nests according to Yang's implementation.
+        _generate_abandoned_nests(self, agents, prob): Generate a fraction of nests to be replaced
+            according to Yang's implementation.
+        _evaluate_nests(self, agents, new_agents, function): Evaluate new nests according to a fitness function.
+        _update(self, agents, best_agent, function): Updates the agents according to cuckoo search algorithm.
         run(space, function): Runs the optimization pipeline.
 
     """
@@ -52,13 +50,13 @@ class CS(Optimizer):
         super(CS, self).__init__(algorithm='CS')
 
         # Step size
-        self._alpha = 0.2
+        self._alpha = 1
 
         # Lévy distribution parameter
         self._beta = 1.5
 
-        # Switch probability
-        self._p = 0.3
+        # Probability of replacing worst nests
+        self._p = 0.2
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -91,7 +89,7 @@ class CS(Optimizer):
 
     @property
     def p(self):
-        """Switch probability.
+        """Probability of replacing worst nests.
 
         """
 
@@ -103,7 +101,7 @@ class CS(Optimizer):
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -135,136 +133,128 @@ class CS(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, p = {self.p} | Built: {self.built}.')
 
-    def _update_frequency(self, min_frequency, max_frequency):
-        """Updates a single particle frequency (over a single variable).
+    def _generate_new_nests(self, agents, best_agent):
+        """Generate new nests according to Yang's implementation.
 
         Args:
-            min_frequency (float): Minimum frequency range.
-            max_frequency (float): Maximum frequency range.
+            agents (list): List of agents.
+            best_agent (Agent): Current best agent.
 
         Returns:
-            A new frequency based on BA's paper equation 2.
+            A new list of agents which can be seen as new nests (Equation 1).
 
         """
 
-        # Generating beta random number
-        beta = r.generate_uniform_random_number(0, 1)
+        # Makes a temporary copy of current agents
+        new_agents = copy.deepcopy(agents)
 
-        # Calculating new frequency
-        # Note that we have to apply (min - max) instead of (max - min) or it will not converge
-        new_frequency = min_frequency + (min_frequency - max_frequency) * beta
+        # Then, we iterate for every agent
+        for new_agent in new_agents:
+            # Calculating the Lévy distribution
+            step = d.generate_levy_distribution(
+                self.beta, new_agent.n_variables)
 
-        return new_frequency
+            # Expanding its dimension to perform entrywise multiplication
+            step = np.expand_dims(step, axis=1)
 
-    def _update_velocity(self, agent_position, best_position, frequency, current_velocity):
-        """Updates a single particle velocity (over a single variable).
+            # Calculating the difference vector between local and best positions
+            # Alpha controls the intensity of the step size
+            step_size = self.alpha * step * \
+                (new_agent.position - best_agent.position)
+
+            # Generates a random normal distribution
+            g = r.generate_gaussian_random_number(
+                size=new_agent.n_variables)
+
+            # Expanding its dimension to perform entrywise multiplication
+            g = np.expand_dims(g, axis=1)
+
+            # Acutally performs the random walk / flight
+            new_agent.position += step_size * g
+
+        return new_agents
+
+    def _generate_abandoned_nests(self, agents, prob):
+        """Generate a fraction of nests to be replaced according to Yang's implementation.
 
         Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Global best position.
-            frequency (float): Agent's frequenct.
-            current_velocity (float): Agent's current velocity.
+            agents (list): List of agents.
+            prob (float): Probability of replacing worst nests.
 
         Returns:
-            A new velocity based on on BA's paper equation 3.
+            A new list of agents which can be seen as the new nests to be replaced.
 
         """
 
-        # Calculates new velocity
-        new_velocity = current_velocity + \
-            (agent_position - best_position) * frequency
+        # Makes a temporary copy of current agents
+        new_agents = copy.deepcopy(agents)
 
-        return new_velocity
+        # Generates a bernoulli distribution array
+        # It will be used to replace or not a certain nest
+        b = d.generate_bernoulli_distribution(prob, len(agents))
 
-    def _update_position(self, agent_position, current_velocity):
-        """Updates a single particle position (over a single variable).
+        # Iterating through every new agent
+        for j, new_agent in enumerate(new_agents):
+            # Generates a uniform random number
+            r1 = r.generate_uniform_random_number(0, 1)
+
+            # Then, we select two random nests
+            k = int(r.generate_uniform_random_number(0, len(agents)-1))
+            l = int(r.generate_uniform_random_number(0, len(agents)-1))
+
+            # Calculating the random walk between these two nests
+            step_size = r1 * (agents[k].position - agents[l].position)
+
+            # Finally, we replace the old nest
+            # Note it will only be replaced if 'b' is 1
+            new_agent.position += (step_size * b[j])
+
+        return new_agents
+
+    def _evaluate_nests(self, agents, new_agents, function):
+        """Evaluate new nests according to a fitness function.
 
         Args:
-            agent_position (float): Agent's current position.
-            current_velocity (float): Agent's current velocity.
-
-        Returns:
-            A new position based on BA's paper equation 4.
+            agents (list): List of current agents.
+            new_agents (list): List of new agents to be evaluated.
+            function (Function): Fitness function used to evaluate.
 
         """
 
-        # Calculates new position
-        new_position = agent_position + current_velocity
+        # Iterating through each agent and new agent
+        for agent, new_agent in zip(agents, new_agents):
+            # Calculates the new agent fitness
+            new_agent.fit = function.pointer(new_agent.position)
 
-        return new_position
+            # If new agent's fitness is better than agent's
+            if new_agent.fit < agent.fit:
+                # Replace its position
+                agent.position = copy.deepcopy(new_agent.position)
 
-    def _calculate_nest_loss(self, size, probability):
-        """
-        """
-
-        loss = round(size * (1 - probability))
-
-        return loss
+                # And also, its fitness
+                agent.fit = copy.deepcopy(new_agent.fit)
 
     def _update(self, agents, best_agent, function):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Method that wraps Cuckoo Search algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A function object.
-            iteration (int): Current iteration number.
-            frequency (np.array): Array of frequencies.
-            velocity (np.array): Array of current velocities.
-            loudness (np.array): Array of loudnesses.
-            pulse_rate (np.array): Array of pulse rates.
 
         """
 
-        # Generates an index for nest k
-        k = int(r.generate_uniform_random_number(0, len(agents)-1))
+        # Generate new nests
+        new_agents = self._generate_new_nests(agents, best_agent)
 
-        # Copies agent k to a temporary agent
-        temp_agent = copy.deepcopy(agents[k])
+        # Evaluate new generated nests
+        self._evaluate_nests(agents, new_agents, function)
 
-        # Generates a Lévy distribution
-        step = d.generate_levy_distribution(self.beta, agents[0].n_variables)
+        # Generate new nests to be replaced
+        new_agents = self._generate_abandoned_nests(agents, 1 - self.p)
 
-        # Expanding its dimension (this is a must as step is a vector)
-        step = np.expand_dims(step, axis=1)
-
-        # print(step.shape)
-        # print(temp_agent.position.shape)
-
-        # (Equation 1)
-        temp_agent.position += self.alpha * step
-
-        #
-        temp_agent.fit = function.pointer(temp_agent.position)
-
-        # Generates an index for nest l
-        l = int(r.generate_uniform_random_number(0, len(agents)-1))
-
-        #
-        if (temp_agent.fit < agents[l].fit):
-            #
-            agents[l] = copy.deepcopy(temp_agent)
-
-        #
-        agents.sort(key = lambda x: x.fit, reverse=True)
-
-        #
-        loss = self._calculate_nest_loss(len(agents), self.p)
-
-        for i in range(len(agents)-1, loss, -1):
-            temp_agent = copy.deepcopy(best_agent)
-            r1 = r.generate_uniform_random_number(0, 1)
-            k = int(r.generate_uniform_random_number(0, len(agents)-1))
-            l = int(r.generate_uniform_random_number(0, len(agents)-1))
-            temp_agent.position += r1 * (agents[k].position - agents[l].position)
-
-            temp_agent.fit = function.pointer(temp_agent.position)
-
-            if (temp_agent.fit < agents[i].fit):
-                agents[i] = copy.deepcopy(temp_agent)
-
-
-
+        # Evaluate new generated nests for further replacement
+        self._evaluate_nests(agents, new_agents, function)
 
     def run(self, space, function):
         """Runs the optimization pipeline.

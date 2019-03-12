@@ -3,6 +3,36 @@ from math import gamma, pi, sin
 import numpy as np
 import opytimizer.math.random as r
 
+def generate_bernoulli_distribution(prob=0.0, size=1):
+    """Generates a Bernoulli distribution based on an input probability.
+
+    Args:
+        prob (float): Probability of distribution.
+        size (int): Size of array.
+
+    Returns:
+        A Bernoulli distribution n-dimensional array.
+
+    """
+
+    # Creating bernoulli array
+    bernoulli_array = np.zeros(size)
+
+    # Generating random number
+    r1 = r.generate_uniform_random_number(0, 1, size)
+
+    # For each dimension
+    for i in range(size):
+        # If random generated number if smaller than probability
+        if (r1[i] < prob):
+            # Mark as one
+            bernoulli_array[i] = 1
+        else:
+            # If not, mark as zero
+            bernoulli_array[i] = 0
+
+    return bernoulli_array
+
 
 def generate_levy_distribution(beta=0.1, size=1):
     """Generates a n-dimensional array based on a Lévy distribution.
@@ -27,10 +57,10 @@ def generate_levy_distribution(beta=0.1, size=1):
     den = gamma((1+beta)/2) * beta * (2 ** ((beta-1)/2))
 
     # Calculates the sigma for further distribution generation
-    sigma_u = (num/den) ** (1/beta)
+    sigma = (num/den) ** (1/beta)
 
     # Calculates the 'u' distribution
-    u = r.generate_gaussian_random_number(size=size) * sigma_u
+    u = r.generate_gaussian_random_number(size=size) * sigma
 
     # Calculates the 'v' distribution
     v = r.generate_gaussian_random_number(size=size)

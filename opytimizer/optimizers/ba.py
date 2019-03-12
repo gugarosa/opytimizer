@@ -275,7 +275,7 @@ class BA(Optimizer):
         return new_position
 
     def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Method that wraps Bat Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
