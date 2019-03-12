@@ -43,6 +43,13 @@ def test_optimizer_built_setter():
 
 
 def test_optimizer_update():
+    def square(x):
+        return np.sum(x**2)
+
+    assert square(2) == 4
+
+    new_function = function.Function(pointer=square)
+
     new_optimizer = optimizer.Optimizer()
 
     search_space = search.SearchSpace(n_agents=2, n_iterations=10,
@@ -50,7 +57,7 @@ def test_optimizer_update():
                                       upper_bound=[10, 10])
 
     boolean = new_optimizer._update(
-        search_space.agents, search_space.best_agent)
+        search_space.agents, search_space.best_agent, new_function)
 
     assert boolean == True
 

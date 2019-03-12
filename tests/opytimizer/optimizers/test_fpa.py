@@ -2,6 +2,7 @@ import sys
 
 import numpy as np
 import pytest
+from opytimizer.core import function
 from opytimizer.optimizers import fpa
 from opytimizer.spaces import search
 
@@ -58,12 +59,17 @@ def test_fpa_local_pollination():
 
 
 def test_fpa_update():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
     new_fpa = fpa.FPA()
 
     search_space = search.SearchSpace(n_agents=20, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    new_fpa._update(search_space.agents, search_space.best_agent)
+    new_fpa._update(search_space.agents, search_space.best_agent, new_function)
 
     assert search_space.agents[0].position[0] != 0

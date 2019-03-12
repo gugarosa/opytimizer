@@ -74,7 +74,7 @@ class Optimizer:
     def built(self, built):
         self._built = built
 
-    def _update(self, agents, best_agent):
+    def _update(self, agents, best_agent, function):
         """Updates the agents' position array.
 
         As each optimizer child can have a different
@@ -84,6 +84,7 @@ class Optimizer:
         Args:
             agents (list): A list of agents that will be updated.
             best_agent (Agent): Global best agent.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 

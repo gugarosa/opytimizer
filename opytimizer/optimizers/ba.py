@@ -305,7 +305,7 @@ class BA(Optimizer):
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Generating a random probability
-            p = r.generate_uniform_random_number(0, 1, 1)
+            p = r.generate_uniform_random_number()
 
             # Generating a random number
             e = r.generate_gaussian_random_number()
