@@ -174,12 +174,13 @@ class FPA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent):
+    def _update(self, agents, best_agent, function):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
@@ -189,9 +190,9 @@ class FPA(Optimizer):
             r1 = r.generate_uniform_random_number(0, 1)
 
             # Check if generated random number is bigger than probability
-            if r1 < self.p:
-                # Update each decision variable according to global pollination
-                agent.position = self._global_pollination(
+            if r1 > self.p:
+                # Update a temporary position according to global pollination
+                temp_position = self._global_pollination(
                     agent.position, best_agent.position)
             else:
                 # Generates an uniform random number
@@ -203,6 +204,17 @@ class FPA(Optimizer):
                 # Generates an index for flower l
                 l = int(r.generate_uniform_random_number(0, len(agents)-1))
 
-                # Update each decision variable according to local pollination
-                agent.position = self._local_pollination(
+                # Update a temporary position according to local pollination
+                temp_position = self._local_pollination(
                     agent.position, agents[k].position, agents[l].position, epsilon)
+
+            # Calculates the fitness for the temporary position
+            fit = function.pointer(temp_position)
+
+            # If new fitness is better than agent's fitness
+            if fit < agent.fit:
+                # Copy its position to the agent
+                agent.position = copy.deepcopy(temp_position)
+
+                # And also copy its fitness
+                agent.fit = copy.deepcopy(fit)

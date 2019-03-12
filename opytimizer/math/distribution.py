@@ -1,6 +1,7 @@
 from math import gamma, pi, sin
 
 import numpy as np
+import opytimizer.math.random as r
 
 
 def generate_levy_distribution(beta=0.1, size=1):
@@ -29,10 +30,10 @@ def generate_levy_distribution(beta=0.1, size=1):
     sigma_u = (num/den) ** (1/beta)
 
     # Calculates the 'u' distribution
-    u = np.random.normal(0, sigma_u ** 2, size)
+    u = r.generate_gaussian_random_number(size=size) * sigma_u
 
     # Calculates the 'v' distribution
-    v = np.random.normal(0, 1, size)
+    v = r.generate_gaussian_random_number(size=size)
 
     # Finally, we can calculate the Lévy distribution
     step = u / np.fabs(v) ** (1 / beta)
