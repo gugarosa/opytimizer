@@ -137,7 +137,7 @@ class Optimizer:
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent)
+            self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

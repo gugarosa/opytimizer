@@ -1,7 +1,7 @@
 import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.ba import BA
+from opytimizer.optimizers.fpa import FPA
 from opytimizer.spaces.search import SearchSpace
 
 
@@ -22,7 +22,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 100
+n_iterations = 1000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -35,14 +35,13 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'f_min': 0,
-    'f_max': 2,
-    'A': 0.5,
-    'r': 0.5
+    'beta': 1.5,
+    'eta': 0.2,
+    'p': 0.8
 }
 
 # Creating PSO's optimizer
-p = BA(hyperparams=hyperparams)
+p = FPA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
