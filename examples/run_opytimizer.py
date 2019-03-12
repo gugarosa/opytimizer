@@ -35,7 +35,7 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'alpha': 0.3,
+    'alpha': 1,
     'beta': 1.5,
     'p': 0.2
 }

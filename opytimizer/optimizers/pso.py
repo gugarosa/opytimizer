@@ -133,7 +133,7 @@ class PSO(Optimizer):
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 

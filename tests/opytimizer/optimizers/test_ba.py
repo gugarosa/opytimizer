@@ -69,6 +69,7 @@ def test_ba_velocity_setter():
 
     assert new_ba.velocity.shape == (1, 1)
 
+
 def test_ba_loudness():
     new_ba = ba.BA()
 
@@ -81,6 +82,7 @@ def test_ba_loudness_setter():
     new_ba.loudness = np.zeros((1, 1))
 
     assert new_ba.loudness.shape == (1, 1)
+
 
 def test_ba_pulse_rate():
     new_ba = ba.BA()
@@ -100,6 +102,7 @@ def test_ba_build():
     new_ba = ba.BA()
 
     assert new_ba.built == True
+
 
 def test_ba_update_frequency():
     new_ba = ba.BA()
@@ -131,7 +134,14 @@ def test_ba_run():
 
     new_function = function.Function(pointer=square)
 
-    new_ba = ba.BA()
+    hyperparams = {
+        'f_min': 0,
+        'f_max': 2,
+        'A': 1,
+        'r': 0.5
+    }
+
+    new_ba = ba.BA(hyperparams=hyperparams)
 
     search_space = search.SearchSpace(n_agents=2, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
