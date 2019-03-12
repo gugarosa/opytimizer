@@ -229,7 +229,7 @@ class BA(Optimizer):
         """
 
         # Generating beta random number
-        beta = r.generate_uniform_random_number(0, 1)
+        beta = r.generate_uniform_random_number()
 
         # Calculating new frequency
         # Note that we have to apply (min - max) instead of (max - min) or it will not converge
