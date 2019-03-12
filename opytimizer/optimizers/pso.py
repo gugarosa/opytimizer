@@ -180,10 +180,10 @@ class PSO(Optimizer):
         """
 
         # Generating first random number
-        r1 = r.generate_uniform_random_number(0, 1)
+        r1 = r.generate_uniform_random_number()
 
         # Generating second random number
-        r2 = r.generate_uniform_random_number(0, 1)
+        r2 = r.generate_uniform_random_number()
 
         # Calculates new velocity
         new_velocity = self.w * current_velocity + self.c1 * r1 * \

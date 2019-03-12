@@ -97,7 +97,7 @@ class FPA(Optimizer):
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
@@ -137,7 +137,7 @@ class FPA(Optimizer):
             best_position (float): Best agent's current position.
 
         Returns:
-            A new position based on FPA's paper global pollination equation.
+            A new position based on FPA's paper equation 1.
 
         """
 
@@ -162,7 +162,7 @@ class FPA(Optimizer):
             epsilon (float): An uniform random generated number.
 
         Returns:
-            A new position based on FPA's paper local pollination equation.
+            A new position based on FPA's paper equation 3.
 
         """
 
@@ -187,16 +187,17 @@ class FPA(Optimizer):
         # Iterate through all agents
         for agent in agents:
             # Generating an uniform random number
-            r1 = r.generate_uniform_random_number(0, 1)
+            r1 = r.generate_uniform_random_number()
 
             # Check if generated random number is bigger than probability
             if r1 > self.p:
                 # Update a temporary position according to global pollination
                 temp_position = self._global_pollination(
                     agent.position, best_agent.position)
+
             else:
                 # Generates an uniform random number
-                epsilon = r.generate_uniform_random_number(0, 1)
+                epsilon = r.generate_uniform_random_number()
 
                 # Generates an index for flower k
                 k = int(r.generate_uniform_random_number(0, len(agents)-1))
