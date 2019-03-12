@@ -51,6 +51,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - optimizers
         - ba
         - cs
+        - fa
         - fpa
         - pso
     - spaces
@@ -90,6 +91,8 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
 ```ba```: Bat Algorithm.
 
 ```cs```: Cuckoo Search.
+
+```fa```: Firefly Algorithm.
 
 ```fpa```: Flower Pollination Algorithm.
 
