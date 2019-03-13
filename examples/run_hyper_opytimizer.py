@@ -2,7 +2,7 @@ import numpy as np
 import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.fa import FA
 from opytimizer.spaces.hyper import HyperSpace
 
 
@@ -21,7 +21,7 @@ def sphere(x):
 f = Function(pointer=sphere)
 
 # Number of agents
-n_agents = 2
+n_agents = 20
 
 # Number of decision variables
 n_variables = 2
@@ -30,7 +30,7 @@ n_variables = 2
 n_dimensions = 4
 
 # Number of running iterations
-n_iterations = 10
+n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -49,7 +49,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = FA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

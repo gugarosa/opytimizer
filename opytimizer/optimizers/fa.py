@@ -161,7 +161,7 @@ class FA(Optimizer):
                     beta = self.beta * np.exp(-self.gamma * distance)
 
                     # Generates a random uniform distribution
-                    r1 = r.generate_uniform_random_number(size=agent.n_variables)
+                    r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (Equation 9)
                     agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)    
