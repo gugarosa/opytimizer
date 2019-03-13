@@ -22,7 +22,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 1000
+n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -35,8 +35,8 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'alpha': 0.2,
-    'beta': 1.0,
+    'alpha': 0.5,
+    'beta': 0.2,
     'gamma': 1.0
 }
 
