@@ -141,7 +141,7 @@ class FA(Optimizer):
         """
 
         # Calculating current iteration delta
-        delta = 1 - ((10 ** -4)  / 0.9) ** (1 / n_iterations)
+        delta = 1 - ((10 ** -4) / 0.9) ** (1 / n_iterations)
 
         # Applying update to alpha parameter
         self.alpha *= (1 - delta)
@@ -154,7 +154,8 @@ class FA(Optimizer):
             # Iterating through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j' (Equation 8)
-                distance = (np.linalg.norm(agent.position - temp.position)) ** 2
+                distance = (np.linalg.norm(
+                    agent.position - temp.position)) ** 2
                 # If 'i' fit is bigger than 'j' fit
                 if (agent.fit > temp.fit):
                     # Recalculate the attractiveness (Equation 6)
@@ -164,8 +165,9 @@ class FA(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (Equation 9)
-                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)    
-
+                    agent.position = beta * \
+                        (temp.position + agent.position) + \
+                        self.alpha * (r1 - 0.5)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -190,7 +192,8 @@ class FA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function, space.n_iterations)
+            self._update(space.agents, space.best_agent,
+                         function, space.n_iterations)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
