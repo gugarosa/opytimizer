@@ -46,10 +46,10 @@ class FA(Optimizer):
         super(FA, self).__init__(algorithm='FA')
 
         # Randomization parameter
-        self._alpha = 0.2
+        self._alpha = 0.5
 
         # Attractiveness
-        self._beta = 1.0
+        self._beta = 0.2
 
         # Light absorption coefficient
         self._gamma = 1.0
@@ -129,17 +129,43 @@ class FA(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, gamma = {self.gamma} | Built: {self.built}.')
 
-    def _update(self, agents, best_agent, function):
+    def _update(self, agents, best_agent, function, n_iterations):
         """Method that wraps Firefly Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A function object.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
-        return True
+        # Calculating current iteration delta
+        delta = 1 - ((10 ** -4)  / 0.9) ** (1 / n_iterations)
+
+        # Applying update to alpha parameter
+        self.alpha *= (1 - delta)
+
+        # We copy a temporary list for iterating purposes
+        temp_agents = copy.deepcopy(agents)
+
+        # Iterating through 'i' agents
+        for agent in agents:
+            # Iterating through 'j' agents
+            for temp in temp_agents:
+                # Distance is calculated by an euclidean distance between 'i' and 'j' (Equation 8)
+                distance = (np.linalg.norm(agent.position - temp.position)) ** 2
+                # If 'i' fit is bigger than 'j' fit
+                if (agent.fit > temp.fit):
+                    # Recalculate the attractiveness (Equation 6)
+                    beta = self.beta * np.exp(-self.gamma * distance)
+
+                    # Generates a random uniform distribution
+                    r1 = r.generate_uniform_random_number(size=agent.n_variables)
+
+                    # Updates agent's position (Equation 9)
+                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)    
+
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -164,7 +190,7 @@ class FA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function)
+            self._update(space.agents, space.best_agent, function, space.n_iterations)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
