@@ -11,6 +11,9 @@ opytimizer.log.*
 # Saved pickles
 **/*.pkl
 
+# Datasets
+datasets/**/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

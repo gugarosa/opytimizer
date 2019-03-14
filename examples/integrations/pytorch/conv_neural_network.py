@@ -31,7 +31,7 @@ Y_train = torch.from_numpy(Y_train).long()
 
 
 class CNN(torch.nn.Module):
-    def __init__(self, output_dim):
+    def __init__(self, n_classes):
         # Overriding initial class
         super(CNN, self).__init__()
 
@@ -59,7 +59,7 @@ class CNN(torch.nn.Module):
         self.fc.add_module("fc1", torch.nn.Linear(8, 32))
         self.fc.add_module("relu_3", torch.nn.ReLU())
         self.fc.add_module("dropout_3", torch.nn.Dropout())
-        self.fc.add_module("fc2", torch.nn.Linear(32, output_dim))
+        self.fc.add_module("fc2", torch.nn.Linear(32, n_classes))
 
     def forward(self, x):
         # Performing first block forward step
@@ -109,11 +109,11 @@ def conv_neural_network(opytimizer):
     n_classes = 10
 
     # Instanciating the model
-    model = CNN(output_dim=n_classes)
+    model = CNN(n_classes=n_classes)
 
     # Input variables
     batch_size = 100
-    epochs = 20
+    epochs = 50
 
     # Gathering parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
