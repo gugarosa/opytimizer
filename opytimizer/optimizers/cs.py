@@ -25,7 +25,7 @@ class CS(Optimizer):
         p (float): Probability of replacing worst nests.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class attribute.
+        _build(hyperparams): Serves as the object building process.
         _generate_new_nests(self, agents, best_agent): Generate new nests according to Yang's implementation.
         _generate_abandoned_nests(self, agents, prob): Generate a fraction of nests to be replaced
             according to Yang's implementation.
@@ -35,7 +35,7 @@ class CS(Optimizer):
 
     """
 
-    def __init__(self, hyperparams=None):
+    def __init__(self, algorithm='CS', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -47,7 +47,7 @@ class CS(Optimizer):
         logger.info('Overriding class: Optimizer -> CS.')
 
         # Override its parent class with the receiving hyperparams
-        super(CS, self).__init__(algorithm='CS')
+        super(CS, self).__init__(algorithm=algorithm)
 
         # Step size
         self._alpha = 1

@@ -25,16 +25,17 @@ class FA(Optimizer):
         gamma (float): Light absorption coefficient.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class attribute.
+        _build(hyperparams): Serves as the object building process.
         _update(self, agents, best_agent, function): Updates the agents according to firefly algorithm.
         run(space, function): Runs the optimization pipeline.
 
     """
 
-    def __init__(self, hyperparams=None):
+    def __init__(self, algorithm='FA', hyperparams=None):
         """Initialization method.
 
         Args:
+            algorithm (str): A string holding optimizer's algorithm name.
             hyperparams (dict): An hyperparams dictionary containing key-value
                 parameters to meta-heuristics.
 
@@ -43,7 +44,7 @@ class FA(Optimizer):
         logger.info('Overriding class: Optimizer -> FA.')
 
         # Override its parent class with the receiving hyperparams
-        super(FA, self).__init__(algorithm='FA')
+        super(FA, self).__init__(algorithm=algorithm)
 
         # Randomization parameter
         self._alpha = 0.5

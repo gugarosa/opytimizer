@@ -32,9 +32,6 @@ def test_aiwpso_hyperparams():
 def test_aiwpso_hyperparams_setter():
     new_aiwpso = aiwpso.AIWPSO()
 
-    new_aiwpso.w = 1
-    assert new_aiwpso.w == 1
-
     new_aiwpso.w_min = 0.5
     assert new_aiwpso.w_min == 0.5
 
@@ -62,54 +59,11 @@ def test_aiwpso_fitness_setter():
     assert new_aiwpso.fitness.shape == (5, )
 
 
-def test_aiwpso_local_position():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    assert new_aiwpso.local_position == None
-
-
-def test_aiwpso_local_position_setter():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    new_aiwpso.local_position = np.zeros((1, 1))
-
-    assert new_aiwpso.local_position.shape == (1, 1)
-
-
-def test_aiwpso_velocity():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    assert new_aiwpso.velocity == None
-
-
-def test_aiwpso_velocity_setter():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    new_aiwpso.velocity = np.zeros((1, 1))
-
-    assert new_aiwpso.velocity.shape == (1, 1)
-
-
-def test_aiwpso_build():
+def test_aiwpso_rebuild():
     new_aiwpso = aiwpso.AIWPSO()
 
     assert new_aiwpso.built == True
 
-
-def test_aiwpso_update_velocity():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    velocity = new_aiwpso._update_velocity(1, 1, 1, 1)
-
-    assert velocity != 0
-
-
-def test_aiwpso_update_position():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    position = new_aiwpso._update_position(1, 1)
-
-    assert position == 2
 
 def test_aiwpso_compute_success():
     n_agents = 2
