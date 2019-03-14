@@ -1,7 +1,7 @@
 import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.fa import FA
+from opytimizer.optimizers.aiwpso import AIWPSO
 from opytimizer.spaces.search import SearchSpace
 
 
@@ -41,7 +41,7 @@ hyperparams = {
 }
 
 # Creating FA's optimizer
-p = FA(hyperparams=hyperparams)
+p = AIWPSO(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

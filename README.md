@@ -49,6 +49,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - hypercomplex
         - random
     - optimizers
+        - aiwpso
         - ba
         - cs
         - fa
@@ -87,6 +88,8 @@ Just because we are computing stuff, it does not means that we do not need math.
 ### Optimizers
 
 This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a broad number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Investigate over any module for more information.
+
+```aiwpso```: Adaptive Inertia Weight Particle Swarm Optimization.
 
 ```ba```: Bat Algorithm.
 
