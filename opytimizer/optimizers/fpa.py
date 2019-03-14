@@ -24,7 +24,7 @@ class FPA(Optimizer):
         p (float): Probability of local pollination.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class attribute.
+        _build(hyperparams): Serves as the object building process.
         _global_pollination(agent_position, best_position): Updates the agent's position
             based on a global pollination (Lévy's flight).
         _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position
@@ -33,17 +33,18 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, hyperparams=None):
+    def __init__(self, algorithm='FPA', hyperparams=None):
         """Initialization method.
 
         Args:
+            algorithm (str): A string holding optimizer's algorithm name.
             hyperparams (dict): An hyperparams dictionary containing key-value
                 parameters to meta-heuristics.
 
         """
 
         # Override its parent class with the receiving hyperparams
-        super(FPA, self).__init__(algorithm='FPA')
+        super(FPA, self).__init__(algorithm=algorithm)
 
         # Lévy flight control parameter
         self._beta = 1.5

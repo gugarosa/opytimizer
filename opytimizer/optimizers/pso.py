@@ -26,7 +26,7 @@ class PSO(Optimizer):
         velocity (np.array): An array holding particles' velocities.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class attribute.
+        _build(hyperparams): Serves as the object building process.
         _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle
             velocity (over a single variable).
         _update_position(agent_position, current_velocity): Updates a single particle
@@ -37,10 +37,11 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, hyperparams=None):
+    def __init__(self, algorithm='PSO', hyperparams=None):
         """Initialization method.
 
         Args:
+            algorithm (str): A string holding optimizer's algorithm name.
             hyperparams (dict): An hyperparams dictionary containing key-value
                 parameters to meta-heuristics.
 
@@ -49,7 +50,7 @@ class PSO(Optimizer):
         logger.info('Overriding class: Optimizer -> PSO.')
 
         # Override its parent class with the receiving hyperparams
-        super(PSO, self).__init__(algorithm='PSO')
+        super(PSO, self).__init__(algorithm=algorithm)
 
         # Inertia weight
         self._w = 0.7

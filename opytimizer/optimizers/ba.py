@@ -29,7 +29,7 @@ class BA(Optimizer):
         pulse_rate (np.array): An array holding particles' pulse rates.
 
     Methods:
-        _build(hyperparams): Sets an external function point to a class attribute.
+        _build(hyperparams): Serves as the object building process.
         _update_frequency(min, max): Updates a single particle frequency (over a single variable).
         _update_velocity(agent_position, best_position, frequency, current_velocity): Updates a single particle
             velocity (over a single variable).
@@ -41,10 +41,11 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, hyperparams=None):
+    def __init__(self, algorithm='BA', hyperparams=None):
         """Initialization method.
 
         Args:
+            algorithm (str): A string holding optimizer's algorithm name.
             hyperparams (dict): An hyperparams dictionary containing key-value
                 parameters to meta-heuristics.
 
@@ -53,7 +54,7 @@ class BA(Optimizer):
         logger.info('Overriding class: Optimizer -> BA.')
 
         # Override its parent class with the receiving hyperparams
-        super(BA, self).__init__(algorithm='BA')
+        super(BA, self).__init__(algorithm=algorithm)
 
         # Minimum frequency range
         self._f_min = 0
