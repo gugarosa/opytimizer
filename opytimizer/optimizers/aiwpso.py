@@ -116,7 +116,7 @@ class AIWPSO(PSO):
 
         # Logging attributes
         logger.debug(
-            f'Extra hyperparameters: w_min = {self.w_min}, w_max = {self.w_max}.')
+            f'Additional hyperparameters: w_min = {self.w_min}, w_max = {self.w_max}.')
 
     def _compute_success(self, agents, fitness):
         """Computes the particles' success for updating inertia weight.
