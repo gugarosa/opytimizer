@@ -11,7 +11,7 @@ opytimizer.log.*
 # Saved pickles
 **/*.pkl
 
-# Datasets
+# Downloaded datasets
 datasets/**/*
 
 # Byte-compiled / optimized / DLL files
