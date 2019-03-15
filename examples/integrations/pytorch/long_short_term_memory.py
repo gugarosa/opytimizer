@@ -100,7 +100,7 @@ def predict(model, x_val):
     return y_val
 
 
-def conv_neural_network(opytimizer):
+def long_sort_term_memory(opytimizer):
     # Some model parameters
     n_features = 8
     n_hidden = 128
@@ -151,7 +151,7 @@ def conv_neural_network(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=conv_neural_network)
+f = Function(pointer=long_sort_term_memory)
 
 # Number of agents
 n_agents = 10
