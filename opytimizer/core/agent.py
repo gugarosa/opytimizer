@@ -9,12 +9,6 @@ logger = l.get_logger(__name__)
 class Agent:
     """An agent class for all meta-heuristic optimization techniques.
 
-    Attributes:
-        n_variables (int): Number of decision variables.
-        n_dimensions (int): Dimension of search space.
-        position (np.array): [n_variables x n_dimensions] matrix of position values.
-        fit (float): Agent's fitness value.
-
     """
 
     def __init__(self, n_variables=2, n_dimensions=1):
@@ -46,7 +40,7 @@ class Agent:
 
     @property
     def n_variables(self):
-        """Number of decision variables.
+        """int: Number of decision variables.
 
         """
 
@@ -54,7 +48,7 @@ class Agent:
 
     @property
     def n_dimensions(self):
-        """Dimension of search space.
+        """int: Dimension of search space.
 
         """
 
@@ -62,7 +56,7 @@ class Agent:
 
     @property
     def position(self):
-        """A matrix of position values.
+        """np.array: A matrix of position values.
 
         """
 
@@ -74,7 +68,7 @@ class Agent:
 
     @property
     def fit(self):
-        """Agent's fitness value.
+        """float: Agent's fitness value.
 
         """
 

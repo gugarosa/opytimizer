@@ -5,19 +5,10 @@ logger = l.get_logger(__name__)
 
 class Function:
     """A Function class to hold objective functions
-        that will be further evaluated.
+    that will be further evaluated.
 
-    It will server as the basis class for holding in-code related
+    It will serve as the basis class for holding in-code related
     objective functions.
-
-    Attributes:
-        pointer (*func): This should be a pointer to a function that will
-            return the fitness value.
-        built (boolean): A boolean to indicate whether the function is built.
-
-    Methods:
-        _build(function): Sets an external function point
-            to a class attribute.
 
     """
 
@@ -25,7 +16,7 @@ class Function:
         """Initialization method.
 
         Args:
-            function (*func): This should be a pointer to a function
+            function (callable): This should be a pointer to a function
                 that will return the fitness value.
 
         """
@@ -45,7 +36,7 @@ class Function:
 
     @property
     def pointer(self):
-        """A pointer to point to our actual function.
+        """callable: A pointer to point to our actual function.
 
         """
 
@@ -57,7 +48,7 @@ class Function:
 
     @property
     def built(self):
-        """A boolean to indicate whether the function is built.
+        """bool: A boolean to indicate whether the function is built.
 
         """
 
@@ -74,7 +65,7 @@ class Function:
         needs to be on its initialization.
 
         Args:
-            function (*func): This should be a pointer to a function
+            function (callable): This should be a pointer to a function
                 that will return the fitness value.
 
         """

@@ -5,8 +5,10 @@ Core is the core. Essentially, it is the parent of everything. You should find p
 
 .. toctree::
     opytimizer.core.agent
+    opytimizer.core.function
+    opytimizer.core.optimizer
+    opytimizer.core.space
 
 .. automodule:: opytimizer.core
    :members:
-   :undoc-members:
    :show-inheritance:

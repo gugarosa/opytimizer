@@ -7,15 +7,6 @@ class History:
     One can configure, if necessary, different properties or outputs that
     can be saved. Currently, we only save each agent's position and its fitness.
 
-    Attributes:
-        history (list): A list to hold agent's position and fitness.
-
-    Methods:
-        dump(agents): Dumps a list of agents into the object.
-        show(): Prints the object in a formatted way.
-        save(file_name): Saves the object to a pickle encoding.
-        load(file_name): Loads the object from a pickle encoding.
-
     """
 
     def __init__(self):
@@ -28,7 +19,7 @@ class History:
 
     @property
     def history(self):
-        """A history property to hold agent's position and fitness.
+        """list: A history property to hold agent's position and fitness.
 
         """
 

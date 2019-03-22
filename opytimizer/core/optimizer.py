@@ -10,21 +10,9 @@ class Optimizer:
     """An Optimizer class that will serve as meta-heuristic
         techniques' parent.
 
-    Attributes:
-        algorithm (str): A string indicating the algorithm name.
-        hyperparams (dict): An hyperparams dictionary containing key-value
-            parameters to meta-heuristics.
-        built (boolean): A boolean to indicate whether the optimizer is built.
-
-    Methods:
-        _update(agents): Updates the agents' position array.
-        _evaluate(space, function): Evaluates the search space according
-            to the objective function.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
-    def __init__(self, algorithm='PSO'):
+    def __init__(self, algorithm=''):
         """Initialization method.
 
         Args:
@@ -43,7 +31,7 @@ class Optimizer:
 
     @property
     def algorithm(self):
-        """A string indicating the algorithm name.
+        """str: A string indicating the algorithm name.
         
         """
 
@@ -51,7 +39,7 @@ class Optimizer:
 
     @property
     def hyperparams(self):
-        """A dictionary containing key-value parameters
+        """dict: A dictionary containing key-value parameters
             to meta-heuristics.
 
         """
@@ -64,7 +52,7 @@ class Optimizer:
 
     @property
     def built(self):
-        """A boolean to indicate whether the optimizer is built.
+        """bool: A boolean to indicate whether the optimizer is built.
 
         """
 
@@ -86,9 +74,12 @@ class Optimizer:
             best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
 
+        Raises:
+            NotImplementedError
+
         """
 
-        return True
+        raise NotImplementedError
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
