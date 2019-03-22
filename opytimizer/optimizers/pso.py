@@ -18,23 +18,6 @@ class PSO(Optimizer):
     References:
         J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
 
-    Attributes:
-        w (float): Inertia weight.
-        c1 (float): Cognitive constant.
-        c2 (float): Social constant.
-        local_position (np.array): An array holding particle's local positions.
-        velocity (np.array): An array holding particles' velocities.
-
-    Methods:
-        _build(hyperparams): Serves as the object building process.
-        _update_velocity(agent_position, best_position, local_position, current_velocity): Updates a single particle
-            velocity (over a single variable).
-        _update_position(agent_position, current_velocity): Updates a single particle
-            position (over a single variable).
-        _update(agents, best_agent, local_position, velocity): Updates the agents' position array.
-        _evaluate(space, function, local_position): Evaluates the search space according to the objective function.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
     def __init__(self, algorithm='PSO', hyperparams=None):
@@ -74,7 +57,7 @@ class PSO(Optimizer):
 
     @property
     def w(self):
-        """Inertia weight.
+        """float: Inertia weight.
 
         """
 
@@ -86,7 +69,7 @@ class PSO(Optimizer):
 
     @property
     def c1(self):
-        """Cognitive constant.
+        """float: Cognitive constant.
 
         """
 
@@ -98,7 +81,7 @@ class PSO(Optimizer):
 
     @property
     def c2(self):
-        """Social constant.
+        """float: Social constant.
 
         """
 
@@ -110,7 +93,7 @@ class PSO(Optimizer):
 
     @property
     def local_position(self):
-        """Particles' local best positions.
+        """np.array: Particles' local best positions.
 
         """
 
@@ -122,7 +105,7 @@ class PSO(Optimizer):
 
     @property
     def velocity(self):
-        """Particles' current velocities.
+        """np.array: Particles' current velocities.
 
         """
 

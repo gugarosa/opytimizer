@@ -18,19 +18,6 @@ class FPA(Optimizer):
     References:
         X.-S. Yang. Flower pollination algorithm for global optimization. International conference on unconventional computing and natural computation (2012).
 
-    Attributes:
-        beta (float): Lévy flight control parameter.
-        eta (float): Lévy flight scaling factor.
-        p (float): Probability of local pollination.
-
-    Methods:
-        _build(hyperparams): Serves as the object building process.
-        _global_pollination(agent_position, best_position): Updates the agent's position
-            based on a global pollination (Lévy's flight).
-        _local_pollination(agent_position, k_position, l_position, epsilon): Updates the agent's position
-            based on a local pollination.
-        _update(agents, best_agent): Updates the agents' position array.
-
     """
 
     def __init__(self, algorithm='FPA', hyperparams=None):
@@ -62,7 +49,7 @@ class FPA(Optimizer):
 
     @property
     def beta(self):
-        """Lévy flight control parameter.
+        """float: Lévy flight control parameter.
 
         """
 
@@ -74,7 +61,7 @@ class FPA(Optimizer):
 
     @property
     def eta(self):
-        """Lévy flight scaling factor.
+        """float: Lévy flight scaling factor.
 
         """
 
@@ -86,7 +73,7 @@ class FPA(Optimizer):
 
     @property
     def p(self):
-        """Probability of local pollination.
+        """float: Probability of local pollination.
 
         """
 

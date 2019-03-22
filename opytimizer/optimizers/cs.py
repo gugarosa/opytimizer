@@ -19,20 +19,6 @@ class CS(Optimizer):
     References:
         X.-S. Yang and D. Suash. Cuckoo search via Lévy flights. World Congress on Nature & Biologically Inspired Computing (2009).
 
-    Attributes:
-        alpha (float): Step size.
-        beta (float): Used to compute the Lévy distribution.
-        p (float): Probability of replacing worst nests.
-
-    Methods:
-        _build(hyperparams): Serves as the object building process.
-        _generate_new_nests(self, agents, best_agent): Generate new nests according to Yang's implementation.
-        _generate_abandoned_nests(self, agents, prob): Generate a fraction of nests to be replaced
-            according to Yang's implementation.
-        _evaluate_nests(self, agents, new_agents, function): Evaluate new nests according to a fitness function.
-        _update(self, agents, best_agent, function): Updates the agents according to cuckoo search algorithm.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
     def __init__(self, algorithm='CS', hyperparams=None):
@@ -65,7 +51,7 @@ class CS(Optimizer):
 
     @property
     def alpha(self):
-        """Step size.
+        """float: Step size.
 
         """
 
@@ -77,7 +63,7 @@ class CS(Optimizer):
 
     @property
     def beta(self):
-        """Lévy distribution parameter.
+        """float: Lévy distribution parameter.
 
         """
 
@@ -89,7 +75,7 @@ class CS(Optimizer):
 
     @property
     def p(self):
-        """Probability of replacing worst nests.
+        """float: Probability of replacing worst nests.
 
         """
 

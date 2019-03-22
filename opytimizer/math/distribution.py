@@ -3,6 +3,7 @@ from math import gamma, pi, sin
 import numpy as np
 import opytimizer.math.random as r
 
+
 def generate_bernoulli_distribution(prob=0.0, size=1):
     """Generates a Bernoulli distribution based on an input probability.
 

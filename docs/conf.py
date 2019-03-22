@@ -48,10 +48,6 @@ extensions = [
     'sphinx.ext.napoleon',
 ]
 
-autodoc_default_options = {
-    'exclude-members': '__weakref__'
-}
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -197,3 +193,8 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+autodoc_default_options = {
+    'exclude-members': '__weakref__'
+}
+
+autodoc_member_order = 'bysource'

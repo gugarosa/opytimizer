@@ -56,10 +56,8 @@ def test_optimizer_update():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    boolean = new_optimizer._update(
-        search_space.agents, search_space.best_agent, new_function)
-
-    assert boolean == True
+    with pytest.raises(NotImplementedError):
+        new_optimizer._update(search_space.agents, search_space.best_agent, new_function)
 
 
 def test_optimizer_evaluate():
@@ -91,6 +89,5 @@ def test_optimizer_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    history = new_optimizer.run(search_space, new_function)
-
-    assert len(history.history) > 0
+    with pytest.raises(NotImplementedError):
+        history = new_optimizer.run(search_space, new_function)
