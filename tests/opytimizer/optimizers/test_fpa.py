@@ -73,3 +73,19 @@ def test_fpa_update():
     new_fpa._update(search_space.agents, search_space.best_agent, new_function)
 
     assert search_space.agents[0].position[0] != 0
+
+def test_fpa_run():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    new_fpa = fpa.FPA()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    history = new_fpa.run(search_space, new_function)
+
+    assert len(history.history) > 0

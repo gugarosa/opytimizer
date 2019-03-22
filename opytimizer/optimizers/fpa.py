@@ -3,6 +3,7 @@ import copy
 import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -207,3 +208,42 @@ class FPA(Optimizer):
 
                 # And also copy its fitness
                 agent.fit = copy.deepcopy(fit)
+
+    def run(self, space, function):
+        """Runs the optimization pipeline.
+        
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            A History object holding all agents' positions and fitness achieved during the task.
+
+        """
+
+        # Initial search space evaluation
+        self._evaluate(space, function)
+
+        # We will define a History object for further dumping
+        history = h.History()
+
+        # These are the number of iterations to converge
+        for t in range(space.n_iterations):
+            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+
+            # Updating agents
+            self._update(space.agents, space.best_agent, function)
+
+            # Checking if agents meets the bounds limits
+            space.check_bound_limits(space.agents, space.lb, space.ub)
+
+            # After the update, we need to re-evaluate the search space
+            self._evaluate(space, function)
+
+            # Every iteration, we need to dump the current space agents
+            history.dump(space.agents)
+
+            logger.info(f'Fitness: {space.best_agent.fit}')
+            logger.info(f'Position: {space.best_agent.position}')
+
+        return history
