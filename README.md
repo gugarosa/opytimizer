@@ -16,7 +16,7 @@ Use Opytimizer if you need a library or wish to:
 
 Read the docs at [opytimizer.readthedocs.io](opytimizer.readthedocs.io).
 
-Opytimizer is compatible with: **Python 3.6** and **PyPy 3.5**.
+Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
 
 ---
 
