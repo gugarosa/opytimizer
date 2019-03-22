@@ -87,7 +87,7 @@ This is an utilities package. Common things shared across the application should
 
 ## Installation
 
-We belive that everything have to be easy. Not difficult or daunting, Opytimizer will be the one-to-go package that you will need, from the very first instalattion to the daily-tasks implementing needs. If you may, just run the following under your most preferende Python environment (raw, conda, virtualenv, whatever)!:
+We belive that everything have to be easy. Not difficult or daunting, Opytimizer will be the one-to-go package that you will need, from the very first instalattion to the daily-tasks implementing needs. If you may, just run the following under your most preferred Python environment (raw, conda, virtualenv, whatever):
 
 ```Python
 pip install .
