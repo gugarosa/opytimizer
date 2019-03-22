@@ -12,12 +12,6 @@ class SearchSpace(Space):
     """A SearchSpace class that will hold agents, variables and methods
     related to the search space.
 
-    Methods:
-        _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents by 
-            setting random numbers [lower_bound, upper_bound] to their position.
-        check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits
-            of all agents and variables.
-
     """
 
     def __init__(self, n_agents=1, n_variables=2, n_iterations=10, lower_bound=None, upper_bound=None):

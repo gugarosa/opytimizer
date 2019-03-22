@@ -11,12 +11,6 @@ class HyperSpace(Space):
     """An HyperSpace class that will hold agents, variables and methods
     related to the hypercomplex search space.
 
-    Methods:
-        _initialize_agents(agents): Initialize the Space's agents by
-            setting random numbers [0, 1] to their position.
-        check_bound_limits(self, agents, lower_bound, upper_bound): Checks bounds limits
-            of all agents and variables.
-
     """
 
     def __init__(self, n_agents=1, n_variables=2, n_dimensions=4, n_iterations=10, lower_bound=None, upper_bound=None):

@@ -18,16 +18,6 @@ class AIWPSO(PSO):
     References:
         A. Nickabadi, M. M. Ebadzadeh and R. Safabakhsh. A novel particle swarm optimization algorithm with adaptive inertia weight. Applied Soft Computing (2011).
 
-    Attributes:
-        w_min (float): Minimum inertia weight.
-        w_max (float): Maximum inertia weight.
-        fitness (np.array): An array holding particles' best fitness.
-
-    Methods:
-        _rebuild(): Serves as the object re-building process.
-        _compute_success(self, agents, fitness): Computes the particles' success for updating inertia weight.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
     def __init__(self, algorithm='AIWPSO', hyperparams=None):
@@ -62,7 +52,7 @@ class AIWPSO(PSO):
 
     @property
     def w_min(self):
-        """Minimum inertia weight.
+        """float: Minimum inertia weight.
 
         """
 
@@ -74,7 +64,7 @@ class AIWPSO(PSO):
 
     @property
     def w_max(self):
-        """Maximum inertia weight.
+        """float: Maximum inertia weight.
 
         """
 
@@ -86,7 +76,7 @@ class AIWPSO(PSO):
 
     @property
     def fitness(self):
-        """Particles' best fitness.
+        """np.array: Particles' best fitness.
 
         """
 

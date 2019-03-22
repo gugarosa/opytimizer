@@ -19,16 +19,6 @@ class FA(Optimizer):
     References:
         X.-S. Yang. Firefly algorithms for multimodal optimization. International symposium on stochastic algorithms (2009).
 
-    Attributes:
-        alpha (float): Randomization parameter.
-        beta (float): Attractiveness.
-        gamma (float): Light absorption coefficient.
-
-    Methods:
-        _build(hyperparams): Serves as the object building process.
-        _update(self, agents, best_agent, function): Updates the agents according to firefly algorithm.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
     def __init__(self, algorithm='FA', hyperparams=None):
@@ -62,7 +52,7 @@ class FA(Optimizer):
 
     @property
     def alpha(self):
-        """Randomization parameter.
+        """float: Randomization parameter.
 
         """
 
@@ -74,7 +64,7 @@ class FA(Optimizer):
 
     @property
     def beta(self):
-        """Attractiveness parameter.
+        """float: Attractiveness parameter.
 
         """
 
@@ -86,7 +76,7 @@ class FA(Optimizer):
 
     @property
     def gamma(self):
-        """Light absorption coefficient.
+        """float: Light absorption coefficient.
 
         """
 

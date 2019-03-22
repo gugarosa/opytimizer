@@ -18,27 +18,6 @@ class BA(Optimizer):
     References:
         X.-S. Yang. A new metaheuristic bat-inspired algorithm. Nature inspired cooperative strategies for optimization (2010).
 
-    Attributes:
-        f_min (float): Minimum frequency range.
-        f_max (float): Maximum frequency range.
-        A (float): Loudness parameter.
-        r (float): Social rate.
-        frequency (np.array): An array holding particles' frequencies.
-        velocity (np.array): An array holding particles' velocities.
-        loudness (np.array): An array holding particles' loudnesses.
-        pulse_rate (np.array): An array holding particles' pulse rates.
-
-    Methods:
-        _build(hyperparams): Serves as the object building process.
-        _update_frequency(min, max): Updates a single particle frequency (over a single variable).
-        _update_velocity(agent_position, best_position, frequency, current_velocity): Updates a single particle
-            velocity (over a single variable).
-        _update_position(agent_position, current_velocity): Updates a single particle
-            position (over a single variable).
-        _update(self, agents, best_agent, function, iteration, frequency,
-            velocity, loudness, pulse_rate): Updates the agents according to bat algorithm.
-        run(space, function): Runs the optimization pipeline.
-
     """
 
     def __init__(self, algorithm='BA', hyperparams=None):
@@ -87,7 +66,7 @@ class BA(Optimizer):
 
     @property
     def f_min(self):
-        """Minimum frequency range.
+        """float: Minimum frequency range.
 
         """
 
@@ -99,7 +78,7 @@ class BA(Optimizer):
 
     @property
     def f_max(self):
-        """Maximum frequency range.
+        """float: Maximum frequency range.
 
         """
 
@@ -111,7 +90,7 @@ class BA(Optimizer):
 
     @property
     def A(self):
-        """Loudness parameter.
+        """float: Loudness parameter.
 
         """
 
@@ -123,7 +102,7 @@ class BA(Optimizer):
 
     @property
     def r(self):
-        """Pulse rate.
+        """float: Pulse rate.
 
         """
 
@@ -135,7 +114,7 @@ class BA(Optimizer):
 
     @property
     def frequency(self):
-        """Particles' current frequencies.
+        """np.array: Particles' current frequencies.
 
         """
 
@@ -147,7 +126,7 @@ class BA(Optimizer):
 
     @property
     def velocity(self):
-        """Particles' current velocities.
+        """np.array: Particles' current velocities.
 
         """
 
@@ -159,7 +138,7 @@ class BA(Optimizer):
 
     @property
     def loudness(self):
-        """Particles' current loudnesses.
+        """np.array: Particles' current loudnesses.
 
         """
 
@@ -171,7 +150,7 @@ class BA(Optimizer):
 
     @property
     def pulse_rate(self):
-        """Particles' current pulse rates.
+        """np.array: Particles' current pulse rates.
 
         """
 
@@ -315,7 +294,8 @@ class BA(Optimizer):
             if p > pulse_rate[i]:
                 # Performing a local random walk (Equation 5)
                 # We apply 0.001 to limit the step size
-                agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
+                agent.position = best_agent.position + \
+                    0.001 * e * np.mean(loudness)
 
             # Evaluates agent
             agent.fit = function.pointer(agent.position)
