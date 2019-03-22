@@ -16,7 +16,12 @@ Opytimizer is compatible with: **Python 3.6** and **PyPy 3.5**.
     :maxdepth: 2
     :caption: Package Reference
 
+    api/opytimizer
     api/opytimizer.core
+    api/opytimizer.math
+    api/opytimizer.optimizers
+    api/opytimizer.spaces
+    api/opytimizer.utils
 
 Indices and tables
 ==================

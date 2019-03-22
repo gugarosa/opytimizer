@@ -9,15 +9,6 @@ class Opytimizer:
     """An Opytimizer class that will hold all the information needed
     in order to perform an optimization task.
 
-    Attributes:
-        space (Space): A Space's object.
-        optimizer (Optimizer): An Optimizer's object, where it can be a child (PSO, BA, etc).
-        function (Function): A Function's object, where it can be a child (External or Internal).
-
-    Methods:
-        _is_built(entity): Checks whether a miscellaneous entity is built or not.
-        start(): Starts the optimization task.
-
     """
 
     def __init__(self, space=None, optimizer=None, function=None):
@@ -52,7 +43,7 @@ class Opytimizer:
 
     @property
     def space(self):
-        """A Space's object.
+        """Space: A Space's object.
         """
 
         return self._space
@@ -63,7 +54,7 @@ class Opytimizer:
 
     @property
     def optimizer(self):
-        """An Optimizer's object, where it can be a child (PSO, BA, etc).
+        """Optimizer: An Optimizer's object, where it can be a child (PSO, BA, etc).
         """
 
         return self._optimizer
@@ -74,7 +65,7 @@ class Opytimizer:
 
     @property
     def function(self):
-        """A Function's object, where it can be a child (External or Internal).
+        """Function: A Function's object, where it can be a child (External or Internal).
         """
 
         return self._function

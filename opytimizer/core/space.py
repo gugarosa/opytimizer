@@ -10,26 +10,7 @@ logger = l.get_logger(__name__)
 
 class Space:
     """A Space class that will hold agents, variables and methods
-        related to the search space.
-
-    Attributes:
-        n_agents (int): Number of agents.
-        n_variables (int): Number of decision variables.
-        n_dimensions (int): Dimension of search space.
-        n_iterations (int): Number of iterations.
-        agents (list): List of agents that belongs to Space.
-        best_agent (Agent): A best agent object from Agent class.
-        lb (np.array): Lower bound array with the minimum possible values.
-        ub (np.array): Upper bound array with the maximum possible values.
-        built (boolean): A boolean to indicate whether the space is built.
-
-    Methods:
-        _check_bound_size(bound, size): Checks whether the bound's length
-            is equal to size parameter.
-        _create_agents(n_agents, n_variables, n_dimensions): Creates a list of agents.
-        _initialize_agents(agents, lower_bound, upper_bound): Initialize the Space's agents,
-            setting random numbers to their position.
-        _build(lower_bound, upper_bound): An object building method.
+    related to the search space.
 
     """
 
@@ -75,7 +56,7 @@ class Space:
 
     @property
     def n_agents(self):
-        """Number of agents.
+        """int: Number of agents.
 
         """
 
@@ -83,7 +64,7 @@ class Space:
 
     @property
     def n_variables(self):
-        """Number of decision variables.
+        """int: Number of decision variables.
 
         """
 
@@ -91,7 +72,7 @@ class Space:
 
     @property
     def n_dimensions(self):
-        """Dimension of search space.
+        """int: Dimension of search space.
 
         """
 
@@ -99,7 +80,7 @@ class Space:
 
     @property
     def n_iterations(self):
-        """Number of iterations.
+        """int: Number of iterations.
 
         """
 
@@ -107,7 +88,7 @@ class Space:
 
     @property
     def agents(self):
-        """List of agents that belongs to Space.
+        """list: List of agents that belongs to Space.
 
         """
 
@@ -119,7 +100,7 @@ class Space:
 
     @property
     def best_agent(self):
-        """A best agent object from Agent class.
+        """Agent: A best agent object from Agent class.
 
         """
 
@@ -131,7 +112,7 @@ class Space:
 
     @property
     def lb(self):
-        """Lower bound array with the minimum possible values.
+        """np.array: Lower bound array with the minimum possible values.
 
         """
 
@@ -143,7 +124,7 @@ class Space:
 
     @property
     def ub(self):
-        """Upper bound array with the maximum possible values.
+        """np.array: Upper bound array with the maximum possible values.
 
         """
 
@@ -155,7 +136,7 @@ class Space:
 
     @property
     def built(self):
-        """A boolean to indicate whether the space is built.
+        """bool: A boolean to indicate whether the space is built.
 
         """
 
@@ -167,7 +148,7 @@ class Space:
 
     def _check_bound_size(self, bound, size):
         """Checks if the bounds' size are the same of
-            variables size.
+        variables size.
 
         Args:
             bound(np.array): bounds array.
@@ -229,6 +210,9 @@ class Space:
             agents (list): List of agents.
             lower_bound (np.array): Lower bound array with the minimum possible values.
             upper_bound (np.array): Upper bound array with the maximum possible values.
+
+        Raises:
+            NotImplementedError
 
         """
 

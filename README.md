@@ -14,7 +14,7 @@ Use Opytimizer if you need a library or wish to:
 * Mix-and-match different strategies to solve your problem.
 * Because it is fun to optimize things.
 
-Read the docs at [opytimizer.recogna.tech](opytimizer.recogna.tech).
+Read the docs at [opytimizer.readthedocs.io](opytimizer.readthedocs.io).
 
 Opytimizer is compatible with: **Python 3.6** and **PyPy 3.5**.
 
@@ -65,57 +65,23 @@ Opytimizer is based on the following structure, and you should pay attention to 
 
 ### Core
 
-Core is the core. Essentially, it is the parent of everything. You should find parent classes defining the basic of our structure. They should provide variables and methods that will help to construct other modules. It is composed by the following submodules:
-
-```agent```: Submodule responsible for handling Agent's class. This can be referred as the particle, the individual or any single instance that corresponds to the basis of an optimization task.
-
-```function```: When working with optimization, we need to evaluate our task into something. Function is the module ready-to-go to evaluate internal or external libraries functions.
-
-```optimizer```: The outlier of optimization techniques. This serves as a foundation for creating more specific optimizers.
-
-```space```: The space can be understood as the agents' house. In other words, is the entity responsible for holding agents, bounds and iterations to perform the optimization task.
+Core is the core. Essentially, it is the parent of everything. You should find parent classes defining the basic of our structure. They should provide variables and methods that will help to construct other modules.
 
 ### Math
 
 Just because we are computing stuff, it does not means that we do not need math. Math is the mathematical package, containing low level math implementations. From random numbers to distributions generation, you can find your needs on this module.
 
-```distribution```: Package used to handle distributions generation.
-
-```hypercomplex```: Package used to handle hypercomplex numbers operations.
-
-```random```: Package used to handle random numbers generation.
-
 ### Optimizers
 
 This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a broad number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Investigate over any module for more information.
-
-```aiwpso```: Adaptive Inertia Weight Particle Swarm Optimization.
-
-```ba```: Bat Algorithm.
-
-```cs```: Cuckoo Search.
-
-```fa```: Firefly Algorithm.
-
-```fpa```: Flower Pollination Algorithm.
-
-```pso```: Particle Swarm Optimization.
 
 ### Spaces
 
 One can see the space as the place that agents will update their positions and evaluate a fitness function. However, newest approaches may consider a different type of space. Thinking on that, we are glad to support diverse space implementations.
 
-```hyper```: An hypercomplex space. It's the ideal space when dealing with complex, quaternions or octonions numbers.
-
-```search```: A classic search space. The traditional way we have been optimizing things over the last years.
-
 ### Utils
 
 This is an utilities package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
-
-```history```: A history class in order to save Opytimizer outputs. It servers as an interesting object for futher analysis of your experiment.
-
-```logging```: Logging tools to track the progress of the optimization task.
 
 ---
 

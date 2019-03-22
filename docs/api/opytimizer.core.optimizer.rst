@@ -1,7 +1,7 @@
-opytimizer.core.agent
+opytimizer.core.optimizer
 ==========================
 
-.. automodule:: opytimizer.core.agent
+.. automodule:: opytimizer.core.optimizer
     :members:
     :private-members:
     :special-members:

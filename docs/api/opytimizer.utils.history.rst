@@ -1,7 +1,7 @@
-opytimizer.core.agent
+opytimizer.utils.history
 ==========================
 
-.. automodule:: opytimizer.core.agent
+.. automodule:: opytimizer.utils.history
     :members:
     :private-members:
     :special-members:

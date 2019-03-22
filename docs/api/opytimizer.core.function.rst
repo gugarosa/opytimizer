@@ -1,7 +1,7 @@
-opytimizer.core.agent
+opytimizer.core.function
 ==========================
 
-.. automodule:: opytimizer.core.agent
+.. automodule:: opytimizer.core.function
     :members:
     :private-members:
     :special-members:

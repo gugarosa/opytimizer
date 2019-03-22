@@ -1,7 +1,7 @@
-opytimizer.core.agent
+opytimizer.utils.logging
 ==========================
 
-.. automodule:: opytimizer.core.agent
+.. automodule:: opytimizer.utils.logging
     :members:
     :private-members:
     :special-members:
