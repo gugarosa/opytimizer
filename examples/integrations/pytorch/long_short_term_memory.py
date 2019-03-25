@@ -33,8 +33,6 @@ X_train = torch.from_numpy(X_train).float()
 X_val = torch.from_numpy(X_val).float()
 Y_train = torch.from_numpy(Y_train).long()
 
-print(X_train.shape)
-
 
 class LSTM(torch.nn.Module):
     def __init__(self, n_features, n_hidden, n_classes):
