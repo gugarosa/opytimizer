@@ -10,9 +10,7 @@ setup(name='opytimizer',
       install_requires=['coverage>=4.5.2',
                         'numpy>=1.13.3',
                         'pylint>=1.7.4',
-                        'pytest>=3.2.3',
-                        'sphinx>=1.8.5',
-                        'sphinx-rtd-theme>=0.4.3'
+                        'pytest>=3.2.3'
                        ],
       extras_require={
           'tests': ['coverage',
