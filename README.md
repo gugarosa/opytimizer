@@ -44,6 +44,8 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - function
         - optimizer
         - space
+    - functions
+        - multi
     - math
         - distribution
         - hypercomplex
@@ -66,6 +68,10 @@ Opytimizer is based on the following structure, and you should pay attention to 
 ### Core
 
 Core is the core. Essentially, it is the parent of everything. You should find parent classes defining the basic of our structure. They should provide variables and methods that will help to construct other modules.
+
+### Functions
+
+Instead of using raw and simple functions, why not try this module? Compose high-level abstract functions or even new function-based ideas in order to solve your problems. Note that for now, we will only support multi-objective function strategies.
 
 ### Math
 
