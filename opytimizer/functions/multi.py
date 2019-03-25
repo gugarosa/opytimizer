@@ -63,10 +63,6 @@ class Multi(Function):
 
         return self._method
 
-    @method.setter
-    def method(self, method):
-        self._method = method
-
     @property
     def pointer(self):
         """callable: A pointer to point to our actual multi objective function.
@@ -131,7 +127,7 @@ class Multi(Function):
             A list of Function's class instances.
 
         Raises:
-            RunTimeError
+            RuntimeError
 
         """
 
