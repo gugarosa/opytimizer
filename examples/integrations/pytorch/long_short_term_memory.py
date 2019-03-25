@@ -33,6 +33,8 @@ X_train = torch.from_numpy(X_train).float()
 X_val = torch.from_numpy(X_val).float()
 Y_train = torch.from_numpy(Y_train).long()
 
+print(X_train.shape)
+
 
 class LSTM(torch.nn.Module):
     def __init__(self, n_features, n_hidden, n_classes):
@@ -111,7 +113,7 @@ def long_sort_term_memory(opytimizer):
 
     # Input variables
     batch_size = 100
-    epochs = 50
+    epochs = 5
 
     # Gathering parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
@@ -130,7 +132,7 @@ def long_sort_term_memory(opytimizer):
         cost = 0.0
 
         # Calculating the number of batches
-        num_batches = len(X_train) // batch_size
+        num_batches = len(Y_train) // batch_size
 
         # For every batch
         for k in range(num_batches):
@@ -139,7 +141,7 @@ def long_sort_term_memory(opytimizer):
 
             # Cost will be the loss accumulated from model's fitting
             cost += fit(model, loss, opt,
-                        X_train[start:end], Y_train[start:end])
+                        X_train[:, start:end, :], Y_train[start:end])
 
     # Predicting samples from evaluating set
     preds = predict(model, X_val)
