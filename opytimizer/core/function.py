@@ -68,6 +68,9 @@ class Function:
             function (callable): This should be a pointer to a function
                 that will return the fitness value.
 
+        Raises:
+            RuntimeError
+
         """
 
         logger.debug('Running private method: build().')
