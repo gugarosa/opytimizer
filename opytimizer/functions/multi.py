@@ -13,12 +13,13 @@ class Multi(Function):
 
     """
 
-    def __init__(self, functions=None, method=None):
+    def __init__(self, functions=None, weights=None, method=None):
         """Initialization method.
 
         Args:
             functions (list): This should be a list of pointers to functions
                 that will return the fitness value.
+            weights (list): List of weights for weighted sum strategy.
             method (str): Multi-objective function strategy method
                 (non-preference, a priori, a posteriori, interactive).
 
@@ -28,6 +29,9 @@ class Multi(Function):
 
         # Creating a list to hold further Function's instances
         self._functions = []
+
+        # Creating weights (when used with 'weight_sum' strategy).
+        self._weights = weights
 
         # Creates an strategy method (non-preference, a priori, a posteriori, interactive)
         self._method = method
@@ -54,6 +58,14 @@ class Multi(Function):
     @functions.setter
     def functions(self, functions):
         self._functions = functions
+
+    @property
+    def weights(self):
+        """list: Weights (when used with 'weight_sum' strategy).
+
+        """
+
+        return self._weights
 
     @property
     def method(self):
@@ -161,11 +173,14 @@ class Multi(Function):
         """
 
         def pointer(x):
-            # Iterate through every function
-            for f in self.functions:
-                # Apply current state as function's state
-                x = f.pointer(x)
+            # Check strategy method
+            if method == 'weight_sum':
+                obj = 0
+                # Iterate through every function
+                for (f, w) in zip(self.functions, self.weights):
+                    # Apply w * f(x)
+                    obj += w * f.pointer(x)
 
-            return x
+                return obj
 
         return pointer
