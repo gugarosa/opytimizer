@@ -16,13 +16,13 @@ def test_multi():
     try:
         new_multi = multi.Multi()
     except:
-        new_multi = multi.Multi(functions=[square, cube], method='combine')
+        new_multi = multi.Multi(functions=[square, cube], weights=[0.5, 0.5], method='weight_sum')
 
 
     assert new_multi.functions[0].pointer(2) == 4
 
     assert new_multi.functions[1].pointer(2) == 8
 
-    assert new_multi.method == 'combine'
+    assert new_multi.method == 'weight_sum'
 
-    assert new_multi.pointer(2) == 64
+    assert new_multi.pointer(2) == 6
