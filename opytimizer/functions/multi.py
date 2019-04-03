@@ -21,7 +21,7 @@ class Multi(Function):
                 that will return the fitness value.
             weights (list): List of weights for weighted sum strategy.
             method (str): Multi-objective function strategy method
-                (non-preference, a priori, a posteriori, interactive).
+                (weight_sum, ).
 
         """
 
@@ -33,7 +33,7 @@ class Multi(Function):
         # Creating weights (when used with 'weight_sum' strategy).
         self._weights = weights
 
-        # Creates an strategy method (non-preference, a priori, a posteriori, interactive)
+        # Creates an strategy method (weight_sum, )
         self._method = method
 
         # We will also need a pointer to behold our multi-objective strategy
@@ -69,7 +69,7 @@ class Multi(Function):
 
     @property
     def method(self):
-        """str: Strategy method (non-preference, a priori, a posteriori, interactive).
+        """str: Strategy method (weight_sum, ).
 
         """
 
@@ -165,7 +165,7 @@ class Multi(Function):
         """Creates a multi-objective method strategy as the real pointer.
 
         Args:
-            method (str): A string indicating what strategy method should be used
+            method (str): A string indicating what strategy method should be used.
 
         Returns:
             A callable based on defined strategy.
@@ -175,12 +175,14 @@ class Multi(Function):
         def pointer(x):
             # Check strategy method
             if method == 'weight_sum':
-                obj = 0
+                # Defining value to hold strategy
+                z = 0
+
                 # Iterate through every function
                 for (f, w) in zip(self.functions, self.weights):
                     # Apply w * f(x)
-                    obj += w * f.pointer(x)
+                    z += w * f.pointer(x)
 
-                return obj
+                return z
 
         return pointer
