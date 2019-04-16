@@ -9,18 +9,18 @@ def sphere(x):
     # Declaring Sphere's function
     y = x ** 2
 
-    return np.sum(y)
+    return -np.sum(y)
 
 
 def cube(x):
     # Declaring Cube's function
     y = x ** 3
 
-    return np.sum(y)
+    return -np.sum(y)
 
 
 # Defining task's main function
-z = Multi(functions=[sphere, cube], weights=[0.5, 0.005], method='weight_sum')
+z = Multi(functions=[sphere, cube], weights=[0.005, 0.5], method='weight_sum')
 
 # Number of agents
 n_agents = 20

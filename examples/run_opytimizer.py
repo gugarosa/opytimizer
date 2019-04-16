@@ -1,7 +1,7 @@
 import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.fa import FA
+from opytimizer.optimizers.bha import BHA
 from opytimizer.spaces.search import SearchSpace
 
 
@@ -22,7 +22,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 1000
+n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -41,7 +41,7 @@ hyperparams = {
 }
 
 # Creating FA's optimizer
-p = FA(hyperparams=hyperparams)
+p = BHA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
