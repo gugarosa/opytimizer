@@ -20,7 +20,7 @@ class Agent:
 
         """
 
-        logger.info('Creating class: Agent.')
+        logger.debug('Creating class: Agent.')
 
         # Initially, an Agent needs its number of variables and dimensions
         self._n_variables = n_variables
@@ -36,7 +36,7 @@ class Agent:
         logger.debug(
             f'Size: ({self._n_variables}, {self._n_dimensions}) | Fitness: {self._fit}.')
 
-        logger.info('Class created.')
+        logger.debug('Class created.')
 
     @property
     def n_variables(self):

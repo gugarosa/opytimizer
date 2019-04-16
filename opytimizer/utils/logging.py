@@ -52,7 +52,7 @@ def get_logger(logger_name):
     logger = logging.getLogger(logger_name)
 
     # Sets an log level
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     # Adds the desired handlers
     logger.addHandler(get_console_handler())
