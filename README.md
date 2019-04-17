@@ -47,10 +47,12 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - functions
         - multi
     - math
+        - benchmark
         - distribution
         - hypercomplex
         - random
     - optimizers
+        - abc
         - aiwpso
         - ba
         - bha
