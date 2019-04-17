@@ -58,6 +58,8 @@ class HyperSpace(Space):
                 # For each decision variable, we generate uniform random numbers
                 agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
 
+        logger.debug('Agents initialized.')
+
     def check_bound_limits(self, agents, lower_bound, upper_bound):
         """Checks bounds limits of all agents and variables.
 

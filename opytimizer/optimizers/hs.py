@@ -43,7 +43,7 @@ class HS(Optimizer):
         self._PAR = 0.7
 
         # Bandwidth parameter
-        self._bw = 10
+        self._bw = 1
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -140,7 +140,7 @@ class HS(Optimizer):
         r1 = r.generate_uniform_random_number(0, 1)
 
         # Using harmony memory
-        if self.HMCR > r1:
+        if r1 < self.HMCR:
             # Gathers a random harmony
             index = int(r.generate_uniform_random_number(0, len(agents)))
 
@@ -151,7 +151,7 @@ class HS(Optimizer):
             r2 = r.generate_uniform_random_number(0, 1)
 
             # Checks if it needs a pitch adjusting
-            if self.PAR > r2:
+            if r2 < self.PAR:
                 # Generates a final random number
                 r3 = r.generate_uniform_random_number(-1, 1)
 
@@ -168,34 +168,31 @@ class HS(Optimizer):
 
         return a
 
-    def _update(self, agents, best_agent, lower_bound, upper_bound, function):
+    def _update(self, agents, lower_bound, upper_bound, function):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             lower_bound (np.array): Array holding lower bounds.
             upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
 
         """
 
-        # Iterating through every agent
-        for _ in range(0, len(agents)):
-            # Sorting agents
-            agents.sort(key = lambda x: x.fit, reverse=True)
+        # Sorting agents
+        agents.sort(key = lambda x: x.fit, reverse=True)
 
-            # Generates a new harmony
-            agent = self._generate_new_harmony(agents, lower_bound, upper_bound)
+        # Generates a new harmony
+        agent = self._generate_new_harmony(agents, lower_bound, upper_bound)
 
-            # Calculates the new harmony fitness
-            agent.fit = function.pointer(agent.position)
+        # Calculates the new harmony fitness
+        agent.fit = function.pointer(agent.position)
 
-            # If newly generated agent fitness is better
-            if agent.fit < agents[-1].fit:
-                # Updates the corresponding agent's position and fitness
-                agents[-1].position = copy.deepcopy(agent.position)
-                agents[-1].fit = copy.deepcopy(agent.fit)
+        # If newly generated agent fitness is better
+        if agent.fit < agents[-1].fit:
+            # Updates the corresponding agent's position and fitness
+            agents[-1].position = copy.deepcopy(agent.position)
+            agents[-1].fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -220,7 +217,7 @@ class HS(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, space.lb, space.ub, function)
+            self._update(space.agents, space.lb, space.ub, function)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

@@ -20,8 +20,6 @@ class Agent:
 
         """
 
-        logger.debug('Creating class: Agent.')
-
         # Initially, an Agent needs its number of variables and dimensions
         self._n_variables = n_variables
         self._n_dimensions = n_dimensions
@@ -31,12 +29,6 @@ class Agent:
 
         # Fitness value is initialized with float's largest number
         self._fit = sys.float_info.max
-
-        # We will log some important information
-        logger.debug(
-            f'Size: ({self._n_variables}, {self._n_dimensions}) | Fitness: {self._fit}.')
-
-        logger.debug('Class created.')
 
     @property
     def n_variables(self):
