@@ -58,6 +58,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - fa
         - fpa
         - hs
+        - ihs
         - pso
     - spaces
         - hyper
