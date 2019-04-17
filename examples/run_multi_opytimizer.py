@@ -1,26 +1,9 @@
 import numpy as np
+import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
 from opytimizer.functions.multi import Multi
 from opytimizer.optimizers.fa import FA
 from opytimizer.spaces.search import SearchSpace
-
-
-def sphere(x):
-    # Declaring Sphere's function
-    y = x ** 2
-
-    return -np.sum(y)
-
-
-def cube(x):
-    # Declaring Cube's function
-    y = x ** 3
-
-    return -np.sum(y)
-
-
-# Defining task's main function
-z = Multi(functions=[sphere, cube], weights=[0.005, 0.5], method='weight_sum')
 
 # Number of agents
 n_agents = 20
@@ -49,6 +32,10 @@ hyperparams = {
 
 # Creating FA's optimizer
 p = FA(hyperparams=hyperparams)
+
+# Defining task's main function
+z = Multi(functions=[b.sphere, b.exponential],
+          weights=[0.5, 0.5], method='weight_sum')
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=z)

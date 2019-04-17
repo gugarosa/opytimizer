@@ -1,19 +1,9 @@
 import numpy as np
+import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.abc import ABC
+from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-
-
-def sphere(x):
-    # Declaring Sphere's function
-    y = x ** 2
-
-    return np.sum(y)
-
-
-# Creating Function's object
-f = Function(pointer=sphere)
 
 # Number of agents
 n_agents = 20
@@ -41,7 +31,10 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = ABC(hyperparams=hyperparams)
+p = PSO(hyperparams=hyperparams)
+
+# Creating Function's object
+f = Function(pointer=b.sphere)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
