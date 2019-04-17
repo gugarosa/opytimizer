@@ -180,7 +180,7 @@ class HS(Optimizer):
         """
 
         # Sorting agents
-        agents.sort(key = lambda x: x.fit, reverse=True)
+        agents.sort(key = lambda x: x.fit)
 
         # Generates a new harmony
         agent = self._generate_new_harmony(agents, lower_bound, upper_bound)
