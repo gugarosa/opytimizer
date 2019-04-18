@@ -120,11 +120,11 @@ class HS(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: HMCR = {self.HMCR}, PAR = {self.PAR}, bw = {self.bw} | Built: {self.built}.')
 
-    def _generate_new_harmony(self, agents, lower_bound, upper_bound):
+    def _generate_new_harmony(self, agent, lower_bound, upper_bound):
         """It generates a new harmony.
 
         Args:
-            agents (list): List of agents.
+            agent (Agent): An agent class instance.
             lower_bound (np.array): Array holding lower bounds.
             upper_bound (np.array): Array holding upper bounds.
 
@@ -133,20 +133,14 @@ class HS(Optimizer):
 
         """
 
-        # Creates a new empty agent
-        a = Agent(agents[0].n_variables, agents[0].n_dimensions)
+        # Mimics its position
+        a = copy.deepcopy(agent)
 
-        # Generates a uniform random number
+        # Generates an uniform random number
         r1 = r.generate_uniform_random_number(0, 1)
 
         # Using harmony memory
         if r1 < self.HMCR:
-            # Gathers a random harmony
-            index = int(r.generate_uniform_random_number(0, len(agents)))
-
-            # Mimics its position
-            a.position = copy.deepcopy(agents[index].position)
-
             # Generates a new uniform random number
             r2 = r.generate_uniform_random_number(0, 1)
 
@@ -164,7 +158,7 @@ class HS(Optimizer):
                 for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
                     # For each decision variable, we generate uniform random numbers
                     a.position[j] = r.generate_uniform_random_number(
-                        lb, ub, size=a.n_dimensions)
+                        lb, ub, size=agent.n_dimensions)
 
         return a
 
@@ -179,22 +173,22 @@ class HS(Optimizer):
 
         """
 
-        # Sorting agents
-        agents.sort(key = lambda x: x.fit)
+        # Calculates a random index
+        i = int(r.generate_uniform_random_number(0, len(agents)))
 
         # Generates a new harmony
-        agent = self._generate_new_harmony(agents, lower_bound, upper_bound)
+        agent = self._generate_new_harmony(agents[i], lower_bound, upper_bound)
 
         # Calculates the new harmony fitness
         agent.fit = function.pointer(agent.position)
 
+        # Sorting agents
+        agents.sort(key = lambda x: x.fit)
+
         # If newly generated agent fitness is better
         if agent.fit < agents[-1].fit:
-            # Updates the corresponding agent's position
-            agents[-1].position = copy.deepcopy(agent.position)
-
-            # And also, its fitness
-            agents[-1].fit = copy.deepcopy(agent.fit)
+            # Updates the corresponding agent's object
+            agents[-1] = copy.deepcopy(agent)
 
     def run(self, space, function):
         """Runs the optimization pipeline.

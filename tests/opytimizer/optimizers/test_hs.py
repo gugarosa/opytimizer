@@ -50,7 +50,7 @@ def test_hs_generate_new_harmony():
                                       upper_bound=[10, 10])
 
     agent = new_hs._generate_new_harmony(
-        search_space.agents, search_space.lb, search_space.ub)
+        search_space.agents[0], search_space.lb, search_space.ub)
 
     assert agent.fit > 0
 
