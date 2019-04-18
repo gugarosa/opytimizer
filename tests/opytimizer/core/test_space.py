@@ -1,5 +1,6 @@
 import pytest
-from opytimizer.core import space
+import numpy as np
+from opytimizer.core import agent, space
 
 
 def test_space_n_agents():
@@ -32,10 +33,26 @@ def test_space_agents():
     assert new_space.agents == None
 
 
+def test_space_agents_setter():
+    new_space = space.Space()
+
+    new_space.agents = []
+
+    assert new_space.agents == []
+
+
 def test_space_best_agent():
     new_space = space.Space()
 
     assert new_space.best_agent == None
+
+
+def test_space_best_agent_setter():
+    new_space = space.Space()
+
+    new_space.best_agent = agent.Agent()
+
+    assert type(new_space.best_agent).__name__ == 'Agent'
 
 
 def test_space_lb():
@@ -44,10 +61,26 @@ def test_space_lb():
     assert new_space.lb.shape == (10, )
 
 
+def test_space_lb_setter():
+    new_space = space.Space(n_variables=2)
+
+    new_space.lb = np.array([0, 1])
+
+    assert new_space.lb.shape == (2, )
+
+
 def test_space_ub():
     new_space = space.Space(n_variables=10)
 
     assert new_space.ub.shape == (10, )
+
+
+def test_space_ub_setter():
+    new_space = space.Space(n_variables=2)
+
+    new_space.ub = np.array([0, 1])
+
+    assert new_space.ub.shape == (2, )
 
 
 def test_space_check_bound_size():
@@ -76,16 +109,9 @@ def test_space_create_agents():
 def test_space_initialize_agents():
     new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
 
-    lb = [0, 0]
-
-    ub = [10, 10]
-
-    try:
-        new_space._initialize_agents(new_space.agents, lb, ub)
-    except:
-        boolean = True
-
-    assert boolean == True
+    with pytest.raises(NotImplementedError):
+        new_space._initialize_agents(
+            new_space.agents, new_space.lb, new_space.ub)
 
 
 def test_space_build():
