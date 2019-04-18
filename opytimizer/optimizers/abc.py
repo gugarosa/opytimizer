@@ -16,6 +16,7 @@ class ABC(Optimizer):
     variables and methods.
 
     References:
+        D. Karaboga and B. Basturk. A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm. Journal of Global Optimization (2007). 
 
     """
 
@@ -39,9 +40,6 @@ class ABC(Optimizer):
 
         # Food sources' trials
         self._trials = None
-
-        # Food sources' probabilites
-        self._probs = None
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -71,18 +69,6 @@ class ABC(Optimizer):
     @trials.setter
     def trials(self, trials):
         self._trials = trials
-
-    @property
-    def probs(self):
-        """np.array: Particles' probabilites.
-
-        """
-
-        return self._probs
-
-    @probs.setter
-    def probs(self, probs):
-        self._probs = probs
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
@@ -114,14 +100,17 @@ class ABC(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: n_trials = {self.n_trials}.')
 
-    def _measure_location(self, agent, neighbour, function, trial):
-        """Measures a food source location and update its value if possible.
+    def _evaluate_location(self, agent, neighbour, function, trial):
+        """Evaluates a food source location and update its value if possible.
 
         Args:
             agent (Agent): An agent.
             neighbour (Agent): A neightbour agent.
             function (Function): A function object.
             trial (int): A trial counter.
+
+        Returns:
+            The number of trials for the current food source.
 
         """
 
@@ -132,7 +121,8 @@ class ABC(Optimizer):
         a = copy.deepcopy(agent)
 
         # Change its location according to equation 2.2
-        a.position = agent.position + (agent.position - neighbour.position) * r1
+        a.position = agent.position + \
+            (agent.position - neighbour.position) * r1
 
         # Evaluating its fitness
         a.fit = function.pointer(a.position)
@@ -153,8 +143,10 @@ class ABC(Optimizer):
             # We increse the trials counter
             trial += 1
 
+        return trial
+
     def _send_employee(self, agents, function, trials):
-        """Sends employee bees onto food source to measure its nectar.
+        """Sends employee bees onto food source to evaluate its nectar.
 
         Args:
             agents (list): List of agents.
@@ -165,80 +157,91 @@ class ABC(Optimizer):
 
         # Iterate through all food sources
         for i, agent in enumerate(agents):
-            # Gathering a random bee to be used
-            bee = int(r.generate_uniform_random_number(0, len(agents)))
+            # Gathering a random source to be used
+            source = int(r.generate_uniform_random_number(0, len(agents)))
 
             # Measuring food source location
-            self._measure_location(agent, agents[bee], function, trials[i])
+            trials[i] = self._evaluate_location(
+                agent, agents[source], function, trials[i])
 
-    def _send_onlooker(self, agents, function, trials, probs):
+    def _send_onlooker(self, agents, function, trials):
         """Sends onlooker bees to select new food sources.
 
         Args:
             agents (list): List of agents.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
-            probs (np.array): Array of probabilites.
 
         """
 
-        # Zeroing the fitness somatory
-        sum_fit = 0
+        # Calculating the fitness somatory
+        total = sum(agent.fit for agent in agents)
 
-        # Iterating through agents
-        for agent in agents:
-            # Calculate the fitness sum
-            sum_fit += agent.fit
-
-        # Iterating through all agents
-        for i, agent in enumerate(agents):
-            # Calculating their probabilites according to equation 2.1
-            probs[i] = agent.fit / sum_fit
-
-
-        i = 0
+        # Defining food sources' counter
         k = 0
 
-        # 
+        # While counter is less than the amount of food sources
         while k < len(agents):
-            #
+            # We iterate through every agent
             for i, agent in enumerate(agents):
-                #
+                # Creates a random uniform number
                 r1 = r.generate_uniform_random_number(0, 1)
-                #
-                if r1 < probs[i]:
-                    #
+
+                # Calculates the food source's probability
+                probs = (agent.fit / (total + 1e-10)) + 0.1
+
+                # If the random number is smaller than food source's probability
+                if r1 < probs:
+                    # We need to increment the counter
                     k += 1
 
-                    # Gathering a random bee to be used
-                    bee = int(r.generate_uniform_random_number(0, len(agents)))
+                    # Gathers a random source to be used
+                    source = int(
+                        r.generate_uniform_random_number(0, len(agents)))
 
-                    #
-                    self._measure_location(agent, agents[bee], function, trials[i])
+                    # Evaluate its location
+                    trials[i] = self._evaluate_location(
+                        agent, agents[source], function, trials[i])
 
-
-
-
-
-    # def _send_scout(self, agents, function, trials):
-    #     """Sends scout bees to scout for new possible food sources.
-
-    #     Args:
-    #         agents (list): List of agents.
-    #         function (Function): A function object.
-    #         trials (np.array): Array of trials counter.
-
-    #     """
-
-    def _update(self, agents, best_agent, function, trials, probs):
-        """Method that wraps Bat Algorithm over all agents and variables.
+    def _send_scout(self, agents, function, trials):
+        """Sends scout bees to scout for new possible food sources.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
-            probs (np.array): Array of probabilites.
+
+        """
+
+        # Calculating the maximum trial counter value and index
+        max_trial, max_index = np.max(trials), np.argmax(trials)
+
+        # If maximum trial is bigger than number of possible trials
+        if max_trial > self.n_trials:
+            # Resets the trial counter
+            trials[max_index] = 0
+
+            # Copies the current agent
+            a = copy.deepcopy(agents[max_index])
+
+            # Updates its position with a random shakeness
+            a.position += r.generate_uniform_random_number(-1, 1)
+
+            # Recalculates its fitness
+            a.fit = function.pointer(a.position)
+
+            # If fitness is better
+            if a.fit < agents[max_index].fit:
+                # We copy the temporary agent to the current one
+                agents[max_index] = copy.deepcopy(a)
+
+    def _update(self, agents, function, trials):
+        """Method that wraps the update pipeline over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A function object.
+            trials (np.array): Array of trials counter.
 
         """
 
@@ -246,10 +249,10 @@ class ABC(Optimizer):
         self._send_employee(agents, function, trials)
 
         # Sending onlooker bees step
-        self._send_onlooker(agents, function, trials, probs)
+        self._send_onlooker(agents, function, trials)
 
         # Sending scout bees step
-        #self._send_scout()
+        self._send_scout(agents, function, trials)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -266,9 +269,6 @@ class ABC(Optimizer):
         # Instanciating array of trials counter
         self.trials = np.zeros(space.n_agents)
 
-        # Instanciating array of probabilites
-        self.probs = np.zeros(space.n_agents)
-        
         # Initial search space evaluation
         self._evaluate(space, function)
 
@@ -280,7 +280,7 @@ class ABC(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function, self.trials, self.probs)
+            self._update(space.agents, function, self.trials)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
