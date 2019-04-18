@@ -13,7 +13,7 @@ class Multi(Function):
 
     """
 
-    def __init__(self, functions=None, weights=None, method=None):
+    def __init__(self, functions=[], weights=[], method='weight_sum'):
         """Initialization method.
 
         Args:
@@ -28,19 +28,13 @@ class Multi(Function):
         logger.info('Overriding class: Function -> Multi.')
 
         # Creating a list to hold further Function's instances
-        self._functions = []
+        self._functions = functions
 
         # Creating weights (when used with 'weight_sum' strategy).
         self._weights = weights
 
         # Creates an strategy method (weight_sum, )
         self._method = method
-
-        # We will also need a pointer to behold our multi-objective strategy
-        self._pointer = None
-
-        # Indicates whether the current object is built or not
-        self._built = False
 
         # Now, we need to build this class up
         self._build(functions, method)
@@ -75,31 +69,6 @@ class Multi(Function):
 
         return self._method
 
-    @property
-    def pointer(self):
-        """callable: A pointer to point to our actual multi objective function.
-
-        Note that this will be the one used by Opytimizer's.
-
-        """
-
-        return self._pointer
-
-    @pointer.setter
-    def pointer(self, pointer):
-        self._pointer = pointer
-
-    @property
-    def built(self):
-        """bool: A boolean to indicate whether the multi function is built.
-
-        """
-
-        return self._built
-
-    @built.setter
-    def built(self, built):
-        self._built = built
 
     def _build(self, functions, method):
         """This method will serve as the object building process.
