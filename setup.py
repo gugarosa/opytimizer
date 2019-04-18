@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(name='opytimizer',
-      version='1.0.4',
+      version='1.0.5',
       description='Meta-Inspired Python Optimizer',
       author='Gustavo Rosa',
       author_email='gth.rosa@uol.com.br',
