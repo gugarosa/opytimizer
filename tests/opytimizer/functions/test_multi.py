@@ -52,7 +52,10 @@ def test_multi_create_functions():
 
     new_multi = multi.Multi()
 
-    new_multi.functions = new_multi._create_functions([square, cube])
+    try:
+        new_multi.functions = new_multi._create_functions('')
+    except:
+        new_multi.functions = new_multi._create_functions([square, cube])
 
     assert len(new_multi.functions) == 2
 
