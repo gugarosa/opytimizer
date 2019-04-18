@@ -2,7 +2,7 @@ import numpy as np
 import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.bha import BHA
+from opytimizer.optimizers.hs import HS
 from opytimizer.spaces.search import SearchSpace
 
 # Number of agents
@@ -31,7 +31,7 @@ hyperparams = {
 }
 
 # Creating HS's optimizer
-p = BHA(hyperparams=hyperparams)
+p = HS(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=b.sphere)

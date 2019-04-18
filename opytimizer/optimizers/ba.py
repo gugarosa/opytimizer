@@ -303,8 +303,7 @@ class BA(Optimizer):
             # Checks if probability is smaller than loudness and if fit is better
             if p < loudness[i] and agent.fit < best_agent.fit:
                 # Copying the new solution to space's best agent
-                best_agent.position = copy.deepcopy(agent.position)
-                best_agent.fit = copy.deepcopy(agent.fit)
+                best_agent = copy.deepcopy(agent)
 
                 # Increasing pulse rate (Equation 6)
                 pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
