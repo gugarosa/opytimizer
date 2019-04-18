@@ -155,10 +155,10 @@ class HS(Optimizer):
         # If harmony memory is not used
         else:
             # Generates a new random harmony
-                for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
-                    # For each decision variable, we generate uniform random numbers
-                    a.position[j] = r.generate_uniform_random_number(
-                        lb, ub, size=agent.n_dimensions)
+            for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+                # For each decision variable, we generate uniform random numbers
+                a.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=agent.n_dimensions)
 
         return a
 
