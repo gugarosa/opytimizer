@@ -169,7 +169,7 @@ class HS(Optimizer):
         return a
 
     def _update(self, agents, lower_bound, upper_bound, function):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Method that wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -190,8 +190,10 @@ class HS(Optimizer):
 
         # If newly generated agent fitness is better
         if agent.fit < agents[-1].fit:
-            # Updates the corresponding agent's position and fitness
+            # Updates the corresponding agent's position
             agents[-1].position = copy.deepcopy(agent.position)
+
+            # And also, its fitness
             agents[-1].fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function):

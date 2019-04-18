@@ -99,7 +99,7 @@ class BHA(Optimizer):
 
         return cost
 
-    def _event_horizon(self, agents, best_agent, lower_bound, upper_bound, function, cost):
+    def _event_horizon(self, agents, best_agent, lower_bound, upper_bound, cost):
         """It calculates the stars' crossing an event horizon.
 
         Args:
@@ -107,7 +107,6 @@ class BHA(Optimizer):
             best_agent (Agent): Global best agent.
             lower_bound (np.array): Array holding lower bounds.
             upper_bound (np.array): Array holding upper bounds.
-            function (Function): A function object.
             cost (float): The event's horizon cost.
 
         """
@@ -128,11 +127,8 @@ class BHA(Optimizer):
                     agent.position[j] = r.generate_uniform_random_number(
                         lb, ub, size=agent.n_dimensions)
 
-                # Calculates new fitness
-                agent.fit = function.pointer(agent.position)
-
     def _update(self, agents, best_agent, lower_bound, upper_bound, function):
-        """Method that wraps Black Hole Algorithm over all agents and variables.
+        """Method that wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -147,8 +143,7 @@ class BHA(Optimizer):
         cost = self._update_position(agents, best_agent, function)
 
         # Performs the Event Horizon (Equation 4)
-        self._event_horizon(agents, best_agent, lower_bound,
-                            upper_bound, function, cost)
+        self._event_horizon(agents, best_agent, lower_bound, upper_bound, cost)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
