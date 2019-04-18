@@ -30,11 +30,6 @@ def test_bha_update_position():
 
 
 def test_bha_event_horizon():
-    def square(x):
-        return np.sum(x**2)
-
-    new_function = function.Function(pointer=square)
-
     new_bha = bha.BHA()
 
     search_space = search.SearchSpace(n_agents=20, n_iterations=100,
@@ -42,7 +37,7 @@ def test_bha_event_horizon():
                                       upper_bound=[10, 10])
 
     new_bha._event_horizon(search_space.agents, search_space.best_agent,
-                           search_space.lb, search_space.ub, new_function, 10)
+                           search_space.lb, search_space.ub, 10)
 
     assert search_space.best_agent.fit != 0
 
