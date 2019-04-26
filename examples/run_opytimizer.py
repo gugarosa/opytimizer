@@ -1,7 +1,8 @@
 import numpy as np
-import opytimizer.math.benchmark as b
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
+from opytimizer.math import benchmark
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
@@ -12,7 +13,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 10000
+n_iterations = 10
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -34,7 +35,7 @@ hyperparams = {
 p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=b.sphere)
+f = Function(pointer=benchmark.sphere)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
@@ -43,4 +44,8 @@ o = Opytimizer(space=s, optimizer=p, function=f)
 history = o.start()
 
 # Now, there is a History object holding vital historical information from the optimization task
-# history.show()
+#history.show()
+
+history = history.load('out.pkl')
+
+print(history.best_agent)
