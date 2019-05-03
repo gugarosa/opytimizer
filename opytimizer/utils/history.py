@@ -83,7 +83,6 @@ class History:
 
             print(f'Best agent: {best[0]} | Fitness: {best[1]}')
 
-
     def save(self, file_name):
         """Saves the object to a pickle encoding.
 
@@ -101,15 +100,11 @@ class History:
         # Close the file
         f.close()
 
-
     def load(self, file_name):
         """Loads the object from a pickle encoding.
 
         Args:
             file_name (str): String containing pickle's file path.
-
-        Returns:
-            A History object loaded from a pickle file.
 
         """
 
@@ -117,6 +112,7 @@ class History:
         f = open(file_name, "rb")
 
         # Loads using pickle
-        self = pickle.load(f)
+        h = pickle.load(f)
 
-        return self
+        # Resetting current object state to loaded state
+        self.__dict__.update(h.__dict__)

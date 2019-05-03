@@ -41,7 +41,4 @@ z = Multi(functions=[b.sphere, b.exponential],
 o = Opytimizer(space=s, optimizer=p, function=z)
 
 # Running the optimization task
-history = o.start()
-
-# Now, there is a History object holding vital historical information from the optimization task
-# history.show()
+o.start(history=True)

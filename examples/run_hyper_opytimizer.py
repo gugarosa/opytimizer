@@ -55,7 +55,4 @@ p = PSO(hyperparams=hyperparams)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-history = o.start()
-
-# Now, there is a History object holding vital historical information from the optimization task
-# history.show()
+o.start(history=True)

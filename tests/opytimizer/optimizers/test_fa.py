@@ -56,4 +56,5 @@ def test_fa_run():
 
     history = new_fa.run(search_space, new_function)
 
-    assert len(history.history) > 0
+    assert len(history.agents) > 0
+    assert len(history.best_agent) > 0

@@ -191,7 +191,7 @@ class AIWPSO(PSO):
             self.w = self._compute_success(space.agents, self.fitness)
 
             # Every iteration, we need to dump the current space agents
-            history.dump(space.agents)
+            history.dump(space.agents, space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

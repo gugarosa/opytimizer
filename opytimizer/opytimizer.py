@@ -92,11 +92,12 @@ class Opytimizer:
             logger.error(e)
             raise RuntimeError(e)
 
-    def start(self):
+    def start(self, history=False):
         """Starts the optimization task.
 
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+        Args:
+            history (bool): A boolean to check whether optimization's history should
+                be saved or not.
 
         """
 
@@ -106,7 +107,7 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        history = self.optimizer.run(self.space, self.function)
+        h = self.optimizer.run(self.space, self.function)
 
         # Ending timer, still needs to get the diff % 60 for real seconds
         end = time.time()
@@ -114,4 +115,13 @@ class Opytimizer:
         logger.info('Optimization task ended.')
         logger.info(f'It took {(end - start) % 60} seconds.')
 
-        return history
+        # Checking if history object should be saved or not
+        if history:
+            # Composes the identifier string to save
+            file_name = f'models/{self.optimizer.algorithm}-i{self.space.n_iterations}-a{self.space.n_agents}' \
+                + f'-v{self.space.n_variables}-d{self.space.n_dimensions}-fit{h.best_agent[-1][1]:.4f}.pkl'
+
+            # Actually saves the history object
+            h.save(file_name)
+
+            logger.info(f'Model saved to: {file_name}.')
