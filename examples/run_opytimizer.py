@@ -41,11 +41,4 @@ f = Function(pointer=benchmark.sphere)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-history = o.start()
-
-# Now, there is a History object holding vital historical information from the optimization task
-#history.show()
-
-history = history.load('out.pkl')
-
-print(history.best_agent)
+o.start(history=True)

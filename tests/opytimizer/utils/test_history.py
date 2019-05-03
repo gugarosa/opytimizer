@@ -5,18 +5,31 @@ from opytimizer.core import agent
 from opytimizer.utils import history
 
 
-def test_history_history():
+def test_history_agents():
     new_history = history.History()
 
-    assert type(new_history.history) == list
+    assert type(new_history.agents) == list
 
 
-def test_history_history_setter():
+def test_history_agents_setter():
     new_history = history.History()
 
-    new_history.history = [1, 2, 3]
+    new_history.agents = [1, 2, 3]
 
-    assert len(new_history.history) > 0
+    assert len(new_history.agents) > 0
+
+def test_history_best_agent():
+    new_history = history.History()
+
+    assert type(new_history.best_agent) == list
+
+
+def test_history_best_agent_setter():
+    new_history = history.History()
+
+    new_history.best_agent = [1, 2, 3]
+
+    assert len(new_history.best_agent) > 0
 
 
 def test_history_dump():
@@ -26,9 +39,10 @@ def test_history_dump():
     for _ in range(5):
         agents.append(agent.Agent(n_variables=2, n_dimensions=1))
 
-    new_history.dump(agents)
+    new_history.dump(agents, agents[0])
 
-    assert len(new_history.history) > 0
+    assert len(new_history.agents) > 0
+    assert len(new_history.best_agent) > 0
 
 
 def test_history_show():
@@ -38,7 +52,7 @@ def test_history_show():
     for _ in range(5):
         agents.append(agent.Agent(n_variables=2, n_dimensions=1))
 
-    new_history.dump(agents)
+    new_history.dump(agents, agents[0])
 
     new_history.show()
 
@@ -52,16 +66,16 @@ def test_history_save():
     for _ in range(5):
         agents.append(agent.Agent(n_variables=2, n_dimensions=1))
 
-    new_history.dump(agents)
+    new_history.dump(agents, agents[0])
 
-    new_history.save('history_test.pkl')
+    new_history.save('models/test.pkl')
 
-    assert os.path.isfile('./history_test.pkl')
+    assert os.path.isfile('./models/test.pkl')
 
 
 def test_history_load():
     new_history = history.History()
 
-    new_history.load('history_test.pkl')
+    new_history.load('models/test.pkl')
 
-    assert len(new_history.history) > 0
+    assert len(new_history.agents) > 0
