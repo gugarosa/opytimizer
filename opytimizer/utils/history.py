@@ -70,7 +70,7 @@ class History:
     def show(self):
         """Prints in a formatted way the history of agents' and best agent's 
         position and fitness.
-        
+
         """
 
         # For every iteration

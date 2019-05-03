@@ -74,6 +74,7 @@ def test_fpa_update():
 
     assert search_space.agents[0].position[0] != 0
 
+
 def test_fpa_run():
     def square(x):
         return np.sum(x**2)

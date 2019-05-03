@@ -14,7 +14,7 @@ class IHS(HS):
 
     References:
         M. Mahdavi, M. Fesanghary, and E. Damangir. An improved harmony search algorithm for solving optimization problems. Applied Mathematics and Computation (2007). 
-        
+
     """
 
     def __init__(self, algorithm='IHS', hyperparams=None):
