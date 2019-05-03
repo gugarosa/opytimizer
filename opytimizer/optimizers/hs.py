@@ -183,7 +183,7 @@ class HS(Optimizer):
         agent.fit = function.pointer(agent.position)
 
         # Sorting agents
-        agents.sort(key = lambda x: x.fit)
+        agents.sort(key=lambda x: x.fit)
 
         # If newly generated agent fitness is better
         if agent.fit < agents[-1].fit:

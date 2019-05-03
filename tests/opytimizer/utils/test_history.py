@@ -18,6 +18,7 @@ def test_history_agents_setter():
 
     assert len(new_history.agents) > 0
 
+
 def test_history_best_agent():
     new_history = history.History()
 
