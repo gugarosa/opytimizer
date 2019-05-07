@@ -1,6 +1,7 @@
 import sys
 
 import numpy as np
+
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -20,8 +21,10 @@ class Agent:
 
         """
 
-        # Initially, an Agent needs its number of variables and dimensions
+        # Initially, an Agent needs its number of variables
         self._n_variables = n_variables
+
+        # And also, its number of dimensions
         self._n_dimensions = n_dimensions
 
         # Create the position vector based on number of variables and dimensions

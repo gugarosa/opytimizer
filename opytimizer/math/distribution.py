@@ -1,6 +1,7 @@
 from math import gamma, pi, sin
 
 import numpy as np
+
 import opytimizer.math.random as r
 
 

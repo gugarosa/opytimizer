@@ -69,7 +69,6 @@ class Multi(Function):
 
         return self._method
 
-
     def _build(self, functions, method):
         """This method will serve as the object building process.
         
