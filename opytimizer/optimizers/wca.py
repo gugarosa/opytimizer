@@ -36,7 +36,7 @@ class WCA(Optimizer):
         super(WCA, self).__init__(algorithm=algorithm)
 
         # Number of rivers + sea 
-        self._nsr = 0
+        self._nsr = 2
 
         # Maximum evaporation condition
         self._d_max = 0.1
@@ -102,62 +102,12 @@ class WCA(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: nsr = {self.nsr}, d_max = {self.d_max} | Built: {self.built}.')
 
-    def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
-        """Method that wraps Bat Algorithm over all agents and variables.
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
-            iteration (int): Current iteration number.
-            frequency (np.array): Array of frequencies.
-            velocity (np.array): Array of current velocities.
-            loudness (np.array): Array of loudnesses.
-            pulse_rate (np.array): Array of pulse rates.
-
+    def _flow_intensity(self):
+        """
         """
 
-        # Declaring alpha constant
-        alpha = 0.9
+        #
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
-            # Updating frequency
-            frequency[i] = self._update_frequency(self.f_min, self.f_max)
-
-            # Updating velocity
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, frequency[i], velocity[i])
-
-            # Updating agent's position
-            agent.position = self._update_position(agent.position, velocity[i])
-
-            # Generating a random probability
-            p = r.generate_uniform_random_number()
-
-            # Generating a random number
-            e = r.generate_gaussian_random_number()
-
-            # Check if probability is bigger than current pulse rate
-            if p > pulse_rate[i]:
-                # Performing a local random walk (Equation 5)
-                # We apply 0.001 to limit the step size
-                agent.position = best_agent.position + \
-                    0.001 * e * np.mean(loudness)
-
-            # Evaluates agent
-            agent.fit = function.pointer(agent.position)
-
-            # Checks if probability is smaller than loudness and if fit is better
-            if p < loudness[i] and agent.fit < best_agent.fit:
-                # Copying the new solution to space's best agent
-                best_agent = copy.deepcopy(agent)
-
-                # Increasing pulse rate (Equation 6)
-                pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
-
-                # Decreasing loudness (Equation 6)
-                loudness[i] = self.A * alpha
 
     def run(self, space, function):
         """Runs the optimization pipeline.
