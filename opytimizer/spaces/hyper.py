@@ -1,4 +1,5 @@
 import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
@@ -56,7 +57,8 @@ class HyperSpace(Space):
             # Iterate through all decision variables
             for j, _ in enumerate(agent.position):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
+                agent.position[j] = r.generate_uniform_random_number(
+                    size=agent.n_dimensions)
 
         logger.debug('Agents initialized.')
 
