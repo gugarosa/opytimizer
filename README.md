@@ -26,6 +26,7 @@ Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
 2. **Installing** is also easy, if you wish to read the code and bump yourself into, just follow along.
 3. Note that there might be some **additional** steps in order to use our solutions.
 4. If there is a problem, please do not **hesitate**, call us.
+5. Finally, we focus on **minimization**. Take that in mind when designing your problem.
 
 ---
 
