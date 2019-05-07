@@ -1,7 +1,6 @@
 import copy
 
 import numpy as np
-
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -10,18 +9,18 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class BA(Optimizer):
-    """A BA class, inherited from Optimizer.
+class WCA(Optimizer):
+    """A WCA class, inherited from Optimizer.
 
-    This will be the designed class to define BA-related
+    This will be the designed class to define WCA-related
     variables and methods.
 
     References:
-        X.-S. Yang. A new metaheuristic bat-inspired algorithm. Nature inspired cooperative strategies for optimization (2010).
+        
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams=None):
+    def __init__(self, algorithm='WCA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -31,22 +30,16 @@ class BA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BA.')
+        logger.info('Overriding class: Optimizer -> WCA.')
 
         # Override its parent class with the receiving hyperparams
-        super(BA, self).__init__(algorithm=algorithm)
+        super(WCA, self).__init__(algorithm=algorithm)
 
-        # Minimum frequency range
-        self._f_min = 0
+        # Number of rivers + sea 
+        self._nsr = 0
 
-        # Maximum frequency range
-        self._f_max = 2
-
-        # Loudness parameter
-        self._A = 0.5
-
-        # Pulse rate
-        self._r = 0.5
+        # Maximum evaporation condition
+        self._d_max = 0.1
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -54,52 +47,28 @@ class BA(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def f_min(self):
-        """float: Minimum frequency range.
+    def nsr(self):
+        """float: Number of rivers summed with a single sea.
 
         """
 
-        return self._f_min
+        return self._nsr
 
-    @f_min.setter
-    def f_min(self, f_min):
-        self._f_min = f_min
+    @nsr.setter
+    def nsr(self, nsr):
+        self._nsr = nsr
 
     @property
-    def f_max(self):
-        """float: Maximum frequency range.
+    def d_max(self):
+        """float: Maximum evaporation condition.
 
         """
 
-        return self._f_max
+        return self._d_max
 
-    @f_max.setter
-    def f_max(self, f_max):
-        self._f_max = f_max
-
-    @property
-    def A(self):
-        """float: Loudness parameter.
-
-        """
-
-        return self._A
-
-    @A.setter
-    def A(self, A):
-        self._A = A
-
-    @property
-    def r(self):
-        """float: Pulse rate.
-
-        """
-
-        return self._r
-
-    @r.setter
-    def r(self, r):
-        self._r = r
+    @d_max.setter
+    def d_max(self, d_max):
+        self._d_max = d_max
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
@@ -121,79 +90,17 @@ class BA(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'f_min' in hyperparams:
-                self.f_min = hyperparams['f_min']
-            if 'f_max' in hyperparams:
-                self.f_max = hyperparams['f_max']
-            if 'A' in hyperparams:
-                self.A = hyperparams['A']
-            if 'r' in hyperparams:
-                self.r = hyperparams['r']
+            if 'nsr' in hyperparams:
+                self.nsr = hyperparams['nsr']
+            if 'd_max' in hyperparams:
+                self.d_max = hyperparams['d_max']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | Built: {self.built}.')
-
-    def _update_frequency(self, min_frequency, max_frequency):
-        """Updates a single particle frequency (over a single variable).
-
-        Args:
-            min_frequency (float): Minimum frequency range.
-            max_frequency (float): Maximum frequency range.
-
-        Returns:
-            A new frequency based on BA's paper equation 2.
-
-        """
-
-        # Generating beta random number
-        beta = r.generate_uniform_random_number()
-
-        # Calculating new frequency
-        # Note that we have to apply (min - max) instead of (max - min) or it will not converge
-        new_frequency = min_frequency + (min_frequency - max_frequency) * beta
-
-        return new_frequency
-
-    def _update_velocity(self, agent_position, best_position, frequency, current_velocity):
-        """Updates a single particle velocity (over a single variable).
-
-        Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Global best position.
-            frequency (float): Agent's frequenct.
-            current_velocity (float): Agent's current velocity.
-
-        Returns:
-            A new velocity based on on BA's paper equation 3.
-
-        """
-
-        # Calculates new velocity
-        new_velocity = current_velocity + \
-            (agent_position - best_position) * frequency
-
-        return new_velocity
-
-    def _update_position(self, agent_position, current_velocity):
-        """Updates a single particle position (over a single variable).
-
-        Args:
-            agent_position (float): Agent's current position.
-            current_velocity (float): Agent's current velocity.
-
-        Returns:
-            A new position based on BA's paper equation 4.
-
-        """
-
-        # Calculates new position
-        new_position = agent_position + current_velocity
-
-        return new_position
+            f'Algorithm: {self.algorithm} | Hyperparameters: nsr = {self.nsr}, d_max = {self.d_max} | Built: {self.built}.')
 
     def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
         """Method that wraps Bat Algorithm over all agents and variables.
@@ -264,24 +171,11 @@ class BA(Optimizer):
 
         """
 
-        # Instanciating array of frequencies
-        frequency = r.generate_uniform_random_number(
-            self.f_min, self.f_max, space.n_agents)
-
-        # Instanciating array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
-
-        # And also an array of loudnesses
-        loudness = r.generate_uniform_random_number(
-            0, self.A, space.n_agents)
-
-        # Finally, an array of pulse rates
-        pulse_rate = r.generate_uniform_random_number(
-            0, self.r, space.n_agents)
-
         # Initial search space evaluation
         self._evaluate(space, function)
+
+        # Calculating the flow's intensity
+        self._flow_intensity()
 
         # We will define a History object for further dumping
         history = h.History()
@@ -292,7 +186,7 @@ class BA(Optimizer):
 
             # Updating agents
             self._update(space.agents, space.best_agent, function, t,
-                         frequency, velocity, loudness, pulse_rate)
+                         self.frequency, self.velocity, self.loudness, self.pulse_rate)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

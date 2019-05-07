@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -42,9 +43,6 @@ class AIWPSO(PSO):
         # Maximum inertia weight
         self._w_max = 0.9
 
-        # Particles' best fitness
-        self._fitness = None
-
         # Now, we need to re-build this class up
         self._rebuild()
 
@@ -73,18 +71,6 @@ class AIWPSO(PSO):
     @w_max.setter
     def w_max(self, w_max):
         self._w_max = w_max
-
-    @property
-    def fitness(self):
-        """np.array: Particles' best fitness.
-
-        """
-
-        return self._fitness
-
-    @fitness.setter
-    def fitness(self, fitness):
-        self._fitness = fitness
 
     def _rebuild(self):
         """This method will serve as the object re-building process.
@@ -115,9 +101,6 @@ class AIWPSO(PSO):
             agents (list): List of agents.
             fitness (np.array): Array of particles' best fitness.
 
-        Returns:
-            An updated value for inertia weight.
-
         """
 
         # Initial counter
@@ -134,9 +117,7 @@ class AIWPSO(PSO):
             fitness[i] = agent.fit
 
         # Update inertia weight value
-        w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
-
-        return w
+        self.w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -151,24 +132,24 @@ class AIWPSO(PSO):
         """
 
         # Instanciating array of local positions
-        self.local_position = np.zeros(
+        local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
         # An array of velocities
-        self.velocity = np.zeros(
+        velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of best particle's fitness
-        self.fitness = np.zeros(space.n_agents)
+        fitness = np.zeros(space.n_agents)
 
         # Initial search space evaluation
-        self._evaluate(space, function, self.local_position)
+        self._evaluate(space, function, local_position)
 
         # Before starting the optimization process
         # We need to copy fitness values to temporary array
         for i, agent in enumerate(space.agents):
             # Copying fitness from agent's fitness
-            self.fitness[i] = agent.fit
+            fitness[i] = agent.fit
 
         # We will define a History object for further dumping
         history = h.History()
@@ -179,16 +160,16 @@ class AIWPSO(PSO):
 
             # Updating agents
             self._update(space.agents, space.best_agent,
-                         self.local_position, self.velocity)
+                         local_position, velocity)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
 
             # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function, self.local_position)
+            self._evaluate(space, function, local_position)
 
             # Computing particle's success and updating inertia weight
-            self.w = self._compute_success(space.agents, self.fitness)
+            self._compute_success(space.agents, fitness)
 
             # Every iteration, we need to dump the current space agents
             history.dump(space.agents, space.best_agent)

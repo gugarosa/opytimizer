@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -44,12 +45,6 @@ class PSO(Optimizer):
         # Social constant
         self._c2 = 1.7
 
-        # Particles' local positions
-        self._local_position = None
-
-        # Particles' velocities
-        self._velocity = None
-
         # Now, we need to build this class up
         self._build(hyperparams)
 
@@ -90,30 +85,6 @@ class PSO(Optimizer):
     @c2.setter
     def c2(self, c2):
         self._c2 = c2
-
-    @property
-    def local_position(self):
-        """np.array: Particles' local best positions.
-
-        """
-
-        return self._local_position
-
-    @local_position.setter
-    def local_position(self, local_position):
-        self._local_position = local_position
-
-    @property
-    def velocity(self):
-        """np.array: Particles' current velocities.
-
-        """
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity):
-        self._velocity = velocity
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
@@ -257,15 +228,15 @@ class PSO(Optimizer):
         """
 
         # Instanciating array of local positions
-        self.local_position = np.zeros(
+        local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
-        self.velocity = np.zeros(
+        velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
-        self._evaluate(space, function, self.local_position)
+        self._evaluate(space, function, local_position)
 
         # We will define a History object for further dumping
         history = h.History()
@@ -276,13 +247,13 @@ class PSO(Optimizer):
 
             # Updating agents
             self._update(space.agents, space.best_agent,
-                         self.local_position, self.velocity)
+                         local_position, velocity)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
 
             # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function, self.local_position)
+            self._evaluate(space, function, local_position)
 
             # Every iteration, we need to dump the current space agents
             history.dump(space.agents, space.best_agent)

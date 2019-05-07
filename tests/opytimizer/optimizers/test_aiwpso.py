@@ -45,20 +45,6 @@ def test_aiwpso_hyperparams_setter():
     assert new_aiwpso.c2 == 1.5
 
 
-def test_aiwpso_fitness():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    assert new_aiwpso.fitness == None
-
-
-def test_aiwpso_fitness_setter():
-    new_aiwpso = aiwpso.AIWPSO()
-
-    new_aiwpso.fitness = np.zeros(5)
-
-    assert new_aiwpso.fitness.shape == (5, )
-
-
 def test_aiwpso_rebuild():
     new_aiwpso = aiwpso.AIWPSO()
 
@@ -76,9 +62,9 @@ def test_aiwpso_compute_success():
 
     new_fitness = np.zeros(n_agents)
 
-    w = new_aiwpso._compute_success(search_space.agents, new_fitness)
+    new_aiwpso._compute_success(search_space.agents, new_fitness)
 
-    assert w != 0
+    assert new_aiwpso.w != 0
 
 
 def test_aiwpso_evaluate():
