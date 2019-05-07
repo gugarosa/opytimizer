@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.history as h

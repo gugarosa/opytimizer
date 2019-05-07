@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -10,7 +11,7 @@ logger = l.get_logger(__name__)
 
 
 class ABC(Optimizer):
-    """A ABC class, inherited from Optimizer.
+    """An ABC class, inherited from Optimizer.
 
     This will be the designed class to define ABC-related
     variables and methods.
@@ -38,9 +39,6 @@ class ABC(Optimizer):
         # Number of trial limits
         self._n_trials = 10
 
-        # Food sources' trials
-        self._trials = None
-
         # Now, we need to build this class up
         self._build(hyperparams)
 
@@ -57,18 +55,6 @@ class ABC(Optimizer):
     @n_trials.setter
     def n_trials(self, n_trials):
         self._n_trials = n_trials
-
-    @property
-    def trials(self):
-        """np.array: Particles' number of trials.
-
-        """
-
-        return self._trials
-
-    @trials.setter
-    def trials(self, trials):
-        self._trials = trials
 
     def _build(self, hyperparams):
         """This method will serve as the object building process.
@@ -267,7 +253,7 @@ class ABC(Optimizer):
         """
 
         # Instanciating array of trials counter
-        self.trials = np.zeros(space.n_agents)
+        trials = np.zeros(space.n_agents)
 
         # Initial search space evaluation
         self._evaluate(space, function)
@@ -280,7 +266,7 @@ class ABC(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, function, self.trials)
+            self._update(space.agents, function, trials)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

@@ -42,62 +42,6 @@ def test_ba_hyperparams_setter():
     assert new_ba.r == 0.5
 
 
-def test_ba_frequency():
-    new_ba = ba.BA()
-
-    assert new_ba.frequency == None
-
-
-def test_ba_frequency_setter():
-    new_ba = ba.BA()
-
-    new_ba.frequency = np.zeros((1, 1))
-
-    assert new_ba.frequency.shape == (1, 1)
-
-
-def test_ba_velocity():
-    new_ba = ba.BA()
-
-    assert new_ba.velocity == None
-
-
-def test_ba_velocity_setter():
-    new_ba = ba.BA()
-
-    new_ba.velocity = np.zeros((1, 1))
-
-    assert new_ba.velocity.shape == (1, 1)
-
-
-def test_ba_loudness():
-    new_ba = ba.BA()
-
-    assert new_ba.loudness == None
-
-
-def test_ba_loudness_setter():
-    new_ba = ba.BA()
-
-    new_ba.loudness = np.zeros((1, 1))
-
-    assert new_ba.loudness.shape == (1, 1)
-
-
-def test_ba_pulse_rate():
-    new_ba = ba.BA()
-
-    assert new_ba.pulse_rate == None
-
-
-def test_ba_pulse_rate_setter():
-    new_ba = ba.BA()
-
-    new_ba.pulse_rate = np.zeros((1, 1))
-
-    assert new_ba.pulse_rate.shape == (1, 1)
-
-
 def test_ba_build():
     new_ba = ba.BA()
 

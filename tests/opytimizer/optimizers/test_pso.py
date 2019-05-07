@@ -36,34 +36,6 @@ def test_pso_hyperparams_setter():
     assert new_pso.c2 == 1.5
 
 
-def test_pso_local_position():
-    new_pso = pso.PSO()
-
-    assert new_pso.local_position == None
-
-
-def test_pso_local_position_setter():
-    new_pso = pso.PSO()
-
-    new_pso.local_position = np.zeros((1, 1))
-
-    assert new_pso.local_position.shape == (1, 1)
-
-
-def test_pso_velocity():
-    new_pso = pso.PSO()
-
-    assert new_pso.velocity == None
-
-
-def test_pso_velocity_setter():
-    new_pso = pso.PSO()
-
-    new_pso.velocity = np.zeros((1, 1))
-
-    assert new_pso.velocity.shape == (1, 1)
-
-
 def test_pso_build():
     new_pso = pso.PSO()
 
