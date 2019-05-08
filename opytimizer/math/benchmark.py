@@ -39,6 +39,50 @@ def alpine2(x):
     return -np.prod(y)
 
 
+def brown(x):
+    """
+    """
+
+    return
+
+
+def chung_reynolds(x):
+    """
+    """
+
+    return
+
+def deb1(x):
+    """
+    """
+
+    return
+
+def deb3(x):
+    """
+    """
+
+    return
+
+def griewank(x):
+    """
+    """
+
+    return
+
+
+def mishra1(x):
+    """
+    """
+
+    return
+
+def mishra2(x):
+    """
+    """
+
+    return
+
 def csendes(x):
     """Csendes' function.
 

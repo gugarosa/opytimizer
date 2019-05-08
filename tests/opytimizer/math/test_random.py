@@ -1,4 +1,5 @@
 import pytest
+
 from opytimizer.math import random
 
 
