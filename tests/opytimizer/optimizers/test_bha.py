@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from opytimizer.core import function
 from opytimizer.optimizers import bha
 from opytimizer.spaces import search

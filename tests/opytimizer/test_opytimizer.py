@@ -1,6 +1,7 @@
 import numpy as np
-import opytimizer
 import pytest
+
+import opytimizer
 from opytimizer.core import function
 from opytimizer.optimizers import pso
 from opytimizer.spaces import search

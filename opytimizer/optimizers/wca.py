@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -132,18 +133,29 @@ class WCA(Optimizer):
 
         return flows
 
-    def _raining_process(self, agents, flows):
+    def _raining_process(self, agents, best_agent):
         """Performs the raining process.
 
         Args:
             agents (list): List of agents.
-            flows (np.array): Array of flows' intensity.
+            best_agent (Agent): Global best agent.
 
         """
 
-        #
+        # Iterate through every raindrop
+        for k in range(self.nsr, len(agents)):
+            # Calculate the euclidean distance between sea and raindrop / strream
+            distance = (np.linalg.norm(
+                best_agent.position - agents[k].position))
 
-        return
+            # If distance if smaller than evaporation condition
+            if distance > self.d_max:
+                # Generates a new random gaussian number
+                r1 = r.generate_gaussian_random_number(
+                    1, agents[k].n_variables)
+
+                # Changes the stream position
+                agents[k].position = best_agent.position + np.sqrt(0.1) * r1
 
     def _update_stream(self, agents, best_agent, flows):
         """Updates every stream position.
@@ -158,7 +170,7 @@ class WCA(Optimizer):
         # Defining a counter to the summation of flows
         n_flows = 0
 
-        # For every river, ignoring the
+        # For every river, ignoring the sea
         for k in range(1, self.nsr):
             # Accumulate the number of flows
             n_flows += flows[k]
@@ -243,8 +255,8 @@ class WCA(Optimizer):
             # Sorting agents
             space.agents.sort(key=lambda x: x.fit)
 
-            # Performs the raining process
-            self._raining_process(space.agents, flows)
+            # Performs the raining process (Equation 12)
+            self._raining_process(space.agents, space.best_agent)
 
             # Updates the evaporation condition
             self.d_max -= (self.d_max / space.n_iterations)

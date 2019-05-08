@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from opytimizer.core import agent
 from opytimizer.utils import history
 

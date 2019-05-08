@@ -2,6 +2,7 @@ import sys
 
 import numpy as np
 import pytest
+
 from opytimizer.core import function, optimizer
 from opytimizer.spaces import search
 
