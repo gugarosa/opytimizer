@@ -17,7 +17,7 @@ class WCA(Optimizer):
     variables and methods.
 
     References:
-
+        H. Eskandar. Water cycle algorithm – A novel metaheuristic optimization method for solving constrained engineering optimization problems. Computers & Structures (2012). 
 
     """
 
