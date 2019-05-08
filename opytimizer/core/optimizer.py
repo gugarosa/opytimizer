@@ -91,7 +91,7 @@ class Optimizer:
         for agent in space.agents:
             # Calculate the fitness value of current agent
             agent.fit = function.pointer(agent.position)
-
+            
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
                 # Makes a deep copy of current agent to the best agent
