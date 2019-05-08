@@ -1,2 +1,2 @@
-"""A utility package for all common opytimizer modules.
+"""An utility package for all common opytimizer modules.
 """

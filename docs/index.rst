@@ -23,6 +23,7 @@ Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
     api/opytimizer.optimizers
     api/opytimizer.spaces
     api/opytimizer.utils
+    api/opytimizer.visualization
 
 Indices and tables
 ==================

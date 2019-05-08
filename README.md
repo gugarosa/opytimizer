@@ -70,6 +70,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - utils
         - history
         - logging
+    - visualization
 ```
 
 ### Core
@@ -95,6 +96,10 @@ One can see the space as the place that agents will update their positions and e
 ### Utils
 
 This is an utilities package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
+
+### Visualization
+
+Every one needs images and plots to help visualize what is happening, correct? This package will provide every visual-related method for you. Check a specific variable convergence, your fitness function convergence, plot benchmark function surfaces and much more!
 
 ---
 
