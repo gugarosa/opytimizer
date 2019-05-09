@@ -5,6 +5,7 @@ def alpine1(x):
     """Alpine 1's function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-10, 10] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -24,6 +25,7 @@ def alpine2(x):
     """Alpine 2's function.
 
     It can be used with 'n' variables and has minimum at -2.808^n.
+    Also, it is expected to be within [0, 10] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -39,54 +41,31 @@ def alpine2(x):
     return -np.prod(y)
 
 
-def brown(x):
-    """
-    """
-
-    return
-
-
 def chung_reynolds(x):
-    """
-    """
+    """Chung Reynolds' function.
 
-    return
+    It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-100, 100] bounds.
 
-def deb1(x):
-    """
-    """
+    Args:
+        x (np.array): An n-dimensional input array.
 
-    return
+    Returns:
+        y = (sum(x^2))^2
 
-def deb3(x):
-    """
     """
 
-    return
+    # Calculating Sphere's function
+    s = sphere(x)
 
-def griewank(x):
-    """
-    """
+    return s ** 2
 
-    return
-
-
-def mishra1(x):
-    """
-    """
-
-    return
-
-def mishra2(x):
-    """
-    """
-
-    return
 
 def csendes(x):
     """Csendes' function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-1, 1] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -102,10 +81,45 @@ def csendes(x):
     return np.sum(y)
 
 
+def deb1(x):
+    """Deb 1's function.
+
+    It can be used with 'n' variables and has minimum at 5^n.
+    Also, it is expected to be within [-1, 1] bounds.
+
+    Args:
+        x (np.array): An n-dimensional input array.
+
+    Returns:
+        y = (-1 / n) * sum(sin(5 * pi * x)^6)
+
+    """
+
+    return
+
+
+def deb3(x):
+    """Deb 3's function.
+
+    It can be used with 'n' variables and has minimum at 5^n.
+    Also, it is expected to be within [-1, 1] bounds.
+
+    Args:
+        x (np.array): An n-dimensional input array.
+
+    Returns:
+        y = (-1 / n) * sum(sin(5 * pi * (x^(3/4) - 0.05))^6)
+
+    """
+
+    return
+
+
 def exponential(x):
     """Exponential's function.
 
     It can be used with 'n' variables and has minimum at -1.
+    Also, it is expected to be within [-1, 1] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -121,10 +135,28 @@ def exponential(x):
     return -np.exp(-0.5 * s)
 
 
+def griewank(x):
+    """Griewank's function.
+
+    It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-100, 100] bounds.
+
+    Args:
+        x (np.array): An n-dimensional input array.
+
+    Returns:
+        y = 1 + sum(x^2 / 4000) - prod(cos(x / sqrt(i)))
+
+    """
+
+    return
+
+
 def rastringin(x):
     """Rastringin's function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-5.12, 5.12] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -147,6 +179,7 @@ def salomon(x):
     """Salomon's function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-100, 100] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -166,6 +199,7 @@ def schwefel(x):
     """Schwefel's function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-500, 500] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
@@ -185,6 +219,7 @@ def sphere(x):
     """Sphere's function.
 
     It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-5.12, 5.12] bounds.
 
     Args:
         x (np.array): An n-dimensional input array.
