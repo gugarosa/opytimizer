@@ -195,12 +195,14 @@ class BA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
+    def _update(self, agents, best_agent, lower_bound, upper_bound, function, iteration, frequency, velocity, loudness, pulse_rate):
         """Method that wraps Bat Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             iteration (int): Current iteration number.
             frequency (np.array): Array of frequencies.
@@ -237,6 +239,9 @@ class BA(Optimizer):
                 # We apply 0.001 to limit the step size
                 agent.position = best_agent.position + \
                     0.001 * e * np.mean(loudness)
+
+            # Checks agent limits
+            agent.check_limits(lower_bound, upper_bound)
 
             # Evaluates agent
             agent.fit = function.pointer(agent.position)
@@ -291,8 +296,8 @@ class BA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function, t,
-                         frequency, velocity, loudness, pulse_rate)
+            self._update(space.agents, space.best_agent, space.lb, space.ub,
+                         function, t, frequency, velocity, loudness, pulse_rate)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
