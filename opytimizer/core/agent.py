@@ -72,3 +72,17 @@ class Agent:
     @fit.setter
     def fit(self, fit):
         self._fit = fit
+
+    def check_limits(self, lower_bound, upper_bound):
+        """Checks bounds limits of current agent.
+
+        Args:
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
+
+        """
+
+        # Iterate through all decision variables
+        for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+            # Clip the array based on variables' lower and upper bounds
+            self.position[j] = np.clip(self.position[j], lb, ub)
