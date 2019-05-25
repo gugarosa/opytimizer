@@ -41,4 +41,4 @@ z = Multi(functions=[b.sphere, b.exponential],
 o = Opytimizer(space=s, optimizer=p, function=z)
 
 # Running the optimization task
-o.start(history=True)
+history = o.start()
