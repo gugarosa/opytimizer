@@ -55,4 +55,4 @@ p = PSO(hyperparams=hyperparams)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-o.start(history=True)
+history = o.start()

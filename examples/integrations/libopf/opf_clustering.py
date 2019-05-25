@@ -1,19 +1,27 @@
 import numpy as np
+
+import opf_wrapper as wp
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-import opf_wrapper as wp
+
 
 def optimum_path_forest(opytimizer):
     # Instanciating an OPF class
     opf = wp.OPF()
 
+    # Clustering the training data
     wp._cluster(opf, 'training.dat', 1, 0.2)
+
+    # Evaluating the testing dat
     wp._test(opf, 'testing.dat')
+
+    # Checking accuracy
     acc = wp._acc(opf, 'testing.dat')
 
     return 1 - acc
+
 
 # Creating Function's object
 f = Function(pointer=optimum_path_forest)

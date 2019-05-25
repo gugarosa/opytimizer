@@ -1,7 +1,9 @@
-from ctypes import *
 import os
 import sys
+from ctypes import *
+
 import numpy as np
+
 
 class LibOPF:
     def __init__(self, OPF=None, dataset=None):
@@ -14,13 +16,16 @@ class LibOPF:
         func.argtypes = argtypes
         return func
 
+
 class Set(Structure):
     pass
 
+
 Set._fields_ = [
-        ("elems", c_int),
-        ("next", POINTER(Set))
-    ]
+    ("elems", c_int),
+    ("next", POINTER(Set))
+]
+
 
 class SNode(Structure):
     _fields_ = [
@@ -39,22 +44,24 @@ class SNode(Structure):
         ("adj", POINTER(Set))
     ]
 
+
 class Subgraph(Structure, LibOPF):
     _fields_ = [
-        ("node", POINTER(SNode)), \
-        ("nnodes", c_int), \
-        ("nfeats", c_int), \
-        ("bestk", c_int), \
-        ("nlabels", c_int), \
-        ("df", c_float), \
-        ("mindens", c_float), \
-        ("maxdens", c_float), \
-        ("k", c_float), \
+        ("node", POINTER(SNode)),
+        ("nnodes", c_int),
+        ("nfeats", c_int),
+        ("bestk", c_int),
+        ("nlabels", c_int),
+        ("df", c_float),
+        ("mindens", c_float),
+        ("maxdens", c_float),
+        ("k", c_float),
         ("ordered_list_of_nodes", POINTER(c_int))
     ]
 
-    def __init__(self, nnodes = None):
+    def __init__(self, nnodes=None):
         super().__init__()
+
 
 class OPF(LibOPF):
     def __init__(self, dataset=None):
@@ -184,6 +191,7 @@ class OPF(LibOPF):
         result = accuracy(subgraph)
         return result
 
+
 def dome_heigh(opf, subgraph, value):
     Hmax = 0.0
     for i in range(subgraph.contents.nnodes):
@@ -191,22 +199,27 @@ def dome_heigh(opf, subgraph, value):
             Hmax = subgraph.contents.node[i].dens
     opf._elimmaxbelowH(subgraph, (Hmax * value))
 
+
 def dome_area(opf, subgraph, value):
     opf._elimmaxbelowA(subgraph, int(value * subgraph.contents.nnodes))
+
 
 def dome_volume(opf, subgraph, value):
     Vmax = 0.0
     for i in range(subgraph.contents.nnodes):
         Vmax += subgraph.contents.node[i].dens
-    opf._elimmaxbelowH(subgraph, int(value * (Vmax / subgraph.contents.nnodes)))
+    opf._elimmaxbelowH(subgraph, int(
+        value * (Vmax / subgraph.contents.nnodes)))
+
 
 def eliminate_maxima(op, opf, subgraph, value):
-    switcher={
-        0: lambda : dome_heigh(opf, subgraph, value),
-        1: lambda : dome_area(opf, subgraph, value),
-        2: lambda : dome_volume(opf, subgraph, value),
+    switcher = {
+        0: lambda: dome_heigh(opf, subgraph, value),
+        1: lambda: dome_area(opf, subgraph, value),
+        2: lambda: dome_volume(opf, subgraph, value),
     }
-    return switcher.get(op, lambda : "ERROR: option invalid")()
+    return switcher.get(op, lambda: "ERROR: option invalid")()
+
 
 def _cluster(opf, train_file, op, value):
     train = opf._readsubgraph(train_file.encode('utf-8'))
@@ -219,6 +232,7 @@ def _cluster(opf, train_file, op, value):
     opf._destroysubgraph(train)
     print('Train OK')
 
+
 def _test(opf, test_file):
     test = opf._readsubgraph(test_file.encode('utf-8'))
     train = opf._readmodelfile('classifier.opf'.encode('utf-8'))
@@ -226,6 +240,7 @@ def _test(opf, test_file):
     opf._writeoutputfile(test, 'testing.dat.out'.encode('utf-8'))
     opf._destroysubgraph(test)
     print('Test OK')
+
 
 def _train(opf, train_file):
     train = opf._readsubgraph(train_file.encode('utf-8'))
@@ -235,6 +250,7 @@ def _train(opf, train_file):
     opf._destroysubgraph(train)
     print('Train OK')
 
+
 def _classify(opf, test_file):
     test = opf._readsubgraph(test_file.encode('utf-8'))
     train = opf._readmodelfile('classifier.opf'.encode('utf-8'))
@@ -242,6 +258,7 @@ def _classify(opf, test_file):
     opf._writeoutputfile(test, 'testing.dat.out'.encode('utf-8'))
     opf._destroysubgraph(test)
     print('Test OK')
+
 
 def _acc(opf, test_file):
     test = opf._readsubgraph(test_file.encode('utf-8'))
