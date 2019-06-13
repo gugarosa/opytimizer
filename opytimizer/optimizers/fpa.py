@@ -164,25 +164,30 @@ class FPA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function):
+    def _update(self, agents, best_agent, lower_bound, upper_bound, function):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Iterate through all agents
         for agent in agents:
+            # Creates a temporary agent
+            a = copy.deepcopy(agent)
+
             # Generating an uniform random number
             r1 = r.generate_uniform_random_number()
 
             # Check if generated random number is bigger than probability
             if r1 > self.p:
                 # Update a temporary position according to global pollination
-                temp_position = self._global_pollination(
+                a.position = self._global_pollination(
                     agent.position, best_agent.position)
 
             else:
@@ -196,19 +201,22 @@ class FPA(Optimizer):
                 l = int(r.generate_uniform_random_number(0, len(agents)-1))
 
                 # Update a temporary position according to local pollination
-                temp_position = self._local_pollination(
+                a.position = self._local_pollination(
                     agent.position, agents[k].position, agents[l].position, epsilon)
 
+            # Check agent limits
+            a.check_limits(lower_bound, upper_bound)
+
             # Calculates the fitness for the temporary position
-            fit = function.pointer(temp_position)
+            a.fit = function.pointer(a.position)
 
             # If new fitness is better than agent's fitness
-            if fit < agent.fit:
+            if a.fit < agent.fit:
                 # Copy its position to the agent
-                agent.position = copy.deepcopy(temp_position)
+                agent.position = copy.deepcopy(a.position)
 
                 # And also copy its fitness
-                agent.fit = copy.deepcopy(fit)
+                agent.fit = copy.deepcopy(a.fit)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -233,7 +241,7 @@ class FPA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function)
+            self._update(space.agents, space.best_agent, space.lb, space.ub, function)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)

@@ -71,7 +71,7 @@ def test_fpa_update():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    new_fpa._update(search_space.agents, search_space.best_agent, new_function)
+    new_fpa._update(search_space.agents, search_space.best_agent, search_space.lb, search_space.ub, new_function)
 
     assert search_space.agents[0].position[0] != 0
 

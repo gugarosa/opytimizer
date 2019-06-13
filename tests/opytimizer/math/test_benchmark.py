@@ -20,6 +20,14 @@ def test_alpine2():
     assert y < 0
 
 
+def test_chung_reynolds():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.chung_reynolds(x)
+
+    assert y > 0
+
+
 def test_csendes():
     x = np.array([0.5, 0.5, 1, 1])
 
