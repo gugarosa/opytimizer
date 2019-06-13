@@ -178,7 +178,7 @@ class CS(Optimizer):
 
         # Generates a bernoulli distribution array
         # It will be used to replace or not a certain nest
-        b = d.generate_bernoulli_distribution(prob, len(agents))
+        b = d.generate_bernoulli_distribution(1 - prob, len(agents))
 
         # Iterating through every new agent
         for j, new_agent in enumerate(new_agents):
@@ -198,18 +198,23 @@ class CS(Optimizer):
 
         return new_agents
 
-    def _evaluate_nests(self, agents, new_agents, function):
+    def _evaluate_nests(self, agents, new_agents, lower_bound, upper_bound, function):
         """Evaluate new nests according to a fitness function.
 
         Args:
             agents (list): List of current agents.
             new_agents (list): List of new agents to be evaluated.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): Fitness function used to evaluate.
 
         """
 
         # Iterating through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
+            # Check agent limits
+            new_agent.check_limits(lower_bound, upper_bound)
+
             # Calculates the new agent fitness
             new_agent.fit = function.pointer(new_agent.position)
 
@@ -221,12 +226,14 @@ class CS(Optimizer):
                 # And also, its fitness
                 agent.fit = copy.deepcopy(new_agent.fit)
 
-    def _update(self, agents, best_agent, function):
+    def _update(self, agents, best_agent, lower_bound, upper_bound, function):
         """Method that wraps Cuckoo Search algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
 
         """
@@ -235,13 +242,13 @@ class CS(Optimizer):
         new_agents = self._generate_new_nests(agents, best_agent)
 
         # Evaluate new generated nests
-        self._evaluate_nests(agents, new_agents, function)
+        self._evaluate_nests(agents, new_agents, lower_bound, upper_bound, function)
 
         # Generate new nests to be replaced
-        new_agents = self._generate_abandoned_nests(agents, 1 - self.p)
+        new_agents = self._generate_abandoned_nests(agents, self.p)
 
         # Evaluate new generated nests for further replacement
-        self._evaluate_nests(agents, new_agents, function)
+        self._evaluate_nests(agents, new_agents, lower_bound, upper_bound, function)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -266,7 +273,7 @@ class CS(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function)
+            self._update(space.agents, space.best_agent, space.lb, space.ub, function)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
