@@ -108,6 +108,12 @@ Every one needs images and plots to help visualize what is happening, correct? T
 We belive that everything have to be easy. Not difficult or daunting, Opytimizer will be the one-to-go package that you will need, from the very first instalattion to the daily-tasks implementing needs. If you may, just run the following under your most preferred Python environment (raw, conda, virtualenv, whatever):
 
 ```Python
+pip install opytimizer
+```
+
+Or, if you prefer to install the bleeding-edge version, please clone this repository and use:
+
+```Python
 pip install .
 ```
 
