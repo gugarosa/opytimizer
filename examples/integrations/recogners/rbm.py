@@ -26,7 +26,7 @@ def rbm(opytimizer):
                 momentum=momentum, decay=decay, temperature=1)
 
     # Training an RBM
-    error, pl = model.fit(train_batches, epochs=2)
+    error, pl = model.fit(train_batches, epochs=5)
 
     return error
 
