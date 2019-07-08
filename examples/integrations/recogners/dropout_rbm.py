@@ -1,5 +1,5 @@
 import torchvision
-from recogners.models.rbm import RBM
+from recogners.models.dropout_rbm import DropoutRBM
 from torch.utils.data import DataLoader
 
 from opytimizer import Opytimizer
@@ -15,37 +15,35 @@ train = torchvision.datasets.MNIST(
 train_batches = DataLoader(train, batch_size=128, shuffle=True, num_workers=1)
 
 
-def restricted_boltzmann_machine(opytimizer):
+def dropout_rbm(opytimizer):
     # Gathering hyperparams
-    lr = opytimizer[0][0]
-    momentum = opytimizer[1][0]
-    decay = opytimizer[2][0]
+    dropout = opytimizer[0][0]
 
     # Creating an RBM
-    model = RBM(n_visible=784, n_hidden=128, steps=1, learning_rate=lr,
-                momentum=momentum, decay=decay, temperature=1)
+    model = DropoutRBM(n_visible=784, n_hidden=128, steps=1, learning_rate=0.1,
+                       momentum=0, decay=0, temperature=1, dropout=dropout)
 
     # Training an RBM
-    error, pl = model.fit(train_batches, epochs=2)
+    error, pl = model.fit(train_batches, epochs=5)
 
     return error
 
 
 # Creating Function's object
-f = Function(pointer=restricted_boltzmann_machine)
+f = Function(pointer=dropout_rbm)
 
 # Number of agents
 n_agents = 10
 
 # Number of decision variables
-n_variables = 3
+n_variables = 1
 
 # Number of running iterations
 n_iterations = 10
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0, 0, 0]
-upper_bound = [1, 1, 1]
+lower_bound = [0]
+upper_bound = [1]
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
