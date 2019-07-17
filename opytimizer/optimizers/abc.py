@@ -86,12 +86,14 @@ class ABC(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: n_trials = {self.n_trials}.')
 
-    def _evaluate_location(self, agent, neighbour, function, trial):
+    def _evaluate_location(self, agent, neighbour, lower_bound, upper_bound, function, trial):
         """Evaluates a food source location and update its value if possible.
 
         Args:
             agent (Agent): An agent.
             neighbour (Agent): A neightbour agent.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             trial (int): A trial counter.
 
@@ -109,6 +111,9 @@ class ABC(Optimizer):
         # Change its location according to equation 2.2
         a.position = agent.position + \
             (agent.position - neighbour.position) * r1
+
+        # Check agent limits
+        a.check_limits(lower_bound, upper_bound)
 
         # Evaluating its fitness
         a.fit = function.pointer(a.position)
@@ -131,11 +136,13 @@ class ABC(Optimizer):
 
         return trial
 
-    def _send_employee(self, agents, function, trials):
+    def _send_employee(self, agents, lower_bound, upper_bound, function, trials):
         """Sends employee bees onto food source to evaluate its nectar.
 
         Args:
             agents (list): List of agents.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
 
@@ -148,13 +155,15 @@ class ABC(Optimizer):
 
             # Measuring food source location
             trials[i] = self._evaluate_location(
-                agent, agents[source], function, trials[i])
+                agent, agents[source], lower_bound, upper_bound, function, trials[i])
 
-    def _send_onlooker(self, agents, function, trials):
+    def _send_onlooker(self, agents, lower_bound, upper_bound, function, trials):
         """Sends onlooker bees to select new food sources.
 
         Args:
             agents (list): List of agents.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
 
@@ -187,13 +196,15 @@ class ABC(Optimizer):
 
                     # Evaluate its location
                     trials[i] = self._evaluate_location(
-                        agent, agents[source], function, trials[i])
+                        agent, agents[source], lower_bound, upper_bound, function, trials[i])
 
-    def _send_scout(self, agents, function, trials):
+    def _send_scout(self, agents, lower_bound, upper_bound, function, trials):
         """Sends scout bees to scout for new possible food sources.
 
         Args:
             agents (list): List of agents.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
 
@@ -213,6 +224,9 @@ class ABC(Optimizer):
             # Updates its position with a random shakeness
             a.position += r.generate_uniform_random_number(-1, 1)
 
+            # Check agent limits
+            a.check_limits(lower_bound, upper_bound)
+
             # Recalculates its fitness
             a.fit = function.pointer(a.position)
 
@@ -221,24 +235,26 @@ class ABC(Optimizer):
                 # We copy the temporary agent to the current one
                 agents[max_index] = copy.deepcopy(a)
 
-    def _update(self, agents, function, trials):
+    def _update(self, agents, lower_bound, upper_bound, function, trials):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
+            lower_bound (np.array): Array holding lower bounds.
+            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
             trials (np.array): Array of trials counter.
 
         """
 
         # Sending employee bees step
-        self._send_employee(agents, function, trials)
+        self._send_employee(agents, lower_bound, upper_bound, function, trials)
 
         # Sending onlooker bees step
-        self._send_onlooker(agents, function, trials)
+        self._send_onlooker(agents, lower_bound, upper_bound, function, trials)
 
         # Sending scout bees step
-        self._send_scout(agents, function, trials)
+        self._send_scout(agents, lower_bound, upper_bound, function, trials)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -266,7 +282,7 @@ class ABC(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, function, trials)
+            self._update(space.agents, space.lb, space.ub, function, trials)
 
             # Checking if agents meets the bounds limits
             space.check_bound_limits(space.agents, space.lb, space.ub)
