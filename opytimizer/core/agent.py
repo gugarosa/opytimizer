@@ -33,6 +33,12 @@ class Agent:
         # Fitness value is initialized with float's largest number
         self._fit = sys.float_info.max
 
+        # Lower bounds are initialized as zero
+        self._lb = np.zeros(n_variables)
+
+        # Upper bounds are initialized as one
+        self._ub = np.ones(n_variables)
+
     @property
     def n_variables(self):
         """int: Number of decision variables.
@@ -73,16 +79,36 @@ class Agent:
     def fit(self, fit):
         self._fit = fit
 
-    def check_limits(self, lower_bound, upper_bound):
-        """Checks bounds limits of current agent.
+    @property
+    def lb(self):
+        """np.array: Agent's lower bound value.
 
-        Args:
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
+        """
+
+        return self._lb
+
+    @lb.setter
+    def lb(self, lb):
+        self._lb = lb
+
+    @property
+    def ub(self):
+        """np.array: Agent's upper bound value.
+
+        """
+
+        return self._ub
+
+    @ub.setter
+    def ub(self, ub):
+        self._ub = ub
+
+    def check_limits(self):
+        """Checks bounds limits of agent.
 
         """
 
         # Iterate through all decision variables
-        for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+        for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
             # Clip the array based on variables' lower and upper bounds
             self.position[j] = np.clip(self.position[j], lb, ub)

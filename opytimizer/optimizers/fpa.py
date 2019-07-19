@@ -164,14 +164,12 @@ class FPA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, lower_bound, upper_bound, function):
+    def _update(self, agents, best_agent, function):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
             function (Function): A Function object that will be used as the objective function.
 
         """
@@ -205,7 +203,7 @@ class FPA(Optimizer):
                     agent.position, agents[k].position, agents[l].position, epsilon)
 
             # Check agent limits
-            a.check_limits(lower_bound, upper_bound)
+            a.check_limits()
 
             # Calculates the fitness for the temporary position
             a.fit = function.pointer(a.position)
@@ -241,10 +239,10 @@ class FPA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, space.lb, space.ub, function)
+            self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

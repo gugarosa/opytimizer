@@ -163,7 +163,7 @@ class AIWPSO(PSO):
                          local_position, velocity)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function, local_position)

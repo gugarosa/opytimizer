@@ -37,23 +37,20 @@ class HyperSpace(Space):
         self._build(lower_bound, upper_bound)
 
         # Initializing agents
-        self._initialize_agents(self.agents)
+        self._initialize_agents()
 
         # We will log some important information
         logger.info('Class overrided.')
 
-    def _initialize_agents(self, agents):
+    def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
-
-        Args:
-            agents (list): List of agents.
 
         """
 
         logger.debug('Running private method: initialize_agents().')
 
         # Iterate through all agents
-        for agent in agents:
+        for agent in self.agents:
             # Iterate through all decision variables
             for j, _ in enumerate(agent.position):
                 # For each decision variable, we generate uniform random numbers
@@ -62,19 +59,14 @@ class HyperSpace(Space):
 
         logger.debug('Agents initialized.')
 
-    def check_bound_limits(self, agents, lower_bound, upper_bound):
+    def check_limits(self):
         """Checks bounds limits of all agents and variables.
-
-        Args:
-            agents (list): List of agents.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
 
         """
 
         # Iterate through all agents
-        for agent in agents:
+        for agent in self.agents:
             # Iterate through all decision variables
-            for j, (_, _) in enumerate(zip(lower_bound, upper_bound)):
+            for j, (_, _) in enumerate(zip(self.lb, self.ub)):
                 # Clip the array between 0 and 1
                 agent.position[j] = np.clip(agent.position[j], 0, 1)

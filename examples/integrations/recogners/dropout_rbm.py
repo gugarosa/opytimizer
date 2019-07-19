@@ -33,13 +33,13 @@ def dropout_rbm(opytimizer):
 f = Function(pointer=dropout_rbm)
 
 # Number of agents
-n_agents = 10
+n_agents = 5
 
 # Number of decision variables
 n_variables = 1
 
 # Number of running iterations
-n_iterations = 10
+n_iterations = 5
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [0]
