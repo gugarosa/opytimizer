@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.wca import WCA
+from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Number of agents
@@ -32,7 +32,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = WCA(hyperparams=hyperparams)
+p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)
