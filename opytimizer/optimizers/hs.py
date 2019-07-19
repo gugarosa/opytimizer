@@ -121,13 +121,11 @@ class HS(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: HMCR = {self.HMCR}, PAR = {self.PAR}, bw = {self.bw} | Built: {self.built}.')
 
-    def _generate_new_harmony(self, agent, lower_bound, upper_bound):
+    def _generate_new_harmony(self, agent):
         """It generates a new harmony.
 
         Args:
             agent (Agent): An agent class instance.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
 
         Returns:
             A new agent (harmony) based on music generation process.
@@ -156,20 +154,18 @@ class HS(Optimizer):
         # If harmony memory is not used
         else:
             # Generates a new random harmony
-            for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+            for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
                 # For each decision variable, we generate uniform random numbers
                 a.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=agent.n_dimensions)
 
         return a
 
-    def _update(self, agents, lower_bound, upper_bound, function):
+    def _update(self, agents, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
 
         """
@@ -178,7 +174,7 @@ class HS(Optimizer):
         i = int(r.generate_uniform_random_number(0, len(agents)))
 
         # Generates a new harmony
-        agent = self._generate_new_harmony(agents[i], lower_bound, upper_bound)
+        agent = self._generate_new_harmony(agents[i])
 
         # Calculates the new harmony fitness
         agent.fit = function.pointer(agent.position)
@@ -214,10 +210,10 @@ class HS(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.lb, space.ub, function)
+            self._update(space.agents, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
