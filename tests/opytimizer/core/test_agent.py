@@ -49,10 +49,10 @@ def test_agent_fit_setter():
 def test_agent_check_limits():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
-    lower_bound = [10]
+    new_agent.lb = [10]
+    
+    new_agent.ub = [10]
 
-    upper_bound = [10]
-
-    new_agent.check_limits(lower_bound, upper_bound)
+    new_agent.check_limits()
 
     assert new_agent.position[0] == 10

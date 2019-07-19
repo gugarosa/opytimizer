@@ -85,16 +85,16 @@ def test_space_ub_setter():
 
 
 def test_space_check_bound_size():
-    new_space = space.Space()
+    new_space = space.Space(n_variables=5)
 
-    lb = [0, 1, 2, 3, 4]
+    wrong_lb = [0, 1, 2, 3]
 
-    size = 5
+    right_lb = [0, 1, 2, 3, 4]
 
     try:
-        new_space._check_bound_size(lb, size-1)
+        new_space._check_bound_size(wrong_lb)
     except:
-        boolean = new_space._check_bound_size(lb, size)
+        boolean = new_space._check_bound_size(right_lb)
 
     assert boolean == True
 
@@ -102,7 +102,7 @@ def test_space_check_bound_size():
 def test_space_create_agents():
     new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
 
-    new_space.agents, new_space.best_agent = new_space._create_agents(2, 2, 1)
+    new_space.agents, new_space.best_agent = new_space._create_agents()
 
     assert len(new_space.agents) == 2
 
@@ -111,8 +111,7 @@ def test_space_initialize_agents():
     new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
 
     with pytest.raises(NotImplementedError):
-        new_space._initialize_agents(
-            new_space.agents, new_space.lb, new_space.ub)
+        new_space._initialize_agents()
 
 
 def test_space_build():
