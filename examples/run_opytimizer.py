@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.fa import FA
 from opytimizer.spaces.search import SearchSpace
 
 # Number of agents
@@ -32,7 +32,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = FA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)

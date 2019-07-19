@@ -84,6 +84,9 @@ class BHA(Optimizer):
             # Updates agent's position according to Equation 3
             agent.position += r1 * (best_agent.position - agent.position)
 
+            # Checking agents limits
+            agent.check_limits()
+
             # Evaluates agent
             agent.fit = function.pointer(agent.position)
 
@@ -100,14 +103,12 @@ class BHA(Optimizer):
 
         return cost
 
-    def _event_horizon(self, agents, best_agent, lower_bound, upper_bound, cost):
+    def _event_horizon(self, agents, best_agent, cost):
         """It calculates the stars' crossing an event horizon.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
             cost (float): The event's horizon cost.
 
         """
@@ -123,19 +124,17 @@ class BHA(Optimizer):
             # If distance is smaller than horizon's radius
             if distance < radius:
                 # Generates a new random star
-                for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
+                for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
                     # For each decision variable, we generate uniform random numbers
                     agent.position[j] = r.generate_uniform_random_number(
                         lb, ub, size=agent.n_dimensions)
 
-    def _update(self, agents, best_agent, lower_bound, upper_bound, function):
+    def _update(self, agents, best_agent, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
-            lower_bound (np.array): Array holding lower bounds.
-            upper_bound (np.array): Array holding upper bounds.
             function (Function): A function object.
 
         """
@@ -144,7 +143,7 @@ class BHA(Optimizer):
         cost = self._update_position(agents, best_agent, function)
 
         # Performs the Event Horizon (Equation 4)
-        self._event_horizon(agents, best_agent, lower_bound, upper_bound, cost)
+        self._event_horizon(agents, best_agent, cost)
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -169,11 +168,10 @@ class BHA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent,
-                         space.lb, space.ub, function)
+            self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

@@ -159,7 +159,7 @@ class IHS(HS):
             self._update(space.agents, space.lb, space.ub, function)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits(space.agents, space.lb, space.ub)
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
