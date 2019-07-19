@@ -22,6 +22,6 @@ def test_search_check_limits():
 
     new_search_space.agents[0].position[0] = 20
 
-    new_search_space.check_limits(new_search_space.agents, lb, ub)
+    new_search_space.check_limits()
 
     assert new_search_space.agents[0].position[0] != 20
