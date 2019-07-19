@@ -2,7 +2,7 @@ import numpy as np
 import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.fa import FA
+from opytimizer.optimizers.wca import WCA
 from opytimizer.spaces.hyper import HyperSpace
 
 
@@ -49,7 +49,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = FA(hyperparams=hyperparams)
+p = WCA(hyperparams=hyperparams)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

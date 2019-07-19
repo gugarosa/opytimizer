@@ -156,10 +156,10 @@ class IHS(HS):
                 np.exp((np.log(self.bw_min / self.bw_max) / space.n_iterations) * t)
 
             # Updating agents
-            self._update(space.agents, space.lb, space.ub, function)
+            self._update(space.agents, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

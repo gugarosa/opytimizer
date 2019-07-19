@@ -247,7 +247,7 @@ class WCA(Optimizer):
             self._update(space.agents, space.best_agent, flows)
 
             # Checking if agents meets the bounds limits
-            space.check_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
