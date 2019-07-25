@@ -44,28 +44,21 @@ class History:
     def best_agent(self, best_agent):
         self._best_agent = best_agent
 
-    def dump(self, agents, best_agent):
+    def dump(self, agents, best_agent, best_index=0):
         """Dumps agents and best agent into the object
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): An instance of the best agent.
-
+            best_index (Optional int): Index of the agent that is currently the best one.
         """
 
-        # Declaring an auxiliary empty list
-        a = []
-
-        # For each agent
-        for agent in agents:
-            # We append its position as a list and its fitness
-            a.append((agent.position.tolist(), agent.fit))
-
-        # Finally, we can append the current iteration agents to our property
+        # Recording position and fitness for each agent
+        a = [(agent.position.tolist(), agent.fit) for agent in agents]
         self.agents.append(a)
 
         # Appending the best agent as well
-        self.best_agent.append((best_agent.position.tolist(), best_agent.fit))
+        self.best_agent.append((best_agent.position.tolist(), best_agent.fit, best_index))
 
     def show(self):
         """Prints in a formatted way the history of agents' and best agent's 
@@ -91,14 +84,8 @@ class History:
 
         """
 
-        # Opening the file in write mode
-        f = open(file_name, 'wb')
-
-        # Dumps to a pickle file
-        pickle.dump(self, f)
-
-        # Close the file
-        f.close()
+        with open(file_name, 'wb') as dest_file:
+            pickle.dump(self, dest_file)
 
     def load(self, file_name):
         """Loads the object from a pickle encoding.
@@ -108,11 +95,7 @@ class History:
 
         """
 
-        # Opens the desired file in read mode
-        f = open(file_name, "rb")
-
-        # Loads using pickle
-        h = pickle.load(f)
-
         # Resetting current object state to loaded state
-        self.__dict__.update(h.__dict__)
+        with open(file_name, "rb") as origin_file:
+            h = pickle.load(origin_file)
+            self.__dict__.update(h.__dict__)

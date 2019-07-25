@@ -41,10 +41,11 @@ def test_history_dump():
     for _ in range(5):
         agents.append(agent.Agent(n_variables=2, n_dimensions=1))
 
-    new_history.dump(agents, agents[0])
+    new_history.dump(agents, agents[4], 4)
 
     assert len(new_history.agents) > 0
     assert len(new_history.best_agent) > 0
+    assert new_history.best_agent[0][-1] == 4
 
 
 def test_history_show():
