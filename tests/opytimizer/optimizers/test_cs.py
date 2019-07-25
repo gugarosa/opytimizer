@@ -52,7 +52,7 @@ def test_cs_update():
     new_cs = cs.CS()
 
     search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
+                                      n_variables=2, lower_bound=[-10, -10],
                                       upper_bound=[10, 10])
 
     new_cs._update(search_space.agents, search_space.best_agent, new_function)
@@ -69,7 +69,7 @@ def test_cs_run():
     new_cs = cs.CS()
 
     search_space = search.SearchSpace(n_agents=2, n_iterations=10,
-                                      n_variables=2, lower_bound=[0, 0],
+                                      n_variables=2, lower_bound=[-10, -10],
                                       upper_bound=[10, 10])
 
     history = new_cs.run(search_space, new_function)

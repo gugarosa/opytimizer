@@ -1,53 +1,51 @@
-import numpy as np
+import torchvision
+from recogners.models.rbm import RBM
+from torch.utils.data import DataLoader
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-from sklearn import svm
-from sklearn.datasets import load_digits
-from sklearn.model_selection import KFold, cross_val_score
 
-# Loading digits dataset
-digits = load_digits()
+# Creating training and testing dataset
+train = torchvision.datasets.MNIST(
+    root='./data', train=True, download=True, transform=torchvision.transforms.ToTensor())
 
-# Gathering samples and targets
-X = digits.data
-Y = digits.target
+# Creating training and testing batches
+train_batches = DataLoader(train, batch_size=128, shuffle=True, num_workers=1)
 
-def support_vector_machine(opytimizer):
+
+def rbm(opytimizer):
     # Gathering hyperparams
-    C = opytimizer[0][0]
+    lr = opytimizer[0][0]
+    momentum = opytimizer[1][0]
+    decay = opytimizer[2][0]
 
-    # Instanciating an SVC class
-    svc = svm.SVC(C=C, kernel='linear')
+    # Creating an RBM
+    model = RBM(n_visible=784, n_hidden=128, steps=1, learning_rate=lr,
+                momentum=momentum, decay=decay, temperature=1)
 
-    # Creating a cross-validation holder
-    k_fold = KFold(n_splits=5)
+    # Training an RBM
+    error, pl = model.fit(train_batches, epochs=5)
 
-    # Fitting model using cross-validation
-    scores = cross_val_score(svc, X, Y, cv=k_fold, n_jobs=-1)
-
-    # Calculating scores mean
-    mean_score = np.mean(scores)
-
-    return 1 - mean_score
+    return error
 
 
 # Creating Function's object
-f = Function(pointer=support_vector_machine)
+f = Function(pointer=rbm)
 
 # Number of agents
 n_agents = 10
 
 # Number of decision variables
-n_variables = 1
+n_variables = 3
 
 # Number of running iterations
-n_iterations = 100
+n_iterations = 10
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0.00001]
-upper_bound = [10]
+lower_bound = [0, 0, 0]
+upper_bound = [1, 1, 1]
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,

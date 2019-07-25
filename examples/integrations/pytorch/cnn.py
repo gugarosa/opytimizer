@@ -104,7 +104,7 @@ def predict(model, x_val):
     return y_val
 
 
-def conv_neural_network(opytimizer):
+def cnn(opytimizer):
     # Some model parameters
     n_classes = 10
 
@@ -153,7 +153,7 @@ def conv_neural_network(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=conv_neural_network)
+f = Function(pointer=cnn)
 
 # Number of agents
 n_agents = 10

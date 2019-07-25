@@ -41,4 +41,4 @@ f = Function(pointer=benchmark.sphere)
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-o.start(history=True)
+history = o.start()

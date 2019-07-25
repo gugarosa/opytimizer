@@ -110,6 +110,9 @@ class ABC(Optimizer):
         a.position = agent.position + \
             (agent.position - neighbour.position) * r1
 
+        # Check agent limits
+        a.check_limits()
+
         # Evaluating its fitness
         a.fit = function.pointer(a.position)
 
@@ -213,6 +216,9 @@ class ABC(Optimizer):
             # Updates its position with a random shakeness
             a.position += r.generate_uniform_random_number(-1, 1)
 
+            # Check agent limits
+            a.check_limits()
+
             # Recalculates its fitness
             a.fit = function.pointer(a.position)
 
@@ -269,7 +275,7 @@ class ABC(Optimizer):
             self._update(space.agents, function, trials)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

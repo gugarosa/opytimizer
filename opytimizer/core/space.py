@@ -147,13 +147,12 @@ class Space:
     def built(self, built):
         self._built = built
 
-    def _check_bound_size(self, bound, size):
+    def _check_bound_size(self, bound):
         """Checks if the bounds' size are the same of
         variables size.
 
         Args:
             bound(np.array): bounds array.
-            size(int): size to be checked.
 
         Returns:
             True if sizes are equal.
@@ -162,23 +161,18 @@ class Space:
 
         logger.debug('Running private method: check_bound_size().')
 
-        if len(bound) != size:
-            e = f'Expected size is {size}. Got {len(bound)}.'
+        if len(bound) != self.n_variables:
+            e = f'Expected size is {self.n_variables}. Got {len(bound)}.'
             logger.error(e)
             raise RuntimeError(e)
         else:
             logger.debug('Bound checked.')
             return True
 
-    def _create_agents(self, n_agents, n_variables, n_dimensions):
+    def _create_agents(self):
         """Creates and populates the agents array.
 
         Also defines a random best agent, only for initialization purposes.
-
-        Args:
-            n_agents (int): Number of agents.
-            n_variables (int): Number of decision variables.
-            n_dimensions (int): Dimension of search space.
 
         Returns:
             A list of agents and a best agent.
@@ -191,26 +185,21 @@ class Space:
         agents = []
 
         # Iterate through number of agents
-        for _ in range(n_agents):
+        for _ in range(self.n_agents):
             # Appends new agent to list
             agents.append(
-                Agent(n_variables=n_variables, n_dimensions=n_dimensions))
+                Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions))
 
         # Apply first agent as the best one
         best_agent = copy.deepcopy(agents[0])
 
         return agents, best_agent
 
-    def _initialize_agents(self, agents, lower_bound, upper_bound):
+    def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
 
         As each space child can have a different procedure of initializing agents,
         you will need to implement it directly on child's class.
-
-        Args:
-            agents (list): List of agents.
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
 
         Raises:
             NotImplementedError
@@ -236,7 +225,7 @@ class Space:
         # Checking if lower bound is avaliable
         if lower_bound:
             # Check if its size matches to our actual number of variables
-            if self._check_bound_size(lower_bound, self.n_variables):
+            if self._check_bound_size(lower_bound):
                 self.lb = lower_bound
         else:
             e = f"Property 'lower_bound' cannot be {lower_bound}."
@@ -245,7 +234,7 @@ class Space:
 
         # We need to check upper bounds as well
         if upper_bound:
-            if self._check_bound_size(upper_bound, self.n_variables):
+            if self._check_bound_size(upper_bound):
                 self.ub = upper_bound
         else:
             e = f"Property 'upper_bound' cannot be {upper_bound}."
@@ -253,8 +242,7 @@ class Space:
             raise RuntimeError(e)
 
         # Creating agents
-        self.agents, self.best_agent = self._create_agents(
-            self.n_agents, self.n_variables, self.n_dimensions)
+        self.agents, self.best_agent = self._create_agents()
 
         # If no errors were shown, we can declared the Space as built
         self.built = True

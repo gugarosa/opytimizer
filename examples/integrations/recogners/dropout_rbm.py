@@ -1,43 +1,49 @@
-import numpy as np
+import torchvision
+from recogners.models.dropout_rbm import DropoutRBM
+from torch.utils.data import DataLoader
 
-import opf_wrapper as wp
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
+# Creating training and testing dataset
+train = torchvision.datasets.MNIST(
+    root='./data', train=True, download=True, transform=torchvision.transforms.ToTensor())
 
-def optimum_path_forest(opytimizer):
-    # Instanciating an OPF class
-    opf = wp.OPF()
+# Creating training and testing batches
+train_batches = DataLoader(train, batch_size=128, shuffle=True, num_workers=1)
 
-    # Clustering the training data
-    wp._cluster(opf, 'training.dat', 1, 0.2)
 
-    # Evaluating the testing dat
-    wp._test(opf, 'testing.dat')
+def dropout_rbm(opytimizer):
+    # Gathering hyperparams
+    dropout = opytimizer[0][0]
 
-    # Checking accuracy
-    acc = wp._acc(opf, 'testing.dat')
+    # Creating an RBM
+    model = DropoutRBM(n_visible=784, n_hidden=128, steps=1, learning_rate=0.1,
+                       momentum=0, decay=0, temperature=1, dropout=dropout)
 
-    return 1 - acc
+    # Training an RBM
+    error, pl = model.fit(train_batches, epochs=5)
+
+    return error
 
 
 # Creating Function's object
-f = Function(pointer=optimum_path_forest)
+f = Function(pointer=dropout_rbm)
 
 # Number of agents
-n_agents = 2
+n_agents = 5
 
 # Number of decision variables
 n_variables = 1
 
 # Number of running iterations
-n_iterations = 2
+n_iterations = 5
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0.00001]
-upper_bound = [10]
+lower_bound = [0]
+upper_bound = [1]
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
