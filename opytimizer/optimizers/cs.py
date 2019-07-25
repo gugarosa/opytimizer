@@ -178,7 +178,7 @@ class CS(Optimizer):
 
         # Generates a bernoulli distribution array
         # It will be used to replace or not a certain nest
-        b = d.generate_bernoulli_distribution(prob, len(agents))
+        b = d.generate_bernoulli_distribution(1 - prob, len(agents))
 
         # Iterating through every new agent
         for j, new_agent in enumerate(new_agents):
@@ -210,6 +210,9 @@ class CS(Optimizer):
 
         # Iterating through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
+            # Check agent limits
+            new_agent.check_limits()
+
             # Calculates the new agent fitness
             new_agent.fit = function.pointer(new_agent.position)
 
@@ -238,7 +241,7 @@ class CS(Optimizer):
         self._evaluate_nests(agents, new_agents, function)
 
         # Generate new nests to be replaced
-        new_agents = self._generate_abandoned_nests(agents, 1 - self.p)
+        new_agents = self._generate_abandoned_nests(agents, self.p)
 
         # Evaluate new generated nests for further replacement
         self._evaluate_nests(agents, new_agents, function)
@@ -269,7 +272,7 @@ class CS(Optimizer):
             self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_bound_limits(space.agents, space.lb, space.ub)
+            space.check_limits()
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

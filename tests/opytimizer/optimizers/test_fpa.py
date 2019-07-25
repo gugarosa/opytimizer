@@ -67,8 +67,8 @@ def test_fpa_update():
 
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
+    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+                                      n_variables=2, lower_bound=[1, 1],
                                       upper_bound=[10, 10])
 
     new_fpa._update(search_space.agents, search_space.best_agent, new_function)

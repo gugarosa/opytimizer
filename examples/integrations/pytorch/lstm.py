@@ -100,7 +100,7 @@ def predict(model, x_val):
     return y_val
 
 
-def long_sort_term_memory(opytimizer):
+def lstm(opytimizer):
     # Some model parameters
     n_features = 8
     n_hidden = 128
@@ -151,7 +151,7 @@ def long_sort_term_memory(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=long_sort_term_memory)
+f = Function(pointer=lstm)
 
 # Number of agents
 n_agents = 10

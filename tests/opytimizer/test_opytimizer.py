@@ -50,4 +50,5 @@ def test_opytimizer_start():
     new_opytimizer = opytimizer.Opytimizer(
         space=new_space, optimizer=new_pso, function=new_function)
 
-    new_opytimizer.start(history=True)
+    history = new_opytimizer.start()
+    assert isinstance(history, opytimizer.utils.history.History)

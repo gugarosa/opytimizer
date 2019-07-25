@@ -37,8 +37,7 @@ def test_bha_event_horizon():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    new_bha._event_horizon(search_space.agents, search_space.best_agent,
-                           search_space.lb, search_space.ub, 10)
+    new_bha._event_horizon(search_space.agents, search_space.best_agent, 10)
 
     assert search_space.best_agent.fit != 0
 

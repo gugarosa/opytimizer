@@ -1,39 +1,49 @@
 import numpy as np
-
-import opf_wrapper as wp
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
+from sklearn import svm
+from sklearn.datasets import load_digits
+from sklearn.model_selection import KFold, cross_val_score
 
+# Loading digits dataset
+digits = load_digits()
 
-def optimum_path_forest(opytimizer):
-    # Instanciating an OPF class
-    opf = wp.OPF()
+# Gathering samples and targets
+X = digits.data
+Y = digits.target
 
-    # Clustering the training data
-    wp._cluster(opf, 'training.dat', 1, 0.2)
+def svm(opytimizer):
+    # Gathering hyperparams
+    C = opytimizer[0][0]
 
-    # Evaluating the testing dat
-    wp._test(opf, 'testing.dat')
+    # Instanciating an SVC class
+    svc = svm.SVC(C=C, kernel='linear')
 
-    # Checking accuracy
-    acc = wp._acc(opf, 'testing.dat')
+    # Creating a cross-validation holder
+    k_fold = KFold(n_splits=5)
 
-    return 1 - acc
+    # Fitting model using cross-validation
+    scores = cross_val_score(svc, X, Y, cv=k_fold, n_jobs=-1)
+
+    # Calculating scores mean
+    mean_score = np.mean(scores)
+
+    return 1 - mean_score
 
 
 # Creating Function's object
-f = Function(pointer=optimum_path_forest)
+f = Function(pointer=svm)
 
 # Number of agents
-n_agents = 2
+n_agents = 10
 
 # Number of decision variables
 n_variables = 1
 
 # Number of running iterations
-n_iterations = 2
+n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [0.00001]
