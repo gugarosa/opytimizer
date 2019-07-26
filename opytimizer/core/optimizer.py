@@ -88,15 +88,19 @@ class Optimizer:
         """
 
         # Iterate through all agents
-        for idx, agent in enumerate(space.agents):
+        for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
             agent.fit = function.pointer(agent.position)
             
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of current agent to the best agent
-                space.best_index = idx
+                # Makes a deep copy of agent's index to the space's best index
+                space.best_index = i
+
+                # Makes a deep copy of agent's position to the best agent
                 space.best_agent.position = copy.deepcopy(agent.position)
+
+                # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def run(self):
