@@ -20,8 +20,6 @@ class History:
         # Also, an empty list for the best agent property
         self._best_agent = []
 
-        self.history = {}
-
     @property
     def agents(self):
         """list: An agents property to hold agents' position and fitness.
