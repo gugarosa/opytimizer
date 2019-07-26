@@ -20,6 +20,8 @@ class History:
         # Also, an empty list for the best agent property
         self._best_agent = []
 
+        self.history = {}
+
     @property
     def agents(self):
         """list: An agents property to hold agents' position and fitness.
@@ -34,7 +36,7 @@ class History:
 
     @property
     def best_agent(self):
-        """list: A best agent property to hold best agent's position and fitness.
+        """list: A best agent property to hold best agent's position, fitness and index.
 
         """
 
@@ -50,19 +52,22 @@ class History:
         Args:
             agents (list): List of agents.
             best_agent (Agent): An instance of the best agent.
-            best_index (Optional int): Index of the agent that is currently the best one.
+            best_index (int): Index of the agent that is currently the best one.
         """
 
         # Recording position and fitness for each agent
         a = [(agent.position.tolist(), agent.fit) for agent in agents]
+
+        # Appending agents to list
         self.agents.append(a)
 
         # Appending the best agent as well
-        self.best_agent.append((best_agent.position.tolist(), best_agent.fit, best_index))
+        self.best_agent.append(
+            (best_agent.position.tolist(), best_agent.fit, best_index))
 
     def show(self):
         """Prints in a formatted way the history of agents' and best agent's 
-        position and fitness.
+        position, fitness and index.
 
         """
 
@@ -74,7 +79,7 @@ class History:
             for j, agent in enumerate(agents):
                 print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
 
-            print(f'Best agent: {best[0]} | Fitness: {best[1]}')
+            print(f'Best = Agent[{best[2]}]: {best[0]} | Fitness: {best[1]}')
 
     def save(self, file_name):
         """Saves the object to a pickle encoding.
@@ -84,7 +89,9 @@ class History:
 
         """
 
+        # Opening a destination file
         with open(file_name, 'wb') as dest_file:
+            # Dumping History object to file
             pickle.dump(self, dest_file)
 
     def load(self, file_name):
@@ -97,5 +104,8 @@ class History:
 
         # Resetting current object state to loaded state
         with open(file_name, "rb") as origin_file:
+            # Loading History object from file
             h = pickle.load(origin_file)
+
+            # Updating all values
             self.__dict__.update(h.__dict__)
