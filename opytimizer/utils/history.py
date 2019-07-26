@@ -45,16 +45,40 @@ class History:
         self._best_agent = best_agent
 
     def dump(self, agents, best_agent, best_index=0):
-        """Dumps agents and best agent into the object
+        """Dumps agents and best agent into the object.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): An instance of the best agent.
             best_index (int): Index of the agent that is currently the best one.
+
         """
 
         # Recording position and fitness for each agent
         a = [(agent.position.tolist(), agent.fit) for agent in agents]
+
+        # Appending agents to list
+        self.agents.append(a)
+
+        # Appending the best agent as well
+        self.best_agent.append(
+            (best_agent.position.tolist(), best_agent.fit, best_index))
+
+    def dump_pso(self, local_position, agents, best_agent, best_index=0):
+        """Dumps agents and best agent into the object (PSO).
+        
+        This is a temporary method and will be reworked later.
+
+        Args:
+            local_position (np.array): Array of agents' local positions.
+            agents (list): List of agents.
+            best_agent (Agent): An instance of the best agent.
+            best_index (int): Index of the agent that is currently the best one.
+
+        """
+
+        # Recording local position and fitness for each agent
+        a = [(local.tolist(), agent.fit) for local, agent in zip(local_position, agents)]
 
         # Appending agents to list
         self.agents.append(a)
