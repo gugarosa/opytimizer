@@ -6,28 +6,59 @@ import numpy as np
 
 
 class LibOPF:
-    def __init__(self, OPF=None, dataset=None):
+    """A class to hold the LibOPF's integration.
+
+    """
+
+    def __init__(self):
+        """Initialization method.
+
+        """
+
+        # Creates the OPF property
         self._OPF = CDLL(os.environ['OPF_DIR']+'/OPF.so')
 
     def wrap_function(lib, funcname, restype, argtypes):
-        """Simplify wrapping ctypes functions"""
+        """Wraps a function using ctypes.
+
+        Args:
+            lib (func): The function pointer to be loaded.
+            funcname (string): The name of the function.
+            restype (types): Function's return type.
+            argtypes (types): Types of the arguments.
+
+        """
+
+        # Gets the function object
         func = lib.__getattr__(funcname)
+
+        # Gets the type of the response
         func.restype = restype
+
+        # Gets the arguments' types
         func.argtypes = argtypes
+
         return func
 
 
 class Set(Structure):
-    pass
+    """A class to hold the Set's structure.
 
+    """
 
-Set._fields_ = [
-    ("elems", c_int),
-    ("next", POINTER(Set))
-]
+    # Fields that belongs to the structure
+    _fields_ = [
+        ("elems", c_int),
+        ("next", POINTER(Set))
+    ]
 
 
 class SNode(Structure):
+    """A class to hold the subgraph's Node structure.
+
+    """
+
+    # Fields that belongs to the structure
     _fields_ = [
         ("pathvalue", c_float),
         ("dens", c_float),
@@ -46,6 +77,11 @@ class SNode(Structure):
 
 
 class Subgraph(Structure, LibOPF):
+    """A class to hold the Subgraph structure.
+
+    """
+
+    # Fields that belongs to the structure
     _fields_ = [
         ("node", POINTER(SNode)),
         ("nnodes", c_int),
@@ -59,53 +95,134 @@ class Subgraph(Structure, LibOPF):
         ("ordered_list_of_nodes", POINTER(c_int))
     ]
 
-    def __init__(self, nnodes=None):
+    def __init__(self):
+        """Initialization method.
+
+        """
+
+        # Override its parent class
         super().__init__()
 
 
 class OPF(LibOPF):
-    def __init__(self, dataset=None):
+    """Wraps methods from the LibOPF.
+
+    """
+
+    def __init__(self):
+        """Initialization method.
+
+        """
+
+        # Overrides its parent class
         super().__init__()
-        self._dataset = dataset
 
     def _readsubgraph(self, dataset):
+        """Reads a subgraph from a .opf file.
+
+        Args:
+            dataset (string): Path to .opf dataset file.
+
+        """
+
         print('Reading data file ...')
+
+        # Creates the pointer to the function
         readsubgraph = self._OPF.ReadSubgraph
+
+        # Gets the type of the response
         readsubgraph.restype = POINTER(Subgraph)
+
+        # Gets the argument types
         readsubgraph.argtypes = [c_char_p]
+
+        # Actually uses the function
         g = readsubgraph(dataset)
+
         return g
-        print('OK')
 
     def _writesubgraph(self, subgraph, file_name):
+        """Writes a subgraph to a .opf file.
+
+        Args:
+            subgraph (Subgraph): Subgraph object to be written.
+            file_name (string): Path to the file that will be saved.
+
+        """
+
         print('Writing data file ...')
+
+        # Creates the pointer to the function
         writesubgraph = self._OPF.WriteSubgraph
+
+        # Gets the argument types
         writesubgraph.argtypes = [POINTER(Subgraph), c_char_p]
+
+        # Actually uses the function
         writesubgraph(subgraph, file_name)
-        print('OK')
 
     def _destroysubgraph(self, subgraph):
+        """Destroys a subgraph.
+
+        Args:
+            subgraph (Subgraph): Subgraph object to be destroyed.
+
+        """
+
         print('Deallocating memory ...')
+
+        # Creates the pointer to the function
         destroysubgraph = self._OPF.DestroySubgraph
+
+        # Gets the argument types
         destroysubgraph.argtypes = [POINTER(POINTER(Subgraph))]
+
+        # Actually uses the function
         destroysubgraph(subgraph)
-        print('OK')
 
     def _writemodelfile(self, subgraph, file_name):
+        """Writes a subgraph to a model file.
+
+        Args:
+            subgraph (Subgraph): Subgraph object to be written.
+            file_name (string): Path to the file that will be saved.
+
+        """
+
         print('Writing classifier\'s model file ...')
+
+        # Creates the pointer to the function
         writemodelfile = self._OPF.opf_WriteModelFile
+
+        # Gets the argument types
         writemodelfile.argtypes = [POINTER(Subgraph), c_char_p]
+
+        # Actually uses the function
         writemodelfile(subgraph, file_name)
-        print('OK')
 
     def _readmodelfile(self, file_name):
+        """Reads a model file to a subgraph.
+
+        Args:
+            file_name (string): Path to the model file that will be read.
+
+        """
+
         print('Reading classifier\'s model file ...')
+
+        # Creates the pointer to the function
         readmodelfile = self._OPF.opf_ReadModelFile
+
+        # Gets the type of the response
         readmodelfile.restype = POINTER(Subgraph)
+
+        # Gets the argument types
         readmodelfile.argtypes = [c_char_p]
+
+        # Actually uses the function
         g = readmodelfile(file_name)
+
         return g
-        print('OK')
 
     def _modelfile2txt(self):
         print('Converting classifier.opf from binary to text file ...')
