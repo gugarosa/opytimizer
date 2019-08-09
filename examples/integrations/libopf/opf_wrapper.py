@@ -233,10 +233,9 @@ class OPF(LibOPF):
 
         # Creates the pointer to the function
         modelfile2txt = self._OPF.opf_ModelFile2Txt
-        
+
         # Actually uses the function
         modelfile2txt()
-        
 
     def _writeoutputfile(self, subgraph, file_name):
         """Writes an output file.
@@ -251,10 +250,10 @@ class OPF(LibOPF):
 
         # Creates the pointer to the function
         writeoutputfile = self._OPF.opf_WriteOutputFile
-        
+
         # Gets the argument types
         writeoutputfile.argtypes = [POINTER(Subgraph), c_char_p]
-        
+
         # Actually uses the function
         writeoutputfile(subgraph, file_name)
 
@@ -283,7 +282,7 @@ class OPF(LibOPF):
 
         Args:
             train (Subgraph): Training subgraph.
-            
+
         """
 
         print('Training with supervised OPF ...')
@@ -303,7 +302,7 @@ class OPF(LibOPF):
         Args:
             train (Subgraph): Training subgraph.
             test (Subgraph): Test subgraph.
-            
+
         """
 
         print('Classifying data ...')
@@ -343,7 +342,7 @@ class OPF(LibOPF):
 
         Args:
             train (Subgraph): Training subgraph.
-            
+
         """
 
         print('Clustering with OPF ...')
@@ -363,7 +362,7 @@ class OPF(LibOPF):
         Args:
             train (Subgraph): Training subgraph.
             test (Subgraph): Test subgraph.
-            
+
         """
 
         print('Classifying with KNN ...')
@@ -373,26 +372,40 @@ class OPF(LibOPF):
 
         # Gets the argument types
         knn_classify.argtypes = [POINTER(Subgraph), POINTER(Subgraph)]
-        
+
         # Actually uses the function
         knn_classify(train, test)
-        
 
     def _elimmaxbelowH(self, subgraph, h):
-        print('Eliminating maxima in the graph with pdf below H (dome height)')
+        """Eliminates the maximum height in the subgraph.
+
+        Args:
+            subgraph (Subgraph): Subgraph to reduce its height.
+            h (float): Maximum height.
+
+        """
+
+        print('Reducing by maximum height ...')
 
         # Creates the pointer to the function
         elimmaxbelowH = self._OPF.opf_ElimMaxBelowH
 
         # Gets the argument types
         elimmaxbelowH.argtypes = [POINTER(Subgraph), c_float]
-        
+
         # Actually uses the function
         elimmaxbelowH(subgraph, h)
-        
 
     def _elimmaxbelowA(self, subgraph, a):
-        print('Eliminating maxima in the graph with pdf below A (area)')
+        """Eliminates the maximum area in the subgraph.
+
+        Args:
+            subgraph (Subgraph): Subgraph to reduce its area.
+            a (float): Maximum area.
+
+        """
+
+        print('Reducing by maximum area ...')
 
         # Creates the pointer to the function
         elimmaxbelowA = self._OPF.opf_ElimMaxBelowArea
@@ -404,7 +417,15 @@ class OPF(LibOPF):
         elimmaxbelowA(subgraph, a)
 
     def _elimmaxbelowV(self, subgraph, v):
-        print('Eliminating maxima in the graph with pdf below V (volume)')
+        """Eliminates the maximum volume in the subgraph.
+
+        Args:
+            subgraph (Subgraph): Subgraph to reduce its volume.
+            v (float): Maximum volume.
+
+        """
+
+        print('Reducing by maximum volume ...')
 
         # Creates the pointer to the function
         elimmaxbelowV = self._OPF.opf_ElimMaxBelowVolume
@@ -427,7 +448,7 @@ class OPF(LibOPF):
 
         # Creates the pointer to the function
         accuracy = self._OPF.opf_Accuracy
-        
+
         # Gets the type of the response
         accuracy.restype = c_float
 
@@ -440,132 +461,220 @@ class OPF(LibOPF):
         return result
 
 
-def dome_heigh(opf, subgraph, value):
-    """
+def dome_height(opf, subgraph, value):
+    """Performing the subgraph reduction by height.
 
     Args:
+        opf (OPF): OPF class instance.
+        subgraph (Subgraph): Subgraph to be reduced.
+        value (float): Maximum value.
 
     """
 
+    # Defines the maximum height
     Hmax = 0.0
+
+    # Iterate through all nodes
     for i in range(subgraph.contents.nnodes):
+        # If node's density is bigger than maximum height
         if (subgraph.contents.node[i].dens > Hmax):
+            # Apply maximum height as its density
             Hmax = subgraph.contents.node[i].dens
+
+    # Performs the reduction
     opf._elimmaxbelowH(subgraph, (Hmax * value))
 
 
 def dome_area(opf, subgraph, value):
-    """
+    """Performing the subgraph reduction by area.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        subgraph (Subgraph): Subgraph to be reduced.
+        value (float): Maximum value.
+
     """
 
+    # Performs the reduction
     opf._elimmaxbelowA(subgraph, int(value * subgraph.contents.nnodes))
 
 
 def dome_volume(opf, subgraph, value):
-    """
+    """Performing the subgraph reduction by volume.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        subgraph (Subgraph): Subgraph to be reduced.
+        value (float): Maximum value.
+
     """
 
+    # Defines the maximum volume
     Vmax = 0.0
+
+    # Iterate through all nodes
     for i in range(subgraph.contents.nnodes):
+        # Sum all the volumes
         Vmax += subgraph.contents.node[i].dens
+
+    # Performs the reduction
     opf._elimmaxbelowH(subgraph, int(
         value * (Vmax / subgraph.contents.nnodes)))
 
 
-def eliminate_maxima(op, opf, subgraph, value):
-    """
+def eliminate(op, opf, subgraph, value):
+    """Performing the subgraph reduction.
 
     Args:
-    
+        op (int): Operation to be chosen.
+        opf (OPF): OPF class instance.
+        subgraph (Subgraph): Subgraph to be reduced.
+        value (float): Maximum value.
+
     """
 
+    # Creates a switcher of operations
     switcher = {
-        0: lambda: dome_heigh(opf, subgraph, value),
+        0: lambda: dome_height(opf, subgraph, value),
         1: lambda: dome_area(opf, subgraph, value),
         2: lambda: dome_volume(opf, subgraph, value),
     }
+
+    # Returns the switcher based on chosen operation
     return switcher.get(op, lambda: "ERROR: option invalid")()
 
 
 def _cluster(opf, train_file, op, value):
-    """
+    """Performs the OPF clustering.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        train_file (string): Training file in .opf format.
+        op (int): Operation to be chosen.
+        value (float): Maximum value.
+
     """
 
+    # Creates the training subgraph
     train = opf._readsubgraph(train_file.encode('utf-8'))
+
+    # Performs the minimum cut
     opf._bestkmincut(train, 1, 100)
-    eliminate_maxima(op, opf, train, value)
+
+    # Eliminates according to chosen method
+    eliminate(op, opf, train, value)
+
+    # Performs the clustering
     opf._clustering(train)
+
     print('num of clusters %d' % train.contents.nlabels)
+
+    # Writes the model file
     opf._writemodelfile(train, 'classifier.opf'.encode('utf-8'))
+
+    # Writes the output file
     opf._writeoutputfile(train, 'training.dat.out'.encode('utf-8'))
+
+    # Destroys the subgraph
     opf._destroysubgraph(train)
-    print('Train OK')
 
 
 def _test(opf, test_file):
-    """
+    """Performs the KNN classification.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        test_file (string): Testing file in .opf format.
+
     """
 
+    # Creates the testing subgraph
     test = opf._readsubgraph(test_file.encode('utf-8'))
+
+    # Reads the training model file
     train = opf._readmodelfile('classifier.opf'.encode('utf-8'))
+
+    # Performs the KNN classification
     opf._knn_classify(train, test)
+
+    # Writes the output file
     opf._writeoutputfile(test, 'testing.dat.out'.encode('utf-8'))
+
+    # Destroys the subgraph
     opf._destroysubgraph(test)
-    print('Test OK')
 
 
 def _train(opf, train_file):
-    """
+    """Performs the supervised OPF traning.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        train_file (string): Training file in .opf format.
+
     """
 
+    # Creates the training subgprah
     train = opf._readsubgraph(train_file.encode('utf-8'))
+
+    # Performs the supervised OPF training
     opf._training(train)
+
+    # Writes the model file
     opf._writemodelfile(train, 'classifier.opf'.encode('utf-8'))
+
+    # Writes the output file
     opf._writeoutputfile(train, 'training.dat.out'.encode('utf-8'))
+
+    # Destroys the subgraph
     opf._destroysubgraph(train)
-    print('Train OK')
 
 
 def _classify(opf, test_file):
-    """
+    """Performs the supervised OPF classification.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        test_file (string): Testing file in .opf format.
+
     """
 
+    # Creates the testing subgprah
     test = opf._readsubgraph(test_file.encode('utf-8'))
+
+    # Reads the model file
     train = opf._readmodelfile('classifier.opf'.encode('utf-8'))
+
+    # Performs the supervised OPF classification
     opf._classifying(train, test)
+
+    # Writes the output file
     opf._writeoutputfile(test, 'testing.dat.out'.encode('utf-8'))
+
+    # Destroys the subgraph
     opf._destroysubgraph(test)
-    print('Test OK')
 
 
 def _acc(opf, test_file):
-    """
+    """Performs the OPF accuracy computation.
 
     Args:
-    
+        opf (OPF): OPF class instance.
+        test_file (string): Testing file in .opf format.
+
     """
 
+    # Creates the testing subgraph
     test = opf._readsubgraph(test_file.encode('utf-8'))
+
+    # Reads the output file
     opf._readoutputfile(test, 'testing.dat.out'.encode('utf-8'))
+
+    # Performs the accuracy computation
     acc = opf._accuracy(test)
-    print('Acc: %.2f' % (acc*100))
+
+    print('Accuracy: %.2f' % (acc*100))
+
+    # Destroys the subgraph
     opf._destroysubgraph(test)
+
     return acc
