@@ -46,6 +46,9 @@ class Space:
         # Best agent object
         self._best_agent = None
 
+        # Index of the best agent. Initially the first agent is the best one
+        self._best_index = 0
+
         # Lower bounds
         self._lb = np.zeros(n_variables)
 
@@ -110,6 +113,17 @@ class Space:
     @best_agent.setter
     def best_agent(self, best_agent):
         self._best_agent = best_agent
+
+    @property
+    def best_index(self):
+        """int: Index of the agent that achieved the lowest fitness value.
+
+        """
+        return self._best_index
+
+    @best_index.setter
+    def best_index(self, best_index):
+        self._best_index = best_index
 
     @property
     def lb(self):

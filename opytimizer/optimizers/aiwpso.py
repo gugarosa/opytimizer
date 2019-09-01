@@ -1,8 +1,5 @@
-import copy
-
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.pso import PSO
@@ -172,7 +169,7 @@ class AIWPSO(PSO):
             self._compute_success(space.agents, fitness)
 
             # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent)
+            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
