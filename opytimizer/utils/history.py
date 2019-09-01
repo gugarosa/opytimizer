@@ -34,7 +34,7 @@ class History:
 
     @property
     def best_agent(self):
-        """list: A best agent property to hold best agent's position and fitness.
+        """list: A best agent property to hold best agent's position, fitness and index.
 
         """
 
@@ -44,32 +44,52 @@ class History:
     def best_agent(self, best_agent):
         self._best_agent = best_agent
 
-    def dump(self, agents, best_agent):
-        """Dumps agents and best agent into the object
+    def dump(self, agents, best_agent, best_index=0):
+        """Dumps agents and best agent into the object.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): An instance of the best agent.
+            best_index (int): Index of the agent that is currently the best one.
 
         """
 
-        # Declaring an auxiliary empty list
-        a = []
+        # Recording position and fitness for each agent
+        a = [(agent.position.tolist(), agent.fit) for agent in agents]
 
-        # For each agent
-        for agent in agents:
-            # We append its position as a list and its fitness
-            a.append((agent.position.tolist(), agent.fit))
-
-        # Finally, we can append the current iteration agents to our property
+        # Appending agents to list
         self.agents.append(a)
 
         # Appending the best agent as well
-        self.best_agent.append((best_agent.position.tolist(), best_agent.fit))
+        self.best_agent.append(
+            (best_agent.position.tolist(), best_agent.fit, best_index))
+
+    def dump_pso(self, local_position, agents, best_agent, best_index=0):
+        """Dumps agents and best agent into the object (PSO).
+        
+        This is a temporary method and will be reworked later.
+
+        Args:
+            local_position (np.array): Array of agents' local positions.
+            agents (list): List of agents.
+            best_agent (Agent): An instance of the best agent.
+            best_index (int): Index of the agent that is currently the best one.
+
+        """
+
+        # Recording local position and fitness for each agent
+        a = [(local.tolist(), agent.fit) for local, agent in zip(local_position, agents)]
+
+        # Appending agents to list
+        self.agents.append(a)
+
+        # Appending the best agent as well
+        self.best_agent.append(
+            (best_agent.position.tolist(), best_agent.fit, best_index))
 
     def show(self):
         """Prints in a formatted way the history of agents' and best agent's 
-        position and fitness.
+        position, fitness and index.
 
         """
 
@@ -81,7 +101,7 @@ class History:
             for j, agent in enumerate(agents):
                 print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
 
-            print(f'Best agent: {best[0]} | Fitness: {best[1]}')
+            print(f'Best = Agent[{best[2]}]: {best[0]} | Fitness: {best[1]}')
 
     def save(self, file_name):
         """Saves the object to a pickle encoding.
@@ -91,14 +111,10 @@ class History:
 
         """
 
-        # Opening the file in write mode
-        f = open(file_name, 'wb')
-
-        # Dumps to a pickle file
-        pickle.dump(self, f)
-
-        # Close the file
-        f.close()
+        # Opening a destination file
+        with open(file_name, 'wb') as dest_file:
+            # Dumping History object to file
+            pickle.dump(self, dest_file)
 
     def load(self, file_name):
         """Loads the object from a pickle encoding.
@@ -108,11 +124,10 @@ class History:
 
         """
 
-        # Opens the desired file in read mode
-        f = open(file_name, "rb")
-
-        # Loads using pickle
-        h = pickle.load(f)
-
         # Resetting current object state to loaded state
-        self.__dict__.update(h.__dict__)
+        with open(file_name, "rb") as origin_file:
+            # Loading History object from file
+            h = pickle.load(origin_file)
+
+            # Updating all values
+            self.__dict__.update(h.__dict__)

@@ -209,11 +209,14 @@ class PSO(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
+                # Makes a deep copy of current agent's index to the space's best index
+                space.best_index = i
+
+                # Makes a deep copy of agent's local best position to the best agent
+                space.best_agent.position = copy.deepcopy(local_position[i])
+
                 # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-
-                # Also copies its position from its local best position
-                space.best_agent.position = copy.deepcopy(local_position[i])
 
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -256,7 +259,7 @@ class PSO(Optimizer):
             self._evaluate(space, function, local_position)
 
             # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent)
+            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
