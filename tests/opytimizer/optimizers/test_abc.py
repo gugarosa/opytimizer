@@ -1,9 +1,7 @@
-import sys
-
 import numpy as np
-import pytest
 
 from opytimizer.core import function
+from opytimizer.math import constants
 from opytimizer.optimizers import abc
 from opytimizer.spaces import search
 
@@ -43,7 +41,7 @@ def test_abc_run():
 
     new_abc = abc.ABC(hyperparams=hyperparams)
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -51,3 +49,6 @@ def test_abc_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, "The algorithm abc failed to converge"
