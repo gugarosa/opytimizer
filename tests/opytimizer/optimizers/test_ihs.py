@@ -1,9 +1,7 @@
-import sys
-
 import numpy as np
-import pytest
 
 from opytimizer.core import function
+from opytimizer.math import constants
 from opytimizer.optimizers import ihs
 from opytimizer.spaces import search
 
@@ -63,11 +61,14 @@ def test_ihs_run():
 
     new_ihs = ihs.IHS()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=20, n_iterations=50,
                                       n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+                                      upper_bound=[5, 5])
 
     history = new_ihs.run(search_space, new_function)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, "The algorithm ihs failed to converge"
