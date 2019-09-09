@@ -1,7 +1,7 @@
 import numpy as np
-import pytest
 
 from opytimizer.core import function
+from opytimizer.math import constants
 from opytimizer.optimizers import bha
 from opytimizer.spaces import search
 
@@ -44,17 +44,20 @@ def test_bha_event_horizon():
 
 def test_bha_run():
     def square(x):
-        return np.sum(x**2)
+        return np.sum(x)
 
     new_function = function.Function(pointer=square)
 
     new_bha = bha.BHA()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=50,
                                       n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+                                      upper_bound=[5, 5])
 
     history = new_bha.run(search_space, new_function)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, "The algorithm bha failed to converge"
