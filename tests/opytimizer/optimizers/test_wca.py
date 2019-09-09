@@ -1,9 +1,7 @@
-import sys
-
 import numpy as np
-import pytest
 
-from opytimizer.core import agent, function
+from opytimizer.core import function
+from opytimizer.math import constants
 from opytimizer.optimizers import wca
 from opytimizer.spaces import search
 
@@ -119,3 +117,6 @@ def test_wca_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, "The algorithm wca failed to converge"

@@ -1,9 +1,9 @@
 import sys
 
 import numpy as np
-import pytest
 
 from opytimizer.core import function
+from opytimizer.math import constants
 from opytimizer.optimizers import pso
 from opytimizer.spaces import search
 
@@ -18,9 +18,7 @@ def test_pso_hyperparams():
     new_pso = pso.PSO(hyperparams=hyperparams)
 
     assert new_pso.w == 2
-
     assert new_pso.c1 == 1.7
-
     assert new_pso.c2 == 1.7
 
 
@@ -86,7 +84,7 @@ def test_pso_run():
 
     new_pso = pso.PSO()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=5, n_iterations=20,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -94,3 +92,6 @@ def test_pso_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, "The algorithm pso failed to converge"
