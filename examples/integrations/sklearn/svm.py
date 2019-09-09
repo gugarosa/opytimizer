@@ -14,7 +14,7 @@ digits = load_digits()
 X = digits.data
 Y = digits.target
 
-def svm(opytimizer):
+def _svm(opytimizer):
     # Gathering hyperparams
     C = opytimizer[0][0]
 
@@ -34,7 +34,7 @@ def svm(opytimizer):
 
 
 # Creating Function's object
-f = Function(pointer=svm)
+f = Function(pointer=_svm)
 
 # Number of agents
 n_agents = 10
