@@ -29,34 +29,34 @@ class Space:
         """
 
         # Number of agents
-        self._n_agents = n_agents
+        self.n_agents = n_agents
 
         # Number of variables
-        self._n_variables = n_variables
+        self.n_variables = n_variables
 
         # Number of dimensions
-        self._n_dimensions = n_dimensions
+        self.n_dimensions = n_dimensions
 
         # Number of iterations
-        self._n_iterations = n_iterations
+        self.n_iterations = n_iterations
 
         # Agent's list
-        self._agents = None
+        self.agents = None
 
         # Best agent object
-        self._best_agent = None
+        self.best_agent = None
 
-        # Index of the best agent. Initially the first agent is the best one
-        self._best_index = 0
+        # Index of the best agent, where initially the first agent is the best one.
+        self.best_index = 0
 
         # Lower bounds
-        self._lb = np.zeros(n_variables)
+        self.lb = np.zeros(n_variables)
 
         # Upper bounds
-        self._ub = np.ones(n_variables)
+        self.ub = np.ones(n_variables)
 
         # Indicates whether the space is built or not
-        self._built = False
+        self.built = False
 
     @property
     def n_agents(self):
@@ -66,6 +66,10 @@ class Space:
 
         return self._n_agents
 
+    @n_agents.setter
+    def n_agents(self, n_agents):
+        self._n_agents = n_agents
+
     @property
     def n_variables(self):
         """int: Number of decision variables.
@@ -73,6 +77,10 @@ class Space:
         """
 
         return self._n_variables
+
+    @n_variables.setter
+    def n_variables(self, n_variables):
+        self._n_variables = n_variables
 
     @property
     def n_dimensions(self):
@@ -82,6 +90,10 @@ class Space:
 
         return self._n_dimensions
 
+    @n_dimensions.setter
+    def n_dimensions(self, n_dimensions):
+        self._n_dimensions = n_dimensions
+
     @property
     def n_iterations(self):
         """int: Number of iterations.
@@ -89,6 +101,10 @@ class Space:
         """
 
         return self._n_iterations
+
+    @n_iterations.setter
+    def n_iterations(self, n_iterations):
+        self._n_iterations = n_iterations
 
     @property
     def agents(self):
@@ -119,6 +135,7 @@ class Space:
         """int: Index of the agent that achieved the lowest fitness value.
 
         """
+
         return self._best_index
 
     @best_index.setter
@@ -166,7 +183,7 @@ class Space:
         variables size.
 
         Args:
-            bound(np.array): bounds array.
+            bound (np.array): bounds array.
 
         Returns:
             True if sizes are equal.

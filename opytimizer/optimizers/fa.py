@@ -38,13 +38,13 @@ class FA(Optimizer):
         super(FA, self).__init__(algorithm=algorithm)
 
         # Randomization parameter
-        self._alpha = 0.5
+        self.alpha = 0.5
 
         # Attractiveness
-        self._beta = 0.2
+        self.beta = 0.2
 
         # Light absorption coefficient
-        self._gamma = 1.0
+        self.gamma = 1.0
 
         # Now, we need to build this class up
         self._build(hyperparams)

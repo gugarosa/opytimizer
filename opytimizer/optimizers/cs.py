@@ -37,13 +37,13 @@ class CS(Optimizer):
         super(CS, self).__init__(algorithm=algorithm)
 
         # Step size
-        self._alpha = 1
+        self.alpha = 1
 
         # Lévy distribution parameter
-        self._beta = 1.5
+        self.beta = 1.5
 
         # Probability of replacing worst nests
-        self._p = 0.2
+        self.p = 0.2
 
         # Now, we need to build this class up
         self._build(hyperparams)

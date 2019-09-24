@@ -37,7 +37,7 @@ class ABC(Optimizer):
         super(ABC, self).__init__(algorithm=algorithm)
 
         # Number of trial limits
-        self._n_trials = 10
+        self.n_trials = 10
 
         # Now, we need to build this class up
         self._build(hyperparams)

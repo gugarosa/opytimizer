@@ -22,22 +22,22 @@ class Agent:
         """
 
         # Initially, an Agent needs its number of variables
-        self._n_variables = n_variables
+        self.n_variables = n_variables
 
         # And also, its number of dimensions
-        self._n_dimensions = n_dimensions
+        self.n_dimensions = n_dimensions
 
         # Create the position vector based on number of variables and dimensions
-        self._position = np.zeros((n_variables, n_dimensions))
+        self.position = np.zeros((n_variables, n_dimensions))
 
         # Fitness value is initialized with float's largest number
-        self._fit = sys.float_info.max
+        self.fit = sys.float_info.max
 
         # Lower bounds are initialized as zero
-        self._lb = np.zeros(n_variables)
+        self.lb = np.zeros(n_variables)
 
         # Upper bounds are initialized as one
-        self._ub = np.ones(n_variables)
+        self.ub = np.ones(n_variables)
 
     @property
     def n_variables(self):
@@ -47,6 +47,10 @@ class Agent:
 
         return self._n_variables
 
+    @n_variables.setter
+    def n_variables(self, n_variables):
+        self._n_variables = n_variables
+
     @property
     def n_dimensions(self):
         """int: Dimension of search space.
@@ -54,6 +58,10 @@ class Agent:
         """
 
         return self._n_dimensions
+
+    @n_dimensions.setter
+    def n_dimensions(self, n_dimensions):
+        self._n_dimensions = n_dimensions
 
     @property
     def position(self):

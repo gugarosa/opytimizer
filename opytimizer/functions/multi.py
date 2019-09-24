@@ -28,13 +28,13 @@ class Multi(Function):
         logger.info('Overriding class: Function -> Multi.')
 
         # Creating a list to hold further Function's instances
-        self._functions = functions
+        self.functions = functions
 
         # Creating weights (when used with 'weight_sum' strategy).
-        self._weights = weights
+        self.weights = weights
 
         # Creates an strategy method (weight_sum, )
-        self._method = method
+        self.method = method
 
         # Now, we need to build this class up
         self._build(functions, method)
@@ -61,6 +61,10 @@ class Multi(Function):
 
         return self._weights
 
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+
     @property
     def method(self):
         """str: Strategy method (weight_sum, ).
@@ -69,9 +73,13 @@ class Multi(Function):
 
         return self._method
 
+    @method.setter
+    def method(self, method):
+        self._method = method
+
     def _build(self, functions, method):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 

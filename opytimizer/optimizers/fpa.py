@@ -34,13 +34,13 @@ class FPA(Optimizer):
         super(FPA, self).__init__(algorithm=algorithm)
 
         # Lévy flight control parameter
-        self._beta = 1.5
+        self.beta = 1.5
 
         # Lévy flight scaling factor
-        self._eta = 0.2
+        self.eta = 0.2
 
         # Probability of local pollination
-        self._p = 0.8
+        self.p = 0.8
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -216,7 +216,7 @@ class FPA(Optimizer):
 
     def run(self, space, function):
         """Runs the optimization pipeline.
-        
+
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.

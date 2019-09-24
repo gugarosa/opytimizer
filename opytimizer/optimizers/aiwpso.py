@@ -35,10 +35,10 @@ class AIWPSO(PSO):
             algorithm=algorithm, hyperparams=hyperparams)
 
         # Minimum inertia weight
-        self._w_min = 0.1
+        self.w_min = 0.1
 
         # Maximum inertia weight
-        self._w_max = 0.9
+        self.w_max = 0.9
 
         # Now, we need to re-build this class up
         self._rebuild()
@@ -169,7 +169,8 @@ class AIWPSO(PSO):
             self._compute_success(space.agents, fitness)
 
             # Every iteration, we need to dump the current space agents
-            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
+            history.dump_pso(local_position, space.agents,
+                             space.best_agent, space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

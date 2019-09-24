@@ -35,16 +35,16 @@ class IHS(HS):
             algorithm=algorithm, hyperparams=hyperparams)
 
         # Minimum pitch adjusting rate
-        self._PAR_min = 0
+        self.PAR_min = 0
 
         # Maximum pitch adjusting rate
-        self._PAR_max = 1
+        self.PAR_max = 1
 
         # Minimum bandwidth parameter
-        self._bw_min = 1
+        self.bw_min = 1
 
         # Maximum bandwidth parameter
-        self._bw_max = 10
+        self.bw_max = 10
 
         # Now, we need to re-build this class up
         self._rebuild()

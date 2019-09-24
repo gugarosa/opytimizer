@@ -37,10 +37,10 @@ class WCA(Optimizer):
         super(WCA, self).__init__(algorithm=algorithm)
 
         # Number of rivers + sea
-        self._nsr = 2
+        self.nsr = 2
 
         # Maximum evaporation condition
-        self._d_max = 0.1
+        self.d_max = 0.1
 
         # Now, we need to build this class up
         self._build(hyperparams)
