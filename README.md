@@ -49,6 +49,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - multi
     - math
         - benchmark
+        - constants
         - distribution
         - hypercomplex
         - random
