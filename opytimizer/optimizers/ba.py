@@ -37,16 +37,16 @@ class BA(Optimizer):
         super(BA, self).__init__(algorithm=algorithm)
 
         # Minimum frequency range
-        self._f_min = 0
+        self.f_min = 0
 
         # Maximum frequency range
-        self._f_max = 2
+        self.f_max = 2
 
         # Loudness parameter
-        self._A = 0.5
+        self.A = 0.5
 
         # Pulse rate
-        self._r = 0.5
+        self.r = 0.5
 
         # Now, we need to build this class up
         self._build(hyperparams)

@@ -36,13 +36,13 @@ class HS(Optimizer):
         super(HS, self).__init__(algorithm=algorithm)
 
         # Harmony memory considering rate
-        self._HMCR = 0.7
+        self.HMCR = 0.7
 
         # Pitch adjusting rate
-        self._PAR = 0.7
+        self.PAR = 0.7
 
         # Bandwidth parameter
-        self._bw = 1
+        self.bw = 1
 
         # Now, we need to build this class up
         self._build(hyperparams)

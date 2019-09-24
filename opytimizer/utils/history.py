@@ -15,10 +15,10 @@ class History:
         """
 
         # Our agents property will be first set as an empty list
-        self._agents = []
+        self.agents = []
 
         # Also, an empty list for the best agent property
-        self._best_agent = []
+        self.best_agent = []
 
     @property
     def agents(self):
@@ -66,7 +66,7 @@ class History:
 
     def dump_pso(self, local_position, agents, best_agent, best_index=0):
         """Dumps agents and best agent into the object (PSO).
-        
+
         This is a temporary method and will be reworked later.
 
         Args:
@@ -78,7 +78,8 @@ class History:
         """
 
         # Recording local position and fitness for each agent
-        a = [(local.tolist(), agent.fit) for local, agent in zip(local_position, agents)]
+        a = [(local.tolist(), agent.fit)
+             for local, agent in zip(local_position, agents)]
 
         # Appending agents to list
         self.agents.append(a)

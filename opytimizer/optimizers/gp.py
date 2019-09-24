@@ -10,18 +10,18 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class PSO(Optimizer):
-    """A PSO class, inherited from Optimizer.
+class GP(Optimizer):
+    """A GP class, inherited from Optimizer.
 
-    This will be the designed class to define PSO-related
+    This will be the designed class to define GP-related
     variables and methods.
 
     References:
-        J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence. Artificial Intelligence (2001). 
+        ...
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams=None):
+    def __init__(self, algorithm='GP', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -31,19 +31,19 @@ class PSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> PSO.')
+        logger.info('Overriding class: Optimizer -> GP.')
 
         # Override its parent class with the receiving hyperparams
-        super(PSO, self).__init__(algorithm=algorithm)
+        super(GP, self).__init__(algorithm=algorithm)
 
-        # Inertia weight
-        self.w = 0.7
+        # Probability of reproduction
+        self._reproduction = 0.3
 
-        # Cognitive constant
-        self.c1 = 1.7
+        # Probability of mutation
+        self._mutation = 0.4
 
-        # Social constant
-        self.c2 = 1.7
+        # Probability of crossover
+        self._crossover = 0.4 
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -259,8 +259,7 @@ class PSO(Optimizer):
             self._evaluate(space, function, local_position)
 
             # Every iteration, we need to dump the current space agents
-            history.dump_pso(local_position, space.agents,
-                             space.best_agent, space.best_index)
+            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

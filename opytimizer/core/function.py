@@ -24,10 +24,10 @@ class Function:
         logger.info('Creating class: Function.')
 
         # Also, we need a pointer to point to our actual function
-        self._pointer = callable
+        self.pointer = callable
 
         # Indicates whether the function is built or not
-        self._built = False
+        self.built = False
 
         # Now, we need to build this class up
         self._build(pointer)
@@ -60,7 +60,7 @@ class Function:
 
     def _build(self, pointer):
         """This method will serve as the object building process.
-        
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 

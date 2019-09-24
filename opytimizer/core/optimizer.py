@@ -20,21 +20,25 @@ class Optimizer:
         """
 
         # We define the algorithm's name
-        self._algorithm = algorithm
+        self.algorithm = algorithm
 
         # Also, we need a dict of desired hyperparameters
-        self._hyperparams = None
+        self.hyperparams = None
 
         # Indicates whether the optimizer is built or not
-        self._built = False
+        self.built = False
 
     @property
     def algorithm(self):
         """str: A string indicating the algorithm name.
-        
+
         """
 
         return self._algorithm
+
+    @algorithm.setter
+    def algorithm(self, algorithm):
+        self._algorithm = algorithm
 
     @property
     def hyperparams(self):
@@ -91,7 +95,7 @@ class Optimizer:
         for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
             agent.fit = function.pointer(agent.position)
-            
+
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
                 # Makes a deep copy of agent's index to the space's best index
@@ -105,7 +109,7 @@ class Optimizer:
 
     def run(self):
         """Runs the optimization pipeline.
-        
+
         As each optimizer child can have a different
         optimization pipeline, you will need to implement
         it directly on child's class.
