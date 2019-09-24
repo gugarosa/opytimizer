@@ -59,12 +59,13 @@ class TreeSpace(Space):
         self._build(lower_bound, upper_bound)
 
         # Initializing agents
-        # self._initialize_agents()
 
         #
         self._check_constants()
 
         self._grow_trees()
+
+        self._initialize_agents()
 
         logger.debug(
             f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | Functions: {self.functions} | Terminals: {self.terminals}.')
@@ -91,21 +92,83 @@ class TreeSpace(Space):
 
             logger.debug('Constants initialized.')
 
-    def _grow(self):
+    def _grow(self, min_depth, max_depth):
         """
 
         """
 
-        if self.min_depth == self.max_depth:
+        if min_depth == max_depth:
             index = int(r.generate_uniform_random_number(0, len(self.terminals)))
             if self.terminals[index] == 'CONST':
                 id = int(r.generate_uniform_random_number(0, N_CONSTANTS))
                 return Node(self.terminals[index], id=id, status='CONSTANT')
-
+            print(index)
             return Node(self.terminals[index], id=index, status='TERMINAL')
+        else:
+            index = int(r.generate_uniform_random_number(0, len(self.functions) + len(self.terminals)))
+            if index >= len(self.functions):
+                index -= len(self.functions)
+                if self.terminals[index] == 'CONST':
+                    id = int(r.generate_uniform_random_number(0, N_CONSTANTS))
+                    return Node(self.terminals[index], id=id, status='CONSTANT')
+                else:
+                    print(index)
+                    return Node(self.terminals[index], id=index, status='TERMINAL')
+            else:
+                node = Node(self.functions[index], id=index, status='FUNCTION')
+                for i in range(2):
+                    tmp_node = self._grow(min_depth+1, max_depth)
+                    tmp_node.parent = node
+                return node
+
 
     def _grow_trees(self):
 
     
         for i in range(self.n_trees):
-            self.trees.append(self._grow())
+            self.trees.append(self._grow(self.min_depth, self.max_depth))
+
+    def _initialize_agents(self):
+        """Initialize agents' position array with uniform random numbers.
+
+        """
+
+        logger.debug('Running private method: initialize_agents().')
+
+        # Iterate through all agents
+        for agent in self.agents:
+            # Iterate through all decision variables
+            for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
+                # For each decision variable, we generate uniform random numbers
+                agent.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=agent.n_dimensions)
+
+                # For each decision variable, we apply lower bound the agent's bound
+                agent.lb[j] = lb
+
+                # And also the upper bound
+                agent.ub[j] = ub
+
+        logger.debug('Agents initialized.')
+
+    def run_tree(self, tree):
+
+        if tree:
+            if len(tree.children):
+                x = self.run_tree(tree.children[0])
+                y = self.run_tree(tree.children[1])
+
+            if tree.status == 'TERMINAL' or tree.status == 'CONSTANT':
+                out = np.zeros((self.n_variables, self.n_dimensions))
+                if tree.status == 'CONSTANT':
+                    out = self.constants[:,tree.id]
+                    out = np.expand_dims(out, axis=1)
+                else:
+                    out = self.agents[tree.id].position
+                return out
+            else:
+                out = x - y
+                return out
+        else:
+            return None
+            

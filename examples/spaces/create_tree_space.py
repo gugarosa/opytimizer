@@ -1,4 +1,5 @@
 from opytimizer.spaces.tree import TreeSpace
+from anytree import RenderTree
 
 # Firstly, we need to define the number of agents
 n_trees = 10
@@ -13,13 +14,13 @@ n_iterations = 10
 min_depth = 1
 
 #
-max_depth = 1
+max_depth = 2
 
 #
 functions = ['SUB']
 
 #
-terminals = ['PARAM', 'CONST']
+terminals = ['TERMINAL', 'CONST']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
@@ -31,5 +32,6 @@ s = TreeSpace(n_trees=n_trees, n_variables=n_variables, n_iterations=n_iteration
               min_depth=min_depth, max_depth=max_depth, functions=functions,
               terminals=terminals, lower_bound=lower_bound, upper_bound=upper_bound)
 
-for tree in s.trees:
-    print(tree)
+# for tree in s.trees:
+#     print(RenderTree(tree))
+#     print(s.run_tree(tree))
