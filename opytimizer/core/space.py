@@ -46,7 +46,7 @@ class Space:
         # Best agent object
         self.best_agent = None
 
-        # Index of the best agent, where initially the first agent is the best one.
+        # Index of the best agent, where initially the first agent is the best one
         self.best_index = 0
 
         # Lower bounds

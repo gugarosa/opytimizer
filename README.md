@@ -60,6 +60,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - cs
         - fa
         - fpa
+        - gp
         - hs
         - ihs
         - pso
@@ -67,9 +68,11 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - spaces
         - hyper
         - search
+        - tree
     - utils
         - history
         - logging
+        - node
     - visualization
 ```
 
