@@ -5,6 +5,7 @@ Just because we are computing stuff, it does not means that we do not need math.
 
 .. toctree::
     opytimizer.math.benchmark
+    opytimizer.math.constants
     opytimizer.math.distribution
     opytimizer.math.hypercomplex
     opytimizer.math.random

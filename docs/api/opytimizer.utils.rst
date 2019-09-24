@@ -6,6 +6,7 @@ This is an utilities package. Common things shared across the application should
 .. toctree::
     opytimizer.utils.history
     opytimizer.utils.logging
+    opytimizer.utils.node
 
 .. automodule:: opytimizer.utils
    :members:

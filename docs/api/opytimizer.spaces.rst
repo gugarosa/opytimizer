@@ -6,6 +6,7 @@ One can see the space as the place that agents will update their positions and e
 .. toctree::
     opytimizer.spaces.hyper
     opytimizer.spaces.search
+    opytimizer.spaces.tree
 
 .. automodule:: opytimizer.spaces
    :members:
