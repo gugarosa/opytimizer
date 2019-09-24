@@ -20,7 +20,7 @@ max_depth = 2
 functions = ['SUB']
 
 #
-terminals = ['TERMINAL', 'CONST']
+terminals = ['TERMINAL', 'CONSTANT']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
@@ -32,6 +32,5 @@ s = TreeSpace(n_trees=n_trees, n_variables=n_variables, n_iterations=n_iteration
               min_depth=min_depth, max_depth=max_depth, functions=functions,
               terminals=terminals, lower_bound=lower_bound, upper_bound=upper_bound)
 
-# for tree in s.trees:
-#     print(RenderTree(tree))
-#     print(s.run_tree(tree))
+for tree in s.trees:
+    print(s.run_tree(tree))

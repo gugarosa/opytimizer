@@ -1,16 +1,15 @@
 import numpy as np
+from anytree import Node
 
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils.node import Node
 
 logger = l.get_logger(__name__)
 
 #
 N_CONSTANTS = 100
-
 
 
 class TreeSpace(Space):
@@ -19,7 +18,7 @@ class TreeSpace(Space):
     """
 
     def __init__(self, n_trees=1, n_variables=2, n_iterations=10,
-                 min_depth=1, max_depth=1, functions=['SUB'], terminals=['TERMINAL', 'CONSTANT'],
+                 min_depth=1, max_depth=1, functions=['SUB'], terminals=['PARAM', 'CONST'],
                  lower_bound=None, upper_bound=None):
         """Initialization method.
 
@@ -82,7 +81,7 @@ class TreeSpace(Space):
         logger.debug('Running private method: check_constants().')
 
         #
-        if 'CONSTANT' in self.terminals:
+        if 'CONST' in self.terminals:
             #
             self.constants = np.zeros((self.n_variables, N_CONSTANTS))
 
@@ -100,27 +99,25 @@ class TreeSpace(Space):
 
         if min_depth == max_depth:
             index = int(r.generate_uniform_random_number(0, len(self.terminals)))
-            if self.terminals[index] == 'CONSTANT':
+            if self.terminals[index] == 'CONST':
                 id = int(r.generate_uniform_random_number(0, N_CONSTANTS))
-                return Node(id=id, name=self.terminals[index], type='CONSTANT')
-            return Node(id=index, name=self.terminals[index], type='TERMINAL')
+                return Node(self.terminals[index], id=id, status='CONSTANT')
+            print(index)
+            return Node(self.terminals[index], id=index, status='TERMINAL')
         else:
             index = int(r.generate_uniform_random_number(0, len(self.functions) + len(self.terminals)))
             if index >= len(self.functions):
                 index -= len(self.functions)
-                if self.terminals[index] == 'CONSTANT':
+                if self.terminals[index] == 'CONST':
                     id = int(r.generate_uniform_random_number(0, N_CONSTANTS))
-                    return Node(id=id, name=self.terminals[index], type='CONSTANT')
+                    return Node(self.terminals[index], id=id, status='CONSTANT')
                 else:
-                    return Node(id=index, name=self.terminals[index], type='TERMINAL')
+                    print(index)
+                    return Node(self.terminals[index], id=index, status='TERMINAL')
             else:
-                node = Node(id=index, name=self.functions[index], type='FUNCTION')
+                node = Node(self.functions[index], id=index, status='FUNCTION')
                 for i in range(2):
                     tmp_node = self._grow(min_depth+1, max_depth)
-                    if not i:
-                        node.left = tmp_node
-                    else:
-                        node.right = tmp_node
                     tmp_node.parent = node
                 return node
 
@@ -157,11 +154,13 @@ class TreeSpace(Space):
     def run_tree(self, tree):
 
         if tree:
-            x = self.run_tree(tree.left)
-            y = self.run_tree(tree.right)
+            if len(tree.children):
+                x = self.run_tree(tree.children[0])
+                y = self.run_tree(tree.children[1])
 
-            if tree.type == 'TERMINAL' or tree.type == 'CONSTANT':
-                if tree.type == 'CONSTANT':
+            if tree.status == 'TERMINAL' or tree.status == 'CONSTANT':
+                out = np.zeros((self.n_variables, self.n_dimensions))
+                if tree.status == 'CONSTANT':
                     out = self.constants[:,tree.id]
                     out = np.expand_dims(out, axis=1)
                 else:
@@ -172,3 +171,4 @@ class TreeSpace(Space):
                 return out
         else:
             return None
+            
