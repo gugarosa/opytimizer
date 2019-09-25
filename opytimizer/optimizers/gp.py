@@ -119,3 +119,149 @@ class GP(Optimizer):
         # Logging attributes
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: reproduction = {self.reproduction}, mutation = {self.mutation}, crossover = {self.crossover} | Built: {self.built}.')
+
+    def _selection(self, fits, k):
+        """
+        """
+
+        #
+        selected = []
+
+        #
+        for i in range(k):
+            #
+            possible = np.random.choice(fits, k)
+
+            #
+            selected.append(np.where(min(possible) == fits)[0][0])
+
+        return selected
+
+    
+    def _reproduct(self, space, tmp_trees):
+        """
+        """
+
+        #
+        n_reproduction = int(space.n_trees * self.reproduction)
+
+        #
+        selected = self._selection(space.fit_trees, n_reproduction)
+
+        #
+        for (i, s) in enumerate(selected):
+            #
+            space.trees[i] = copy.deepcopy(tmp_trees[s])
+
+
+    def _mutate(self, space, tmp_trees):
+        """
+        """
+
+        #
+        n_mutation = int(space.n_trees * self.mutation)
+
+        #
+        selected = self._selection(space.fit_trees, n_mutation)
+
+    def _cross(self, space, tmp_trees):
+        """
+        """
+
+        #
+        n_crossover = int(space.n_trees * self.crossover)
+
+        #
+        selected = self._selection(space.fit_trees, n_crossover)
+    
+    def _update(self, space):
+        """
+        """
+
+        #
+        tmp_trees = copy.deepcopy(space.trees)
+
+        #
+        self._reproduct(space, tmp_trees)
+
+        #
+        self._mutate(space, tmp_trees)
+
+        #
+        self._cross(space, tmp_trees)
+        
+
+    def _evaluate(self, space, function):
+        """Evaluates the search space according to the objective function.
+
+        Args:
+            space (TreeSpace): A TreeSpace object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Creates a new temporary agent
+        a = copy.deepcopy(space.agents[0])
+
+        # Iterate through all trees
+        for i, tree in enumerate(space.trees):
+            # Runs through the tree and return a position array
+            a.position = space.run_tree(tree)
+
+            # Checks the agent limits
+            a.check_limits()
+
+            # Calculate the fitness value of the temporary agent
+            fit = function.pointer(a.position)
+
+            # If fitness is better than tree's best fit
+            if fit < space.fit_trees[i]:
+                # Updates its current fitness to the newer one
+                space.fit_trees[i] = fit
+
+            # If tree's fitness is better than global fitness
+            if space.fit_trees[i] < space.best_agent.fit:
+                # Makes a deep copy of current tree's index to the space's best index
+                space.best_index = i
+
+                # Makes a deep copy of agent's best position to the best agent
+                space.best_agent.position = copy.deepcopy(a.position)
+
+                # Makes a deep copy of current tree fitness to the best agent
+                space.best_agent.fit = copy.deepcopy(space.fit_trees[i])
+    
+    def run(self, space, function):
+        """Runs the optimization pipeline.
+
+        Args:
+            space (TreeSpace): A TreeSpace object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            A History object holding all agents' positions and fitness achieved during the task.
+
+        """
+
+        # Initial tree space evaluation
+        self._evaluate(space, function)
+
+        # We will define a History object for further dumping
+        history = h.History()
+
+        # These are the number of iterations to converge
+        for t in range(space.n_iterations):
+            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+
+            # Updating trees
+            self._update(space)
+
+            # After the update, we need to re-evaluate the tree space
+            self._evaluate(space, function)
+
+            # Every iteration, we need to dump the current space agents
+            history.dump(space.agents, space.best_agent, space.best_index)
+
+            logger.info(f'Fitness: {space.best_agent.fit}')
+            logger.info(f'Position: {space.best_agent.position}')
+
+        return history

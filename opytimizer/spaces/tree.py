@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 
 import opytimizer.math.constants as c
@@ -11,7 +13,8 @@ logger = l.get_logger(__name__)
 
 
 class TreeSpace(Space):
-    """
+    """A TreeSpace class that will hold trees, agents, variables and methods
+    related to the tree-based search space.
 
     """
 
@@ -41,6 +44,12 @@ class TreeSpace(Space):
 
         # Number of trees
         self.n_trees = n_trees
+
+        # List of trees
+        self.trees = None
+
+        # List of trees' fitness
+        self.fit_trees = [sys.float_info.max for i in range(n_trees)]
 
         # Minimum depth of the trees
         self.min_depth = min_depth
