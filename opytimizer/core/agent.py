@@ -1,7 +1,7 @@
 import sys
 
 import numpy as np
-
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
@@ -49,6 +49,9 @@ class Agent:
 
     @n_variables.setter
     def n_variables(self, n_variables):
+        if n_variables <= 0:
+            raise e.InvalidValueError('n_variables should be > 0')
+
         self._n_variables = n_variables
 
     @property
@@ -61,6 +64,9 @@ class Agent:
 
     @n_dimensions.setter
     def n_dimensions(self, n_dimensions):
+        if n_dimensions <= 0:
+            raise e.InvalidValueError('n_dimensions should be > 0')
+
         self._n_dimensions = n_dimensions
 
     @property
