@@ -153,6 +153,44 @@ class GP(Optimizer):
             #
             space.trees[i] = copy.deepcopy(tmp_trees[s])
 
+    def mute(self, space, tree):
+
+        p = 0.5
+
+        m_tree = copy.deepcopy(tree)
+
+        random = r.generate_uniform_random_number()
+
+        point = int(r.generate_uniform_random_number(2, space.get_depth(tree)))
+
+        c = 0
+        flag = 0
+
+        if p > random:
+            new_tree = space.prefix(m_tree, point, flag, 'FUNCTION', c)
+        else:
+            new_tree = space.prefix(m_tree, point, flag, 'TERMINAL', c)
+
+        if new_tree:
+            tmp = space.grow(space.min_depth, space.max_depth)
+
+            if flag:
+                tmp2 = new_tree.left
+            else:
+                tmp2 = new_tree.right
+
+            if flag:
+                new_tree.left = tmp
+                tmp.flag = 1
+            else:
+                new_tree.right = tmp
+                tmp.flag = 0
+            tmp.parent = new_tree
+        else:
+            m_tree = space.grow(space.min_depth, space.max_depth)
+
+        return m_tree
+
 
     def _mutate(self, space, tmp_trees):
         """
@@ -168,11 +206,11 @@ class GP(Optimizer):
         selected = self._selection(space.fit_trees, n_mutation)
 
         for (i, m) in enumerate(selected):
+            
             if space.get_depth(tmp_trees[m]) > 1:
-                pass
-                # space.trees[i+n_reproduction] = 
+                space.trees[i+n_reproduction] = self.mute(space, tmp_trees[m])
             else:
-                space.trees[i+n_reproduction] = space._grow(space.min_depth, space.max_depth)
+                space.trees[i+n_reproduction] = space.grow(space.min_depth, space.max_depth)
 
     def _cross(self, space, tmp_trees):
         """
@@ -216,7 +254,7 @@ class GP(Optimizer):
         # Iterate through all trees
         for i, tree in enumerate(space.trees):
             # Runs through the tree and return a position array
-            a.position = space.run_tree(tree)
+            a.position = space.output(tree)
 
             # Checks the agent limits
             a.check_limits()

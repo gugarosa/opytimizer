@@ -1,7 +1,19 @@
+#
+#
+N_ARGS_FUNCTION = {
+    'SUM': 2,
+    'SUB': 2,
+    'MUL': 2,
+    'DIV': 2,
+    'EXP': 1,
+    'SQRT': 1,
+    'LOG': 1,
+    'ABS': 1
+}
+
 # A constant value used to avoid division by zero, zero logarithms
 # and any possible mathematical error
 EPSILON = 10e-10
-
 
 # A test passes if the best solution found by the agent in the target function
 # (which is always the sphere function, i.e. sum(x^2) and has global minimum at 0)
