@@ -81,38 +81,38 @@ def csendes(x):
     return np.sum(y)
 
 
-def deb1(x):
-    """Deb 1's function.
+# def deb1(x):
+#     """Deb 1's function.
 
-    It can be used with 'n' variables and has minimum at 5^n.
-    Also, it is expected to be within [-1, 1] bounds.
+#     It can be used with 'n' variables and has minimum at 5^n.
+#     Also, it is expected to be within [-1, 1] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = (-1 / n) * sum(sin(5 * pi * x)^6)
+#     Returns:
+#         y = (-1 / n) * sum(sin(5 * pi * x)^6)
 
-    """
+#     """
 
-    return
+#     return
 
 
-def deb3(x):
-    """Deb 3's function.
+# def deb3(x):
+#     """Deb 3's function.
 
-    It can be used with 'n' variables and has minimum at 5^n.
-    Also, it is expected to be within [-1, 1] bounds.
+#     It can be used with 'n' variables and has minimum at 5^n.
+#     Also, it is expected to be within [-1, 1] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = (-1 / n) * sum(sin(5 * pi * (x^(3/4) - 0.05))^6)
+#     Returns:
+#         y = (-1 / n) * sum(sin(5 * pi * (x^(3/4) - 0.05))^6)
 
-    """
+#     """
 
-    return
+#     return
 
 
 def exponential(x):
@@ -135,21 +135,21 @@ def exponential(x):
     return -np.exp(-0.5 * s)
 
 
-def griewank(x):
-    """Griewank's function.
+# def griewank(x):
+#     """Griewank's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-100, 100] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-100, 100] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 1 + sum(x^2 / 4000) - prod(cos(x / sqrt(i)))
+#     Returns:
+#         y = 1 + sum(x^2 / 4000) - prod(cos(x / sqrt(i)))
 
-    """
+#     """
 
-    return
+#     return
 
 
 def rastringin(x):
