@@ -159,10 +159,20 @@ class GP(Optimizer):
         """
 
         #
+        n_reproduction = int(space.n_trees * self.reproduction)
+
+        #
         n_mutation = int(space.n_trees * self.mutation)
 
         #
         selected = self._selection(space.fit_trees, n_mutation)
+
+        for (i, m) in enumerate(selected):
+            if space.get_depth(tmp_trees[m]) > 1:
+                pass
+                # space.trees[i+n_reproduction] = 
+            else:
+                space.trees[i+n_reproduction] = space._grow(space.min_depth, space.max_depth)
 
     def _cross(self, space, tmp_trees):
         """

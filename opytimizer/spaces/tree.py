@@ -198,6 +198,15 @@ class TreeSpace(Space):
 
         logger.debug('Trees initialized.')
 
+    def get_depth(self, tree):
+        """
+        """
+
+        if tree:
+            return 1 + self.get_depth(tree.left) + self.get_depth(tree.right)
+        else:
+            return 0
+
     def run_tree(self, tree):
         """Runs the tree and outputs its solution array.
 
