@@ -18,7 +18,7 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', hyperparams=None):
+    def __init__(self, algorithm='AIWPSO', hyperparams={}):
         """Initialization method.
 
         Args:

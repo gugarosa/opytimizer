@@ -21,7 +21,7 @@ class ABC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABC', hyperparams=None):
+    def __init__(self, algorithm='ABC', hyperparams={}):
         """Initialization method.
 
         Args:

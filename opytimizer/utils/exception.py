@@ -26,6 +26,17 @@ class ValueError(Error):
         #
         super(ValueError, self).__init__('ValueError', error)
 
+class SizeError(Error):
+    """
+    """
+
+    def __init__(self, error):
+        """
+        """
+
+        #
+        super(SizeError, self).__init__('SizeError', error)
+
 class TypeError(Error):
     """
     """

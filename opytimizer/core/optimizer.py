@@ -1,13 +1,13 @@
 import copy
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
 
 
 class Optimizer:
-    """An Optimizer class that will serve as meta-heuristic
-        techniques' parent.
+    """An Optimizer class that serves as meta-heuristics' parent.
 
     """
 
@@ -15,7 +15,7 @@ class Optimizer:
         """Initialization method.
 
         Args:
-            algorithm (str): A string indicating the algorithm name.
+            algorithm (str): Indicates the algorithm name.
 
         """
 
@@ -23,14 +23,14 @@ class Optimizer:
         self.algorithm = algorithm
 
         # Also, we need a dict of desired hyperparameters
-        self.hyperparams = None
+        self.hyperparams = {}
 
         # Indicates whether the optimizer is built or not
         self.built = False
 
     @property
     def algorithm(self):
-        """str: A string indicating the algorithm name.
+        """str: Indicates the algorithm name.
 
         """
 
@@ -42,7 +42,7 @@ class Optimizer:
 
     @property
     def hyperparams(self):
-        """dict: A dictionary containing key-value parameters
+        """dict: Contains the key-value parameters
             to meta-heuristics.
 
         """
@@ -51,11 +51,14 @@ class Optimizer:
 
     @hyperparams.setter
     def hyperparams(self, hyperparams):
+        if not isinstance(hyperparams, dict):
+            raise e.TypeError('`hyperparams` should be a dictionary')
+
         self._hyperparams = hyperparams
 
     @property
     def built(self):
-        """bool: A boolean to indicate whether the optimizer is built.
+        """bool: Indicates whether the optimizer is built.
 
         """
 

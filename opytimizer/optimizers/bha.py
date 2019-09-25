@@ -19,7 +19,7 @@ class BHA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BHA', hyperparams=None):
+    def __init__(self, algorithm='BHA', hyperparams={}):
         """Initialization method.
 
         Args:

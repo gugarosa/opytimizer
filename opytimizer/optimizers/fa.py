@@ -22,7 +22,7 @@ class FA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FA', hyperparams=None):
+    def __init__(self, algorithm='FA', hyperparams={}):
         """Initialization method.
 
         Args:
