@@ -20,7 +20,7 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FPA', hyperparams=None):
+    def __init__(self, algorithm='FPA', hyperparams={}):
         """Initialization method.
 
         Args:

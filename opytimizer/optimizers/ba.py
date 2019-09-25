@@ -21,7 +21,7 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams=None):
+    def __init__(self, algorithm='BA', hyperparams={}):
         """Initialization method.
 
         Args:

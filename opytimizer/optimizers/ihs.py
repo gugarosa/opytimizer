@@ -18,7 +18,7 @@ class IHS(HS):
 
     """
 
-    def __init__(self, algorithm='IHS', hyperparams=None):
+    def __init__(self, algorithm='IHS', hyperparams={}):
         """Initialization method.
 
         Args:

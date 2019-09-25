@@ -22,7 +22,7 @@ class CS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CS', hyperparams=None):
+    def __init__(self, algorithm='CS', hyperparams={}):
         """Initialization method.
 
         Args:

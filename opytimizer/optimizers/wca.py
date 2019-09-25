@@ -21,7 +21,7 @@ class WCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WCA', hyperparams=None):
+    def __init__(self, algorithm='WCA', hyperparams={}):
         """Initialization method.
 
         Args:

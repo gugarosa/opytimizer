@@ -21,7 +21,7 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams=None):
+    def __init__(self, algorithm='PSO', hyperparams={}):
         """Initialization method.
 
         Args:

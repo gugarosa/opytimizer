@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
 
@@ -10,12 +11,12 @@ logger = l.get_logger(__name__)
 
 
 class Space:
-    """A Space class that will hold agents, variables and methods
+    """A Space class for agents, variables and methods
     related to the search space.
 
     """
 
-    def __init__(self, n_agents=1, n_variables=2, n_dimensions=1, n_iterations=10, lower_bound=None, upper_bound=None):
+    def __init__(self, n_agents=1, n_variables=1, n_dimensions=1, n_iterations=10, lower_bound=[], upper_bound=[]):
         """Initialization method.
 
         Args:
@@ -23,8 +24,8 @@ class Space:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
             n_iterations (int): Number of iterations.
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
+            lower_bound (list): Lower bound list with the minimum possible values.
+            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 
@@ -40,11 +41,11 @@ class Space:
         # Number of iterations
         self.n_iterations = n_iterations
 
-        # Agent's list
-        self.agents = None
+        # List of agents
+        self.agents = []
 
         # Best agent object
-        self.best_agent = None
+        self.best_agent = Agent()
 
         # Index of the best agent, where initially the first agent is the best one
         self.best_index = 0
@@ -68,6 +69,11 @@ class Space:
 
     @n_agents.setter
     def n_agents(self, n_agents):
+        if not isinstance(n_agents, int):
+            raise e.TypeError('`n_agents` should be an integer')
+        if n_agents <= 0:
+            raise e.ValueError('`n_agents` should be > 0')
+
         self._n_agents = n_agents
 
     @property
@@ -80,6 +86,11 @@ class Space:
 
     @n_variables.setter
     def n_variables(self, n_variables):
+        if not isinstance(n_variables, int):
+            raise e.TypeError('`n_variables` should be an integer')
+        if n_variables <= 0:
+            raise e.ValueError('`n_variables` should be > 0')
+
         self._n_variables = n_variables
 
     @property
@@ -92,6 +103,11 @@ class Space:
 
     @n_dimensions.setter
     def n_dimensions(self, n_dimensions):
+        if not isinstance(n_dimensions, int):
+            raise e.TypeError('`n_dimensions` should be an integer')
+        if n_dimensions <= 0:
+            raise e.ValueError('`n_dimensions` should be > 0')
+
         self._n_dimensions = n_dimensions
 
     @property
@@ -104,6 +120,11 @@ class Space:
 
     @n_iterations.setter
     def n_iterations(self, n_iterations):
+        if not isinstance(n_iterations, int):
+            raise e.TypeError('`n_iterations` should be an integer')
+        if n_iterations <= 0:
+            raise e.ValueError('`n_iterations` should be > 0')
+
         self._n_iterations = n_iterations
 
     @property
@@ -116,6 +137,9 @@ class Space:
 
     @agents.setter
     def agents(self, agents):
+        if not isinstance(agents, list):
+            raise e.TypeError('`agents` should be a list')
+
         self._agents = agents
 
     @property
@@ -128,6 +152,9 @@ class Space:
 
     @best_agent.setter
     def best_agent(self, best_agent):
+        if not isinstance(best_agent, Agent):
+            raise e.TypeError('`best_agent` should be an Agent')
+
         self._best_agent = best_agent
 
     @property
@@ -140,6 +167,11 @@ class Space:
 
     @best_index.setter
     def best_index(self, best_index):
+        if not isinstance(best_index, int):
+            raise e.TypeError('`best_index` should be an integer')
+        if best_index < 0:
+            raise e.ValueError('`best_index` should be >= 0')
+
         self._best_index = best_index
 
     @property
@@ -152,6 +184,11 @@ class Space:
 
     @lb.setter
     def lb(self, lb):
+        if not isinstance(lb, np.ndarray):
+            raise e.TypeError('`lb` should be a numpy array')
+        if lb.shape[0] != self.n_variables:
+            raise e.SizeError('`lb` should be the same size as `n_variables`')
+
         self._lb = lb
 
     @property
@@ -164,6 +201,11 @@ class Space:
 
     @ub.setter
     def ub(self, ub):
+        if not isinstance(ub, np.ndarray):
+            raise e.TypeError('`ub` should be a numpy array')
+        if ub.shape[0] != self.n_variables:
+            raise e.SizeError('`ub` should be the same size as `n_variables`')
+
         self._ub = ub
 
     @property
@@ -178,30 +220,8 @@ class Space:
     def built(self, built):
         self._built = built
 
-    def _check_bound_size(self, bound):
-        """Checks if the bounds' size are the same of
-        variables size.
-
-        Args:
-            bound (np.array): bounds array.
-
-        Returns:
-            True if sizes are equal.
-
-        """
-
-        logger.debug('Running private method: check_bound_size().')
-
-        if len(bound) != self.n_variables:
-            e = f'Expected size is {self.n_variables}. Got {len(bound)}.'
-            logger.error(e)
-            raise RuntimeError(e)
-        else:
-            logger.debug('Bound checked.')
-            return True
-
     def _create_agents(self):
-        """Creates and populates the agents array.
+        """Creates a list of agents and the best agent.
 
         Also defines a random best agent, only for initialization purposes.
 
@@ -212,16 +232,11 @@ class Space:
 
         logger.debug('Running private method: create_agents().')
 
-        # Creating an agents list
-        agents = []
+        # Creating a list of agents
+        agents = [Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions)
+                  for _ in range(self.n_agents)]
 
-        # Iterate through number of agents
-        for _ in range(self.n_agents):
-            # Appends new agent to list
-            agents.append(
-                Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions))
-
-        # Apply first agent as the best one
+        # Apply the first agent as the best one
         best_agent = copy.deepcopy(agents[0])
 
         return agents, best_agent
@@ -246,31 +261,18 @@ class Space:
         needs to be on its initialization.
 
         Args:
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
+            lower_bound (list): Lower bound array with the minimum possible values.
+            upper_bound (list): Upper bound array with the maximum possible values.
 
         """
 
         logger.debug('Running private method: build().')
 
-        # Checking if lower bound is avaliable
-        if lower_bound:
-            # Check if its size matches to our actual number of variables
-            if self._check_bound_size(lower_bound):
-                self.lb = lower_bound
-        else:
-            e = f"Property 'lower_bound' cannot be {lower_bound}."
-            logger.error(e)
-            raise RuntimeError(e)
+        # Creating lower bound array from list
+        self.lb = np.asarray(lower_bound)
 
-        # We need to check upper bounds as well
-        if upper_bound:
-            if self._check_bound_size(upper_bound):
-                self.ub = upper_bound
-        else:
-            e = f"Property 'upper_bound' cannot be {upper_bound}."
-            logger.error(e)
-            raise RuntimeError(e)
+        # Creating upper bound array from list
+        self.ub = np.asarray(upper_bound)
 
         # Creating agents
         self.agents, self.best_agent = self._create_agents()

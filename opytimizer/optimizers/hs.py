@@ -20,7 +20,7 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', hyperparams=None):
+    def __init__(self, algorithm='HS', hyperparams={}):
         """Initialization method.
 
         Args:

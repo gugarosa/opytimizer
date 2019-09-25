@@ -16,15 +16,18 @@ def test_optimizer_algorithm():
 def test_optimizer_hyperparams():
     new_optimizer = optimizer.Optimizer()
 
-    assert new_optimizer.hyperparams == None
+    assert new_optimizer.hyperparams == {}
 
 
 def test_optimizer_hyperparams_setter():
     new_optimizer = optimizer.Optimizer()
 
-    new_optimizer.hyperparams = {
-        'w': 1.5
-    }
+    try:
+        new_optimizer.hyperparams = 1
+    except:
+        new_optimizer.hyperparams = {
+            'w': 1.5
+        }
 
     assert new_optimizer.hyperparams['w'] == 1.5
 

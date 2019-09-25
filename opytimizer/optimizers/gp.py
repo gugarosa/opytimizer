@@ -21,7 +21,7 @@ class GP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GP', hyperparams=None):
+    def __init__(self, algorithm='GP', hyperparams={}):
         """Initialization method.
 
         Args:
