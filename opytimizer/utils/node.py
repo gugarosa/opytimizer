@@ -1,3 +1,5 @@
+import sys
+
 class Node():
     """
     """
@@ -26,9 +28,3 @@ class Node():
 
         #
         self.parent = parent
-
-    def show(self):
-        """
-        """
-
-        print(f'Node: id = {self.id} | name = {self.name} | type = {self.type} | left = {self.left} | right = {self.right} | parent = {self.parent}.')
