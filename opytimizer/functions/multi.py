@@ -1,14 +1,18 @@
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.function import Function
 
 logger = l.get_logger(__name__)
 
+# Constant to hold possible multi-objective strategies
+METHODS = ['weight_sum']
 
-class Multi(Function):
-    """A Multi Function class to hold multi objective functions
+
+class MultiFunction(Function):
+    """A MultiFunction class for using with multi objective functions
     that will be further evaluated.
 
-    It will serve as the basis class for holding in-code related
+    It serves as the basis class for holding in-code related
     multi objective functions.
 
     """
@@ -17,11 +21,9 @@ class Multi(Function):
         """Initialization method.
 
         Args:
-            functions (list): This should be a list of pointers to functions
-                that will return the fitness value.
-            weights (list): List of weights for weighted sum strategy.
-            method (str): Multi-objective function strategy method
-                (weight_sum, ).
+            functions (list): Pointers to functions that will return the fitness value.
+            weights (list): Weights for weighted sum strategy.
+            method (str): Multi-objective function strategy method (e.g., weight_sum).
 
         """
 
@@ -33,7 +35,7 @@ class Multi(Function):
         # Creating weights (when used with 'weight_sum' strategy).
         self.weights = weights
 
-        # Creates an strategy method (weight_sum, )
+        # Creates an strategy method (e.g., weight_sum)
         self.method = method
 
         # Now, we need to build this class up
@@ -43,7 +45,7 @@ class Multi(Function):
 
     @property
     def functions(self):
-        """list: A list of Function's instances.
+        """list: Function's instances.
 
         """
 
@@ -51,6 +53,9 @@ class Multi(Function):
 
     @functions.setter
     def functions(self, functions):
+        if not isinstance(functions, list):
+            raise e.TypeError('`functions` should be a list')
+
         self._functions = functions
 
     @property
@@ -63,11 +68,14 @@ class Multi(Function):
 
     @weights.setter
     def weights(self, weights):
+        if not isinstance(weights, list):
+            raise e.TypeError('`weights` should be a list')
+
         self._weights = weights
 
     @property
     def method(self):
-        """str: Strategy method (weight_sum, ).
+        """str: Strategy method (e.g., weight_sum).
 
         """
 
@@ -75,17 +83,19 @@ class Multi(Function):
 
     @method.setter
     def method(self, method):
+        if method not in METHODS:
+            raise e.ArgumentError(f'`method` value should be in {METHODS}')
+
         self._method = method
 
     def _build(self, functions, method):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            functions (list): This should be a list of pointers to functions
-                that will return the fitness value.
+            functions (list): Pointers to functions that will return the fitness value.
             method (str): Strategy method.
 
         """
@@ -93,7 +103,7 @@ class Multi(Function):
         logger.debug('Running private method: build().')
 
         # Populating pointers with real functions
-        self.functions = self._create_functions(functions)
+        self.functions = [Function(pointer=f) for f in functions]
 
         # Creating a multi-objective method strategy as the real pointer
         self.pointer = self._create_strategy(method)
@@ -103,39 +113,7 @@ class Multi(Function):
 
         # Logging attributes
         logger.debug(
-            f'Functions: {self.functions} | Built: {self.built}')
-
-    def _create_functions(self, pointers):
-        """Creates functions class instances using the provided list of pointers.
-
-        Args:
-            pointers (list): A list of pointers to create respective Function's instances.
-
-        Returns:
-            A list of Function's class instances.
-
-        Raises:
-            RuntimeError
-
-        """
-
-        # Creates an empty functions list
-        functions = []
-
-        # Checks if pointers is a list
-        if type(pointers).__name__ == 'list':
-            # Iterate through every item in list
-            for pointer in pointers:
-                # Creates a function class instance for each item
-                functions.append(Function(pointer=pointer))
-
-        # If not, raises an runtime error
-        else:
-            e = f"Property 'pointers' needs to be a list."
-            logger.error(e)
-            raise RuntimeError(e)
-
-        return functions
+            f'Functions: {[f.pointer.__name__ for f in self.functions]} | Built: {self.built}')
 
     def _create_strategy(self, method):
         """Creates a multi-objective method strategy as the real pointer.
@@ -144,7 +122,7 @@ class Multi(Function):
             method (str): A string indicating what strategy method should be used.
 
         Returns:
-            A callable based on defined strategy.
+            A callable based on the chosen strategy.
 
         """
 
