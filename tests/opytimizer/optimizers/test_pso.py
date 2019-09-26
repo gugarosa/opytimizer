@@ -25,13 +25,40 @@ def test_pso_hyperparams():
 def test_pso_hyperparams_setter():
     new_pso = pso.PSO()
 
-    new_pso.w = 1
+    try:
+        new_pso.w = 'a'
+    except:
+        new_pso.w = 1
+
+    try:
+        new_pso.w = -1
+    except:
+        new_pso.w = 1
+
     assert new_pso.w == 1
 
-    new_pso.c1 = 1.5
+    try:
+        new_pso.c1 = 'b'
+    except:
+        new_pso.c1 = 1.5
+
+    try:
+        new_pso.c1 = -1
+    except:
+        new_pso.c1 = 1.5
+
     assert new_pso.c1 == 1.5
 
-    new_pso.c2 = 1.5
+    try:
+        new_pso.c2 = 'c'
+    except:
+        new_pso.c2 = 1.5
+
+    try:
+        new_pso.c2 = -1
+    except:
+        new_pso.c2 = 1.5
+
     assert new_pso.c2 == 1.5
 
 

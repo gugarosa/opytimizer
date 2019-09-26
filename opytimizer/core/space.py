@@ -255,7 +255,7 @@ class Space:
         raise NotImplementedError
 
     def _build(self, lower_bound, upper_bound):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.

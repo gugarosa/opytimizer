@@ -28,16 +28,57 @@ def test_ba_hyperparams():
 def test_ba_hyperparams_setter():
     new_ba = ba.BA()
 
-    new_ba.f_min = 0
-    assert new_ba.f_min == 0
+    try:
+        new_ba.f_min = 'a'
+    except:
+        new_ba.f_min = 0.1
 
-    new_ba.f_max = 2
+    try:
+        new_ba.f_min = -1
+    except:
+        new_ba.f_min = 0.1
+
+    assert new_ba.f_min == 0.1
+
+    try:
+        new_ba.f_max = 'b'
+    except:
+        new_ba.f_max = 2
+
+    try:
+        new_ba.f_max = -1
+    except:
+        new_ba.f_max = 2
+
+    try:
+        new_ba.f_max = 0
+    except:
+        new_ba.f_max = 2
+
     assert new_ba.f_max == 2
 
-    new_ba.A = 0.5
+    try:
+        new_ba.A = 'c'
+    except:
+        new_ba.A = 0.5
+
+    try:
+        new_ba.A = -1
+    except:
+        new_ba.A = 0.5
+
     assert new_ba.A == 0.5
 
-    new_ba.r = 0.5
+    try:
+        new_ba.r = 'd'
+    except:
+        new_ba.r = 0.5
+
+    try:
+        new_ba.r = -1
+    except:
+        new_ba.r = 0.5
+
     assert new_ba.r == 0.5
 
 

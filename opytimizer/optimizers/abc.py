@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -13,7 +14,7 @@ logger = l.get_logger(__name__)
 class ABC(Optimizer):
     """An ABC class, inherited from Optimizer.
 
-    This will be the designed class to define ABC-related
+    This is the designed class to define ABC-related
     variables and methods.
 
     References:
@@ -25,9 +26,8 @@ class ABC(Optimizer):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,17 +54,21 @@ class ABC(Optimizer):
 
     @n_trials.setter
     def n_trials(self, n_trials):
+        if not isinstance(n_trials, int):
+            raise e.TypeError('`n_trials` should be an integer')
+        if n_trials <= 0:
+            raise e.ValueError('`n_trials` should be > 0')
+
         self._n_trials = n_trials
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 

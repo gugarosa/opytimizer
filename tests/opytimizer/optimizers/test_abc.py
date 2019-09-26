@@ -19,7 +19,16 @@ def test_abc_hyperparams():
 def test_abc_hyperparams_setter():
     new_abc = abc.ABC()
 
-    new_abc.n_trials = 10
+    try:
+        new_abc.n_trials = 0.0
+    except:
+        new_abc.n_trials = 10
+
+    try:
+        new_abc.n_trials = 0
+    except:
+        new_abc.n_trials = 10
+
     assert new_abc.n_trials == 10
 
 
@@ -36,7 +45,7 @@ def test_abc_run():
     new_function = function.Function(pointer=square)
 
     hyperparams = {
-        'n_trials': 10
+        'n_trials': 1
     }
 
     new_abc = abc.ABC(hyperparams=hyperparams)

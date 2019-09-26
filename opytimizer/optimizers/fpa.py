@@ -2,6 +2,7 @@ import copy
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -12,7 +13,7 @@ logger = l.get_logger(__name__)
 class FPA(Optimizer):
     """A FPA class, inherited from Optimizer.
 
-    This will be the designed class to define FPA-related
+    This is the designed class to define FPA-related
     variables and methods.
 
     References:
@@ -24,9 +25,8 @@ class FPA(Optimizer):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -84,14 +84,13 @@ class FPA(Optimizer):
         self._p = p
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
