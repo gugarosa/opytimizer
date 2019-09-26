@@ -2,7 +2,7 @@ import sys
 
 import opytimizer.math.constants as c
 
-class Node():
+class Node:
     """
     """
 
