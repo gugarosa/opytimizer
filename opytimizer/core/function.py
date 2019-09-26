@@ -67,7 +67,7 @@ class Function:
         self._built = built
 
     def _build(self, pointer):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.

@@ -1,5 +1,6 @@
 import numpy as np
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.pso import PSO
@@ -10,7 +11,7 @@ logger = l.get_logger(__name__)
 class AIWPSO(PSO):
     """An AIWPSO class, inherited from PSO.
 
-    This will be the designed class to define AIWPSO-related
+    This is the designed class to define AIWPSO-related
     variables and methods.
 
     References:
@@ -22,9 +23,8 @@ class AIWPSO(PSO):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -55,6 +55,11 @@ class AIWPSO(PSO):
 
     @w_min.setter
     def w_min(self, w_min):
+        if not (isinstance(w_min, float) or isinstance(w_min, int)):
+            raise e.TypeError('`w_min` should be a float or integer')
+        if w_min < 0:
+            raise e.ValueError('`w_min` should be >= 0')
+
         self._w_min = w_min
 
     @property
@@ -67,10 +72,17 @@ class AIWPSO(PSO):
 
     @w_max.setter
     def w_max(self, w_max):
+        if not (isinstance(w_max, float) or isinstance(w_max, int)):
+            raise e.TypeError('`w_max` should be a float or integer')
+        if w_max < 0:
+            raise e.ValueError('`w_max` should be >= 0')
+        if w_max < self.w_min:
+            raise e.ValueError('`w_max` should be >= `w_min`')
+
         self._w_max = w_max
 
     def _rebuild(self):
-        """This method will serve as the object re-building process.
+        """This method serves as the object re-building process.
 
         One is supposed to use this class only when defining extra hyperparameters
         that can not be inherited by its parent.

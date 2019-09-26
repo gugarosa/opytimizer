@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -13,7 +14,7 @@ logger = l.get_logger(__name__)
 class PSO(Optimizer):
     """A PSO class, inherited from Optimizer.
 
-    This will be the designed class to define PSO-related
+    This is the designed class to define PSO-related
     variables and methods.
 
     References:
@@ -25,9 +26,8 @@ class PSO(Optimizer):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -60,6 +60,11 @@ class PSO(Optimizer):
 
     @w.setter
     def w(self, w):
+        if not (isinstance(w, float) or isinstance(w, int)):
+            raise e.TypeError('`w` should be a float or integer')
+        if w < 0:
+            raise e.ValueError('`w` should be >= 0')
+
         self._w = w
 
     @property
@@ -72,6 +77,11 @@ class PSO(Optimizer):
 
     @c1.setter
     def c1(self, c1):
+        if not (isinstance(c1, float) or isinstance(c1, int)):
+            raise e.TypeError('`c1` should be a float or integer')
+        if c1 < 0:
+            raise e.ValueError('`c1` should be >= 0')
+
         self._c1 = c1
 
     @property
@@ -84,17 +94,21 @@ class PSO(Optimizer):
 
     @c2.setter
     def c2(self, c2):
+        if not (isinstance(c2, float) or isinstance(c2, int)):
+            raise e.TypeError('`c2` should be a float or integer')
+        if c2 < 0:
+            raise e.ValueError('`c2` should be >= 0')
+
         self._c2 = c2
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 

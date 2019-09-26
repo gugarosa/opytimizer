@@ -4,6 +4,7 @@ import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -14,7 +15,7 @@ logger = l.get_logger(__name__)
 class CS(Optimizer):
     """A CS class, inherited from Optimizer.
 
-    This will be the designed class to define CS-related
+    This is the designed class to define CS-related
     variables and methods.
 
     References:
@@ -26,8 +27,7 @@ class CS(Optimizer):
         """Initialization method.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -60,6 +60,11 @@ class CS(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
+        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+            raise e.TypeError('`alpha` should be a float or integer')
+        if alpha < 0:
+            raise e.ValueError('`alpha` should be >= 0')
+
         self._alpha = alpha
 
     @property
@@ -72,6 +77,11 @@ class CS(Optimizer):
 
     @beta.setter
     def beta(self, beta):
+        if not (isinstance(beta, float) or isinstance(beta, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
+
         self._beta = beta
 
     @property
@@ -84,17 +94,21 @@ class CS(Optimizer):
 
     @p.setter
     def p(self, p):
+        if not (isinstance(p, float) or isinstance(p, int)):
+            raise e.TypeError('`p` should be a float or integer')
+        if p < 0 or p > 1:
+            raise e.ValueError('`p` should be between 0 and 1')
+
         self._p = p
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 

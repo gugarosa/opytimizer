@@ -1,5 +1,6 @@
 import numpy as np
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.hs import HS
@@ -10,7 +11,7 @@ logger = l.get_logger(__name__)
 class IHS(HS):
     """An IHS class, inherited from HS.
 
-    This will be the designed class to define IHS-related
+    This is the designed class to define IHS-related
     variables and methods.
 
     References:
@@ -22,9 +23,8 @@ class IHS(HS):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -100,7 +100,7 @@ class IHS(HS):
         self._bw_max = bw_max
 
     def _rebuild(self):
-        """This method will serve as the object re-building process.
+        """This method serves as the object re-building process.
 
         One is supposed to use this class only when defining extra hyperparameters
         that can not be inherited by its parent.

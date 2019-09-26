@@ -10,40 +10,48 @@ from opytimizer.spaces import search
 
 def test_aiwpso_hyperparams():
     hyperparams = {
-        'w': 2,
         'w_min': 1,
         'w_max': 3,
-        'c1': 1.7,
-        'c2': 1.7
     }
 
     new_aiwpso = aiwpso.AIWPSO(hyperparams=hyperparams)
-
-    assert new_aiwpso.w == 2
 
     assert new_aiwpso.w_min == 1
 
     assert new_aiwpso.w_max == 3
 
-    assert new_aiwpso.c1 == 1.7
-
-    assert new_aiwpso.c2 == 1.7
-
 
 def test_aiwpso_hyperparams_setter():
     new_aiwpso = aiwpso.AIWPSO()
 
-    new_aiwpso.w_min = 0.5
+    try:
+        new_aiwpso.w_min = 'a'
+    except:
+        new_aiwpso.w_min = 0.5
+
+    try:
+        new_aiwpso.w_min = -1
+    except:
+        new_aiwpso.w_min = 0.5
+
     assert new_aiwpso.w_min == 0.5
 
-    new_aiwpso.w_max = 2
-    assert new_aiwpso.w_max == 2
+    try:
+        new_aiwpso.w_max = 'b'
+    except:
+        new_aiwpso.w_max = 1.0
 
-    new_aiwpso.c1 = 1.5
-    assert new_aiwpso.c1 == 1.5
+    try:
+        new_aiwpso.w_max = -1
+    except:
+        new_aiwpso.w_max = 1.0
 
-    new_aiwpso.c2 = 1.5
-    assert new_aiwpso.c2 == 1.5
+    try:
+        new_aiwpso.w_max = 0
+    except:
+        new_aiwpso.w_max = 1.0
+
+    assert new_aiwpso.w_max == 1.0
 
 
 def test_aiwpso_rebuild():
