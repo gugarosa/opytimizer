@@ -305,8 +305,8 @@ class GP(Optimizer):
             # After the update, we need to re-evaluate the tree space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents, best agent and best agent's index
+            history.dump(agents=space.agents, best=space.best_agent, best_index=space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

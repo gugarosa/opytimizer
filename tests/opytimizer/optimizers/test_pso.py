@@ -118,7 +118,9 @@ def test_pso_run():
     history = new_pso.run(search_space, new_function)
 
     assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+    assert len(history.best) > 0
+    assert len(history.best_index) > 0
+    assert len(history.local) > 0
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm pso failed to converge"
+    best_fitness = history.best[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'

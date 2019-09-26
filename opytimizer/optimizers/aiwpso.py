@@ -180,9 +180,9 @@ class AIWPSO(PSO):
             # Computing particle's success and updating inertia weight
             self._compute_success(space.agents, fitness)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump_pso(local_position, space.agents,
-                             space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents, local positions, best agent and best agent's index
+            history.dump(agents=space.agents, local=local_position,
+                         best=space.best_agent, best_index=space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
