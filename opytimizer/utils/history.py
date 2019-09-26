@@ -91,7 +91,7 @@ class History:
 
         # Checks if the key is `local`
         elif key == 'local':
-            # Returns a list of agents' tuples (position, fit)
+            # Returns a list of local positions
             return [v.tolist() for v in value]
 
     def save(self, file_name):
