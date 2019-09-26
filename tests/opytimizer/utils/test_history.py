@@ -6,7 +6,6 @@ from opytimizer.core import agent
 from opytimizer.utils import history
 
 
-
 def test_history_dump():
     new_history = history.History()
 
