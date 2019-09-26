@@ -22,10 +22,28 @@ def test_wca_hyperparams():
 def test_wca_hyperparams_setter():
     new_wca = wca.WCA()
 
-    new_wca.nsr = 10
+    try:
+        new_wca.nsr = 0.0
+    except:
+        new_wca.nsr = 10
+
+    try:
+        new_wca.nsr = 0
+    except:
+        new_wca.nsr = 10
+
     assert new_wca.nsr == 10
 
-    new_wca.d_max = 0.1
+    try:
+        new_wca.d_max = 'a'
+    except:
+        new_wca.d_max = 0.1
+
+    try:
+        new_wca.d_max = -1
+    except:
+        new_wca.d_max = 0.1
+
     assert new_wca.d_max == 0.1
 
 

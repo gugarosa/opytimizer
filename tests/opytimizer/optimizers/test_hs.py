@@ -10,7 +10,7 @@ def test_hs_hyperparams():
     hyperparams = {
         'HMCR': 0.7,
         'PAR': 0.7,
-        'bw': 10
+        'bw': 10.0
     }
 
     new_hs = hs.HS(hyperparams=hyperparams)
@@ -19,19 +19,48 @@ def test_hs_hyperparams():
 
     assert new_hs.PAR == 0.7
 
-    assert new_hs.bw == 10
+    assert new_hs.bw == 10.0
 
 
 def test_hs_hyperparams_setter():
     new_hs = hs.HS()
 
-    new_hs.HMCR = 0.5
+    try:
+        new_hs.HMCR = 'a'
+    except:
+        new_hs.HMCR = 0.5
+
+    try:
+        new_hs.HMCR = -1
+    except:
+        new_hs.HMCR = 0.5
+
     assert new_hs.HMCR == 0.5
 
-    new_hs.PAR = 0.5
+    try:
+        new_hs.PAR = 'b'
+    except:
+        new_hs.PAR = 0.5
+
+    try:
+        new_hs.PAR = -1
+    except:
+        new_hs.PAR = 0.5
+
     assert new_hs.PAR == 0.5
 
-    new_hs.bw = 5
+    try:
+        new_hs.bw = 'c'
+    except:
+        new_hs.bw = 5
+
+    try:
+        new_hs.bw = -1
+    except:
+        new_hs.bw = 5
+
+    assert new_hs.bw == 5
+
     assert new_hs.bw == 5
 
 
@@ -62,7 +91,7 @@ def test_hs_run():
     hyperparams = {
         'HMCR': 0.7,
         'PAR': 0.7,
-        'bw': 10
+        'bw': 10.0
     }
 
     new_hs = hs.HS(hyperparams=hyperparams)

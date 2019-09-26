@@ -61,6 +61,11 @@ class FA(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
+        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+            raise e.TypeError('`alpha` should be a float or integer')
+        if alpha < 0:
+            raise e.ValueError('`alpha` should be >= 0')
+
         self._alpha = alpha
 
     @property
@@ -73,6 +78,11 @@ class FA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
+        if not (isinstance(beta, float) or isinstance(beta, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
+
         self._beta = beta
 
     @property
@@ -85,6 +95,11 @@ class FA(Optimizer):
 
     @gamma.setter
     def gamma(self, gamma):
+        if not (isinstance(gamma, float) or isinstance(gamma, int)):
+            raise e.TypeError('`gamma` should be a float or integer')
+        if gamma < 0:
+            raise e.ValueError('`gamma` should be >= 0')
+
         self._gamma = gamma
 
     def _build(self, hyperparams):
