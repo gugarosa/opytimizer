@@ -1,13 +1,16 @@
+from inspect import signature
+
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
 
 
 class Function:
-    """A Function class to hold objective functions
+    """A Function class for using with objective functions
     that will be further evaluated.
 
-    It will serve as the basis class for holding in-code related
+    It serves as the basis class for holding in-code related
     objective functions.
 
     """
@@ -23,8 +26,8 @@ class Function:
 
         logger.info('Creating class: Function.')
 
-        # Also, we need a pointer to point to our actual function
-        self.pointer = callable
+        # Also, we need a callable to point to the actual function
+        self.pointer = pointer
 
         # Indicates whether the function is built or not
         self.built = False
@@ -36,7 +39,7 @@ class Function:
 
     @property
     def pointer(self):
-        """callable: A pointer to point to our actual function.
+        """callable: Points to the actual function.
 
         """
 
@@ -44,11 +47,16 @@ class Function:
 
     @pointer.setter
     def pointer(self, pointer):
+        if not callable(pointer):
+            raise e.TypeError('`pointer` should be a callable')
+        if len(signature(pointer).parameters) > 1:
+            raise e.ArgumentError('`pointer` should only have 1 argument')
+
         self._pointer = pointer
 
     @property
     def built(self):
-        """bool: A boolean to indicate whether the function is built.
+        """bool: Indicate whether the function is built.
 
         """
 
@@ -68,24 +76,15 @@ class Function:
             function (callable): This should be a pointer to a function
                 that will return the fitness value.
 
-        Raises:
-            RuntimeError
-
         """
 
         logger.debug('Running private method: build().')
 
         # We apply to class pointer's the desired function
-        if pointer:
-            self.pointer = pointer
-        else:
-            e = f"Property 'pointer' cannot be {pointer}."
-            logger.error(e)
-            raise RuntimeError(e)
+        self.pointer = pointer
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Pointer: {self.pointer} | Built: {self.built}')
+        logger.debug(f'Pointer: {self.pointer.__name__} | Built: {self.built}')

@@ -14,6 +14,11 @@ def test_agent_n_variables():
 
 def test_agent_n_variables_setter():
     try:
+        new_agent = agent.Agent(n_variables=0.0, n_dimensions=4)
+    except:
+        new_agent = agent.Agent(n_variables=5, n_dimensions=4)
+
+    try:
         new_agent = agent.Agent(n_variables=0, n_dimensions=4)
     except:
         new_agent = agent.Agent(n_variables=5, n_dimensions=4)
@@ -28,6 +33,11 @@ def test_agent_n_dimensions():
 
 
 def test_agent_n_dimensions_setter():
+    try:
+        new_agent = agent.Agent(n_variables=5, n_dimensions=0.0)
+    except:
+        new_agent = agent.Agent(n_variables=5, n_dimensions=4)
+
     try:
         new_agent = agent.Agent(n_variables=5, n_dimensions=0)
     except:
