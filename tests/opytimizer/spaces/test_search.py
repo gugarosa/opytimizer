@@ -4,9 +4,9 @@ from opytimizer.spaces import search
 
 
 def test_search_initialize_agents():
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_search_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 
@@ -14,9 +14,9 @@ def test_search_initialize_agents():
 
 
 def test_search_check_limits():
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_search_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 

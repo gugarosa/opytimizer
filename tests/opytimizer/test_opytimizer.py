@@ -15,9 +15,9 @@ def test_opytimizer_build():
 
     new_function = function.Function(pointer=square)
 
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 
@@ -39,9 +39,9 @@ def test_opytimizer_start():
 
     new_function = function.Function(pointer=square)
 
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 

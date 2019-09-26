@@ -1,7 +1,7 @@
-opytimizer.utils.node
+opytimizer.utils.exception
 ==========================
 
-.. automodule:: opytimizer.utils.node
+.. automodule:: opytimizer.utils.exception
     :members:
     :private-members:
     :special-members:

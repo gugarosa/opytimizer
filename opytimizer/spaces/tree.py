@@ -6,8 +6,8 @@ import opytimizer.math.constants as c
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
+from opytimizer.core.node import Node
 from opytimizer.core.space import Space
-from opytimizer.utils.node import Node
 
 logger = l.get_logger(__name__)
 

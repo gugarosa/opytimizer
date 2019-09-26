@@ -43,6 +43,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - core
         - agent
         - function
+        - node
         - optimizer
         - space
     - functions
@@ -71,9 +72,9 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - search
         - tree
     - utils
+        - exception
         - history
         - logging
-        - node
     - visualization
 ```
 

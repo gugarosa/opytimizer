@@ -14,7 +14,7 @@ class HyperSpace(Space):
 
     """
 
-    def __init__(self, n_agents=1, n_variables=2, n_dimensions=4, n_iterations=10, lower_bound=None, upper_bound=None):
+    def __init__(self, n_agents=1, n_variables=1, n_dimensions=2, n_iterations=10, lower_bound=[], upper_bound=[]):
         """Initialization method.
 
         Args:
@@ -22,8 +22,8 @@ class HyperSpace(Space):
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
             n_iterations (int): Number of iterations.
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
+            lower_bound (list): Lower bound list with the minimum possible values.
+            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 
