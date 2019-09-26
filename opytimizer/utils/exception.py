@@ -15,7 +15,7 @@ class Error(Exception):
         logger.error(f'{cls}: {msg}.')
 
 
-class InvalidValueError(Error):
+class ValueError(Error):
     """
     """
 
@@ -24,4 +24,26 @@ class InvalidValueError(Error):
         """
 
         #
-        super(InvalidValueError, self).__init__('InvalidValueError', error)
+        super(ValueError, self).__init__('ValueError', error)
+
+class TypeError(Error):
+    """
+    """
+
+    def __init__(self, error):
+        """
+        """
+
+        #
+        super(TypeError, self).__init__('TypeError', error)
+
+class ArgumentError(Error):
+    """
+    """
+
+    def __init__(self, error):
+        """
+        """
+
+        #
+        super(ArgumentError, self).__init__('ArgumentError', error)

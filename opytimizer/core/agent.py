@@ -1,6 +1,7 @@
 import sys
 
 import numpy as np
+
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -49,8 +50,10 @@ class Agent:
 
     @n_variables.setter
     def n_variables(self, n_variables):
+        if not isinstance(n_variables, int):
+            raise e.TypeError('`n_variables` should be an integer')
         if n_variables <= 0:
-            raise e.InvalidValueError('n_variables should be > 0')
+            raise e.ValueError('`n_variables` should be > 0')
 
         self._n_variables = n_variables
 
@@ -64,8 +67,10 @@ class Agent:
 
     @n_dimensions.setter
     def n_dimensions(self, n_dimensions):
+        if not isinstance(n_dimensions, int):
+            raise e.TypeError('`n_dimensions` should be an integer')
         if n_dimensions <= 0:
-            raise e.InvalidValueError('n_dimensions should be > 0')
+            raise e.ValueError('`n_dimensions` should be > 0')
 
         self._n_dimensions = n_dimensions
 

@@ -16,7 +16,20 @@ def test_function_pointer_setter():
 
     assert square(2) == 4
 
-    new_function = function.Function(pointer=square)
+    try:
+        new_function = function.Function(pointer=0)
+    except:
+        new_function = function.Function(pointer=square)
+
+    def square2(x, y):
+        return x**2 + y**2
+
+    assert square2(2, 2) == 8
+
+    try:
+        new_function = function.Function(pointer=square2)
+    except:
+        new_function = function.Function(pointer=square)
 
     assert new_function.pointer == square
 
@@ -36,9 +49,6 @@ def test_function_built_setter():
 
 
 def test_function_build():
-    try:
-        new_function = function.Function(pointer=None)
-    except:
-        new_function = function.Function()
+    new_function = function.Function()
 
     assert new_function.built == True
