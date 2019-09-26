@@ -57,6 +57,11 @@ class WCA(Optimizer):
 
     @nsr.setter
     def nsr(self, nsr):
+        if not isinstance(nsr, int):
+            raise e.TypeError('`nsr` should be an integer')
+        if nsr < 1:
+            raise e.ValueError('`nsr` should be > 1')
+
         self._nsr = nsr
 
     @property
@@ -69,6 +74,11 @@ class WCA(Optimizer):
 
     @d_max.setter
     def d_max(self, d_max):
+        if not (isinstance(d_max, float) or isinstance(d_max, int)):
+            raise e.TypeError('`d_max` should be a float or integer')
+        if d_max < 0:
+            raise e.ValueError('`d_max` should be >= 0')
+
         self._d_max = d_max
 
     def _build(self, hyperparams):

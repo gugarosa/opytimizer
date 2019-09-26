@@ -57,6 +57,11 @@ class FPA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
+        if not (isinstance(beta, float) or isinstance(beta, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
+
         self._beta = beta
 
     @property
@@ -69,6 +74,11 @@ class FPA(Optimizer):
 
     @eta.setter
     def eta(self, eta):
+        if not (isinstance(eta, float) or isinstance(eta, int)):
+            raise e.TypeError('`eta` should be a float or integer')
+        if eta < 0:
+            raise e.ValueError('`eta` should be >= 0')
+
         self._eta = eta
 
     @property
@@ -81,6 +91,11 @@ class FPA(Optimizer):
 
     @p.setter
     def p(self, p):
+        if not (isinstance(p, float) or isinstance(p, int)):
+            raise e.TypeError('`p` should be a float or integer')
+        if p < 0 or p > 1:
+            raise e.ValueError('`p` should be between 0 and 1')
+
         self._p = p
 
     def _build(self, hyperparams):

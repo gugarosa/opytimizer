@@ -25,14 +25,41 @@ def test_fa_hyperparams():
 def test_fa_hyperparams_setter():
     new_fa = fa.FA()
 
-    new_fa.alpha = 0.25
-    assert new_fa.alpha == 0.25
+    try:
+        new_fa.alpha = 'a'
+    except:
+        new_fa.alpha = 0.5
 
-    new_fa.beta = 1.0
-    assert new_fa.beta == 1.0
+    try:
+        new_fa.alpha = -1
+    except:
+        new_fa.alpha = 0.5
 
-    new_fa.gamma = 1.5
-    assert new_fa.gamma == 1.5
+    assert new_fa.alpha == 0.5
+
+    try:
+        new_fa.beta = 'b'
+    except:
+        new_fa.beta = 0.2
+
+    try:
+        new_fa.beta = -1
+    except:
+        new_fa.beta = 0.2
+
+    assert new_fa.beta == 0.2
+
+    try:
+        new_fa.gamma = 'c'
+    except:
+        new_fa.gamma = 1.0
+
+    try:
+        new_fa.gamma = -1
+    except:
+        new_fa.gamma = 1.0
+
+    assert new_fa.gamma == 1.0
 
 
 def test_fa_build():

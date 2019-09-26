@@ -42,7 +42,7 @@ class HS(Optimizer):
         self.PAR = 0.7
 
         # Bandwidth parameter
-        self.bw = 1
+        self.bw = 1.0
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -59,6 +59,11 @@ class HS(Optimizer):
 
     @HMCR.setter
     def HMCR(self, HMCR):
+        if not (isinstance(HMCR, float) or isinstance(HMCR, int)):
+            raise e.TypeError('`HMCR` should be a float or integer')
+        if HMCR < 0 or HMCR > 1:
+            raise e.ValueError('`HMCR` should be between 0 and 1')
+
         self._HMCR = HMCR
 
     @property
@@ -71,6 +76,11 @@ class HS(Optimizer):
 
     @PAR.setter
     def PAR(self, PAR):
+        if not (isinstance(PAR, float) or isinstance(PAR, int)):
+            raise e.TypeError('`PAR` should be a float or integer')
+        if PAR < 0 or PAR > 1:
+            raise e.ValueError('`PAR` should be between 0 and 1')
+
         self._PAR = PAR
 
     @property
@@ -83,6 +93,11 @@ class HS(Optimizer):
 
     @bw.setter
     def bw(self, bw):
+        if not (isinstance(bw, float) or isinstance(bw, int)):
+            raise e.TypeError('`bw` should be a float or integer')
+        if bw < 0:
+            raise e.ValueError('`bw` should be >= 0')
+
         self._bw = bw
 
     def _build(self, hyperparams):

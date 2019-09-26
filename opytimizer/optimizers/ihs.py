@@ -61,6 +61,11 @@ class IHS(HS):
 
     @PAR_min.setter
     def PAR_min(self, PAR_min):
+        if not (isinstance(PAR_min, float) or isinstance(PAR_min, int)):
+            raise e.TypeError('`PAR_min` should be a float or integer')
+        if PAR_min < 0 or PAR_min > 1:
+            raise e.ValueError('`PAR_min` should be between 0 and 1')
+
         self._PAR_min = PAR_min
 
     @property
@@ -73,6 +78,13 @@ class IHS(HS):
 
     @PAR_max.setter
     def PAR_max(self, PAR_max):
+        if not (isinstance(PAR_max, float) or isinstance(PAR_max, int)):
+            raise e.TypeError('`PAR_max` should be a float or integer')
+        if PAR_max < 0 or PAR_max > 1:
+            raise e.ValueError('`PAR_max` should be between 0 and 1')
+        if PAR_max < self.PAR_min:
+            raise e.ValueError('`PAR_max` should be >= `PAR_min`')
+
         self._PAR_max = PAR_max
 
     @property
@@ -85,6 +97,11 @@ class IHS(HS):
 
     @bw_min.setter
     def bw_min(self, bw_min):
+        if not (isinstance(bw_min, float) or isinstance(bw_min, int)):
+            raise e.TypeError('`bw_min` should be a float or integer')
+        if bw_min < 0:
+            raise e.ValueError('`bw_min` should be >= 0')
+
         self._bw_min = bw_min
 
     @property
@@ -97,6 +114,13 @@ class IHS(HS):
 
     @bw_max.setter
     def bw_max(self, bw_max):
+        if not (isinstance(bw_max, float) or isinstance(bw_max, int)):
+            raise e.TypeError('`bw_max` should be a float or integer')
+        if bw_max < 0:
+            raise e.ValueError('`bw_max` should be >= 0')
+        if bw_max < self.bw_min:
+            raise e.ValueError('`bw_max` should be >= `bw_min`')
+
         self._bw_max = bw_max
 
     def _rebuild(self):

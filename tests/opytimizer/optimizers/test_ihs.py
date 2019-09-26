@@ -8,7 +8,6 @@ from opytimizer.spaces import search
 
 def test_ihs_hyperparams():
     hyperparams = {
-        'HMCR': 0.5,
         'PAR_min': 0.5,
         'PAR_max': 1,
         'bw_min': 2,
@@ -16,8 +15,6 @@ def test_ihs_hyperparams():
     }
 
     new_ihs = ihs.IHS(hyperparams=hyperparams)
-
-    assert new_ihs.HMCR == 0.5
 
     assert new_ihs.PAR_min == 0.5
 
@@ -31,20 +28,63 @@ def test_ihs_hyperparams():
 def test_ihs_hyperparams_setter():
     new_ihs = ihs.IHS()
 
-    new_ihs.HMCR = 0.7
-    assert new_ihs.HMCR == 0.7
+    try:
+        new_ihs.PAR_min = 'a'
+    except:
+        new_ihs.PAR_min = 0.5
 
-    new_ihs.PAR_min = 0.1
-    assert new_ihs.PAR_min == 0.1
+    try:
+        new_ihs.PAR_min = -1
+    except:
+        new_ihs.PAR_min = 0.5
 
-    new_ihs.PAR_max = 0.5
-    assert new_ihs.PAR_max == 0.5
+    assert new_ihs.PAR_min == 0.5
 
-    new_ihs.bw_min = 1
-    assert new_ihs.bw_min == 1
+    try:
+        new_ihs.PAR_max = 'b'
+    except:
+        new_ihs.PAR_max = 1.0
 
-    new_ihs.bw_max = 10
-    assert new_ihs.bw_max == 10
+    try:
+        new_ihs.PAR_max = -1
+    except:
+        new_ihs.PAR_max = 1.0
+
+    try:
+        new_ihs.PAR_max = 0
+    except:
+        new_ihs.PAR_max = 1.0
+
+    assert new_ihs.PAR_max == 1.0
+
+    try:
+        new_ihs.bw_min = 'c'
+    except:
+        new_ihs.bw_min = 1.0
+
+    try:
+        new_ihs.bw_min = -1
+    except:
+        new_ihs.bw_min = 1.0
+
+    assert new_ihs.bw_min == 1.0
+
+    try:
+        new_ihs.bw_max = 'd'
+    except:
+        new_ihs.bw_max = 10.0
+
+    try:
+        new_ihs.bw_max = -1
+    except:
+        new_ihs.bw_max = 10.0
+
+    try:
+        new_ihs.bw_max = 0
+    except:
+        new_ihs.bw_max = 10.0
+
+    assert new_ihs.bw_max == 10.0
 
 
 def test_ihs_rebuild():
