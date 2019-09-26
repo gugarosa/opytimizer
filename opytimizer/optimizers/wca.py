@@ -270,8 +270,8 @@ class WCA(Optimizer):
             # Updates the evaporation condition
             self.d_max -= (self.d_max / space.n_iterations)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents, best agent and best agent's index
+            history.dump(agents=space.agents, best=space.best_agent, best_index=space.best_index)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
