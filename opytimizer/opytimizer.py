@@ -1,12 +1,13 @@
 import time
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
 
 
 class Opytimizer:
-    """An Opytimizer class that will hold all the information needed
+    """An Opytimizer class holds all the information needed
     in order to perform an optimization task.
 
     """
@@ -16,24 +17,21 @@ class Opytimizer:
 
         Args:
             space (Space): A Space's object.
-            optimizer (Optimizer): An Optimizer's object, where it can be a child (PSO, BA, etc).
-            function (Function): A Function's object, where it can be a child (External or Internal).
+            optimizer (Optimizer): An Optimizer's object, where it can be a child (e.g., PSO, BA, etc).
+            function (Function): A Function's object, where it can be a child (e.g., MultiFunction).
 
         """
 
         logger.info('Creating class: Opytimizer.')
 
-        # Checks if Space is built
-        if self._is_built(space):
-            self.space = space
+        # Attaches the space to Opytimizer
+        self.space = space
 
-        # Checks if Optimizer is built
-        if self._is_built(optimizer):
-            self.optimizer = optimizer
+        # Attaches the optimizer
+        self.optimizer = optimizer
 
-        # Checks if Function is built
-        if self._is_built(function):
-            self.function = function
+        # Lastly, attaches the function
+        self.function = function
 
         # We will log some important information
         logger.debug(
@@ -50,6 +48,10 @@ class Opytimizer:
 
     @space.setter
     def space(self, space):
+        if not space.built:
+            raise e.BuildError(
+                '`space` should be built before using Opytimizer')
+
         self._space = space
 
     @property
@@ -61,6 +63,10 @@ class Opytimizer:
 
     @optimizer.setter
     def optimizer(self, optimizer):
+        if not optimizer.built:
+            raise e.BuildError(
+                '`optimizer` should be built before using Opytimizer')
+
         self._optimizer = optimizer
 
     @property
@@ -72,32 +78,18 @@ class Opytimizer:
 
     @function.setter
     def function(self, function):
+        if not function.built:
+            raise e.BuildError(
+                '`function` should be built before using Opytimizer')
+
         self._function = function
-
-    def _is_built(self, entity):
-        """Checks whether a miscellaneous entity is built or not.
-
-        Args:
-            entity (obj): A miscellaneous entity that has the built attribute.
-
-        Returns:
-            True, if entity is built.
-
-        """
-
-        if entity.built:
-            return True
-        else:
-            e = entity.__class__.__name__ + ' is not built yet.'
-            logger.error(e)
-            raise RuntimeError(e)
 
     def start(self):
         """Starts the optimization task.
 
         Returns:
             A History object describing the agents position and best fitness values
-                at each iteration during the optimization process.
+                at each iteration throughout the optimization process.
 
         """
 
@@ -109,7 +101,7 @@ class Opytimizer:
         # Starting optimizer
         opt_history = self.optimizer.run(self.space, self.function)
 
-        # Ending timer, still needs to get the diff % 60 for real seconds
+        # Ending timer
         end = time.time()
 
         logger.info('Optimization task ended.')

@@ -24,11 +24,29 @@ def test_opytimizer_build():
     new_pso = pso.PSO()
 
     try:
+        new_space.built = False
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+    except:
+        new_space.built = True
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+
+    try:
         new_pso.built = False
         new_opytimizer = opytimizer.Opytimizer(
             space=new_space, optimizer=new_pso, function=new_function)
     except:
         new_pso.built = True
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+
+    try:
+        new_function.built = False
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+    except:
+        new_function.built = True
         new_opytimizer = opytimizer.Opytimizer(
             space=new_space, optimizer=new_pso, function=new_function)
 

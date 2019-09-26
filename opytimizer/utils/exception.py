@@ -39,6 +39,23 @@ class ArgumentError(Error):
         super(ArgumentError, self).__init__('ArgumentError', error)
 
 
+class BuildError(Error):
+    """A BuildError class for logging errors related to classes not being built.
+
+    """
+
+    def __init__(self, error):
+        """Initialization method.
+
+        Args:
+            error (str): Error message to be logged.
+
+        """
+
+        # Override its parent class with class name and error message
+        super(BuildError, self).__init__('BuildError', error)
+
+
 class SizeError(Error):
     """A SizeError class for logging errors related to wrong length or size of variables.
 
