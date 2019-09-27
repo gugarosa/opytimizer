@@ -1,7 +1,7 @@
 import numpy as np
 import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
-from opytimizer.functions.multi import Multi
+from opytimizer.functions.weighted import WeightedFunction
 from opytimizer.optimizers.fa import FA
 from opytimizer.spaces.search import SearchSpace
 
@@ -34,8 +34,7 @@ hyperparams = {
 p = FA(hyperparams=hyperparams)
 
 # Defining task's main function
-z = Multi(functions=[b.sphere, b.exponential],
-          weights=[0.5, 0.5], method='weight_sum')
+z = WeightedFunction(functions=[b.sphere, b.exponential], weights=[0.5, 0.5])
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=z)

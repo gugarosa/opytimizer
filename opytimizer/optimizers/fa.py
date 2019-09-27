@@ -147,7 +147,7 @@ class FA(Optimizer):
         """
 
         # Calculating current iteration delta
-        delta = 1 - ((10 ** -4) / 0.9) ** (1 / n_iterations)
+        delta = 1 - ((10e-4) / 0.9) ** (1 / n_iterations)
 
         # Applying update to alpha parameter
         self.alpha *= (1 - delta)

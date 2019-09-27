@@ -1,5 +1,4 @@
-from opytimizer.core.function import Function
-from opytimizer.functions.multi import MultiFunction
+from opytimizer.functions.weighted import WeightedFunction
 
 
 # One should declare a function of x, where it should return a value
@@ -16,8 +15,8 @@ x = 0
 
 # Functions can be used if your objective
 # function is an internal python code
-g = MultiFunction(functions=[test_function1, test_function2], weights=[
-                  0.5, 0.5], method='weight_sum')
+g = WeightedFunction(
+    functions=[test_function1, test_function2], weights=[0.5, 0.5])
 
 # Testing out your new Function class
 print(f'\nx: {x}')
