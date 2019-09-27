@@ -31,11 +31,11 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
               n_iterations=n_iterations, min_depth=min_depth, max_depth=max_depth,
               functions=func_nodes, lower_bound=lower_bound, upper_bound=upper_bound)
 
-# Outputting the post order of the tree
-print(f'\n{s.trees[0].post_order}')
-
 # Outputting the whole tree
 print(s.trees[0])
 
-# Outputs the tree's current position (solution)
+# Outputting the tree's current position (solution)
 print(f'Position: {s.trees[0].position}')
+
+# Outputting valuable information about the tree
+print(f'\nPost Order: {s.trees[0].post_order}')
