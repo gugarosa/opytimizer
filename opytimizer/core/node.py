@@ -1,19 +1,19 @@
-import sys
-
 import opytimizer.utils.constants as c
 
 class Node:
     """
     """
 
-    def __init__(self, name, type, value=None, right=None, left=None, parent=None):
+    def __init__(self, name, type, value=None, left=None, right=None, parent=None):
         """Initialization method.
 
         Args:
             name (int | str):
             type (str):
             value (np.array):
+            left (Node):
             right (Node):
+            parent (Node):
             
         """
 
@@ -26,11 +26,13 @@ class Node:
         # Value of the node (only if it is a terminal node)
         self.value = value
 
+        # Pointer to node's left child
+        self.left = left
+
         # Pointer to node's right child
         self.right = right
 
-        # Pointer to node's left child
-        self.left = left
+        
 
         # Flag to identify whether the child is placed in the left or right
         self.flag = 1
