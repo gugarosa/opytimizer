@@ -40,8 +40,8 @@ class Node:
         # Pointer to node's parent
         self.parent = parent
 
-        # Flag to identify whether the child is placed in the left or right
-        self.flag = 1
+        # Flag to identify whether the node is a left child
+        self.flag = True
 
     def __repr__(self):
         """Object representation as a formal string.
@@ -52,9 +52,10 @@ class Node:
 
     def __str__(self):
         """Object representation as an informal string.
+
         """
 
-        # Building a formatted string displaying the nodes
+        # Building a formatted string for displaying the nodes
         lines = _build_string(self)[0]
 
         return '\n' + '\n'.join(lines)
@@ -157,6 +158,21 @@ class Node:
         self._parent = parent
 
     @property
+    def flag(self):
+        """bool: Flag to identify whether the node is a left child.
+
+        """
+
+        return self._flag
+
+    @flag.setter
+    def flag(self, flag):
+        if not isinstance(flag, bool):
+            raise e.TypeError('`flag` should be a boolean')
+
+        self._flag = flag
+
+    @property
     def min_depth(self):
         """int: Minimum depth of node.
 
@@ -196,6 +212,62 @@ class Node:
 
         return _evaluate(self)
 
+    @property
+    def post_order(self):
+        """list: Traverses the nodes in post-order.
+
+        """
+
+        # Creates a list for outputting the nodes
+        post_order = []
+
+        # Creates a list to hold the stacked nodes
+        stacked = []
+
+        # Creates a perpetual while
+        while True:
+            # Creates another while to check if node exists
+            while self is not None:
+                # If there is a right child node
+                if self.right is not None:
+                    # Appends the right child node
+                    stacked.append(self.right)
+
+                # Appends the current node
+                stacked.append(self)
+
+                # Gathers the left child node
+                self = self.left
+
+            # Pops the stacked nodes
+            self = stacked.pop()
+
+            # If there is a right node, stacked nodes and the last stacked was a right child
+            if (self.right is not None and len(stacked) > 0 and stacked[-1] is self.right):
+                # Pops the stacked node
+                stacked.pop()
+
+                # Appends current node
+                stacked.append(self)
+
+                # Gathers the right child node
+                self = self.right
+
+            # If the condition fails
+            else:
+                # Appends the node to the output list
+                post_order.append(self)
+
+                # And apply None as the current node
+                self = None
+
+            # If the stacked list is empty
+            if len(stacked) == 0:
+                # Breaks the loop
+                break
+
+        return post_order
+
     def prefix(self, node, position, flag, type, c):
         """
         """
@@ -230,93 +302,135 @@ class Node:
         else:
             return None
 
-    @property
-    def post_order(self):
-
-        node_stack = []
-        result = []
-        node = self
-
-        while True:
-            while node is not None:
-                if node.right is not None:
-                    node_stack.append(node.right)
-                node_stack.append(node)
-                node = node.left
-
-            node = node_stack.pop()
-            if (node.right is not None and
-                    len(node_stack) > 0 and
-                    node_stack[-1] is node.right):
-                node_stack.pop()
-                node_stack.append(node)
-                node = node.right
-            else:
-                result.append(node)
-                node = None
-
-            if len(node_stack) == 0:
-                break
-
-        return result
-
 
 def _build_string(node):
-    """
+    """Builds a formatted string for displaying the nodes.
+
+    References:
+        https://github.com/joowani/binarytree/blob/master/binarytree/__init__.py#L153
+
+    Args:
+        node (Node): An instance of the Node class (can be a tree of Nodes).
+
+    Returns:
+        An output solution of size (n_variables x n_dimensions).
+
     """
 
+    # If current node is None
     if node is None:
+        # Return an empty list along with `0` arguments
         return [], 0, 0, 0
 
-    line1 = []
-    line2 = []
+    # Creates a list to hold the first line
+    first_line = []
 
-    node_repr = str(node.name)
+    # And also a list to hold the second line
+    second_line = []
 
-    new_node_width = gap_size = len(node_repr)
+    # Gets the node name as a string
+    name = str(node.name)
 
-    # Get the left and right sub-boxes, their widths, and node repr positions
-    l_box, l_box_width, l_node_start, l_node_end = _build_string(node.left)
-    r_box, r_box_width, r_node_start, r_node_end = _build_string(node.right)
+    # The gap size and width of the new node will be the length of the name's string
+    gap = width = len(name)
 
-    # Draw the branch connecting the current node node to the left sub-box
-    # Pad the line with whitespaces where necessary
-    if l_box_width > 0:
-        l_node = (l_node_start + l_node_end) // 2 + 1
-        line1.append(' ' * (l_node + 1))
-        line1.append('_' * (l_box_width - l_node))
-        line2.append(' ' * l_node + '/')
-        line2.append(' ' * (l_box_width - l_node))
-        new_node_start = l_box_width + 1
-        gap_size += 1
+    # Iterate recursively through the left branch
+    left_branch, left_width, left_start, left_end = _build_string(node.left)
+
+    # Iterate recursively through the right branch
+    right_branch, right_width, right_start, right_end = _build_string(
+        node.right)
+
+    # If left branch width is greater than 0
+    if left_width > 0:
+        # Calculates the left node
+        left = (left_start + left_end) // 2 + 1
+
+        # Appends to first line space chars
+        first_line.append(' ' * (left + 1))
+
+        # Appends to first line underscore chars
+        first_line.append('_' * (left_width - left))
+
+        # Appends to second line space chars and a connecting slash
+        second_line.append(' ' * left + '/')
+
+        # Appends to second line space chars
+        second_line.append(' ' * (left_width - left))
+
+        # The start point will be the left width plus one
+        start = left_width + 1
+
+        # Increases the gap
+        gap += 1
+
+    # If not
     else:
-        new_node_start = 0
+        # The start point will be 0
+        start = 0
 
-    # Draw the representation of the current node node
-    line1.append(node_repr)
-    line2.append(' ' * new_node_width)
+    # Appending current node's name to first line
+    first_line.append(name)
 
-    # Draw the branch connecting the current node node to the right sub-box
-    # Pad the line with whitespaces where necessary
-    if r_box_width > 0:
-        r_node = (r_node_start + r_node_end) // 2
-        line1.append('_' * r_node)
-        line1.append(' ' * (r_box_width - r_node + 1))
-        line2.append(' ' * r_node + '\\')
-        line2.append(' ' * (r_box_width - r_node))
-        gap_size += 1
-    new_node_end = new_node_start + new_node_width - 1
+    # Appending space chars to second line based on the node's width
+    second_line.append(' ' * width)
 
-    # Combine the left and right sub-boxes with the branches drawn above
-    gap = ' ' * gap_size
-    new_box = [''.join(line1), ''.join(line2)]
-    for i in range(max(len(l_box), len(r_box))):
-        l_line = l_box[i] if i < len(l_box) else ' ' * l_box_width
-        r_line = r_box[i] if i < len(r_box) else ' ' * r_box_width
-        new_box.append(l_line + gap + r_line)
+    # If right branch width is greater than 0
+    if right_width > 0:
+        # Calculates the right node
+        right = (right_start + right_end) // 2
+
+        # Appends to first line underscore chars
+        first_line.append('_' * right)
+
+        # Appends to first line space chars
+        first_line.append(' ' * (right_width - right + 1))
+
+        # Appends to second line space chars and a connecting backslash
+        second_line.append(' ' * right + '\\')
+
+        # Appends to second line space chars
+        second_line.append(' ' * (right_width - right))
+
+        # Increases the gap size
+        gap += 1
+
+    # The ending point will be start plus width minus 1
+    end = start + width - 1
+
+    # Calculates how many gaps are needed
+    gap = ' ' * gap
+
+    # Combining left and right branches
+    lines = [''.join(first_line), ''.join(second_line)]
+
+    # For every possible value in the branches
+    for i in range(max(len(left_branch), len(right_branch))):
+        # If current iteration is smaller than left branch's size
+        if i < len(left_branch):
+            # Applies the left branch to the left line
+            left_line = left_branch[i]
+
+        # If not
+        else:
+            # Apply space chars
+            ' ' * left_width
+
+        # If current iteration is smaller than right branch's size
+        if i < len(right_branch):
+            # Applies the right branch to the right line
+            right_line = right_branch[i]
+
+        # If not
+        else:
+            # Apply space chars
+            ' ' * right_width
+
+        # Appends the whole line
+        lines.append(left_line + gap + right_line)
 
     # Return the new box, its width and its node repr positions
-    return new_box, len(new_box[0]), new_node_start, new_node_end
+    return lines, len(lines[0]), start, end
 
 
 def _evaluate(node):
@@ -363,7 +477,7 @@ def _evaluate(node):
             # Checks if its an exponential
             elif node.name == 'EXP':
                 # Checks if node is actually an array
-                if type(x).__name__ == 'ndarray':
+                if isinstance(x, np.ndarray):
                     return np.exp(x)
                 else:
                     return np.exp(y)
@@ -371,7 +485,7 @@ def _evaluate(node):
             # Checks if its a square root
             elif node.name == 'SQRT':
                 # Checks if node is actually an array
-                if type(x).__name__ == 'ndarray':
+                if isinstance(x, np.ndarray):
                     return np.sqrt(np.abs(x))
                 else:
                     return np.sqrt(np.abs(y))
@@ -379,7 +493,7 @@ def _evaluate(node):
             # Checks if its a logarithm
             elif node.name == 'LOG':
                 # Checks if node is actually an array
-                if type(x).__name__ == 'ndarray':
+                if isinstance(x, np.ndarray):
                     return np.log(np.abs(x) + c.EPSILON)
                 else:
                     return np.log(np.abs(y) + c.EPSILON)
@@ -387,49 +501,95 @@ def _evaluate(node):
             # Checks if its an absolute value
             elif node.name == 'ABS':
                 # Checks if node is actually an array
-                if type(x).__name__ == 'ndarray':
+                if isinstance(x, np.ndarray):
                     return np.abs(x)
                 else:
                     return np.abs(y)
+
+            # Checks if its a sine value
+            elif node.name == 'SIN':
+                # Checks if node is actually an array
+                if isinstance(x, np.ndarray):
+                    return np.sin(x)
+                else:
+                    return np.sin(y)
+
+            # Checks if its a cosine value
+            elif node.name == 'COS':
+                # Checks if node is actually an array
+                if isinstance(x, np.ndarray):
+                    return np.cos(x)
+                else:
+                    return np.cos(y)
 
     # If the node does not exists
     else:
         return None
 
 
-def _properties(root):
-    """
+def _properties(node):
+    """Traverses the nodes and returns some useful properties.
+
+    Args:
+        node (Node): An instance of the Node class (can be a tree of Nodes).
+
+    Returns:
+        A dictionary containing some useful properties: `min_depth`, `max_depth`,
+        `n_leaves` and `n_nodes`.
+
     """
 
-    n_nodes = 0
-    n_leaves = 0
+    # Initializing minimum depth as 0
     min_depth = 0
-    max_depth = -1
-    current_nodes = [root]
 
-    while len(current_nodes) > 0:
+    # Initializing maximum depth as -1
+    max_depth = -1
+
+    # Initializing number of leaves and nodes as 0
+    n_leaves = n_nodes = 0
+
+    # Gathering a list of possible nodes
+    nodes = [node]
+
+    # While there is a nonde
+    while len(nodes) > 0:
+        # Maximum depth increases by 1
         max_depth += 1
+
+        # Creates a list for further nodes
         next_nodes = []
 
-        for node in current_nodes:
+        # For each node in the current ones
+        for node in nodes:
+            # Increases the number of nodes
             n_nodes += 1
-            # Node is a leaf.
+
+            # If the node is a leaf
             if node.left is None and node.right is None:
+                # If minimum depth is equal to 0
                 if min_depth == 0:
+                    # Minimum depth will be equal to maximum depth
                     min_depth = max_depth
+
+                # Increases the number of leaves by 1
                 n_leaves += 1
 
+            # If there is a child in the left
             if node.left is not None:
+                # Appends the left child node
                 next_nodes.append(node.left)
 
+            # If there is a child in the right
             if node.right is not None:
+                # Appends the right child node
                 next_nodes.append(node.right)
 
-        current_nodes = next_nodes
+        # Current nodes will receive the list of the next depth
+        nodes = next_nodes
 
     return {
-        'max_depth': max_depth,
         'min_depth': min_depth,
+        'max_depth': max_depth,
         'n_leaves': n_leaves,
         'n_nodes': n_nodes
     }
