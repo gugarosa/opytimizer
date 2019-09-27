@@ -3,9 +3,9 @@ import sys
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import pso
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_pso_hyperparams():

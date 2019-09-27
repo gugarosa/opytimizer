@@ -1,7 +1,7 @@
-opytimizer.math.constants
+opytimizer.utils.constants
 ==============================
 
-.. automodule:: opytimizer.math.constants
+.. automodule:: opytimizer.utils.constants
     :members:
     :private-members:
     :special-members:
