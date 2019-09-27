@@ -180,10 +180,10 @@ class GP(Optimizer):
 
             if flag:
                 new_tree.left = tmp
-                tmp.flag = 1
+                tmp.flag = True
             else:
                 new_tree.right = tmp
-                tmp.flag = 0
+                tmp.flag = False
             tmp.parent = new_tree
         else:
             m_tree = space.grow(space.min_depth, space.max_depth)

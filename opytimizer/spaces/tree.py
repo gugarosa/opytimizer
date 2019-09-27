@@ -266,8 +266,8 @@ class TreeSpace(Space):
                         # The right child receives the temporary node
                         function_node.right = node
 
-                        # Flag to identify whether the child is in the left or right
-                        node.flag = 0
+                        # Flag to identify whether the node is a left child
+                        node.flag = False
 
                     # The parent of the temporary node is the function node
                     node.parent = function_node

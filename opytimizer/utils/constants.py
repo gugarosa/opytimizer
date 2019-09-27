@@ -8,7 +8,7 @@ EPSILON = 10e-10
 # the maximum float value possible
 FLOAT_MAX = sys.float_info.max
 
-# If necessary, one can apply custom rules to keys' dumping
+# If necessary, one can apply custom rxules to keys' dumping
 # when using the History object
 HISTORY_KEYS = ['agents', 'best', 'local']
 
@@ -22,9 +22,11 @@ N_ARGS_FUNCTION = {
     'EXP': 1,
     'SQRT': 1,
     'LOG': 1,
-    'ABS': 1
+    'ABS': 1,
+    'SIN': 1,
+    'COS': 1
 }
 
 # A test passes if the best solution found by the agent in the target function
-# is smaller than this value. 
+# is smaller than this value.
 TEST_EPSILON = 5
