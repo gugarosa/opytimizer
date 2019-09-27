@@ -19,7 +19,7 @@ min_depth = 2
 max_depth = 5
 
 # List of functions nodes
-functions = ['SUM', 'SUB', 'MUL', 'DIV']
+func_nodes = ['SUM', 'SUB', 'MUL', 'DIV']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
@@ -29,7 +29,7 @@ upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 # Creating the TreeSpace object
 s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
               n_iterations=n_iterations, min_depth=min_depth, max_depth=max_depth,
-              functions=functions, lower_bound=lower_bound, upper_bound=upper_bound)
+              functions=func_nodes, lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Outputting the post order of the tree
 print(f'\n{s.trees[0].post_order}')

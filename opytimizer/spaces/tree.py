@@ -1,9 +1,8 @@
-import sys
-
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constants as c
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
 from opytimizer.core.node import Node
@@ -13,13 +12,13 @@ logger = l.get_logger(__name__)
 
 
 class TreeSpace(Space):
-    """A TreeSpace class that will hold trees, agents, variables and methods
-    related to the tree-based search space.
+    """A TreeSpace class for trees, agents, variables and methods
+    related to a tree-based search space.
 
     """
 
-    def __init__(self, n_trees=1, n_terminals=1, n_variables=2, n_iterations=10,
-                 min_depth=1, max_depth=3, functions=['SUM'],
+    def __init__(self, n_trees=1, n_terminals=1, n_variables=1, n_iterations=10,
+                 min_depth=1, max_depth=3, functions=[],
                  lower_bound=None, upper_bound=None):
         """Initialization method.
 
@@ -30,9 +29,9 @@ class TreeSpace(Space):
             n_iterations (int): Number of iterations.
             min_depth (int): Minimum depth of the trees.
             max_depth (int): Maximum depth of the trees.
-            functions (list): List of functions nodes.
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
+            functions (list): Functions nodes.
+            lower_bound (list): Lower bound list with the minimum possible values.
+            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 
@@ -44,9 +43,6 @@ class TreeSpace(Space):
 
         # Number of trees
         self.n_trees = n_trees
-
-        # List of trees' fitness
-        self.fit_trees = [sys.float_info.max for i in range(n_trees)]
 
         # Minimum depth of the trees
         self.min_depth = min_depth
@@ -61,10 +57,133 @@ class TreeSpace(Space):
         self._build(lower_bound, upper_bound)
 
         # Creating the initial trees
-        self._create_trees()
+        self.trees, self.trees_fit = self._create_trees()
 
         # We will log some important information
         logger.info('Class overrided.')
+
+    @property
+    def n_trees(self):
+        """int: Number of trees.
+
+        """
+
+        return self._n_trees
+
+    @n_trees.setter
+    def n_trees(self, n_trees):
+        if not isinstance(n_trees, int):
+            raise e.TypeError('`n_trees` should be an integer')
+        if n_trees <= 0:
+            raise e.ValueError('`n_trees` should be > 0')
+
+        self._n_trees = n_trees
+
+    @property
+    def min_depth(self):
+        """int: Minimum depth of the trees.
+
+        """
+
+        return self._min_depth
+
+    @min_depth.setter
+    def min_depth(self, min_depth):
+        if not isinstance(min_depth, int):
+            raise e.TypeError('`min_depth` should be an integer')
+        if min_depth <= 0:
+            raise e.ValueError('`min_depth` should be > 0')
+
+        self._min_depth = min_depth
+
+    @property
+    def max_depth(self):
+        """int: Maximum depth of the trees.
+
+        """
+
+        return self._max_depth
+
+    @max_depth.setter
+    def max_depth(self, max_depth):
+        if not isinstance(max_depth, int):
+            raise e.TypeError('`max_depth` should be an integer')
+        if max_depth < self.min_depth:
+            raise e.ValueError('`max_depth` should be >= `min_depth`')
+
+        self._max_depth = max_depth
+
+    @property
+    def functions(self):
+        """list: Functions nodes.
+
+        """
+
+        return self._functions
+
+    @functions.setter
+    def functions(self, functions):
+        if not isinstance(functions, list):
+            raise e.TypeError('`functions` should be a list')
+
+        self._functions = functions
+
+    @property
+    def trees(self):
+        """list: Trees instances (derived from the Node class).
+
+        """
+
+        return self._trees
+
+    @trees.setter
+    def trees(self, trees):
+        if not isinstance(trees, list):
+            raise e.TypeError('`trees` should be a list')
+
+        self._trees = trees
+
+    @property
+    def trees_fit(self):
+        """list: Fitness value for each tree.
+
+        """
+
+        return self._trees_fit
+
+    @trees_fit.setter
+    def trees_fit(self, trees_fit):
+        if not isinstance(trees_fit, list):
+            raise e.TypeError('`trees_fit` should be a list')
+
+        self._trees_fit = trees_fit
+
+    def _create_trees(self, algorithm='GROW'):
+        """Creates a list of random trees using a specific algorithm.
+
+        Args:
+            algorithm (str): Algorithm's used to create the initial trees.
+
+        Returns:
+            The created trees and their fitness values.
+
+        """
+
+        logger.debug('Running private method: create_trees().')
+
+        # Checks if the chosen algorithm is GROW
+        if algorithm == 'GROW':
+            # Creates a list of random trees
+            trees = [self.grow(self.min_depth, self.max_depth)
+                     for _ in range(self.n_trees)]
+
+        # Creates a list containing the fitness value for each tree
+        trees_fit = [c.FLOAT_MAX for _ in range(self.n_trees)]
+
+        logger.debug(
+            f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | Functions: {self.functions} | Algorithm: {algorithm}.')
+
+        return trees, trees_fit
 
     def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
@@ -84,20 +203,6 @@ class TreeSpace(Space):
 
                 # And also the upper bound
                 agent.ub[j] = ub
-
-    def _create_trees(self):
-        """Creates a list of random trees using GROW algorithm.
-
-        """
-
-        logger.debug('Running private method: create_trees().')
-
-        # Creates a list of random trees
-        self.trees = [self.grow(self.min_depth, self.max_depth)
-                      for i in range(self.n_trees)]
-
-        logger.debug(
-            f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | Functions: {self.functions}.')
 
     def grow(self, min_depth, max_depth):
         """It creates a random tree based on the GROW algorithm.
@@ -168,46 +273,3 @@ class TreeSpace(Space):
                     node.parent = function_node
 
                 return function_node
-
-    def get_depth(self, tree):
-        """
-        """
-
-        if tree:
-            return 1 + self.get_depth(tree.left) + self.get_depth(tree.right)
-        else:
-            return 0
-
-    def prefix(self, tree, position, flag, type, c):
-        """
-        """
-
-        if tree:
-            c += 1
-            if c == position:
-                flag = tree.flag
-                c = 0
-
-                if type == 'TERMINAL':
-                    return tree.parent
-
-                elif tree.parent.parent:
-                    flag = tree.parent.flag
-                    return tree.parent.parent
-
-                else:
-                    return None
-
-            else:
-                node = self.prefix(tree.left, position, flag, type, c)
-                if node:
-                    return node
-                else:
-                    node = self.prefix(tree.right, position, flag, type, c)
-                    if node:
-                        return node
-                    else:
-                        return None
-
-        else:
-            return None

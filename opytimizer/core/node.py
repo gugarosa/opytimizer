@@ -204,6 +204,40 @@ class Node:
         # If the node does not exists
         else:
             return None
+
+    def prefix(self, node, position, flag, type, c):
+        """
+        """
+
+        if node:
+            c += 1
+            if c == position:
+                flag = node.flag
+                c = 0
+
+                if type == 'TERMINAL':
+                    return node.parent
+
+                elif node.parent.parent:
+                    flag = node.parent.flag
+                    return node.parent.parent
+
+                else:
+                    return None
+
+            else:
+                tmp_node = self.prefix(node.left, position, flag, type, c)
+                if tmp_node:
+                    return tmp_node
+                else:
+                    tmp_node = self.prefix(node.right, position, flag, type, c)
+                    if tmp_node:
+                        return tmp_node
+                    else:
+                        return None
+
+        else:
+            return None
         
 
     def __repr__(self):
