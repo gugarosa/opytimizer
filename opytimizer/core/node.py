@@ -1,6 +1,6 @@
 import sys
 
-import opytimizer.math.constants as c
+import opytimizer.utils.constants as c
 
 class Node:
     """

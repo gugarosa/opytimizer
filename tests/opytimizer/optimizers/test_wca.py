@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import wca
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_wca_hyperparams():

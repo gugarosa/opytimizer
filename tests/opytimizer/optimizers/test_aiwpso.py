@@ -3,9 +3,9 @@ import sys
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import aiwpso
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_aiwpso_hyperparams():

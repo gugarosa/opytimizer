@@ -2,8 +2,8 @@ import sys
 
 import numpy as np
 
-import opytimizer.math.constants as c
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
 from opytimizer.core.node import Node
