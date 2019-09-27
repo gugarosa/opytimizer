@@ -39,3 +39,4 @@ print(f'Position: {s.trees[0].position}')
 
 # Outputting valuable information about the tree
 print(f'\nPost Order: {s.trees[0].post_order}')
+print(f'\nNodes: {s.trees[0].n_nodes} | Leaves: {s.trees[0].n_leaves} | Minimum Depth: {s.trees[0].min_depth} | Maximum Depth: {s.trees[0].max_depth}')
