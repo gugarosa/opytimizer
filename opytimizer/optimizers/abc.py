@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -181,7 +182,7 @@ class ABC(Optimizer):
                 r1 = r.generate_uniform_random_number(0, 1)
 
                 # Calculates the food source's probability
-                probs = (agent.fit / (total + 1e-10)) + 0.1
+                probs = (agent.fit / (total + c.EPSILON)) + 0.1
 
                 # If the random number is smaller than food source's probability
                 if r1 < probs:

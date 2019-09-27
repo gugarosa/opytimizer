@@ -1,7 +1,6 @@
 import pickle
 
-# These keys have speficic requirements and must be parsed
-RULES = ['agents', 'best', 'local']
+import opytimizer.utils.constants as c
 
 
 class History:
@@ -48,7 +47,7 @@ class History:
         # For every key-value pair
         for (k, v) in kwargs.items():
             # Checks if current key has a specific rule
-            if k in RULES:
+            if k in c.HISTORY_KEYS:
                 # Parses the information according to the key
                 out = self.parse(k, v)
 

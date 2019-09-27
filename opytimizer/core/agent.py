@@ -2,6 +2,7 @@ import sys
 
 import numpy as np
 
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -32,7 +33,7 @@ class Agent:
         self.position = np.zeros((n_variables, n_dimensions))
 
         # Fitness value is initialized with float's largest number
-        self.fit = sys.float_info.max
+        self.fit = c.FLOAT_MAX
 
         # Lower bounds are initialized as zero
         self.lb = np.zeros(n_variables)

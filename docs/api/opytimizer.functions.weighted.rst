@@ -1,7 +1,7 @@
-opytimizer.functions.multi
+opytimizer.functions.weighted
 ============================
 
-.. automodule:: opytimizer.functions.multi
+.. automodule:: opytimizer.functions.weighted
     :members:
     :private-members:
     :special-members:
