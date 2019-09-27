@@ -145,7 +145,7 @@ class GP(Optimizer):
         n_reproduction = int(space.n_trees * self.reproduction)
 
         #
-        selected = self._selection(space.fit_trees, n_reproduction)
+        selected = self._selection(space.trees_fit, n_reproduction)
 
         #
         for (i, s) in enumerate(selected):
@@ -160,15 +160,15 @@ class GP(Optimizer):
 
         random = r.generate_uniform_random_number()
 
-        point = int(r.generate_uniform_random_number(2, space.get_depth(tree)))
+        point = int(r.generate_uniform_random_number(2, tree.n_nodes))
 
         c = 0
         flag = 0
 
         if p > random:
-            new_tree = space.prefix(m_tree, point, flag, 'FUNCTION', c)
+            new_tree = m_tree.prefix(m_tree, point, flag, 'FUNCTION', c)
         else:
-            new_tree = space.prefix(m_tree, point, flag, 'TERMINAL', c)
+            new_tree = m_tree.prefix(m_tree, point, flag, 'TERMINAL', c)
 
         if new_tree:
             tmp = space.grow(space.min_depth, space.max_depth)
@@ -202,11 +202,11 @@ class GP(Optimizer):
         n_mutation = int(space.n_trees * self.mutation)
 
         #
-        selected = self._selection(space.fit_trees, n_mutation)
+        selected = self._selection(space.trees_fit, n_mutation)
 
         for (i, m) in enumerate(selected):
             
-            if space.get_depth(tmp_trees[m]) > 1:
+            if tmp_trees[m].n_nodes > 1:
                 space.trees[i+n_reproduction] = self.mute(space, tmp_trees[m])
             else:
                 space.trees[i+n_reproduction] = space.grow(space.min_depth, space.max_depth)
@@ -219,7 +219,7 @@ class GP(Optimizer):
         n_crossover = int(space.n_trees * self.crossover)
 
         #
-        selected = self._selection(space.fit_trees, n_crossover)
+        selected = self._selection(space.trees_fit, n_crossover)
     
     def _update(self, space):
         """
@@ -253,7 +253,7 @@ class GP(Optimizer):
         # Iterate through all trees
         for i, tree in enumerate(space.trees):
             # Runs through the tree and return a position array
-            a.position = space.output(tree)
+            a.position = tree.position
 
             # Checks the agent limits
             a.check_limits()
@@ -262,12 +262,12 @@ class GP(Optimizer):
             fit = function.pointer(a.position)
 
             # If fitness is better than tree's best fit
-            if fit < space.fit_trees[i]:
+            if fit < space.trees_fit[i]:
                 # Updates its current fitness to the newer one
-                space.fit_trees[i] = fit
+                space.trees_fit[i] = fit
 
             # If tree's fitness is better than global fitness
-            if space.fit_trees[i] < space.best_agent.fit:
+            if space.trees_fit[i] < space.best_agent.fit:
                 # Makes a deep copy of current tree's index to the space's best index
                 space.best_index = i
 
@@ -275,7 +275,7 @@ class GP(Optimizer):
                 space.best_agent.position = copy.deepcopy(a.position)
 
                 # Makes a deep copy of current tree fitness to the best agent
-                space.best_agent.fit = copy.deepcopy(space.fit_trees[i])
+                space.best_agent.fit = copy.deepcopy(space.trees_fit[i])
     
     def run(self, space, function):
         """Runs the optimization pipeline.
