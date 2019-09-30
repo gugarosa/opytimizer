@@ -11,10 +11,11 @@ def test_history_dump():
 
     agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents=agents, best=agents[4])
+    new_history.dump(agents=agents, best=agents[4], value=0)
 
     assert len(new_history.agents) > 0
     assert len(new_history.best) > 0
+    assert new_history.value[0] == 0
 
 
 def test_history_save():
