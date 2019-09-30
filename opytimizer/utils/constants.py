@@ -30,3 +30,7 @@ N_ARGS_FUNCTION = {
 # A test passes if the best solution found by the agent in the target function
 # is smaller than this value.
 TEST_EPSILON = 5
+
+#
+#
+TOURNAMENT_SIZE = 2

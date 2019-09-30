@@ -16,7 +16,7 @@ n_terminals = 2
 n_variables = 2
 
 # We can also decide the number of iterations
-n_iterations = 10
+n_iterations = 1000
 
 # Minimum depth of the trees
 min_depth = 2
@@ -39,8 +39,8 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'p_reproduction': 0.25,
-    'p_mutation': 0.5,
+    'p_reproduction': 0.1,
+    'p_mutation': 0.1,
     'p_crossover': 0.5
 }
 
