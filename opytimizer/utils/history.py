@@ -18,7 +18,7 @@ class History:
         """
 
         # For every iteration
-        for i, (agents, best) in enumerate(zip(self.agents, self.best)):
+        for i, (agents, best) in enumerate(zip(self.agents, self.best_agent)):
             print(f'\nIteration {i+1}/{len(self.agents)}')
 
             # Iterating through every agent
@@ -78,8 +78,8 @@ class History:
             # Returns a list of agents' tuples (position, fit)
             return [(v.position.tolist(), v.fit) for v in value]
 
-        # Checks if the key is `best`
-        elif key == 'best':
+        # Checks if the key is `best_agent`
+        elif key == 'best_agent':
             # Returns the best agent's tuple (position, fit)
             return (value.position.tolist(), value.fit)
 

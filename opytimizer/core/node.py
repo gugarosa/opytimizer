@@ -48,7 +48,7 @@ class Node:
 
         """
 
-        return f'{self.type}:{self.name}'
+        return f'(Nodes: {self.n_nodes}, Leaves: {self.n_leaves}, Min Depth: {self.min_depth}, Max Depth: {self.max_depth})'
 
     def __str__(self):
         """Object representation as an informal string.
