@@ -268,7 +268,19 @@ class GP(Optimizer):
 
         """
 
-        pass
+        # Calculates a list of current trees' fitness
+        fitness = [agent.fit for agent in agents]
+
+        # Number of individuals to be reproducted
+        n_individuals = int(space.n_trees * self.p_crossover)
+
+        if n_individuals % 2 != 0:
+            n_individuals += 1
+
+        # Gathers a list of selected individuals to be replaced
+        selected = r.tournament_selection(fitness, n_individuals)
+
+        print(selected)
 
     def _update(self, space):
         """Method that wraps reproduction, crossover and mutation operators over all trees.
