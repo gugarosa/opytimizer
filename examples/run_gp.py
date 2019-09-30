@@ -16,7 +16,7 @@ n_terminals = 2
 n_variables = 2
 
 # We can also decide the number of iterations
-n_iterations = 1000
+n_iterations = 10
 
 # Minimum depth of the trees
 min_depth = 2
@@ -55,3 +55,14 @@ o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
 history = o.start()
+
+print(s.best_index)
+
+print(s.trees[s.best_index])
+print(s.trees[s.best_index].position)
+
+print(s.best_tree)
+print(s.best_tree.position)
+
+for tree in s.trees:
+    print(tree)

@@ -117,7 +117,6 @@ def test_fpa_run():
 
     assert len(history.agents) > 0
     assert len(history.best) > 0
-    assert len(history.best_index) > 0
 
     best_fitness = history.best[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm fpa failed to converge.'

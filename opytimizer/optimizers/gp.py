@@ -119,7 +119,7 @@ class GP(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: reproduction = {self.reproduction}, mutation = {self.mutation}, crossover = {self.crossover} | Built: {self.built}.')
 
-    def _selection(self, fits, k):
+    def _tournament_selection(self, fits, k):
         """
         """
 
@@ -137,20 +137,26 @@ class GP(Optimizer):
         return selected
 
     
-    def _reproduct(self, space, tmp_trees):
+    def _reproduct(self, space, trees):
+        """Reproducts a number of individuals through a selection procedure.s
+
+        Args:
+            space (TreeSpace): A TreeSpace object.
+            trees (list): Current iteration trees.
+
         """
-        """
 
-        #
-        n_reproduction = int(space.n_trees * self.reproduction)
+        # Number of individuals to be reproducted
+        n_individuals = int(space.n_trees * self.reproduction)
 
-        #
-        selected = self._selection(space.trees_fit, n_reproduction)
+        # Gathers a list of selected individuals to be replaced
+        selected = self._tournament_selection(space.trees_fit, n_individuals)
 
-        #
+        # For every selected individual
         for (i, s) in enumerate(selected):
-            #
-            space.trees[i] = copy.deepcopy(tmp_trees[s])
+            # Replace the individual by performing a deep copy
+            space.trees[i] = copy.deepcopy(trees[s])
+            space.trees_fit[i] = copy.deepcopy(space.trees_fit[s])
 
     def mute(self, space, tree):
 
@@ -202,7 +208,7 @@ class GP(Optimizer):
         n_mutation = int(space.n_trees * self.mutation)
 
         #
-        selected = self._selection(space.trees_fit, n_mutation)
+        selected = self._tournament_selection(space.trees_fit, n_mutation)
 
         for (i, m) in enumerate(selected):
             
@@ -219,30 +225,30 @@ class GP(Optimizer):
         n_crossover = int(space.n_trees * self.crossover)
 
         #
-        selected = self._selection(space.trees_fit, n_crossover)
+        selected = self._tournament_selection(space.trees_fit, n_crossover)
     
     def _update(self, space):
         """
         """
 
-        #
+        # Copying current trees to a temporary variable
         tmp_trees = copy.deepcopy(space.trees)
 
-        #
+        # It performs the reproduction
         self._reproduct(space, tmp_trees)
 
         #
-        self._mutate(space, tmp_trees)
+        # self._mutate(space, tmp_trees)
 
         #
-        self._cross(space, tmp_trees)
+        # self._cross(space, tmp_trees)
         
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (TreeSpace): A TreeSpace object that will be evaluated.
+            space (TreeSpace): A TreeSpace object.
             function (Function): A Function object that will be used as the objective function.
 
         """
@@ -253,23 +259,23 @@ class GP(Optimizer):
         # Iterate through all trees
         for i, tree in enumerate(space.trees):
             # Runs through the tree and return a position array
-            a.position = tree.position
+            a.position = copy.deepcopy(tree.position)
 
             # Checks the agent limits
             a.check_limits()
 
             # Calculate the fitness value of the temporary agent
-            fit = function.pointer(a.position)
+            # fit = function.pointer(a.position)
 
-            # If fitness is better than tree's best fit
-            if fit < space.trees_fit[i]:
-                # Updates its current fitness to the newer one
-                space.trees_fit[i] = fit
+            # # # If fitness is better than tree's best fit
+            # if fit < space.trees_fit[i]:
+            # # Updates its current fitness to the newer one
+            space.trees_fit[i] = function.pointer(a.position)
 
             # If tree's fitness is better than global fitness
             if space.trees_fit[i] < space.best_agent.fit:
-                # Makes a deep copy of current tree's index to the space's best index
-                space.best_index = i
+                #
+                space.best_tree = copy.deepcopy(tree)
 
                 # Makes a deep copy of agent's best position to the best agent
                 space.best_agent.position = copy.deepcopy(a.position)
@@ -300,13 +306,13 @@ class GP(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating trees
-            self._update(space)
+            # self._update(space)
 
             # After the update, we need to re-evaluate the tree space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump agents, best agent and best agent's index
-            history.dump(agents=space.agents, best=space.best_agent, best_index=space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            # history.dump(agents=space.agents, best=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

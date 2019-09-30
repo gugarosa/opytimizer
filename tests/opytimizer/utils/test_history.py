@@ -11,11 +11,10 @@ def test_history_dump():
 
     agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents=agents, best=agents[4], best_index=4)
+    new_history.dump(agents=agents, best=agents[4])
 
     assert len(new_history.agents) > 0
     assert len(new_history.best) > 0
-    assert new_history.best_index[0] == 4
 
 
 def test_history_save():
@@ -23,7 +22,7 @@ def test_history_save():
 
     agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents=agents, best=agents[0], best_index=0)
+    new_history.dump(agents=agents, best=agents[0])
 
     new_history.save('models/test.pkl')
 
