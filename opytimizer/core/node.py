@@ -48,7 +48,7 @@ class Node:
 
         """
 
-        return f'(Nodes: {self.n_nodes}, Leaves: {self.n_leaves}, Min Depth: {self.min_depth}, Max Depth: {self.max_depth})'
+        return f'{self.type}:{self.name}:{self.flag}'
 
     def __str__(self):
         """Object representation as an informal string.
@@ -268,6 +268,41 @@ class Node:
 
         return post_order
 
+    @property
+    def preorder(self):
+        """
+        """
+        
+        node_stack = [self]
+        result = []
+
+        while len(node_stack) > 0:
+            node = node_stack.pop()
+            result.append(node)
+
+            if node.right is not None:
+                node_stack.append(node.right)
+            if node.left is not None:
+                node_stack.append(node.left)
+
+        return result
+
+    def find_node(self, point):
+        if len(self.preorder) > point:
+            node = self.preorder[point]
+
+            if node.type == 'TERMINAL':
+                return node.parent, node.flag
+            
+            elif node.type == 'FUNCTION':
+                if node.parent.parent:
+                    return node.parent.parent, node.parent.flag
+                else:
+                    return None, False
+
+        return None, False
+        
+
     def prefix(self, node, point, type, c):
         """Performs a pre-fix walk to find the `point`-th node.
 
@@ -308,7 +343,7 @@ class Node:
 
                 # If both conditions are not satisfied
                 else:
-                    return None, 0
+                    return None, False
 
             # If counter is not in the mutation point
             else:
@@ -330,11 +365,11 @@ class Node:
 
                     # If there is no node
                     else:
-                        return None, 0
+                        return None, False
 
         # If there is no node
         else:
-            return None, 0
+            return None, False
 
 
 def _build_string(node):

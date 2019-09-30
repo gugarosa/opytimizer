@@ -2,6 +2,7 @@ import copy
 
 import numpy as np
 
+import opytimizer.math.common as c
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
@@ -213,18 +214,20 @@ class GP(Optimizer):
         # Defining a counter to use for the pre-fix walk
         c = 0
 
-        # Generates an uniform random number
-        r1 = r.generate_uniform_random_number()
+        sub_tree, flag = mutated_tree.find_node(mutation_point)
 
-        # Checks if the mutation will occur in a `FUNCTION` or `TERMINAL` node
-        if r1 < 0.5:
-            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
-            sub_tree, flag = mutated_tree.prefix(
-                mutated_tree, mutation_point, 'FUNCTION', c)
-        else:
-            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
-            sub_tree, flag = mutated_tree.prefix(
-                mutated_tree, mutation_point, 'TERMINAL', c)
+        # # Generates an uniform random number
+        # r1 = r.generate_uniform_random_number()
+
+        # # Checks if the mutation will occur in a `FUNCTION` or `TERMINAL` node
+        # if r1 < 0.5:
+        #     # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
+        #     sub_tree, flag = mutated_tree.prefix(
+        #         mutated_tree, mutation_point, 'FUNCTION', c)
+        # else:
+        #     # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
+        #     sub_tree, flag = mutated_tree.prefix(
+        #         mutated_tree, mutation_point, 'TERMINAL', c)
 
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
         # and prefix() stops at a terminal node whose father is a root
@@ -254,7 +257,7 @@ class GP(Optimizer):
         # Otherwise, if condition is false
         else:
             # The mutated tree will be a random tree
-            mutated_tree = space.grow(space.min_depth, space.max_depth)
+            mutated_tree = space.grow(space.min_depth, space.max_depth)    
 
         return mutated_tree
 
@@ -274,13 +277,119 @@ class GP(Optimizer):
         # Number of individuals to be reproducted
         n_individuals = int(space.n_trees * self.p_crossover)
 
-        if n_individuals % 2 != 0:
-            n_individuals += 1
-
         # Gathers a list of selected individuals to be replaced
         selected = r.tournament_selection(fitness, n_individuals)
 
-        print(selected)
+        # print(selected)
+
+        s = [0, 6]
+        if (trees[s[0]].n_nodes > 1) and (trees[s[1]].n_nodes > 1):
+                # print(space.trees[s[0]])
+                # print(space.trees[s[1]])
+            space.trees[s[0]], space.trees[s[1]] = self._cross(trees[s[0]], trees[s[1]])
+                # print(space.trees[s[0]])
+                # print(space.trees[s[1]])
+
+    def _cross(self, father, mother):
+        """
+        """
+
+        # Copying father tree to the father's offspring structure
+        father_offspring = copy.deepcopy(father)
+
+        # Calculating father's crossover point
+        father_point = int(r.generate_uniform_random_number(2, father.n_nodes))   
+
+        # print(father_offspring)
+
+        # print(father)
+
+        # Defining a counter to use for the pre-fix walk
+        c = 0
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Checks if the crossover will occur in a `FUNCTION` or `TERMINAL` node
+        if r1 < 0.7:
+            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
+            sub_father, flag_father = father_offspring.prefix(
+                father_offspring, father_point, 'FUNCTION', c)
+        else:
+            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
+            sub_father, flag_father = father_offspring.prefix(
+                father_offspring, father_point, 'TERMINAL', c) 
+
+        # Copying mother tree to the mother's offspring structure
+        mother_offspring = copy.deepcopy(mother)
+
+        # Calculating mother's crossover point
+        mother_point = int(r.generate_uniform_random_number(2, mother.n_nodes))   
+
+        # Defining a counter to use for the pre-fix walk
+        c = 0
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Checks if the crossover will occur in a `FUNCTION` or `TERMINAL` node
+        if r1 < 0.7:
+            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
+            sub_mother, flag_mother = mother_offspring.prefix(
+                mother_offspring, mother_point, 'FUNCTION', c)
+        else:
+            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
+            sub_mother, flag_mother = mother_offspring.prefix(
+                mother_offspring, mother_point, 'TERMINAL', c)
+
+        print(father_point, mother_point)
+
+        print(father, mother)
+
+        print(sub_father, sub_mother)
+
+        print('-----------\n\n')
+
+        if sub_father and sub_mother:
+            print(sub_father)
+            if flag_father:
+                branch = sub_father.left
+                if flag_mother:
+                    sub_father.left = sub_mother.left
+                    sub_mother.left.flag = True
+                else:
+                    sub_father.left = sub_mother.right
+                    sub_mother.right.flag = True
+            else:
+                branch = sub_father.right
+                if flag_mother:
+                    sub_father.right = sub_mother.left
+                    sub_mother.left.flag = False
+                else:
+                    sub_father.right = sub_mother.right
+                    sub_mother.right.flag = False
+            print(sub_father)
+        
+            sub_mother.parent = sub_father
+
+            if flag_mother:
+                sub_mother.left = branch
+                branch.flag = True
+            else:
+                sub_mother.right = branch
+                branch.flag = False
+            
+            branch.parent = sub_mother
+
+        # print('Father Offspring\n\n')
+        # # print(sub_father)
+        # print(father_offspring) 
+        # print(father)
+        # print('Mother Offspring\n\n')
+        # print(mother_offspring)
+        # print(mother)
+
+        return father_offspring, mother_offspring
 
     def _update(self, space):
         """Method that wraps reproduction, crossover and mutation operators over all trees.
@@ -300,7 +409,7 @@ class GP(Optimizer):
         self._reproduction(space, agents, trees)
 
         # Performs the crossover
-        self._crossover(space, agents, trees)
+        # self._crossover(space, agents, trees)
 
         # Performs the mutation
         self._mutation(space, agents, trees)
