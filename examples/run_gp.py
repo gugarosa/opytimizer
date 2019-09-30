@@ -16,7 +16,7 @@ n_terminals = 2
 n_variables = 2
 
 # We can also decide the number of iterations
-n_iterations = 10
+n_iterations = 1000
 
 # Minimum depth of the trees
 min_depth = 2

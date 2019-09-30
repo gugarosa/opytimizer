@@ -119,45 +119,35 @@ class GP(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: reproduction = {self.reproduction}, mutation = {self.mutation}, crossover = {self.crossover} | Built: {self.built}.')
 
-    def _tournament_selection(self, fits, k):
-        """
-        """
-
-        #
-        selected = []
-
-        #
-        for i in range(k):
-            #
-            possible = np.random.choice(fits, k)
-
-            #
-            selected.append(np.where(min(possible) == fits)[0][0])
-
-        return selected
-
     
     def _reproduct(self, space, trees):
-        """Reproducts a number of individuals through a selection procedure.s
+        """Reproducts a number of individuals through a tournament selection procedure.
 
         Args:
             space (TreeSpace): A TreeSpace object.
-            trees (list): Current iteration trees.
+            trees (list): Temporary trees.
 
         """
 
-        fits = [agent.fit for agent in space.agents]
+        # Calculates a list of current trees' fitness
+        fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be reproducted
         n_individuals = int(space.n_trees * self.reproduction)
 
         # Gathers a list of selected individuals to be replaced
-        selected = self._tournament_selection(fits, n_individuals)
+        selected = r.tournament_selection(fitness, n_individuals)
 
         # For every selected individual
-        for (i, s) in enumerate(selected):
-            # Replace the individual by performing a deep copy
-            space.trees[i] = copy.deepcopy(trees[s])
+        for s in selected:
+            # Gathers the worst individual index
+            worst = np.argmax(fitness)
+
+            # Replace the individual by performing a deep copy on selected tree
+            space.trees[worst] = copy.deepcopy(trees[s])
+
+            # Replaces the worst individua fitness with a minimum value
+            fitness[worst] = 0
 
     def mute(self, space, tree):
 
@@ -211,7 +201,7 @@ class GP(Optimizer):
         n_mutation = int(space.n_trees * self.mutation)
 
         #
-        selected = self._tournament_selection(fits, n_mutation)
+        selected = r.tournament_selection(fits, n_mutation)
 
         for (i, m) in enumerate(selected):
             
@@ -220,30 +210,25 @@ class GP(Optimizer):
             else:
                 space.trees[i+n_reproduction] = space.grow(space.min_depth, space.max_depth)
 
-    def _cross(self, space, tmp_trees):
-        """
-        """
-
-        #
-        n_crossover = int(space.n_trees * self.crossover)
-
-        #
-        selected = self._tournament_selection(space.trees_fit, n_crossover)
     
     def _update(self, space):
+        """Method that wraps reproduction, crossover and mutation operators over all trees.
+
+        Args:
+            space (TreeSpace): A TreeSpace object.
+
         """
-        """
 
-        # Copying current trees to a temporary variable
-        tmp_trees = copy.deepcopy(space.trees)
+        # Copying current trees to initiate a new generation
+        new_trees = copy.deepcopy(space.trees)
 
-        # It performs the reproduction
-        self._reproduct(space, tmp_trees)
+        # Performs the reproduction
+        self._reproduct(space, new_trees)
 
-        #
-        self._mutate(space, tmp_trees)
+        # Performs the mutation
+        self._mutate(space, new_trees)
 
-        #
+        # Performs the crossover
         # self._cross(space, tmp_trees)
         
 
@@ -300,7 +285,7 @@ class GP(Optimizer):
         for t in range(space.n_iterations):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
-            # Updating trees
+            # Updating trees with designed operators
             self._update(space)
 
             # After the update, we need to re-evaluate the tree space
