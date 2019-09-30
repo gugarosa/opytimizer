@@ -118,28 +118,6 @@ def test_space_best_agent_setter():
     assert isinstance(new_space.best_agent, agent.Agent)
 
 
-def test_space_best_index():
-    new_space = space.Space()
-
-    assert new_space.best_index == 0
-
-
-def test_space_best_index_setter():
-    new_space = space.Space()
-
-    try:
-        new_space.best_index = 0.0
-    except:
-        new_space.best_index = 1
-
-    try:
-        new_space.best_index = -1
-    except:
-        new_space.best_index = 1
-
-    assert new_space.best_index == 1
-
-
 def test_space_lb():
     new_space = space.Space(n_variables=10)
 

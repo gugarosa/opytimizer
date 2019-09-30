@@ -291,8 +291,8 @@ class CS(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump agents, best agent and best agent's index
-            history.dump(agents=space.agents, best=space.best_agent, best_index=space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

@@ -18,21 +18,16 @@ class History:
         """
 
         # For every iteration
-        for i, (agents, best) in enumerate(zip(self.agents, self.best_index)):
-            print(f'\nIteration {i+1}/{len(self.best_index)}')
+        for i, (agents, best) in enumerate(zip(self.agents, self.best)):
+            print(f'\nIteration {i+1}/{len(self.agents)}')
 
             # Iterating through every agent
             for j, agent in enumerate(agents):
-                # If current agent is the best one
-                if j == best:
-                    # Prints a highlighted information
-                    print(
-                        f'***Agent[{j}]: {agent[0]} | Fitness: {agent[1]}***')
+                # Prints an agent
+                print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
 
-                # If it is not the best one
-                else:
-                    # Prints the information
-                    print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
+            # Prints the best agent so far
+            print(f'\nBest: {best[0]} | Fitness: {best[1]}')
 
         return ''
 

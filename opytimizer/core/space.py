@@ -47,9 +47,6 @@ class Space:
         # Best agent object
         self.best_agent = Agent()
 
-        # Index of the best agent, where initially the first agent is the best one
-        self.best_index = 0
-
         # Lower bounds
         self.lb = np.zeros(n_variables)
 
@@ -156,23 +153,6 @@ class Space:
             raise e.TypeError('`best_agent` should be an Agent')
 
         self._best_agent = best_agent
-
-    @property
-    def best_index(self):
-        """int: Index of the agent that achieved the lowest fitness value.
-
-        """
-
-        return self._best_index
-
-    @best_index.setter
-    def best_index(self, best_index):
-        if not isinstance(best_index, int):
-            raise e.TypeError('`best_index` should be an integer')
-        if best_index < 0:
-            raise e.ValueError('`best_index` should be >= 0')
-
-        self._best_index = best_index
 
     @property
     def lb(self):

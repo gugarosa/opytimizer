@@ -119,7 +119,6 @@ def test_pso_run():
 
     assert len(history.agents) > 0
     assert len(history.best) > 0
-    assert len(history.best_index) > 0
     assert len(history.local) > 0
 
     best_fitness = history.best[-1][1]
