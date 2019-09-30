@@ -270,7 +270,7 @@ class PSO(Optimizer):
             self._evaluate(space, function, local_position)
 
             # Every iteration, we need to dump agents, local positions and best agent
-            history.dump(agents=space.agents, local=local_position, best=space.best_agent)
+            history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

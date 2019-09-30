@@ -10,7 +10,7 @@ FLOAT_MAX = sys.float_info.max
 
 # If necessary, one can apply custom rxules to keys' dumping
 # when using the History object
-HISTORY_KEYS = ['agents', 'best', 'local']
+HISTORY_KEYS = ['agents', 'best_agent', 'local']
 
 # When using Genetic Programming, each function node needs an unique number of arguments,
 # which is defined by this dictionary

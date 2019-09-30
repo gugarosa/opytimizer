@@ -146,17 +146,18 @@ class GP(Optimizer):
 
         """
 
+        fits = [agent.fit for agent in space.agents]
+
         # Number of individuals to be reproducted
         n_individuals = int(space.n_trees * self.reproduction)
 
         # Gathers a list of selected individuals to be replaced
-        selected = self._tournament_selection(space.trees_fit, n_individuals)
+        selected = self._tournament_selection(fits, n_individuals)
 
         # For every selected individual
         for (i, s) in enumerate(selected):
             # Replace the individual by performing a deep copy
             space.trees[i] = copy.deepcopy(trees[s])
-            space.trees_fit[i] = copy.deepcopy(space.trees_fit[s])
 
     def mute(self, space, tree):
 
@@ -201,6 +202,8 @@ class GP(Optimizer):
         """
         """
 
+        fits = [agent.fit for agent in space.agents]
+
         #
         n_reproduction = int(space.n_trees * self.reproduction)
 
@@ -208,7 +211,7 @@ class GP(Optimizer):
         n_mutation = int(space.n_trees * self.mutation)
 
         #
-        selected = self._tournament_selection(space.trees_fit, n_mutation)
+        selected = self._tournament_selection(fits, n_mutation)
 
         for (i, m) in enumerate(selected):
             
@@ -238,7 +241,7 @@ class GP(Optimizer):
         self._reproduct(space, tmp_trees)
 
         #
-        # self._mutate(space, tmp_trees)
+        self._mutate(space, tmp_trees)
 
         #
         # self._cross(space, tmp_trees)
@@ -253,35 +256,27 @@ class GP(Optimizer):
 
         """
 
-        # Creates a new temporary agent
-        a = copy.deepcopy(space.agents[0])
-
-        # Iterate through all trees
-        for i, tree in enumerate(space.trees):
-            # Runs through the tree and return a position array
-            a.position = copy.deepcopy(tree.position)
+        # Iterate through all (trees, agents)
+        for i, (tree, agent) in enumerate(zip(space.trees, space.agents)):
+            # Runs through the tree and returns a position array
+            agent.position = copy.deepcopy(tree.position)
 
             # Checks the agent limits
-            a.check_limits()
+            agent.check_limits()
 
-            # Calculate the fitness value of the temporary agent
-            # fit = function.pointer(a.position)
-
-            # # # If fitness is better than tree's best fit
-            # if fit < space.trees_fit[i]:
-            # # Updates its current fitness to the newer one
-            space.trees_fit[i] = function.pointer(a.position)
+            # Calculates the fitness value of the agent
+            agent.fit = function.pointer(agent.position)
 
             # If tree's fitness is better than global fitness
-            if space.trees_fit[i] < space.best_agent.fit:
-                #
+            if agent.fit < space.best_agent.fit:
+                # Makes a deep copy of current tree
                 space.best_tree = copy.deepcopy(tree)
 
-                # Makes a deep copy of agent's best position to the best agent
-                space.best_agent.position = copy.deepcopy(a.position)
+                # Makes a deep copy of agent's position to the best agent
+                space.best_agent.position = copy.deepcopy(agent.position)
 
-                # Makes a deep copy of current tree fitness to the best agent
-                space.best_agent.fit = copy.deepcopy(space.trees_fit[i])
+                # Also, copies its fitness from agent's fitness
+                space.best_agent.fit = copy.deepcopy(agent.fit)
     
     def run(self, space, function):
         """Runs the optimization pipeline.
@@ -306,13 +301,13 @@ class GP(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating trees
-            # self._update(space)
+            self._update(space)
 
             # After the update, we need to re-evaluate the tree space
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
-            # history.dump(agents=space.agents, best=space.best_agent)
+            history.dump(agents=space.agents, best_agent=space.best_agent, best_tree=space.best_tree)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

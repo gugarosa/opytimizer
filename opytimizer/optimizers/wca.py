@@ -271,7 +271,7 @@ class WCA(Optimizer):
             self.d_max -= (self.d_max / space.n_iterations)
 
             # Every iteration, we need to dump agents and best agent
-            history.dump(agents=space.agents, best=space.best_agent)
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

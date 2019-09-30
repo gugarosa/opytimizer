@@ -55,14 +55,3 @@ o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
 history = o.start()
-
-print(s.best_index)
-
-print(s.trees[s.best_index])
-print(s.trees[s.best_index].position)
-
-print(s.best_tree)
-print(s.best_tree.position)
-
-for tree in s.trees:
-    print(tree)

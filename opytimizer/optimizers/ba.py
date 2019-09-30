@@ -325,7 +325,7 @@ class BA(Optimizer):
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
-            history.dump(agents=space.agents, best=space.best_agent)
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
