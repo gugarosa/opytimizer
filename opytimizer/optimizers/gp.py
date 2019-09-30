@@ -37,13 +37,13 @@ class GP(Optimizer):
         super(GP, self).__init__(algorithm=algorithm)
 
         # Probability of reproduction
-        self.reproduction = 0.3
+        self.p_reproduction = 0.3
 
         # Probability of mutation
-        self.mutation = 0.4
+        self.p_mutation = 0.4
 
         # Probability of crossover
-        self.crossover = 0.4
+        self.p_crossover = 0.4
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -51,40 +51,52 @@ class GP(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def reproduction(self):
+    def p_reproduction(self):
         """float: Probability of reproduction.
 
         """
 
-        return self._reproduction
+        return self._p_reproduction
 
-    @reproduction.setter
-    def reproduction(self, reproduction):
-        self._reproduction = reproduction
+    @p_reproduction.setter
+    def p_reproduction(self, p_reproduction):
+        if not (isinstance(p_reproduction, float) or isinstance(p_reproduction, int)):
+            raise e.TypeError('`p_reproduction` should be a float or integer')
+        if p_reproduction < 0 or p_reproduction > 1:
+            raise e.ValueError('`p_reproduction` should be between 0 and 1')
+        self._p_reproduction = p_reproduction
 
     @property
-    def mutation(self):
+    def p_mutation(self):
         """float: Probability of mutation.
 
         """
 
-        return self._mutation
+        return self._p_mutation
 
-    @mutation.setter
-    def mutation(self, mutation):
-        self._mutation = mutation
+    @p_mutation.setter
+    def p_mutation(self, p_mutation):
+        if not (isinstance(p_mutation, float) or isinstance(p_mutation, int)):
+            raise e.TypeError('`p_mutation` should be a float or integer')
+        if p_mutation < 0 or p_mutation > 1:
+            raise e.ValueError('`p_mutation` should be between 0 and 1')
+        self._p_mutation = p_mutation
 
     @property
-    def crossover(self):
+    def p_crossover(self):
         """float: Probability of crossover.
 
         """
 
-        return self._crossover
+        return self._p_crossover
 
-    @crossover.setter
-    def crossover(self, crossover):
-        self._crossover = crossover
+    @p_crossover.setter
+    def p_crossover(self, p_crossover):
+        if not (isinstance(p_crossover, float) or isinstance(p_crossover, int)):
+            raise e.TypeError('`p_crossover` should be a float or integer')
+        if p_crossover < 0 or p_crossover > 1:
+            raise e.ValueError('`p_crossover` should be between 0 and 1')
+        self._p_crossover = p_crossover
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
@@ -105,35 +117,35 @@ class GP(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'reproduction' in hyperparams:
-                self.reproduction = hyperparams['reproduction']
-            if 'mutation' in hyperparams:
-                self.mutation = hyperparams['mutation']
-            if 'crossover' in hyperparams:
-                self.crossover = hyperparams['crossover']
+            if 'p_reproduction' in hyperparams:
+                self.p_reproduction = hyperparams['p_reproduction']
+            if 'p_mutation' in hyperparams:
+                self.p_mutation = hyperparams['p_mutation']
+            if 'p_crossover' in hyperparams:
+                self.p_crossover = hyperparams['p_crossover']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: reproduction = {self.reproduction}, mutation = {self.mutation}, crossover = {self.crossover} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, p_crossover = {self.p_crossover} | Built: {self.built}.')
 
-    
-    def _reproduct(self, space, trees):
-        """Reproducts a number of individuals through a tournament selection procedure.
+    def _reproduction(self, space, agents, trees):
+        """Reproducts a number of individuals pre-selected through a tournament procedure.
 
         Args:
             space (TreeSpace): A TreeSpace object.
-            trees (list): Temporary trees.
+            agents (list): Current iteration agents.
+            trees (list): Current iteration trees.
 
         """
 
         # Calculates a list of current trees' fitness
-        fitness = [agent.fit for agent in space.agents]
+        fitness = [agent.fit for agent in agents]
 
         # Number of individuals to be reproducted
-        n_individuals = int(space.n_trees * self.reproduction)
+        n_individuals = int(space.n_trees * self.p_reproduction)
 
         # Gathers a list of selected individuals to be replaced
         selected = r.tournament_selection(fitness, n_individuals)
@@ -143,74 +155,121 @@ class GP(Optimizer):
             # Gathers the worst individual index
             worst = np.argmax(fitness)
 
-            # Replace the individual by performing a deep copy on selected tree
+            # Replace the individual by performing a deep copy on selected tree and agent
             space.trees[worst] = copy.deepcopy(trees[s])
+            space.agents[worst] = copy.deepcopy(agents[s])
 
             # Replaces the worst individua fitness with a minimum value
             fitness[worst] = 0
 
-    def mute(self, space, tree):
+    def _mutation(self, space, agents, trees):
+        """Mutates a number of individuals pre-selected through a tournament procedure.
 
-        p = 0.5
+        Args:
+            space (TreeSpace): A TreeSpace object.
+            agents (list): Current iteration agents.
+            trees (list): Current iteration trees.
 
-        m_tree = copy.deepcopy(tree)
+        """
 
-        random = r.generate_uniform_random_number()
+        # Calculates a list of current trees' fitness
+        fitness = [agent.fit for agent in agents]
 
-        point = int(r.generate_uniform_random_number(2, tree.n_nodes))
+        # Number of individuals to be reproducted
+        n_individuals = int(space.n_trees * self.p_mutation)
 
+        # Gathers a list of selected individuals to be replaced
+        selected = r.tournament_selection(fitness, n_individuals)
+
+        # For every selected individual
+        for s in selected:
+            # Checks if the tree has more than one node
+            if trees[s].n_nodes > 1:
+                space.trees[s] = self._mutate(space, trees[s])
+
+            # If there is only one node
+            else:
+                # Re-create it with a random tree
+                space.trees[s] = space.grow(space.min_depth, space.max_depth)
+
+    def _mutate(self, space, tree):
+        """Actually performs the mutation on a single tree (Node).
+
+        Args:
+            space (TreeSpace): A TreeSpace object.
+            trees (Node): A Node instance to be mutated.
+
+        Returns:
+            A mutated tree (Node).
+
+        """
+
+        # Copying tree to a mutated tree structure
+        mutated_tree = copy.deepcopy(tree)
+
+        # Calculating mutation point
+        mutation_point = int(r.generate_uniform_random_number(2, tree.n_nodes))
+
+        # Defining a counter to use for the pre-fix walk
         c = 0
-        flag = 0
 
-        if p > random:
-            new_tree = m_tree.prefix(m_tree, point, flag, 'FUNCTION', c)
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Checks if the mutation will occur in a `FUNCTION` or `TERMINAL` node
+        if r1 < 0.5:
+            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
+            sub_tree, flag = mutated_tree.prefix(
+                mutated_tree, mutation_point, 'FUNCTION', c)
         else:
-            new_tree = m_tree.prefix(m_tree, point, flag, 'TERMINAL', c)
+            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
+            sub_tree, flag = mutated_tree.prefix(
+                mutated_tree, mutation_point, 'TERMINAL', c)
 
-        if new_tree:
-            tmp = space.grow(space.min_depth, space.max_depth)
+        # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
+        # and prefix() stops at a terminal node whose father is a root
+        if sub_tree:
+            # Creating a new random sub-tree
+            branch = space.grow(space.min_depth, space.max_depth)
 
+            # Checks if sub-tree should be positioned in the left
             if flag:
-                tmp2 = new_tree.left
-            else:
-                tmp2 = new_tree.right
+                # The left child will receive the sub-branch
+                sub_tree.left = branch
 
-            if flag:
-                new_tree.left = tmp
-                tmp.flag = True
+                # And its flag will be True
+                branch.flag = True
+
+            # If `flag` is False
             else:
-                new_tree.right = tmp
-                tmp.flag = False
-            tmp.parent = new_tree
+                # The right child will receive the sub-branch
+                sub_tree.right = branch
+
+                # And its flag will be False
+                branch.flag = False
+
+            # Connects the sub-branch to its parent
+            branch.parent = sub_tree
+
+        # Otherwise, if condition is false
         else:
-            m_tree = space.grow(space.min_depth, space.max_depth)
+            # The mutated tree will be a random tree
+            mutated_tree = space.grow(space.min_depth, space.max_depth)
 
-        return m_tree
+        return mutated_tree
 
+    def _crossover(self, space, agents, trees):
+        """Crossover a number of individuals pre-selected through a tournament procedure.
 
-    def _mutate(self, space, tmp_trees):
+        Args:
+            space (TreeSpace): A TreeSpace object.
+            agents (list): Current iteration agents.
+            trees (list): Current iteration trees.
+
         """
-        """
 
-        fits = [agent.fit for agent in space.agents]
+        pass
 
-        #
-        n_reproduction = int(space.n_trees * self.reproduction)
-
-        #
-        n_mutation = int(space.n_trees * self.mutation)
-
-        #
-        selected = r.tournament_selection(fits, n_mutation)
-
-        for (i, m) in enumerate(selected):
-            
-            if tmp_trees[m].n_nodes > 1:
-                space.trees[i+n_reproduction] = self.mute(space, tmp_trees[m])
-            else:
-                space.trees[i+n_reproduction] = space.grow(space.min_depth, space.max_depth)
-
-    
     def _update(self, space):
         """Method that wraps reproduction, crossover and mutation operators over all trees.
 
@@ -219,18 +278,20 @@ class GP(Optimizer):
 
         """
 
+        # Copying current agents to initiate a new generation
+        agents = copy.deepcopy(space.agents)
+
         # Copying current trees to initiate a new generation
-        new_trees = copy.deepcopy(space.trees)
+        trees = copy.deepcopy(space.trees)
 
         # Performs the reproduction
-        self._reproduct(space, new_trees)
-
-        # Performs the mutation
-        self._mutate(space, new_trees)
+        self._reproduction(space, agents, trees)
 
         # Performs the crossover
-        # self._cross(space, tmp_trees)
-        
+        self._crossover(space, agents, trees)
+
+        # Performs the mutation
+        self._mutation(space, agents, trees)
 
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
@@ -262,7 +323,7 @@ class GP(Optimizer):
 
                 # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-    
+
     def run(self, space, function):
         """Runs the optimization pipeline.
 
@@ -292,7 +353,8 @@ class GP(Optimizer):
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
-            history.dump(agents=space.agents, best_agent=space.best_agent, best_tree=space.best_tree)
+            history.dump(agents=space.agents,
+                         best_agent=space.best_agent, best_tree=space.best_tree)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

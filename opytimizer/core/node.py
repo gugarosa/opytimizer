@@ -268,39 +268,73 @@ class Node:
 
         return post_order
 
-    def prefix(self, node, position, flag, type, c):
-        """
+    def prefix(self, node, point, type, c):
+        """Performs a pre-fix walk to find the `point`-th node.
+
+        Args:
+            node (Node): A node instance.
+            point (int): The position to find the desired node.
+            type (str): The node's type (e.g., `FUNCTION` or `TERMINAL`).
+            c (int): A counter to indicate if the algorithm reached the desired point.
+
+        Returns:
+            The `point`-th node.
+
         """
 
+        # Checks if node exists
         if node:
+            # If yes, increments the counter
             c += 1
-            if c == position:
+
+            # If counter equal to the point
+            if c == point:
+                # Flag receives the node flag
                 flag = node.flag
+
+                # Resets the counter
                 c = 0
 
+                # If it is a terminal node
                 if type == 'TERMINAL':
-                    return node.parent
+                    return node.parent, flag
 
+                # If it is a function node, we need to return the parent of its parent
                 elif node.parent.parent:
+                    # Flag receives the node parent's flag
                     flag = node.parent.flag
-                    return node.parent.parent
 
+                    return node.parent.parent, flag
+
+                # If both conditions are not satisfied
                 else:
-                    return None
+                    return None, 0
 
+            # If counter is not in the mutation point
             else:
-                tmp_node = self.prefix(node.left, position, flag, type, c)
-                if tmp_node:
-                    return tmp_node
-                else:
-                    tmp_node = self.prefix(node.right, position, flag, type, c)
-                    if tmp_node:
-                        return tmp_node
-                    else:
-                        return None
+                # Continues to perform the pre-fix walk to the left
+                next_node, flag = self.prefix(node.left, point, type, c)
 
+                # If there is a node
+                if next_node:
+                    return next_node, flag
+
+                # If there is no node
+                else:
+                    # Continues to perform the pre-fix walk to the right
+                    next_node, flag = self.prefix(node.right, point, type, c)
+
+                    # If there is a node
+                    if next_node:
+                        return next_node, flag
+
+                    # If there is no node
+                    else:
+                        return None, 0
+
+        # If there is no node
         else:
-            return None
+            return None, 0
 
 
 def _build_string(node):

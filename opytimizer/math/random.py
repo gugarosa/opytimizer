@@ -56,10 +56,10 @@ def tournament_selection(fitness, k):
 
     # For every possible selection
     for i in range(k):
-        # Calculate the probabilities of selecting an individual
+        # Randomly selects `k` individuals to participate in the tournement
         possible = np.random.choice(fitness, k)
 
-        # Appends the selected index
+        # Selects the individual with the minimum fitness 
         selected.append(np.where(min(possible) == fitness)[0][0])
 
     return selected

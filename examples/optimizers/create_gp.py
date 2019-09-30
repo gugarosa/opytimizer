@@ -3,9 +3,9 @@ from opytimizer.optimizers.gp import GP
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
 hyperparams = {
-    'reproduction': 0.3,
-    'mutation': 0.4,
-    'crossover': 0.4
+    'p_reproduction': 0.25,
+    'p_mutation': 0.5,
+    'p_crossover': 0.5
 }
 
 # Creating a GP optimizer
