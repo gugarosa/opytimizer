@@ -311,10 +311,13 @@ class Node:
 
         """
 
+        # Calculates the pre-order of current node
+        pre_order = self.pre_order
+
         # Checks if the pre-order list has more nodes than the desired position
-        if len(self.pre_order) > position:
+        if len(pre_order) > position:
             # Gets the node from position
-            node = self.pre_order[position]
+            node = pre_order[position]
 
             # If the node is a terminal
             if node.type == 'TERMINAL':
