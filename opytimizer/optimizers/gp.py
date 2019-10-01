@@ -38,13 +38,16 @@ class GP(Optimizer):
         super(GP, self).__init__(algorithm=algorithm)
 
         # Probability of reproduction
-        self.p_reproduction = 0.3
+        self.p_reproduction = 0.25
 
         # Probability of mutation
-        self.p_mutation = 0.4
+        self.p_mutation = 0.1
 
         # Probability of crossover
-        self.p_crossover = 0.4
+        self.p_crossover = 0.1
+
+        #
+        self.prune_ratio = 0
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -124,13 +127,26 @@ class GP(Optimizer):
                 self.p_mutation = hyperparams['p_mutation']
             if 'p_crossover' in hyperparams:
                 self.p_crossover = hyperparams['p_crossover']
+            if 'prune_ratio' in hyperparams:
+                self.prune_ratio = hyperparams['prune_ratio']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, p_crossover = {self.p_crossover} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, p_crossover = {self.p_crossover}, prune_ratio = {self.prune_ratio} | Built: {self.built}.')
+
+    def _prune_nodes(self, n_nodes):
+        """
+        """
+
+        prunned_nodes = int(n_nodes * (1 - self.prune_ratio))
+
+        if prunned_nodes <= 2:
+            return 2
+        
+        return prunned_nodes
 
     def _reproduction(self, space, agents, trees):
         """Reproducts a number of individuals pre-selected through a tournament procedure.
@@ -184,16 +200,24 @@ class GP(Optimizer):
 
         # For every selected individual
         for s in selected:
+            # Gathers individual number of nodes
+            n_nodes = trees[s].n_nodes
+
             # Checks if the tree has more than one node
-            if trees[s].n_nodes > 1:
-                space.trees[s] = self._mutate(space, trees[s])
+            if n_nodes > 1:
+                # Prunes the amount of maximum nodes
+                max_nodes = self._prune_nodes(n_nodes)
+
+                # Mutatets the individual
+                space.trees[s] = self._mutate(space, trees[s], max_nodes)
 
             # If there is only one node
             else:
                 # Re-create it with a random tree
                 space.trees[s] = space.grow(space.min_depth, space.max_depth)
 
-    def _mutate(self, space, tree):
+    @profile
+    def _mutate(self, space, tree, max_nodes):
         """Actually performs the mutation on a single tree (Node).
 
         Args:
@@ -205,8 +229,10 @@ class GP(Optimizer):
 
         """
 
+        print(max_nodes)
+
         # Calculating mutation point
-        mutation_point = int(r.generate_uniform_random_number(2, tree.n_nodes))
+        mutation_point = int(r.generate_uniform_random_number(2, max_nodes))
 
         # Finds the node at desired mutation point
         sub_tree, flag = tree.find_node(mutation_point)
@@ -243,6 +269,7 @@ class GP(Optimizer):
 
         return tree
 
+    # @profile
     def _crossover(self, space, agents, trees):
         """Crossover a number of individuals pre-selected through a tournament procedure.
 
@@ -269,13 +296,15 @@ class GP(Optimizer):
 
         # For every pair in selected individuals
         for s in c.pairwise(selected):
+            father_nodes = trees[s[0]].n_nodes
+            mother_nodes = trees[s[1]].n_nodes
             # Checks if both trees have more than one node
-            if (trees[s[0]].n_nodes > 1) and (trees[s[1]].n_nodes > 1):
+            if (father_nodes > 1) and (mother_nodes > 1):
                 # Apply the crossover operation
-                space.trees[s[0]], space.trees[s[1]] = self._cross(trees[s[0]], trees[s[1]])
+                space.trees[s[0]], space.trees[s[1]] = self._cross(trees[s[0]], trees[s[1]], father_nodes, mother_nodes)
 
-    @profile
-    def _cross(self, father, mother):
+    # @profile
+    def _cross(self, father, mother, n_father, n_mother):
         """Actually performs the crossover over a father and mother nodes.
 
         Args:
@@ -288,21 +317,19 @@ class GP(Optimizer):
         """
 
         # Copying father tree to the father's offspring structure
-        # father_offspring = copy.deepcopy(father)
         father_offspring = father
 
         # Calculating father's crossover point
-        father_point = int(r.generate_uniform_random_number(2, father.n_nodes))
+        father_point = int(r.generate_uniform_random_number(2, n_father))
 
         # Finds the node at desired crossover point
         sub_father, flag_father = father_offspring.find_node(father_point)
 
         # Copying mother tree to the mother's offspring structure
-        # mother_offspring = copy.deepcopy(mother)
         mother_offspring = mother
 
         # Calculating mother's crossover point
-        mother_point = int(r.generate_uniform_random_number(2, mother.n_nodes))
+        mother_point = int(r.generate_uniform_random_number(2, n_mother))
 
         # Finds the node at desired crossover point
         sub_mother, flag_mother = mother_offspring.find_node(mother_point)
@@ -394,7 +421,7 @@ class GP(Optimizer):
         self._reproduction(space, agents, trees)
 
         # Performs the crossover
-        # self._crossover(space, agents, trees)
+        self._crossover(space, agents, trees)
 
         # Performs the mutation
         self._mutation(space, agents, trees)

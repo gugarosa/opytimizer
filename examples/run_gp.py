@@ -25,7 +25,7 @@ min_depth = 2
 max_depth = 5
 
 # List of functions nodes
-functions = ['SUM', 'SUB', 'MUL', 'DIV']
+functions = ['SUM', 'MUL', 'DIV']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
@@ -41,7 +41,8 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
 hyperparams = {
     'p_reproduction': 0.25,
     'p_mutation': 0.1,
-    'p_crossover': 0.1
+    'p_crossover': 0.0,
+    'prune_ratio': 0
 }
 
 # Creating GP's optimizer
