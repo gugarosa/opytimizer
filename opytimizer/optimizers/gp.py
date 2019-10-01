@@ -157,7 +157,7 @@ class GP(Optimizer):
             worst = np.argmax(fitness)
 
             # Replace the individual by performing a deep copy on selected tree and agent
-            space.trees[worst] = copy.deepcopy(trees[s])
+            space.trees[worst] = trees[s]
             space.agents[worst] = copy.deepcopy(agents[s])
 
             # Replaces the worst individua fitness with a minimum value
@@ -205,32 +205,14 @@ class GP(Optimizer):
 
         """
 
-        # Copying tree to a mutated tree structure
-        mutated_tree = copy.deepcopy(tree)
-
         # Calculating mutation point
         mutation_point = int(r.generate_uniform_random_number(2, tree.n_nodes))
 
-        # Defining a counter to use for the pre-fix walk
-        c = 0
-
-        sub_tree, flag = mutated_tree.find_node(mutation_point)
-
-        # # Generates an uniform random number
-        # r1 = r.generate_uniform_random_number()
-
-        # # Checks if the mutation will occur in a `FUNCTION` or `TERMINAL` node
-        # if r1 < 0.5:
-        #     # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
-        #     sub_tree, flag = mutated_tree.prefix(
-        #         mutated_tree, mutation_point, 'FUNCTION', c)
-        # else:
-        #     # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
-        #     sub_tree, flag = mutated_tree.prefix(
-        #         mutated_tree, mutation_point, 'TERMINAL', c)
+        # Finds the node at desired mutation point
+        sub_tree, flag = tree.find_node(mutation_point)
 
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
-        # and prefix() stops at a terminal node whose father is a root
+        # and find_node() stops at a terminal node whose father is a root
         if sub_tree:
             # Creating a new random sub-tree
             branch = space.grow(space.min_depth, space.max_depth)
@@ -257,9 +239,9 @@ class GP(Optimizer):
         # Otherwise, if condition is false
         else:
             # The mutated tree will be a random tree
-            mutated_tree = space.grow(space.min_depth, space.max_depth)    
+            tree = space.grow(space.min_depth, space.max_depth) 
 
-        return mutated_tree
+        return tree
 
     def _crossover(self, space, agents, trees):
         """Crossover a number of individuals pre-selected through a tournament procedure.
@@ -277,117 +259,120 @@ class GP(Optimizer):
         # Number of individuals to be reproducted
         n_individuals = int(space.n_trees * self.p_crossover)
 
+        # Checks if `n_individuals is an odd number`
+        if n_individuals % 2 != 0:
+            # If it is, increase it by one
+            n_individuals += 1
+
         # Gathers a list of selected individuals to be replaced
         selected = r.tournament_selection(fitness, n_individuals)
 
-        # print(selected)
+        # For every pair in selected individuals
+        for s in c.pairwise(selected):
+            # Checks if both trees have more than one node
+            if (trees[s[0]].n_nodes > 1) and (trees[s[1]].n_nodes > 1):
+                # Apply the crossover operation
+                space.trees[s[0]], space.trees[s[1]] = self._cross(trees[s[0]], trees[s[1]])
 
-        s = [0, 6]
-        if (trees[s[0]].n_nodes > 1) and (trees[s[1]].n_nodes > 1):
-                # print(space.trees[s[0]])
-                # print(space.trees[s[1]])
-            space.trees[s[0]], space.trees[s[1]] = self._cross(trees[s[0]], trees[s[1]])
-                # print(space.trees[s[0]])
-                # print(space.trees[s[1]])
-
+    @profile
     def _cross(self, father, mother):
-        """
+        """Actually performs the crossover over a father and mother nodes.
+
+        Args:
+            father (Node): A father's node to be crossed.
+            mother (Node): A mother's node to be crossed.
+
+        Returns:
+            Two offsprings based on the crossover operator.
+
         """
 
         # Copying father tree to the father's offspring structure
-        father_offspring = copy.deepcopy(father)
+        # father_offspring = copy.deepcopy(father)
+        father_offspring = father
 
         # Calculating father's crossover point
-        father_point = int(r.generate_uniform_random_number(2, father.n_nodes))   
+        father_point = int(r.generate_uniform_random_number(2, father.n_nodes))
 
-        # print(father_offspring)
-
-        # print(father)
-
-        # Defining a counter to use for the pre-fix walk
-        c = 0
-
-        # Generates an uniform random number
-        r1 = r.generate_uniform_random_number()
-
-        # Checks if the crossover will occur in a `FUNCTION` or `TERMINAL` node
-        if r1 < 0.7:
-            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
-            sub_father, flag_father = father_offspring.prefix(
-                father_offspring, father_point, 'FUNCTION', c)
-        else:
-            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
-            sub_father, flag_father = father_offspring.prefix(
-                father_offspring, father_point, 'TERMINAL', c) 
+        # Finds the node at desired crossover point
+        sub_father, flag_father = father_offspring.find_node(father_point)
 
         # Copying mother tree to the mother's offspring structure
-        mother_offspring = copy.deepcopy(mother)
+        # mother_offspring = copy.deepcopy(mother)
+        mother_offspring = mother
 
         # Calculating mother's crossover point
-        mother_point = int(r.generate_uniform_random_number(2, mother.n_nodes))   
+        mother_point = int(r.generate_uniform_random_number(2, mother.n_nodes))
 
-        # Defining a counter to use for the pre-fix walk
-        c = 0
+        # Finds the node at desired crossover point
+        sub_mother, flag_mother = mother_offspring.find_node(mother_point)
 
-        # Generates an uniform random number
-        r1 = r.generate_uniform_random_number()
-
-        # Checks if the crossover will occur in a `FUNCTION` or `TERMINAL` node
-        if r1 < 0.7:
-            # Gathers a new tree from a `FUNCTION` node by performing a pre-fix walk
-            sub_mother, flag_mother = mother_offspring.prefix(
-                mother_offspring, mother_point, 'FUNCTION', c)
-        else:
-            # Gathers a new tree from a `TERMINAL` node by performing a pre-fix walk
-            sub_mother, flag_mother = mother_offspring.prefix(
-                mother_offspring, mother_point, 'TERMINAL', c)
-
-        print(father_point, mother_point)
-
-        print(father, mother)
-
-        print(sub_father, sub_mother)
-
-        print('-----------\n\n')
-
+        # If there are crossover nodes
         if sub_father and sub_mother:
-            print(sub_father)
+            # If father's node is positioned in the left
             if flag_father:
+                # Gathers its left branch
                 branch = sub_father.left
+
+                # If mother's node is positioned in the left
                 if flag_mother:
+                    # Changes father's left node with mother's left node
                     sub_father.left = sub_mother.left
+
+                    # And activates the flag
                     sub_mother.left.flag = True
+                
+                # If mother's node is positioned in the right
                 else:
+                    # Changes father's left node with mother's right node
                     sub_father.left = sub_mother.right
+
+                    # Activates the flag
                     sub_mother.right.flag = True
+            
+            # If father's node is positioned in the right
             else:
+                # Gathers its right branch
                 branch = sub_father.right
+
+                # If mother's node is positioned in the left
                 if flag_mother:
+                    # Changes father's right node with mother's left node
                     sub_father.right = sub_mother.left
+
+                    # Deactivates the flag
                     sub_mother.left.flag = False
+
+                # If mother's node is positioned in the right
                 else:
+                    # Changes father's right node with mother's right node
                     sub_father.right = sub_mother.right
+
+                    # And deactivates the flag
                     sub_mother.right.flag = False
-            print(sub_father)
-        
+
+            # Finally, mother's parent will be the father's node
             sub_mother.parent = sub_father
 
+            # Now, for creating the mother's offspring
+            # Check if it is positioned in the left
             if flag_mother:
+                # Applies the father's removed branch to mother's left child
                 sub_mother.left = branch
+
+                # Activates the flag
                 branch.flag = True
+
+            # If it is positioned in the right
             else:
+                # Applies the father's removed branch to mother's right child
                 sub_mother.right = branch
+
+                # Deactivates the flag
                 branch.flag = False
             
+            # The branch's parent will be the mother's node
             branch.parent = sub_mother
-
-        # print('Father Offspring\n\n')
-        # # print(sub_father)
-        # print(father_offspring) 
-        # print(father)
-        # print('Mother Offspring\n\n')
-        # print(mother_offspring)
-        # print(mother)
 
         return father_offspring, mother_offspring
 

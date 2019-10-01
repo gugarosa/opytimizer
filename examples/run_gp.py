@@ -25,7 +25,7 @@ min_depth = 2
 max_depth = 5
 
 # List of functions nodes
-functions = ['SUM', 'MUL', 'DIV']
+functions = ['SUM', 'SUB', 'MUL', 'DIV']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
@@ -39,9 +39,9 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'p_reproduction': 0.1,
+    'p_reproduction': 0.25,
     'p_mutation': 0.1,
-    'p_crossover': 0.5
+    'p_crossover': 0.1
 }
 
 # Creating GP's optimizer
@@ -55,3 +55,6 @@ o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
 history = o.start()
+
+for tree in s.trees:
+    print(f'\nNodes: {tree.n_nodes} | Leaves: {tree.n_leaves} | Minimum Depth: {tree.min_depth} | Max: {tree.max_depth}')

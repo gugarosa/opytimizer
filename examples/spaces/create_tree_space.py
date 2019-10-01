@@ -38,12 +38,6 @@ print(s.trees[0])
 print(f'Position: {s.trees[0].position}')
 
 # Outputting valuable information about the tree
+print(f'\nPre Order: {s.trees[0].pre_order}')
 print(f'\nPost Order: {s.trees[0].post_order}')
 print(f'\nNodes: {s.trees[0].n_nodes} | Leaves: {s.trees[0].n_leaves} | Minimum Depth: {s.trees[0].min_depth} | Maximum Depth: {s.trees[0].max_depth}')
-
-print(f'\nPre Order: {s.trees[0].find_node(2)}')
-
-c = 0
-print(s.trees[0].prefix(s.trees[0], 2, 'FUNCTION', c))
-c = 0
-print(s.trees[0].prefix(s.trees[0], 2, 'TERMINAL', c))
