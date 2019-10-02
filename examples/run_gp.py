@@ -41,8 +41,8 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
 hyperparams = {
     'p_reproduction': 0.25,
     'p_mutation': 0.1,
-    'p_crossover': 0.0,
-    'prune_ratio': 0
+    'p_crossover': 0.5,
+    'prunning_ratio': 0.0
 }
 
 # Creating GP's optimizer
@@ -58,4 +58,4 @@ o = Opytimizer(space=s, optimizer=p, function=f)
 history = o.start()
 
 for tree in s.trees:
-    print(f'\nNodes: {tree.n_nodes} | Leaves: {tree.n_leaves} | Minimum Depth: {tree.min_depth} | Max: {tree.max_depth}')
+    print(f'\nNodes: {tree.n_nodes} | Leaves: {tree.n_leaves} | Minimum Depth: {tree.min_depth} | Max: {tree.max_depth} | Fitness: {benchmark.sphere(tree.position)}')
