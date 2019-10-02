@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import fa
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_fa_hyperparams():
@@ -25,14 +25,41 @@ def test_fa_hyperparams():
 def test_fa_hyperparams_setter():
     new_fa = fa.FA()
 
-    new_fa.alpha = 0.25
-    assert new_fa.alpha == 0.25
+    try:
+        new_fa.alpha = 'a'
+    except:
+        new_fa.alpha = 0.5
 
-    new_fa.beta = 1.0
-    assert new_fa.beta == 1.0
+    try:
+        new_fa.alpha = -1
+    except:
+        new_fa.alpha = 0.5
 
-    new_fa.gamma = 1.5
-    assert new_fa.gamma == 1.5
+    assert new_fa.alpha == 0.5
+
+    try:
+        new_fa.beta = 'b'
+    except:
+        new_fa.beta = 0.2
+
+    try:
+        new_fa.beta = -1
+    except:
+        new_fa.beta = 0.2
+
+    assert new_fa.beta == 0.2
+
+    try:
+        new_fa.gamma = 'c'
+    except:
+        new_fa.gamma = 1.0
+
+    try:
+        new_fa.gamma = -1
+    except:
+        new_fa.gamma = 1.0
+
+    assert new_fa.gamma == 1.0
 
 
 def test_fa_build():
@@ -59,4 +86,4 @@ def test_fa_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm fa failed to converge"
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm fa failed to converge.'

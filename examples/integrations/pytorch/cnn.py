@@ -40,14 +40,14 @@ class CNN(torch.nn.Module):
 
         # First convolutional block
         # Pay extremely attention when matching tensor dimensions
-        self.conv.add_module("conv_1", torch.nn.Conv2d(1, 4, kernel_size=3))
+        self.conv.add_module("conv_1", torch.nn.Conv2d(1, 4, kernel_size=2))
         self.conv.add_module("dropout_1", torch.nn.Dropout())
         self.conv.add_module("maxpool_1", torch.nn.MaxPool2d(kernel_size=2))
         self.conv.add_module("relu_1", torch.nn.ReLU())
 
         # Second convolutional block
         # Same apply for this step
-        self.conv.add_module("conv_2", torch.nn.Conv2d(4, 8, kernel_size=3))
+        self.conv.add_module("conv_2", torch.nn.Conv2d(4, 8, kernel_size=2))
         self.conv.add_module("dropout_2", torch.nn.Dropout())
         self.conv.add_module("maxpool_2", torch.nn.MaxPool2d(kernel_size=2))
         self.conv.add_module("relu_2", torch.nn.ReLU())

@@ -9,20 +9,20 @@ logger = l.get_logger(__name__)
 
 
 class SearchSpace(Space):
-    """A SearchSpace class that will hold agents, variables and methods
+    """A SearchSpace class for agents, variables and methods
     related to the search space.
 
     """
 
-    def __init__(self, n_agents=1, n_variables=2, n_iterations=10, lower_bound=None, upper_bound=None):
+    def __init__(self, n_agents=1, n_variables=1, n_iterations=10, lower_bound=[], upper_bound=[]):
         """Initialization method.
 
         Args:
             n_agents (int): Number of agents.
             n_variables (int): Number of decision variables.
             n_iterations (int): Number of iterations.
-            lower_bound (np.array): Lower bound array with the minimum possible values.
-            upper_bound (np.array): Upper bound array with the maximum possible values.
+            lower_bound (list): Lower bound list with the minimum possible values.
+            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 

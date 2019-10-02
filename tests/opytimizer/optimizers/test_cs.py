@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import cs
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_cs_hyperparams():
@@ -23,13 +23,40 @@ def test_cs_hyperparams():
 def test_cs_hyperparams_setter():
     new_cs = cs.CS()
 
-    new_cs.alpha = 0.001
+    try:
+        new_cs.alpha = 'a'
+    except:
+        new_cs.alpha = 0.001
+
+    try:
+        new_cs.alpha = -1
+    except:
+        new_cs.alpha = 0.001
+
     assert new_cs.alpha == 0.001
 
-    new_cs.beta = 0.75
+    try:
+        new_cs.beta = 'b'
+    except:
+        new_cs.beta = 0.75
+
+    try:
+        new_cs.beta = -1
+    except:
+        new_cs.beta = 0.75
+
     assert new_cs.beta == 0.75
 
-    new_cs.p = 0.25
+    try:
+        new_cs.p = 'c'
+    except:
+        new_cs.p = 0.25
+
+    try:
+        new_cs.p = -1
+    except:
+        new_cs.p = 0.25
+
     assert new_cs.p == 0.25
 
 
@@ -74,4 +101,4 @@ def test_cs_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm abc failed to converge"
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm abc failed to converge.'

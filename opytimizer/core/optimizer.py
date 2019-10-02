@@ -1,13 +1,13 @@
 import copy
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
 
 
 class Optimizer:
-    """An Optimizer class that will serve as meta-heuristic
-        techniques' parent.
+    """An Optimizer class that serves as meta-heuristics' parent.
 
     """
 
@@ -15,30 +15,34 @@ class Optimizer:
         """Initialization method.
 
         Args:
-            algorithm (str): A string indicating the algorithm name.
+            algorithm (str): Indicates the algorithm name.
 
         """
 
         # We define the algorithm's name
-        self._algorithm = algorithm
+        self.algorithm = algorithm
 
         # Also, we need a dict of desired hyperparameters
-        self._hyperparams = None
+        self.hyperparams = {}
 
         # Indicates whether the optimizer is built or not
-        self._built = False
+        self.built = False
 
     @property
     def algorithm(self):
-        """str: A string indicating the algorithm name.
-        
+        """str: Indicates the algorithm name.
+
         """
 
         return self._algorithm
 
+    @algorithm.setter
+    def algorithm(self, algorithm):
+        self._algorithm = algorithm
+
     @property
     def hyperparams(self):
-        """dict: A dictionary containing key-value parameters
+        """dict: Contains the key-value parameters
             to meta-heuristics.
 
         """
@@ -47,11 +51,14 @@ class Optimizer:
 
     @hyperparams.setter
     def hyperparams(self, hyperparams):
+        if not isinstance(hyperparams, dict):
+            raise e.TypeError('`hyperparams` should be a dictionary')
+
         self._hyperparams = hyperparams
 
     @property
     def built(self):
-        """bool: A boolean to indicate whether the optimizer is built.
+        """bool: Indicates whether the optimizer is built.
 
         """
 
@@ -88,15 +95,12 @@ class Optimizer:
         """
 
         # Iterate through all agents
-        for i, agent in enumerate(space.agents):
+        for agent in space.agents:
             # Calculate the fitness value of current agent
             agent.fit = function.pointer(agent.position)
-            
+
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's index to the space's best index
-                space.best_index = i
-
                 # Makes a deep copy of agent's position to the best agent
                 space.best_agent.position = copy.deepcopy(agent.position)
 
@@ -105,7 +109,7 @@ class Optimizer:
 
     def run(self):
         """Runs the optimization pipeline.
-        
+
         As each optimizer child can have a different
         optimization pipeline, you will need to implement
         it directly on child's class.

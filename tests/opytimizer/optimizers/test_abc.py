@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import abc
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_abc_hyperparams():
@@ -19,7 +19,16 @@ def test_abc_hyperparams():
 def test_abc_hyperparams_setter():
     new_abc = abc.ABC()
 
-    new_abc.n_trials = 10
+    try:
+        new_abc.n_trials = 0.0
+    except:
+        new_abc.n_trials = 10
+
+    try:
+        new_abc.n_trials = 0
+    except:
+        new_abc.n_trials = 10
+
     assert new_abc.n_trials == 10
 
 
@@ -36,7 +45,7 @@ def test_abc_run():
     new_function = function.Function(pointer=square)
 
     hyperparams = {
-        'n_trials': 10
+        'n_trials': 1
     }
 
     new_abc = abc.ABC(hyperparams=hyperparams)
@@ -51,4 +60,4 @@ def test_abc_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm abc failed to converge"
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm abc failed to converge.'

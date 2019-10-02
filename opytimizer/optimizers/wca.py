@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -13,7 +14,7 @@ logger = l.get_logger(__name__)
 class WCA(Optimizer):
     """A WCA class, inherited from Optimizer.
 
-    This will be the designed class to define WCA-related
+    This is the designed class to define WCA-related
     variables and methods.
 
     References:
@@ -21,13 +22,12 @@ class WCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WCA', hyperparams=None):
+    def __init__(self, algorithm='WCA', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -37,10 +37,10 @@ class WCA(Optimizer):
         super(WCA, self).__init__(algorithm=algorithm)
 
         # Number of rivers + sea
-        self._nsr = 2
+        self.nsr = 2
 
         # Maximum evaporation condition
-        self._d_max = 0.1
+        self.d_max = 0.1
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -57,6 +57,11 @@ class WCA(Optimizer):
 
     @nsr.setter
     def nsr(self, nsr):
+        if not isinstance(nsr, int):
+            raise e.TypeError('`nsr` should be an integer')
+        if nsr < 1:
+            raise e.ValueError('`nsr` should be > 1')
+
         self._nsr = nsr
 
     @property
@@ -69,17 +74,21 @@ class WCA(Optimizer):
 
     @d_max.setter
     def d_max(self, d_max):
+        if not (isinstance(d_max, float) or isinstance(d_max, int)):
+            raise e.TypeError('`d_max` should be a float or integer')
+        if d_max < 0:
+            raise e.ValueError('`d_max` should be >= 0')
+
         self._d_max = d_max
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -261,8 +270,8 @@ class WCA(Optimizer):
             # Updates the evaporation condition
             self.d_max -= (self.d_max / space.n_iterations)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
