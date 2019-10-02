@@ -1,132 +1,117 @@
 import pickle
 
+import opytimizer.utils.constants as c
+
 
 class History:
     """A History class is responsible for saving each iteration's output.
 
-    One can configure, if necessary, different properties or outputs that
-    can be saved. Currently, we only save agents' and best agent's position and fitness.
+    Note that you can use dump() and parse() for whatever your needs. Our default
+    is only for agents, best agent and best agent's index.
 
     """
 
-    def __init__(self):
-        """Initialization method.
-
-        """
-
-        # Our agents property will be first set as an empty list
-        self._agents = []
-
-        # Also, an empty list for the best agent property
-        self._best_agent = []
-
-    @property
-    def agents(self):
-        """list: An agents property to hold agents' position and fitness.
-
-        """
-
-        return self._agents
-
-    @agents.setter
-    def agents(self, agents):
-        self._agents = agents
-
-    @property
-    def best_agent(self):
-        """list: A best agent property to hold best agent's position, fitness and index.
-
-        """
-
-        return self._best_agent
-
-    @best_agent.setter
-    def best_agent(self, best_agent):
-        self._best_agent = best_agent
-
-    def dump(self, agents, best_agent, best_index=0):
-        """Dumps agents and best agent into the object.
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): An instance of the best agent.
-            best_index (int): Index of the agent that is currently the best one.
-
-        """
-
-        # Recording position and fitness for each agent
-        a = [(agent.position.tolist(), agent.fit) for agent in agents]
-
-        # Appending agents to list
-        self.agents.append(a)
-
-        # Appending the best agent as well
-        self.best_agent.append(
-            (best_agent.position.tolist(), best_agent.fit, best_index))
-
-    def dump_pso(self, local_position, agents, best_agent, best_index=0):
-        """Dumps agents and best agent into the object (PSO).
-        
-        This is a temporary method and will be reworked later.
-
-        Args:
-            local_position (np.array): Array of agents' local positions.
-            agents (list): List of agents.
-            best_agent (Agent): An instance of the best agent.
-            best_index (int): Index of the agent that is currently the best one.
-
-        """
-
-        # Recording local position and fitness for each agent
-        a = [(local.tolist(), agent.fit) for local, agent in zip(local_position, agents)]
-
-        # Appending agents to list
-        self.agents.append(a)
-
-        # Appending the best agent as well
-        self.best_agent.append(
-            (best_agent.position.tolist(), best_agent.fit, best_index))
-
-    def show(self):
-        """Prints in a formatted way the history of agents' and best agent's 
-        position, fitness and index.
+    def __str__(self):
+        """Prints in a formatted way the history of agents' throughout the
+        optimization task.
 
         """
 
         # For every iteration
         for i, (agents, best) in enumerate(zip(self.agents, self.best_agent)):
-            print(f'\nIteration: {i+1}\n')
+            print(f'\nIteration {i+1}/{len(self.agents)}')
 
             # Iterating through every agent
             for j, agent in enumerate(agents):
+                # Prints an agent
                 print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
 
-            print(f'Best = Agent[{best[2]}]: {best[0]} | Fitness: {best[1]}')
+            # Prints the best agent so far
+            print(f'\nBest: {best[0]} | Fitness: {best[1]}')
+
+        return ''
+
+    def dump(self, **kwargs):
+        """Dumps key-value pairs into lists attributes.
+
+        Note that if an attribute already exists, it will be appended
+        in the list.
+
+        """
+
+        # For every key-value pair
+        for (k, v) in kwargs.items():
+            # Checks if current key has a specific rule
+            if k in c.HISTORY_KEYS:
+                # Parses the information according to the key
+                out = self.parse(k, v)
+
+            # If there is no specific rule
+            else:
+                # Just applies the information
+                out = v
+
+            # If there is no attribute
+            if not hasattr(self, k):
+                # Sets its initial value as a list
+                setattr(self, k, [out])
+
+            # If there is already an attribute
+            else:
+                # Appends the new value to the attribute
+                getattr(self, k).append(out)
+
+    def parse(self, key, value):
+        """Parses a value according to the key's requirement.
+
+        Args:
+            key (str): Key's identifier.
+            value (any): Any possible value.
+
+        Returns:
+            The parsed (formatted) value according to the key.
+
+        """
+
+        # Checks if the key is `agents`
+        if key == 'agents':
+            # Returns a list of agents' tuples (position, fit)
+            return [(v.position.tolist(), v.fit) for v in value]
+
+        # Checks if the key is `best_agent`
+        elif key == 'best_agent':
+            # Returns the best agent's tuple (position, fit)
+            return (value.position.tolist(), value.fit)
+
+        # Checks if the key is `local`
+        elif key == 'local':
+            # Returns a list of local positions
+            return [v.tolist() for v in value]
 
     def save(self, file_name):
         """Saves the object to a pickle encoding.
 
         Args:
-            file_name (str): String holding the file's name that will be saved.
+            file_name (str): File's name to be saved.
 
         """
 
         # Opening a destination file
         with open(file_name, 'wb') as dest_file:
-            # Dumping History object to file
+            # Dumping History to file
             pickle.dump(self, dest_file)
 
     def load(self, file_name):
         """Loads the object from a pickle encoding.
 
         Args:
-            file_name (str): String containing pickle's file path.
+            file_name (str): Pickle's file path to be loaded.
 
         """
 
-        # Resetting current object state to loaded state
+        # Trying to open the file
         with open(file_name, "rb") as origin_file:
-            # Loading History object from file
+            # Loading History from file
             h = pickle.load(origin_file)
 
             # Updating all values

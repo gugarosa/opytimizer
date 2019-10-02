@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import bha
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_bha_build():
@@ -60,4 +60,4 @@ def test_bha_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm bha failed to converge"
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm bha failed to converge.'

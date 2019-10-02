@@ -1,9 +1,9 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.math import constants
 from opytimizer.optimizers import wca
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_wca_hyperparams():
@@ -22,10 +22,28 @@ def test_wca_hyperparams():
 def test_wca_hyperparams_setter():
     new_wca = wca.WCA()
 
-    new_wca.nsr = 10
+    try:
+        new_wca.nsr = 0.0
+    except:
+        new_wca.nsr = 10
+
+    try:
+        new_wca.nsr = 0
+    except:
+        new_wca.nsr = 10
+
     assert new_wca.nsr == 10
 
-    new_wca.d_max = 0.1
+    try:
+        new_wca.d_max = 'a'
+    except:
+        new_wca.d_max = 0.1
+
+    try:
+        new_wca.d_max = -1
+    except:
+        new_wca.d_max = 0.1
+
     assert new_wca.d_max == 0.1
 
 
@@ -119,4 +137,4 @@ def test_wca_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, "The algorithm wca failed to converge"
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm wca failed to converge.'

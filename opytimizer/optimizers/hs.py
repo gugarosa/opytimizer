@@ -1,6 +1,7 @@
 import copy
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
@@ -12,7 +13,7 @@ logger = l.get_logger(__name__)
 class HS(Optimizer):
     """A HS class, inherited from Optimizer.
 
-    This will be the designed class to define HS-related
+    This is the designed class to define HS-related
     variables and methods.
 
     References:
@@ -20,13 +21,12 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', hyperparams=None):
+    def __init__(self, algorithm='HS', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -36,13 +36,13 @@ class HS(Optimizer):
         super(HS, self).__init__(algorithm=algorithm)
 
         # Harmony memory considering rate
-        self._HMCR = 0.7
+        self.HMCR = 0.7
 
         # Pitch adjusting rate
-        self._PAR = 0.7
+        self.PAR = 0.7
 
         # Bandwidth parameter
-        self._bw = 1
+        self.bw = 1.0
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -59,6 +59,11 @@ class HS(Optimizer):
 
     @HMCR.setter
     def HMCR(self, HMCR):
+        if not (isinstance(HMCR, float) or isinstance(HMCR, int)):
+            raise e.TypeError('`HMCR` should be a float or integer')
+        if HMCR < 0 or HMCR > 1:
+            raise e.ValueError('`HMCR` should be between 0 and 1')
+
         self._HMCR = HMCR
 
     @property
@@ -71,6 +76,11 @@ class HS(Optimizer):
 
     @PAR.setter
     def PAR(self, PAR):
+        if not (isinstance(PAR, float) or isinstance(PAR, int)):
+            raise e.TypeError('`PAR` should be a float or integer')
+        if PAR < 0 or PAR > 1:
+            raise e.ValueError('`PAR` should be between 0 and 1')
+
         self._PAR = PAR
 
     @property
@@ -83,17 +93,21 @@ class HS(Optimizer):
 
     @bw.setter
     def bw(self, bw):
+        if not (isinstance(bw, float) or isinstance(bw, int)):
+            raise e.TypeError('`bw` should be a float or integer')
+        if bw < 0:
+            raise e.ValueError('`bw` should be >= 0')
+
         self._bw = bw
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -216,8 +230,8 @@ class HS(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

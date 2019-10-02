@@ -2,6 +2,7 @@ import copy
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -12,7 +13,7 @@ logger = l.get_logger(__name__)
 class FPA(Optimizer):
     """A FPA class, inherited from Optimizer.
 
-    This will be the designed class to define FPA-related
+    This is the designed class to define FPA-related
     variables and methods.
 
     References:
@@ -20,13 +21,12 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FPA', hyperparams=None):
+    def __init__(self, algorithm='FPA', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -34,13 +34,13 @@ class FPA(Optimizer):
         super(FPA, self).__init__(algorithm=algorithm)
 
         # Lévy flight control parameter
-        self._beta = 1.5
+        self.beta = 1.5
 
         # Lévy flight scaling factor
-        self._eta = 0.2
+        self.eta = 0.2
 
         # Probability of local pollination
-        self._p = 0.8
+        self.p = 0.8
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -57,6 +57,11 @@ class FPA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
+        if not (isinstance(beta, float) or isinstance(beta, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
+
         self._beta = beta
 
     @property
@@ -69,6 +74,11 @@ class FPA(Optimizer):
 
     @eta.setter
     def eta(self, eta):
+        if not (isinstance(eta, float) or isinstance(eta, int)):
+            raise e.TypeError('`eta` should be a float or integer')
+        if eta < 0:
+            raise e.ValueError('`eta` should be >= 0')
+
         self._eta = eta
 
     @property
@@ -81,17 +91,21 @@ class FPA(Optimizer):
 
     @p.setter
     def p(self, p):
+        if not (isinstance(p, float) or isinstance(p, int)):
+            raise e.TypeError('`p` should be a float or integer')
+        if p < 0 or p > 1:
+            raise e.ValueError('`p` should be between 0 and 1')
+
         self._p = p
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -216,7 +230,7 @@ class FPA(Optimizer):
 
     def run(self, space, function):
         """Runs the optimization pipeline.
-        
+
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
@@ -245,8 +259,8 @@ class FPA(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

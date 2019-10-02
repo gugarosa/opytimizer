@@ -1,5 +1,6 @@
 import numpy as np
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.pso import PSO
@@ -10,7 +11,7 @@ logger = l.get_logger(__name__)
 class AIWPSO(PSO):
     """An AIWPSO class, inherited from PSO.
 
-    This will be the designed class to define AIWPSO-related
+    This is the designed class to define AIWPSO-related
     variables and methods.
 
     References:
@@ -18,13 +19,12 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', hyperparams=None):
+    def __init__(self, algorithm='AIWPSO', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -35,10 +35,10 @@ class AIWPSO(PSO):
             algorithm=algorithm, hyperparams=hyperparams)
 
         # Minimum inertia weight
-        self._w_min = 0.1
+        self.w_min = 0.1
 
         # Maximum inertia weight
-        self._w_max = 0.9
+        self.w_max = 0.9
 
         # Now, we need to re-build this class up
         self._rebuild()
@@ -55,6 +55,11 @@ class AIWPSO(PSO):
 
     @w_min.setter
     def w_min(self, w_min):
+        if not (isinstance(w_min, float) or isinstance(w_min, int)):
+            raise e.TypeError('`w_min` should be a float or integer')
+        if w_min < 0:
+            raise e.ValueError('`w_min` should be >= 0')
+
         self._w_min = w_min
 
     @property
@@ -67,10 +72,17 @@ class AIWPSO(PSO):
 
     @w_max.setter
     def w_max(self, w_max):
+        if not (isinstance(w_max, float) or isinstance(w_max, int)):
+            raise e.TypeError('`w_max` should be a float or integer')
+        if w_max < 0:
+            raise e.ValueError('`w_max` should be >= 0')
+        if w_max < self.w_min:
+            raise e.ValueError('`w_max` should be >= `w_min`')
+
         self._w_max = w_max
 
     def _rebuild(self):
-        """This method will serve as the object re-building process.
+        """This method serves as the object re-building process.
 
         One is supposed to use this class only when defining extra hyperparameters
         that can not be inherited by its parent.
@@ -168,8 +180,8 @@ class AIWPSO(PSO):
             # Computing particle's success and updating inertia weight
             self._compute_success(space.agents, fitness)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents, local positions and best agent
+            history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

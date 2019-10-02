@@ -5,7 +5,7 @@ from opytimizer.optimizers.hs import HS
 hyperparams = {
     'HMCR': 0.7,
     'PAR': 0.7,
-    'bw': 1
+    'bw': 1.0
 }
 
 # Creating a HS optimizer
