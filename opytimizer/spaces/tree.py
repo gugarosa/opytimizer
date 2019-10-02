@@ -21,7 +21,7 @@ class TreeSpace(Space):
 
     def __init__(self, n_trees=1, n_terminals=1, n_variables=1, n_iterations=10,
                  min_depth=1, max_depth=3, functions=[],
-                 lower_bound=None, upper_bound=None):
+                 lower_bound=[0], upper_bound=[1]):
         """Initialization method.
 
         Args:
@@ -39,12 +39,13 @@ class TreeSpace(Space):
 
         logger.info('Overriding class: Space -> TreeSpace.')
 
+        # Number of trees
+        self.n_trees = n_trees
+
         # Override its parent class with the receiving arguments
         super(TreeSpace, self).__init__(n_agents=n_trees, n_variables=n_variables,
                                         n_iterations=n_iterations, lower_bound=lower_bound, upper_bound=upper_bound)
 
-        # Number of trees
-        self.n_trees = n_trees
 
         # Number of terminal nodes
         self.n_terminals = n_terminals

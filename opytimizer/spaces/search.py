@@ -14,7 +14,7 @@ class SearchSpace(Space):
 
     """
 
-    def __init__(self, n_agents=1, n_variables=1, n_iterations=10, lower_bound=[], upper_bound=[]):
+    def __init__(self, n_agents=1, n_variables=1, n_iterations=10, lower_bound=[0], upper_bound=[1]):
         """Initialization method.
 
         Args:
