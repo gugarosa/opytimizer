@@ -447,7 +447,7 @@ def _build_string(node):
         # If not
         else:
             # Apply space chars
-            ' ' * left_width
+            left_line = ' ' * left_width
 
         # If current iteration is smaller than right branch's size
         if i < len(right_branch):
@@ -457,7 +457,7 @@ def _build_string(node):
         # If not
         else:
             # Apply space chars
-            ' ' * right_width
+            right_line = ' ' * right_width
 
         # Appends the whole line
         lines.append(left_line + gap + right_line)
@@ -509,51 +509,27 @@ def _evaluate(node):
 
             # Checks if its an exponential
             elif node.name == 'EXP':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.exp(x)
-                else:
-                    return np.exp(y)
+                return np.exp(x)
 
             # Checks if its a square root
             elif node.name == 'SQRT':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.sqrt(np.abs(x))
-                else:
-                    return np.sqrt(np.abs(y))
+                return np.sqrt(np.abs(x))
 
             # Checks if its a logarithm
             elif node.name == 'LOG':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.log(np.abs(x) + c.EPSILON)
-                else:
-                    return np.log(np.abs(y) + c.EPSILON)
+                return np.log(np.abs(x) + c.EPSILON)
 
             # Checks if its an absolute value
             elif node.name == 'ABS':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.abs(x)
-                else:
-                    return np.abs(y)
+                return np.abs(x)
 
             # Checks if its a sine value
             elif node.name == 'SIN':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.sin(x)
-                else:
-                    return np.sin(y)
+                return np.sin(x)
 
             # Checks if its a cosine value
             elif node.name == 'COS':
-                # Checks if node is actually an array
-                if isinstance(x, np.ndarray):
-                    return np.cos(x)
-                else:
-                    return np.cos(y)
+                return np.cos(x)
 
     # If the node does not exists
     else:

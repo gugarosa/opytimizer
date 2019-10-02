@@ -125,15 +125,18 @@ def test_gp_evaluate():
 
     new_function = function.Function(pointer=square)
 
-    search_space = tree.TreeSpace(n_trees=1, n_iterations=10,
-                                  n_variables=1, lower_bound=[0],
-                                  upper_bound=[10])
+    tree_space = tree.TreeSpace(n_trees=1000, n_terminals=2, n_variables=1,
+                                n_iterations=10, min_depth=1, max_depth=5,
+                                functions=['SUM'], lower_bound=[0], upper_bound=[10])
 
     new_gp = gp.GP()
 
-    new_gp._evaluate(search_space, new_function)
+    new_gp._evaluate(tree_space, new_function)
 
-    assert search_space.best_agent.fit < sys.float_info.max
+    for t in tree_space.trees:
+        print(t)
+
+    assert tree_space.best_agent.fit < sys.float_info.max
 
 
 def test_gp_run():
@@ -144,11 +147,23 @@ def test_gp_run():
 
     new_gp = gp.GP()
 
-    search_space = tree.TreeSpace(n_trees=10, n_terminals=2, n_variables=1,
-                                  n_iterations=100, min_depth=2, max_depth=3,
-                                  functions=['SUM', 'MUL', 'DIV'], lower_bound=[0], upper_bound=[10])
+    tree_space = tree.TreeSpace(n_trees=10, n_terminals=2, n_variables=1,
+                                n_iterations=500, min_depth=1, max_depth=2,
+                                functions=['SUM', 'SUB', 'MUL', 'DIV'], lower_bound=[0], upper_bound=[10])
 
-    history = new_gp.run(search_space, new_function)
+    history = new_gp.run(tree_space, new_function)
+
+    print(tree_space.best_tree)
+    print(tree_space.best_tree.post_order)
+
+    tree_space = tree.TreeSpace(n_trees=10, n_terminals=2, n_variables=1,
+                                n_iterations=500, min_depth=2, max_depth=3,
+                                functions=['EXP', 'LOG', 'SQRT', 'ABS', 'COS', 'SIN'], lower_bound=[0], upper_bound=[10])
+
+    history = new_gp.run(tree_space, new_function)
+
+    print(tree_space.best_tree)
+    print(tree_space.best_tree.post_order)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
