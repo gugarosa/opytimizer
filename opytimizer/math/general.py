@@ -1,26 +1,25 @@
 import numpy as np
+from itertools import islice
 
 import opytimizer.utils.constants as c
 
 
-def pairwise(iterator):
+def pairwise(values):
     """Iterates over an iterator and returns pairwise samples from it.
 
     Args:
-        iterator (list): An iterator to be iterated.
+        values (list): Values to be iterated over.
 
     Returns:
         Pairwise samples from the iterator.
 
     """
 
-    # Forces the creation of an iterator
-    iterator = iter(iterator)
+    # Creats an iterator from values
+    iterator = iter(values)
 
-    # A permanent while loop
-    while True:
-        # Yields the next two samples from the iterator
-        yield next(iterator), next(iterator)
+    # Splits into pairs and returns a new iterator
+    return iter(lambda: tuple(islice(iterator, 2)), ())
 
 
 def tournament_selection(fitness, n):
