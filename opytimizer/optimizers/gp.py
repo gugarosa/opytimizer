@@ -327,8 +327,10 @@ class GP(Optimizer):
 
             # Checks if both trees have more than one node
             if (father_nodes > 1) and (mother_nodes > 1):
-                # Prunes father and mother nodes
+                # Prunning father nodes
                 max_f_nodes = self._prune_nodes(father_nodes)
+
+                # Prunning mother nodes
                 max_m_nodes = self._prune_nodes(mother_nodes)
 
                 # Apply the crossover operation
@@ -350,89 +352,89 @@ class GP(Optimizer):
         """
 
         # Copying father tree to the father's offspring structure
-        # father_offspring = copy.deepcopy(father)
+        father_offspring = copy.deepcopy(father)
 
         # Calculating father's crossover point
         father_point = int(r.generate_uniform_random_number(2, max_father))
 
         # Finds the node at desired crossover point
-        sub_father, flag_father = father.find_node(father_point)
+        sub_father, flag_father = father_offspring.find_node(father_point)
 
         # Copying mother tree to the mother's offspring structure
-        # mother_offspring = copy.deepcopy(mother)
+        mother_offspring = copy.deepcopy(mother)
 
         # Calculating mother's crossover point
         mother_point = int(r.generate_uniform_random_number(2, max_mother))
 
         # Finds the node at desired crossover point
-        sub_mother, flag_mother = mother.find_node(mother_point)
+        sub_mother, flag_mother = mother_offspring.find_node(mother_point)
 
-        # # If there are crossover nodes
-        # if sub_father and sub_mother:
-        #     # If father's node is positioned in the left
-        #     if flag_father:
-        #         # Gathers its left branch
-        #         branch = copy.deepcopy(sub_father.left)
+        # If there are crossover nodes
+        if sub_father and sub_mother:
+            # If father's node is positioned in the left
+            if flag_father:
+                # Gathers its left branch
+                branch = sub_father.left
 
-        #         # If mother's node is positioned in the left
-        #         if flag_mother:
-        #             # Changes father's left node with mother's left node
-        #             sub_father.left = copy.deepcopy(sub_mother.left)
+                # If mother's node is positioned in the left
+                if flag_mother:
+                    # Changes father's left node with mother's left node
+                    sub_father.left = sub_mother.left
 
-        #             # And activates the flag
-        #             sub_mother.left.flag = True
+                    # And activates the flag
+                    sub_mother.left.flag = True
 
-        #         # If mother's node is positioned in the right
-        #         else:
-        #             # Changes father's left node with mother's right node
-        #             sub_father.left = copy.deepcopy(sub_mother.right)
+                # If mother's node is positioned in the right
+                else:
+                    # Changes father's left node with mother's right node
+                    sub_father.left = sub_mother.right
 
-        #             # Activates the flag
-        #             sub_mother.right.flag = True
+                    # Activates the flag
+                    sub_mother.right.flag = True
 
-        #     # If father's node is positioned in the right
-        #     else:
-        #         # Gathers its right branch
-        #         branch = copy.deepcopy(sub_father.right)
+            # If father's node is positioned in the right
+            else:
+                # Gathers its right branch
+                branch = sub_father.right
 
-        #         # If mother's node is positioned in the left
-        #         if flag_mother:
-        #             # Changes father's right node with mother's left node
-        #             sub_father.right = copy.deepcopy(sub_mother.left)
+                # If mother's node is positioned in the left
+                if flag_mother:
+                    # Changes father's right node with mother's left node
+                    sub_father.right = sub_mother.left
 
-        #             # Deactivates the flag
-        #             sub_mother.left.flag = False
+                    # Deactivates the flag
+                    sub_mother.left.flag = False
 
-        #         # If mother's node is positioned in the right
-        #         else:
-        #             # Changes father's right node with mother's right node
-        #             sub_father.right = copy.deepcopy(sub_mother.right)
+                # If mother's node is positioned in the right
+                else:
+                    # Changes father's right node with mother's right node
+                    sub_father.right = sub_mother.right
 
-        #             # And deactivates the flag
-        #             sub_mother.right.flag = False
+                    # And deactivates the flag
+                    sub_mother.right.flag = False
 
-        #     # Finally, mother's parent will be the father's node
-        #     sub_mother.parent = copy.deepcopy(sub_father)
+            # Finally, mother's parent will be the father's node
+            sub_mother.parent = sub_father
 
-        #     # Now, for creating the mother's offspring
-        #     # Check if it is positioned in the left
-        #     if flag_mother:
-        #         # Applies the father's removed branch to mother's left child
-        #         sub_mother.left = copy.deepcopy(branch)
+            # Now, for creating the mother's offspring
+            # Check if it is positioned in the left
+            if flag_mother:
+                # Applies the father's removed branch to mother's left child
+                sub_mother.left = branch
 
-        #         # Activates the flag
-        #         branch.flag = True
+                # Activates the flag
+                branch.flag = True
 
-        #     # If it is positioned in the right
-        #     else:
-        #         # Applies the father's removed branch to mother's right child
-        #         sub_mother.right = copy.deepcopy(branch)
+            # If it is positioned in the right
+            else:
+                # Applies the father's removed branch to mother's right child
+                sub_mother.right = branch
 
-        #         # Deactivates the flag
-        #         branch.flag = False
+                # Deactivates the flag
+                branch.flag = False
 
-        #     # The branch's parent will be the mother's node
-        #     branch.parent = copy.deepcopy(sub_mother)
+            # The branch's parent will be the mother's node
+            branch.parent = sub_mother
 
         return father, mother
 
