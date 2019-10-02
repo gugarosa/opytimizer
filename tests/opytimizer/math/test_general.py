@@ -11,7 +11,7 @@ def test_pairwise():
     for p in pairs:
         pass
 
-    assert type(pairs).__name__ == 'callable_iterator'
+    assert type(pairs).__name__ == 'callable_iterator' or 'generator'
 
 
 def test_tournament_selection():
