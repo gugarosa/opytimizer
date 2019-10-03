@@ -104,7 +104,13 @@ class Opytimizer:
         # Ending timer
         end = time.time()
 
+        # Calculating optimization task time
+        opt_time = end - start
+
+        # Dumping the elapsed time to optimization history
+        opt_history.dump(time=opt_time)
+
         logger.info('Optimization task ended.')
-        logger.info(f'It took {(end - start)} seconds.')
+        logger.info(f'It took {opt_time} seconds.')
 
         return opt_history
