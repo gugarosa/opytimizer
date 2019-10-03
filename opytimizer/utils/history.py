@@ -64,23 +64,35 @@ class History:
                 # Appends the new value to the attribute
                 getattr(self, k).append(out)
 
-    def get(self, key, shape=()):
-        """
+    def get(self, key, shape):
+        """Gets the desired key based on the input shape.
+
+        Args:
+            key (str): Key's name to be retrieved.
+            shape (tuple): A tuple indicating which indexes should be retrieved.
+
+        Returns:
+            All key's values based on the input shape. Note that this method returns all records, i.e.,
+            all values from the `t` iterations.
+
         """
 
-        #
+        # Checks if shape is a tuple
         if not isinstance(shape, tuple):
             raise e.TypeError('`shape` should be a tuple')
-        
-        #
+
+        # Gathers the numpy array from the attribute
         attr = np.asarray(getattr(self, key))
 
-        #
-        if attr.ndim != len(shape):
-            raise e.SizeError('`shape` should have the same dimension as `key`')
-        
-        #
-        attr = attr[shape]
+        # Checks if attribute's dimensions are equal to the length of input shape
+        # We use `- 1` as the method retrieves values from all iterations
+        if attr.ndim - 1 != len(shape):
+            raise e.SizeError(
+                f'`shape` = {len(shape)} should have one less dimension than `key` = {attr.ndim}')
+
+        # Slices the array based on the input shape
+        # Again, slice(None) will retrieve values from all iterations
+        attr = attr[(slice(None),) + shape]
 
         return attr
 

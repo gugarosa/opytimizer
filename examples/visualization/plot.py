@@ -10,6 +10,6 @@ history = History()
 history.load('pso.pkl')
 
 #
-print(history.get('agents', (0, 0, 1)))
+print(history.get('best_agent', (1,)))
 
 
