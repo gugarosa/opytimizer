@@ -25,6 +25,6 @@ def test_constants():
         'COS': 1
     }
 
-    assert constants.TEST_EPSILON == 5
+    assert constants.TEST_EPSILON == 10
 
     assert constants.TOURNAMENT_SIZE == 2
