@@ -1,6 +1,9 @@
 import pickle
 
+import numpy as np
+
 import opytimizer.utils.constants as c
+import opytimizer.utils.exception as e
 
 
 class History:
@@ -60,6 +63,26 @@ class History:
             else:
                 # Appends the new value to the attribute
                 getattr(self, k).append(out)
+
+    def get(self, key, shape=()):
+        """
+        """
+
+        #
+        if not isinstance(shape, tuple):
+            raise e.TypeError('`shape` should be a tuple')
+        
+        #
+        attr = np.asarray(getattr(self, key))
+
+        #
+        if attr.ndim != len(shape):
+            raise e.SizeError('`shape` should have the same dimension as `key`')
+        
+        #
+        attr = attr[shape]
+
+        return attr
 
     def parse(self, key, value):
         """Parses a value according to the key's requirement.
