@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import opytimizer.utils.exception as e
 
 
-def plot(*args, labels=None, title='', grid=True, legend=True):
+def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
     """Plots the convergence graph of desired variables.
 
     Essentially, each variable is a list or numpy array
@@ -12,16 +12,21 @@ def plot(*args, labels=None, title='', grid=True, legend=True):
     Args:
         labels (list): Labels to be applied for each plot in legend.
         title (str): The title of the plot.
+        subtitle (str): The subtitle of the plot.
         grid (bool): If grid should be used or not.
         legend (bool): If legend should be displayed or not.
 
     """
 
     # Creating figure and axis subplots
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(7, 5))
 
-    # Defining some properties, such as axis labels and title
-    ax.set(xlabel='iteration', ylabel='value', title=title)
+    # Defining some properties, such as axis labels
+    ax.set(xlabel='iteration', ylabel='value')
+
+    # Setting both title and subtitles
+    ax.set_title(title, loc='left', fontsize=14)
+    ax.set_title(subtitle, loc='right', fontsize=8, color='grey')
 
     # If grid usage is true
     if grid:
