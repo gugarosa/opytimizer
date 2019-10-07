@@ -7,7 +7,7 @@ from opytimizer.utils.history import History
 history = History()
 
 # Loading saved optimization task
-history.load('pso.pkl')
+history.load('')
 
 # Gathering desired keys from the object
 # In this case, we will the first agent's position and fitness
