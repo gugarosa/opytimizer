@@ -18,6 +18,26 @@ def test_history_dump():
     assert new_history.value[0] == 0
 
 
+def test_history_get():
+    new_history = history.History()
+
+    agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
+
+    new_history.dump(agents=agents, best_agent=agents[4], value=0)
+
+    try:
+        agents = new_history.get(key='agents', index=0)
+    except:
+        agents = new_history.get(key='agents', index=(0, 0))
+
+    try:
+        agents = new_history.get(key='agents', index=(0, 0, 0))
+    except:
+        agents = new_history.get(key='agents', index=(0, 0))
+
+    assert agents.shape == (2, 1)
+
+
 def test_history_save():
     new_history = history.History()
 
