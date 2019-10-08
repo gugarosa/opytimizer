@@ -20,13 +20,13 @@ best_agent_fit = history.get(key='best_agent', index=(1,))
 
 # Plotting convergence graphs
 # Plotting the convergence of agent's positions
-c.plot(agent_pos[0], agent_pos[1], labels=['agent[0]', 'agent[1]'],
-       title='Convergence Plot', subtitle="Agent's positioning throughout $1000$ iterations")
+c.plot(agent_pos[0], agent_pos[1], labels=['$x_0$', '$x_1$'],
+       title='Sphere Function: $x^2 \mid x \in [-10, 10]$', subtitle='Agent: 0 | Algorithm: Particle Swarm Optimization')
 
 # Plotting the convergence of best agent's positions
-c.plot(best_agent_pos[0], best_agent_pos[1], labels=['best_agent[0]', 'best_agent[1]'],
-       title='Convergence Plot', subtitle="Best Agent's positioning throughout $1000$ iterations")
+c.plot(best_agent_pos[0], best_agent_pos[1], labels=['$x^*_0$', '$x^*_1$'],
+       title='Sphere Function: $x^2 \mid x \in [-10, 10]$', subtitle="Agent: Best | Algorithm: Particle Swarm Optimization")
 
 # Plotting the convergence of agent's and best agent's fitness
-c.plot(agent_fit, best_agent_fit, labels=['agent', 'best_agent'], title='Convergence Plot',
-       subtitle="Agent's and best agent's fitness throughout $1000$ iterations")
+c.plot(agent_fit, best_agent_fit, labels=[
+       '$f(x)$', '$f(x^{*})$'], title='Sphere Function: $x^2 \mid x \in [-10, 10]$', subtitle="Agents: 0 and Best | Algorithm: Particle Swarm Optimization")
