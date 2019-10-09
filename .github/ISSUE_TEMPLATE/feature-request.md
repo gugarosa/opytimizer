@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: New features are always welcome
+about: We always welcome new features
 title: "[NEW]"
 labels: enhancement
 assignees: ''

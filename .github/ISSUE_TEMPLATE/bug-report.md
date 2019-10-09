@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: A bug report is really important to foster Opytimizer's library
+about: Bug reports are really important to foster Opytimizer's library
 title: "[BUG]"
 labels: bug
 assignees: ''
