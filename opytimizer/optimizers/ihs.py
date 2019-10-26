@@ -1,5 +1,6 @@
 import numpy as np
 
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.hs import HS
@@ -10,7 +11,7 @@ logger = l.get_logger(__name__)
 class IHS(HS):
     """An IHS class, inherited from HS.
 
-    This will be the designed class to define IHS-related
+    This is the designed class to define IHS-related
     variables and methods.
 
     References:
@@ -18,13 +19,12 @@ class IHS(HS):
 
     """
 
-    def __init__(self, algorithm='IHS', hyperparams=None):
+    def __init__(self, algorithm='IHS', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -35,16 +35,16 @@ class IHS(HS):
             algorithm=algorithm, hyperparams=hyperparams)
 
         # Minimum pitch adjusting rate
-        self._PAR_min = 0
+        self.PAR_min = 0
 
         # Maximum pitch adjusting rate
-        self._PAR_max = 1
+        self.PAR_max = 1
 
         # Minimum bandwidth parameter
-        self._bw_min = 1
+        self.bw_min = 1
 
         # Maximum bandwidth parameter
-        self._bw_max = 10
+        self.bw_max = 10
 
         # Now, we need to re-build this class up
         self._rebuild()
@@ -61,6 +61,11 @@ class IHS(HS):
 
     @PAR_min.setter
     def PAR_min(self, PAR_min):
+        if not (isinstance(PAR_min, float) or isinstance(PAR_min, int)):
+            raise e.TypeError('`PAR_min` should be a float or integer')
+        if PAR_min < 0 or PAR_min > 1:
+            raise e.ValueError('`PAR_min` should be between 0 and 1')
+
         self._PAR_min = PAR_min
 
     @property
@@ -73,6 +78,13 @@ class IHS(HS):
 
     @PAR_max.setter
     def PAR_max(self, PAR_max):
+        if not (isinstance(PAR_max, float) or isinstance(PAR_max, int)):
+            raise e.TypeError('`PAR_max` should be a float or integer')
+        if PAR_max < 0 or PAR_max > 1:
+            raise e.ValueError('`PAR_max` should be between 0 and 1')
+        if PAR_max < self.PAR_min:
+            raise e.ValueError('`PAR_max` should be >= `PAR_min`')
+
         self._PAR_max = PAR_max
 
     @property
@@ -85,6 +97,11 @@ class IHS(HS):
 
     @bw_min.setter
     def bw_min(self, bw_min):
+        if not (isinstance(bw_min, float) or isinstance(bw_min, int)):
+            raise e.TypeError('`bw_min` should be a float or integer')
+        if bw_min < 0:
+            raise e.ValueError('`bw_min` should be >= 0')
+
         self._bw_min = bw_min
 
     @property
@@ -97,10 +114,17 @@ class IHS(HS):
 
     @bw_max.setter
     def bw_max(self, bw_max):
+        if not (isinstance(bw_max, float) or isinstance(bw_max, int)):
+            raise e.TypeError('`bw_max` should be a float or integer')
+        if bw_max < 0:
+            raise e.ValueError('`bw_max` should be >= 0')
+        if bw_max < self.bw_min:
+            raise e.ValueError('`bw_max` should be >= `bw_min`')
+
         self._bw_max = bw_max
 
     def _rebuild(self):
-        """This method will serve as the object re-building process.
+        """This method serves as the object re-building process.
 
         One is supposed to use this class only when defining extra hyperparameters
         that can not be inherited by its parent.
@@ -164,8 +188,8 @@ class IHS(HS):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -13,7 +14,7 @@ logger = l.get_logger(__name__)
 class PSO(Optimizer):
     """A PSO class, inherited from Optimizer.
 
-    This will be the designed class to define PSO-related
+    This is the designed class to define PSO-related
     variables and methods.
 
     References:
@@ -21,13 +22,12 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams=None):
+    def __init__(self, algorithm='PSO', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -37,13 +37,13 @@ class PSO(Optimizer):
         super(PSO, self).__init__(algorithm=algorithm)
 
         # Inertia weight
-        self._w = 0.7
+        self.w = 0.7
 
         # Cognitive constant
-        self._c1 = 1.7
+        self.c1 = 1.7
 
         # Social constant
-        self._c2 = 1.7
+        self.c2 = 1.7
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -60,6 +60,11 @@ class PSO(Optimizer):
 
     @w.setter
     def w(self, w):
+        if not (isinstance(w, float) or isinstance(w, int)):
+            raise e.TypeError('`w` should be a float or integer')
+        if w < 0:
+            raise e.ValueError('`w` should be >= 0')
+
         self._w = w
 
     @property
@@ -72,6 +77,11 @@ class PSO(Optimizer):
 
     @c1.setter
     def c1(self, c1):
+        if not (isinstance(c1, float) or isinstance(c1, int)):
+            raise e.TypeError('`c1` should be a float or integer')
+        if c1 < 0:
+            raise e.ValueError('`c1` should be >= 0')
+
         self._c1 = c1
 
     @property
@@ -84,17 +94,21 @@ class PSO(Optimizer):
 
     @c2.setter
     def c2(self, c2):
+        if not (isinstance(c2, float) or isinstance(c2, int)):
+            raise e.TypeError('`c2` should be a float or integer')
+        if c2 < 0:
+            raise e.ValueError('`c2` should be >= 0')
+
         self._c2 = c2
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -209,9 +223,6 @@ class PSO(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of current agent's index to the space's best index
-                space.best_index = i
-
                 # Makes a deep copy of agent's local best position to the best agent
                 space.best_agent.position = copy.deepcopy(local_position[i])
 
@@ -258,8 +269,8 @@ class PSO(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function, local_position)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump_pso(local_position, space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents, local positions and best agent
+            history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

@@ -115,3 +115,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# line_profiler
+*.lprof

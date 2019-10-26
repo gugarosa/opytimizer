@@ -43,13 +43,15 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - core
         - agent
         - function
+        - node
         - optimizer
         - space
     - functions
-        - multi
+        - weighted
     - math
         - benchmark
         - distribution
+        - general
         - hypercomplex
         - random
     - optimizers
@@ -60,6 +62,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - cs
         - fa
         - fpa
+        - gp
         - hs
         - ihs
         - pso
@@ -67,10 +70,14 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - spaces
         - hyper
         - search
+        - tree
     - utils
+        - constants
+        - exception
         - history
         - logging
     - visualization
+        - convergence
 ```
 
 ### Core

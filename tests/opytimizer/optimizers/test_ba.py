@@ -1,11 +1,9 @@
-import sys
-
 import numpy as np
-import pytest
 
 from opytimizer.core import function
 from opytimizer.optimizers import ba
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_ba_hyperparams():
@@ -30,16 +28,57 @@ def test_ba_hyperparams():
 def test_ba_hyperparams_setter():
     new_ba = ba.BA()
 
-    new_ba.f_min = 0
-    assert new_ba.f_min == 0
+    try:
+        new_ba.f_min = 'a'
+    except:
+        new_ba.f_min = 0.1
 
-    new_ba.f_max = 2
+    try:
+        new_ba.f_min = -1
+    except:
+        new_ba.f_min = 0.1
+
+    assert new_ba.f_min == 0.1
+
+    try:
+        new_ba.f_max = 'b'
+    except:
+        new_ba.f_max = 2
+
+    try:
+        new_ba.f_max = -1
+    except:
+        new_ba.f_max = 2
+
+    try:
+        new_ba.f_max = 0
+    except:
+        new_ba.f_max = 2
+
     assert new_ba.f_max == 2
 
-    new_ba.A = 0.5
+    try:
+        new_ba.A = 'c'
+    except:
+        new_ba.A = 0.5
+
+    try:
+        new_ba.A = -1
+    except:
+        new_ba.A = 0.5
+
     assert new_ba.A == 0.5
 
-    new_ba.r = 0.5
+    try:
+        new_ba.r = 'd'
+    except:
+        new_ba.r = 0.5
+
+    try:
+        new_ba.r = -1
+    except:
+        new_ba.r = 0.5
+
     assert new_ba.r == 0.5
 
 
@@ -88,7 +127,7 @@ def test_ba_run():
 
     new_ba = ba.BA(hyperparams=hyperparams)
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -96,3 +135,6 @@ def test_ba_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ba failed to converge.'

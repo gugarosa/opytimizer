@@ -11,7 +11,7 @@ logger = l.get_logger(__name__)
 class BHA(Optimizer):
     """A BHA class, inherited from Optimizer.
 
-    This will be the designed class to define BHA-related
+    This is the designed class to define BHA-related
     variables and methods.
 
     References:
@@ -19,13 +19,12 @@ class BHA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BHA', hyperparams=None):
+    def __init__(self, algorithm='BHA', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -40,14 +39,13 @@ class BHA(Optimizer):
         logger.info('Class overrided.')
 
     def _build(self):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -176,8 +174,8 @@ class BHA(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

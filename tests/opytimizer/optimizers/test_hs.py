@@ -1,18 +1,16 @@
-import sys
-
 import numpy as np
-import pytest
 
 from opytimizer.core import function
 from opytimizer.optimizers import hs
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_hs_hyperparams():
     hyperparams = {
         'HMCR': 0.7,
         'PAR': 0.7,
-        'bw': 10
+        'bw': 10.0
     }
 
     new_hs = hs.HS(hyperparams=hyperparams)
@@ -21,19 +19,48 @@ def test_hs_hyperparams():
 
     assert new_hs.PAR == 0.7
 
-    assert new_hs.bw == 10
+    assert new_hs.bw == 10.0
 
 
 def test_hs_hyperparams_setter():
     new_hs = hs.HS()
 
-    new_hs.HMCR = 0.5
+    try:
+        new_hs.HMCR = 'a'
+    except:
+        new_hs.HMCR = 0.5
+
+    try:
+        new_hs.HMCR = -1
+    except:
+        new_hs.HMCR = 0.5
+
     assert new_hs.HMCR == 0.5
 
-    new_hs.PAR = 0.5
+    try:
+        new_hs.PAR = 'b'
+    except:
+        new_hs.PAR = 0.5
+
+    try:
+        new_hs.PAR = -1
+    except:
+        new_hs.PAR = 0.5
+
     assert new_hs.PAR == 0.5
 
-    new_hs.bw = 5
+    try:
+        new_hs.bw = 'c'
+    except:
+        new_hs.bw = 5
+
+    try:
+        new_hs.bw = -1
+    except:
+        new_hs.bw = 5
+
+    assert new_hs.bw == 5
+
     assert new_hs.bw == 5
 
 
@@ -64,12 +91,12 @@ def test_hs_run():
     hyperparams = {
         'HMCR': 0.7,
         'PAR': 0.7,
-        'bw': 10
+        'bw': 10.0
     }
 
     new_hs = hs.HS(hyperparams=hyperparams)
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -77,3 +104,6 @@ def test_hs_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm hs failed to converge.'

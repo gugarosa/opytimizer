@@ -1,11 +1,9 @@
-import sys
-
 import numpy as np
-import pytest
 
 from opytimizer.core import function
 from opytimizer.optimizers import fpa
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_fpa_hyperparams():
@@ -27,13 +25,40 @@ def test_fpa_hyperparams():
 def test_fpa_hyperparams_setter():
     new_fpa = fpa.FPA()
 
-    new_fpa.beta = 0.75
+    try:
+        new_fpa.beta = 'a'
+    except:
+        new_fpa.beta = 0.75
+
+    try:
+        new_fpa.beta = -1
+    except:
+        new_fpa.beta = 0.75
+
     assert new_fpa.beta == 0.75
 
-    new_fpa.eta = 1.5
+    try:
+        new_fpa.eta = 'b'
+    except:
+        new_fpa.eta = 1.5
+
+    try:
+        new_fpa.eta = -1
+    except:
+        new_fpa.eta = 1.5
+
     assert new_fpa.eta == 1.5
 
-    new_fpa.p = 0.25
+    try:
+        new_fpa.p = 'c'
+    except:
+        new_fpa.p = 0.25
+
+    try:
+        new_fpa.p = -1
+    except:
+        new_fpa.p = 0.25
+
     assert new_fpa.p == 0.25
 
 
@@ -84,7 +109,7 @@ def test_fpa_run():
 
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=30,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -92,3 +117,6 @@ def test_fpa_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm fpa failed to converge.'

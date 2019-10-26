@@ -14,5 +14,5 @@ x = 0
 f = Function(pointer=test_function)
 
 # Testing out your new Function class
-print(f'x: {x}')
+print(f'\nx: {x}')
 print(f'f(x): {f.pointer(x)}')

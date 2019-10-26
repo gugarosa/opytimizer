@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -13,7 +14,7 @@ logger = l.get_logger(__name__)
 class BA(Optimizer):
     """A BA class, inherited from Optimizer.
 
-    This will be the designed class to define BA-related
+    This is the designed class to define BA-related
     variables and methods.
 
     References:
@@ -21,13 +22,12 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams=None):
+    def __init__(self, algorithm='BA', hyperparams={}):
         """Initialization method.
 
         Args:
-            algorithm (str): A string holding optimizer's algorithm name.
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -37,16 +37,16 @@ class BA(Optimizer):
         super(BA, self).__init__(algorithm=algorithm)
 
         # Minimum frequency range
-        self._f_min = 0
+        self.f_min = 0
 
         # Maximum frequency range
-        self._f_max = 2
+        self.f_max = 2
 
         # Loudness parameter
-        self._A = 0.5
+        self.A = 0.5
 
         # Pulse rate
-        self._r = 0.5
+        self.r = 0.5
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -63,6 +63,11 @@ class BA(Optimizer):
 
     @f_min.setter
     def f_min(self, f_min):
+        if not (isinstance(f_min, float) or isinstance(f_min, int)):
+            raise e.TypeError('`f_min` should be a float or integer')
+        if f_min < 0:
+            raise e.ValueError('`f_min` should be >= 0')
+
         self._f_min = f_min
 
     @property
@@ -75,6 +80,13 @@ class BA(Optimizer):
 
     @f_max.setter
     def f_max(self, f_max):
+        if not (isinstance(f_max, float) or isinstance(f_max, int)):
+            raise e.TypeError('`f_max` should be a float or integer')
+        if f_max < 0:
+            raise e.ValueError('`f_max` should be >= 0')
+        if f_max < self.f_min:
+            raise e.ValueError('`f_max` should be >= `f_min`')
+
         self._f_max = f_max
 
     @property
@@ -87,6 +99,11 @@ class BA(Optimizer):
 
     @A.setter
     def A(self, A):
+        if not (isinstance(A, float) or isinstance(A, int)):
+            raise e.TypeError('`A` should be a float or integer')
+        if A < 0:
+            raise e.ValueError('`A` should be >= 0')
+
         self._A = A
 
     @property
@@ -99,17 +116,21 @@ class BA(Optimizer):
 
     @r.setter
     def r(self, r):
+        if not (isinstance(r, float) or isinstance(r, int)):
+            raise e.TypeError('`r` should be a float or integer')
+        if r < 0:
+            raise e.ValueError('`r` should be >= 0')
+
         self._r = r
 
     def _build(self, hyperparams):
-        """This method will serve as the object building process.
+        """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): An hyperparams dictionary containing key-value
-                parameters to meta-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -303,8 +324,8 @@ class BA(Optimizer):
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
-            # Every iteration, we need to dump the current space agents
-            history.dump(space.agents, space.best_agent, space.best_index)
+            # Every iteration, we need to dump agents and best agent
+            history.dump(agents=space.agents, best_agent=space.best_agent)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')
