@@ -1,49 +1,57 @@
 import sys
 
 import numpy as np
-import pytest
 
-from opytimizer.core import agent, function
+from opytimizer.core import function
 from opytimizer.optimizers import aiwpso
 from opytimizer.spaces import search
+from opytimizer.utils import constants
 
 
 def test_aiwpso_hyperparams():
     hyperparams = {
-        'w': 2,
         'w_min': 1,
         'w_max': 3,
-        'c1': 1.7,
-        'c2': 1.7
     }
 
     new_aiwpso = aiwpso.AIWPSO(hyperparams=hyperparams)
-
-    assert new_aiwpso.w == 2
 
     assert new_aiwpso.w_min == 1
 
     assert new_aiwpso.w_max == 3
 
-    assert new_aiwpso.c1 == 1.7
-
-    assert new_aiwpso.c2 == 1.7
-
 
 def test_aiwpso_hyperparams_setter():
     new_aiwpso = aiwpso.AIWPSO()
 
-    new_aiwpso.w_min = 0.5
+    try:
+        new_aiwpso.w_min = 'a'
+    except:
+        new_aiwpso.w_min = 0.5
+
+    try:
+        new_aiwpso.w_min = -1
+    except:
+        new_aiwpso.w_min = 0.5
+
     assert new_aiwpso.w_min == 0.5
 
-    new_aiwpso.w_max = 2
-    assert new_aiwpso.w_max == 2
+    try:
+        new_aiwpso.w_max = 'b'
+    except:
+        new_aiwpso.w_max = 1.0
 
-    new_aiwpso.c1 = 1.5
-    assert new_aiwpso.c1 == 1.5
+    try:
+        new_aiwpso.w_max = -1
+    except:
+        new_aiwpso.w_max = 1.0
 
-    new_aiwpso.c2 = 1.5
-    assert new_aiwpso.c2 == 1.5
+    try:
+        new_aiwpso.w_max = 0
+    except:
+        new_aiwpso.w_max = 1.0
+
+    assert new_aiwpso.w_max == 1.0
 
 
 def test_aiwpso_rebuild():
@@ -95,7 +103,7 @@ def test_aiwpso_run():
 
     new_aiwpso = aiwpso.AIWPSO()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=10,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
@@ -103,3 +111,7 @@ def test_aiwpso_run():
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
+    assert len(history.local) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm aiwpso failed to converge.'

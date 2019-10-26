@@ -6,70 +6,44 @@ from opytimizer.core import agent
 from opytimizer.utils import history
 
 
-def test_history_agents():
-    new_history = history.History()
-
-    assert type(new_history.agents) == list
-
-
-def test_history_agents_setter():
-    new_history = history.History()
-
-    new_history.agents = [1, 2, 3]
-
-    assert len(new_history.agents) > 0
-
-
-def test_history_best_agent():
-    new_history = history.History()
-
-    assert type(new_history.best_agent) == list
-
-
-def test_history_best_agent_setter():
-    new_history = history.History()
-
-    new_history.best_agent = [1, 2, 3]
-
-    assert len(new_history.best_agent) > 0
-
-
 def test_history_dump():
     new_history = history.History()
 
-    agents = []
-    for _ in range(5):
-        agents.append(agent.Agent(n_variables=2, n_dimensions=1))
+    agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents, agents[4], 4)
+    new_history.dump(agents=agents, best_agent=agents[4], value=0)
 
     assert len(new_history.agents) > 0
     assert len(new_history.best_agent) > 0
-    assert new_history.best_agent[0][-1] == 4
+    assert new_history.value[0] == 0
 
 
-def test_history_show():
+def test_history_get():
     new_history = history.History()
 
-    agents = []
-    for _ in range(5):
-        agents.append(agent.Agent(n_variables=2, n_dimensions=1))
+    agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents, agents[0])
+    new_history.dump(agents=agents, best_agent=agents[4], value=0)
 
-    new_history.show()
+    try:
+        agents = new_history.get(key='agents', index=0)
+    except:
+        agents = new_history.get(key='agents', index=(0, 0))
 
-    assert True == True
+    try:
+        agents = new_history.get(key='agents', index=(0, 0, 0))
+    except:
+        agents = new_history.get(key='agents', index=(0, 0))
+
+    assert agents.shape == (2, 1)
 
 
 def test_history_save():
     new_history = history.History()
 
-    agents = []
-    for _ in range(5):
-        agents.append(agent.Agent(n_variables=2, n_dimensions=1))
+    agents = [agent.Agent(n_variables=2, n_dimensions=1) for _ in range(5)]
 
-    new_history.dump(agents, agents[0])
+    new_history.dump(agents=agents, best_agent=agents[0])
 
     new_history.save('models/test.pkl')
 
@@ -82,3 +56,5 @@ def test_history_load():
     new_history.load('models/test.pkl')
 
     assert len(new_history.agents) > 0
+
+    print(new_history)

@@ -2,42 +2,44 @@ import sys
 
 import numpy as np
 
+import opytimizer.utils.constants as c
+import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)
 
 
 class Agent:
-    """An agent class for all meta-heuristic optimization techniques.
+    """An Agent class for all optimization techniques.
 
     """
 
-    def __init__(self, n_variables=2, n_dimensions=1):
+    def __init__(self, n_variables=1, n_dimensions=1):
         """Initialization method.
 
         Args:
             n_variables (int): Number of decision variables.
-            n_dimensions (int): Dimension of search space.
+            n_dimensions (int): Number of dimensions.
 
         """
 
-        # Initially, an Agent needs its number of variables
-        self._n_variables = n_variables
+        # Initially, an agent needs its number of variables
+        self.n_variables = n_variables
 
         # And also, its number of dimensions
-        self._n_dimensions = n_dimensions
+        self.n_dimensions = n_dimensions
 
-        # Create the position vector based on number of variables and dimensions
-        self._position = np.zeros((n_variables, n_dimensions))
+        # Create the position vector based on the number of variables and dimensions
+        self.position = np.zeros((n_variables, n_dimensions))
 
         # Fitness value is initialized with float's largest number
-        self._fit = sys.float_info.max
+        self.fit = c.FLOAT_MAX
 
         # Lower bounds are initialized as zero
-        self._lb = np.zeros(n_variables)
+        self.lb = np.zeros(n_variables)
 
         # Upper bounds are initialized as one
-        self._ub = np.ones(n_variables)
+        self.ub = np.ones(n_variables)
 
     @property
     def n_variables(self):
@@ -47,17 +49,35 @@ class Agent:
 
         return self._n_variables
 
+    @n_variables.setter
+    def n_variables(self, n_variables):
+        if not isinstance(n_variables, int):
+            raise e.TypeError('`n_variables` should be an integer')
+        if n_variables <= 0:
+            raise e.ValueError('`n_variables` should be > 0')
+
+        self._n_variables = n_variables
+
     @property
     def n_dimensions(self):
-        """int: Dimension of search space.
+        """int: Number of dimensions.
 
         """
 
         return self._n_dimensions
 
+    @n_dimensions.setter
+    def n_dimensions(self, n_dimensions):
+        if not isinstance(n_dimensions, int):
+            raise e.TypeError('`n_dimensions` should be an integer')
+        if n_dimensions <= 0:
+            raise e.ValueError('`n_dimensions` should be > 0')
+
+        self._n_dimensions = n_dimensions
+
     @property
     def position(self):
-        """np.array: A matrix of position values.
+        """np.array: N-dimensional array of values.
 
         """
 
@@ -69,7 +89,7 @@ class Agent:
 
     @property
     def fit(self):
-        """float: Agent's fitness value.
+        """float: Fitness value.
 
         """
 
@@ -81,7 +101,7 @@ class Agent:
 
     @property
     def lb(self):
-        """np.array: Agent's lower bound value.
+        """np.array: Lower bounds.
 
         """
 
@@ -93,7 +113,7 @@ class Agent:
 
     @property
     def ub(self):
-        """np.array: Agent's upper bound value.
+        """np.array: Upper bounds.
 
         """
 
@@ -104,11 +124,11 @@ class Agent:
         self._ub = ub
 
     def check_limits(self):
-        """Checks bounds limits of agent.
+        """Checks the bounds limits of an agent.
 
         """
 
-        # Iterate through all decision variables
+        # Iterates through all the decision variables
         for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-            # Clip the array based on variables' lower and upper bounds
+            # Clips the array based on variables' lower and upper bounds
             self.position[j] = np.clip(self.position[j], lb, ub)

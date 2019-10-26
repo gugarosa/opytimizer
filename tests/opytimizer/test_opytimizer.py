@@ -15,13 +15,22 @@ def test_opytimizer_build():
 
     new_function = function.Function(pointer=square)
 
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 
     new_pso = pso.PSO()
+
+    try:
+        new_space.built = False
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+    except:
+        new_space.built = True
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
 
     try:
         new_pso.built = False
@@ -32,6 +41,15 @@ def test_opytimizer_build():
         new_opytimizer = opytimizer.Opytimizer(
             space=new_space, optimizer=new_pso, function=new_function)
 
+    try:
+        new_function.built = False
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+    except:
+        new_function.built = True
+        new_opytimizer = opytimizer.Opytimizer(
+            space=new_space, optimizer=new_pso, function=new_function)
+
 
 def test_opytimizer_start():
     def square(x):
@@ -39,9 +57,9 @@ def test_opytimizer_start():
 
     new_function = function.Function(pointer=square)
 
-    lb = [0, 0]
+    lb = [0]
 
-    ub = [10, 10]
+    ub = [10]
 
     new_space = search.SearchSpace(lower_bound=lb, upper_bound=ub)
 
