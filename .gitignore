@@ -1,6 +1,7 @@
 # Mac OS Files
 **/*.DS_Store
 .vscode/
+.idea/
 
 # Ubuntu's editor temp files
 **/*.*~
