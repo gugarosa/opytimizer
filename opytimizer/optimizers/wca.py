@@ -241,6 +241,8 @@ class WCA(Optimizer):
         """
 
         # Initial search space evaluation
+        if pre_evaluation_hook:
+            pre_evaluation_hook(self, space, function)
         self._evaluate(space, function)
 
         # Calculating the flow's intensity (Equation 6)
@@ -260,6 +262,8 @@ class WCA(Optimizer):
             space.check_limits()
 
             # After the update, we need to re-evaluate the search space
+            if pre_evaluation_hook:
+                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function)
 
             # Sorting agents

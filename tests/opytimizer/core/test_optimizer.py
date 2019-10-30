@@ -113,3 +113,25 @@ def test_store_all_agents():
 
     assert hasattr(history, 'best_agent')
     assert len(history.best_agent) == n_iters
+
+
+def test_hook():
+    pso = PSO()
+    n_iters = 10
+    counter = 0
+
+    target_fn = Function(lambda x: x**2)
+    space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters, n_agents=15)
+
+    def eval_hook(arg_opt, arg_space, arg_target_fn):
+        assert arg_opt is pso
+        assert arg_space is space
+        assert arg_target_fn is target_fn
+
+        nonlocal counter
+        counter += 1
+
+    Opytimizer(space, pso, target_fn).start(pre_evaluation_hook=eval_hook)
+
+    # The hook is evaluated for each iteration plus initialization
+    assert counter == n_iters + 1
