@@ -191,6 +191,8 @@ class FA(Optimizer):
         """
 
         # Initial search space evaluation
+        if pre_evaluation_hook:
+            pre_evaluation_hook(self, space, function)
         self._evaluate(space, function)
 
         # We will define a History object for further dumping
@@ -208,6 +210,8 @@ class FA(Optimizer):
             space.check_limits()
 
             # After the update, we need to re-evaluate the search space
+            if pre_evaluation_hook:
+                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent

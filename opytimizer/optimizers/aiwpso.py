@@ -155,6 +155,8 @@ class AIWPSO(PSO):
         fitness = np.zeros(space.n_agents)
 
         # Initial search space evaluation
+        if pre_evaluation_hook:
+            pre_evaluation_hook(self, space, function)
         self._evaluate(space, function, local_position)
 
         # Before starting the optimization process
@@ -178,6 +180,8 @@ class AIWPSO(PSO):
             space.check_limits()
 
             # After the update, we need to re-evaluate the search space
+            if pre_evaluation_hook:
+                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function, local_position)
 
             # Computing particle's success and updating inertia weight

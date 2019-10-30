@@ -252,6 +252,8 @@ class PSO(Optimizer):
         velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
+        if pre_evaluation_hook:
+            pre_evaluation_hook(self, space, function)
         self._evaluate(space, function, local_position)
 
         # We will define a History object for further dumping
@@ -269,6 +271,8 @@ class PSO(Optimizer):
             space.check_limits()
 
             # After the update, we need to re-evaluate the search space
+            if pre_evaluation_hook:
+                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function, local_position)
 
             # Every iteration, we need to dump agents, local positions and best agent
