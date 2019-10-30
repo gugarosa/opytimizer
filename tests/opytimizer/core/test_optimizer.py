@@ -3,8 +3,12 @@ import sys
 import numpy as np
 import pytest
 
-from opytimizer.core import function, optimizer
+from opytimizer import Opytimizer
 from opytimizer.spaces import search
+from opytimizer.optimizers.pso import PSO
+from opytimizer.spaces.search import SearchSpace
+from opytimizer.core.function import Function
+from opytimizer.core import function, optimizer
 
 
 def test_optimizer_algorithm():
@@ -74,4 +78,38 @@ def test_optimizer_run():
     new_optimizer = optimizer.Optimizer()
 
     with pytest.raises(NotImplementedError):
-        history = new_optimizer.run()
+        target_fn = Function(lambda x: x)
+        search_space = SearchSpace()
+        new_optimizer.run(search_space, target_fn)
+
+
+def test_store_best_agent_only():
+    pso = PSO()
+    n_iters = 10
+    target_fn = Function(lambda x: x**2)
+    space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters)
+
+    history = Opytimizer(space, pso, target_fn).start(store_best_only=True)
+    assert not hasattr(history, 'agents')
+
+    assert hasattr(history, 'best_agent')
+    assert len(history.best_agent) == n_iters
+
+
+def test_store_all_agents():
+    pso = PSO()
+    n_iters = 10
+    n_agents = 2
+    target_fn = Function(lambda x: x**2)
+    space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters, n_agents=n_agents)
+
+    history = Opytimizer(space, pso, target_fn).start()
+    assert hasattr(history, 'agents')
+
+    # Ensuring that the amount of entries is the same as the amount of iterations and
+    # that for each iteration all agents are kept
+    assert len(history.agents) == n_iters
+    assert all(len(iter_agents) == n_agents for iter_agents in history.agents)
+
+    assert hasattr(history, 'best_agent')
+    assert len(history.best_agent) == n_iters
