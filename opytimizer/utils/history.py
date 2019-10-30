@@ -14,6 +14,16 @@ class History:
 
     """
 
+    def __init__(self, store_best_only=False):
+        """Initialization method.
+
+        Args:
+            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+
+        """
+
+        self.store_best_only = store_best_only
+
     def __str__(self):
         """Prints in a formatted way the history of agents' throughout the
         optimization task.
@@ -71,12 +81,12 @@ class History:
 
         # For every key-value pair
         for (k, v) in kwargs.items():
+            # Parses information using specific rules, if defined
             # Checks if current key has a specific rule
             if k in c.HISTORY_KEYS:
-                # Parses the information according to the key
+                if k != 'best_agent' and self.store_best_only:
+                    continue
                 out = self._parse(k, v)
-
-            # If there is no specific rule
             else:
                 # Just applies the information
                 out = v
