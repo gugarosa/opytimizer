@@ -240,9 +240,12 @@ class WCA(Optimizer):
 
         """
 
-        # Initial search space evaluation
+        # Check if there is a pre-evaluation hook
         if pre_evaluation_hook:
+            # Applies the hook
             pre_evaluation_hook(self, space, function)
+
+        # Initial search space evaluation
         self._evaluate(space, function)
 
         # Calculating the flow's intensity (Equation 6)

@@ -490,7 +490,7 @@ class GP(Optimizer):
         """Runs the optimization pipeline.
 
         Args:
-            space (Space): A Space object that will be evaluated.
+            space (TreeSpace): A TreeSpace object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
             pre_evaluation_hook (function): A function that receives the optimizer, space and function

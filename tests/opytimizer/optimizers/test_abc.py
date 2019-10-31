@@ -61,7 +61,4 @@ def test_abc_run():
 
     best_fitness = history.best_agent[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm abc failed to converge.'
-
-if __name__ == '__main__':
-    import pytest
-    pytest.main()
+    

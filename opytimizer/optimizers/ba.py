@@ -307,9 +307,12 @@ class BA(Optimizer):
         pulse_rate = r.generate_uniform_random_number(
             0, self.r, space.n_agents)
 
-        # Initial search space evaluation
+        # Check if there is a pre-evaluation hook
         if pre_evaluation_hook:
+            # Applies the hook
             pre_evaluation_hook(self, space, function)
+
+        # Initial search space evaluation
         self._evaluate(space, function)
 
         # We will define a History object for further dumping
