@@ -501,9 +501,12 @@ class GP(Optimizer):
 
         """
 
-        # Initial tree space evaluation
+        # Check if there is a pre-evaluation hook
         if pre_evaluation_hook:
+            # Applies the hook
             pre_evaluation_hook(self, space, function)
+
+        # Initial tree space evaluation
         self._evaluate(space, function)
 
         # We will define a History object for further dumping
@@ -515,10 +518,13 @@ class GP(Optimizer):
 
             # Updating trees with designed operators
             self._update(space)
+            
+            # Check if there is a pre-evaluation hook
+            if pre_evaluation_hook:
+                # Applies the hook
+                pre_evaluation_hook(self, space, function)
 
             # After the update, we need to re-evaluate the tree space
-            if pre_evaluation_hook:
-                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
