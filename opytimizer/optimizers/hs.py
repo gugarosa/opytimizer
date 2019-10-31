@@ -235,9 +235,12 @@ class HS(Optimizer):
             # Checking if agents meets the bounds limits
             space.check_limits()
 
-            # After the update, we need to re-evaluate the search space
+            # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:
+                # Applies the hook
                 pre_evaluation_hook(self, space, function)
+
+            # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
