@@ -175,12 +175,15 @@ class FA(Optimizer):
                         (temp.position + agent.position) + \
                         self.alpha * (r1 - 0.5)
 
-    def run(self, space, function):
+    def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
+            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (function): A function that receives the optimizer, space and function
+                and returns None. This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -188,10 +191,12 @@ class FA(Optimizer):
         """
 
         # Initial search space evaluation
+        if pre_evaluation_hook:
+            pre_evaluation_hook(self, space, function)
         self._evaluate(space, function)
 
         # We will define a History object for further dumping
-        history = h.History()
+        history = h.History(store_best_only)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
@@ -205,6 +210,8 @@ class FA(Optimizer):
             space.check_limits()
 
             # After the update, we need to re-evaluate the search space
+            if pre_evaluation_hook:
+                pre_evaluation_hook(self, space, function)
             self._evaluate(space, function)
 
             # Every iteration, we need to dump agents and best agent
