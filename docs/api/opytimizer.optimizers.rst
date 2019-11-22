@@ -16,6 +16,7 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
     opytimizer.optimizers.ihs
     opytimizer.optimizers.pso
     opytimizer.optimizers.rpso
+    opytimizer.optimizers.sca
     opytimizer.optimizers.wca
 
 .. automodule:: opytimizer.optimizers

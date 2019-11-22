@@ -129,7 +129,7 @@ class RPSO(PSO):
         self._evaluate(space, function, local_position)
 
         # We will define a History object for further dumping
-        history = h.History()
+        history = h.History(store_best_only)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
