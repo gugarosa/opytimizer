@@ -135,7 +135,7 @@ class PSO(Optimizer):
             f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | Built: {self.built}.')
 
     def _update_velocity(self, position, best_position, local_position, velocity):
-        """Updates a single particle velocity (over a single variable).
+        """Updates a particle velocity.
 
         Args:
             position (float): Agent's current position.
@@ -162,7 +162,7 @@ class PSO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a single particle position (over a single variable).
+        """Updates a particle position.
 
         Args:
             position (float): Agent's current position.
