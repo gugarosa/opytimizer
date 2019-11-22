@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.gsa import GSA
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -29,13 +29,11 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
+    'G': 2.467
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = GSA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)

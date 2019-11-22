@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.distribution as d
+import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
@@ -160,8 +161,8 @@ class FA(Optimizer):
             # Iterating through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j' (Equation 8)
-                distance = (np.linalg.norm(
-                    agent.position - temp.position)) ** 2
+                distance = g.euclidean_distance(agent.position, temp.position)
+
                 # If 'i' fit is bigger than 'j' fit
                 if (agent.fit > temp.fit):
                     # Recalculate the attractiveness (Equation 6)

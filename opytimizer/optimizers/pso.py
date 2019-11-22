@@ -134,14 +134,14 @@ class PSO(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | Built: {self.built}.')
 
-    def _update_velocity(self, agent_position, best_position, local_position, current_velocity):
+    def _update_velocity(self, position, best_position, local_position, velocity):
         """Updates a single particle velocity (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
+            position (float): Agent's current position.
             best_position (float): Global best position.
             local_position (float): Agent's local best position.
-            current_velocity (float): Agent's current velocity.
+            velocity (float): Agent's current velocity.
 
         Returns:
             A new velocity based on PSO's paper velocity update equation.
@@ -155,18 +155,18 @@ class PSO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Calculates new velocity
-        new_velocity = self.w * current_velocity + self.c1 * r1 * \
-            (local_position - agent_position) + self.c2 * \
-            r2 * (best_position - agent_position)
+        new_velocity = self.w * velocity + self.c1 * r1 * \
+            (local_position - position) + self.c2 * \
+            r2 * (best_position - position)
 
         return new_velocity
 
-    def _update_position(self, agent_position, current_velocity):
+    def _update_position(self, position, velocity):
         """Updates a single particle position (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
-            current_velocity (float): Agent's current velocity.
+            position (float): Agent's current position.
+            velocity (float): Agent's current velocity.
 
         Returns:
             A new position based PSO's paper position update equation.
@@ -174,7 +174,7 @@ class PSO(Optimizer):
         """
 
         # Calculates new position
-        new_position = agent_position + current_velocity
+        new_position = position + velocity
 
         return new_position
 
