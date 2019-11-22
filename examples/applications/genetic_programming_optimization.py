@@ -6,6 +6,9 @@ from opytimizer.math import benchmark
 from opytimizer.optimizers.gp import GP
 from opytimizer.spaces.tree import TreeSpace
 
+# Random seed for experimental consistency
+np.random.seed(0)
+
 # Firstly, we need to define the number of agents
 n_trees = 10
 
