@@ -110,7 +110,7 @@ class GSA(Optimizer):
         return force
 
     def _update_velocity(self, force, mass, velocity):
-        """Updates a single particle velocity (over a single variable).
+        """Updates an agent velocity.
 
         Args:
             position (float): Agent's current position.
@@ -132,7 +132,7 @@ class GSA(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a single particle position (over a single variable).
+        """Updates an agent position.
 
         Args:
             position (float): Agent's current position.

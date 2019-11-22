@@ -159,7 +159,7 @@ class BA(Optimizer):
             f'Algorithm: {self.algorithm} | Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | Built: {self.built}.')
 
     def _update_frequency(self, min_frequency, max_frequency):
-        """Updates a single particle frequency (over a single variable).
+        """Updates an agent frequency.
 
         Args:
             min_frequency (float): Minimum frequency range.
@@ -180,7 +180,7 @@ class BA(Optimizer):
         return new_frequency
 
     def _update_velocity(self, position, best_position, frequency, velocity):
-        """Updates a single particle velocity (over a single variable).
+        """Updates an agent velocity.
 
         Args:
             position (float): Agent's current position.
@@ -200,7 +200,7 @@ class BA(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a single particle position (over a single variable).
+        """Updates an agent position.
 
         Args:
             position (float): Agent's current position.
