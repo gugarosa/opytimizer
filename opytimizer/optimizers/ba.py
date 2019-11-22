@@ -179,14 +179,14 @@ class BA(Optimizer):
 
         return new_frequency
 
-    def _update_velocity(self, agent_position, best_position, frequency, current_velocity):
+    def _update_velocity(self, position, best_position, frequency, velocity):
         """Updates a single particle velocity (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
+            position (float): Agent's current position.
             best_position (float): Global best position.
             frequency (float): Agent's frequenct.
-            current_velocity (float): Agent's current velocity.
+            velocity (float): Agent's current velocity.
 
         Returns:
             A new velocity based on on BA's paper equation 3.
@@ -194,17 +194,17 @@ class BA(Optimizer):
         """
 
         # Calculates new velocity
-        new_velocity = current_velocity + \
-            (agent_position - best_position) * frequency
+        new_velocity = velocity + \
+            (position - best_position) * frequency
 
         return new_velocity
 
-    def _update_position(self, agent_position, current_velocity):
+    def _update_position(self, position, velocity):
         """Updates a single particle position (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
-            current_velocity (float): Agent's current velocity.
+            position (float): Agent's current position.
+            velocity (float): Agent's current velocity.
 
         Returns:
             A new position based on BA's paper equation 4.
@@ -212,7 +212,7 @@ class BA(Optimizer):
         """
 
         # Calculates new position
-        new_position = agent_position + current_velocity
+        new_position = position + velocity
 
         return new_position
 
