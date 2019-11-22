@@ -1,6 +1,7 @@
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.optimizers.pso import PSO
@@ -59,7 +60,7 @@ class RPSO(PSO):
         r2 = r.generate_uniform_random_number()
 
         # Calculating gamma parameter
-        gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / 300000 ** 2))
+        gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / c.LIGHT_SPEED ** 2))
 
         # Calculates new velocity
         new_velocity = mass * velocity * gamma + self.c1 * r1 * \
