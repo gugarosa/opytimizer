@@ -7,5 +7,5 @@ hyperparams = {
     'c2': 1.7
 }
 
-# Creating a RPSO optimizer
+# Creating an RPSO optimizer
 o = RPSO(hyperparams=hyperparams)
