@@ -223,7 +223,7 @@ class BA(Optimizer):
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A function object.
-            iteration (int): Current iteration number.
+            iteration (int): Current iteration value.
             frequency (np.array): Array of frequencies.
             velocity (np.array): Array of current velocities.
             loudness (np.array): Array of loudnesses.

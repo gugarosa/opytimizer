@@ -92,18 +92,49 @@ class GSA(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: G = {self.G} | Built: {self.built}.')
 
-    def _calculate_force(self, agents, mass, gravity):
-        """
+    def _calculate_mass(self, agents):
+        """Calculates agents' mass.
+
+        Args:
+            agents (list): List of agents.
+
+        Returns:
+            The agents' mass based on equation 16.
+
         """
 
-        #
+        # Gathering the best and worst agents
+        best, worst = agents[0].fit, agents[-1].fit
+
+        # Calculating agents' masses using equation 15
+        mass = [(agent.fit - worst) / (best - worst) for agent in agents]
+
+        # Normalizing agents' masses
+        norm_mass = mass / np.sum(mass)
+
+        return norm_mass
+
+    def _calculate_force(self, agents, mass, gravity):
+        """Calculates agents' force.
+
+        Args:
+            agents (list): List of agents.
+            mass (np.array): An array of agents' mass.
+            gravity (float): Current gravity value.
+
+        Returns:
+            The attraction force between all agents based on GSA's paper equation 7 and 9.
+
+        """
+
+        # Calculates the force
         force = [[gravity * (mass[i] * mass[j]) / (g.euclidean_distance(agents[i].position, agents[j].position) + c.EPSILON)
                   * (agents[j].position - agents[i].position) for j in range(len(agents))] for i in range(len(agents))]
 
-        #
+        # Transforms the force into an array
         force = np.asarray(force)
 
-        #
+        # Applying a stochastic trait to the force
         # force = np.sum(r.generate_uniform_random_number(size=(len(agents), agents[0].n_variables, agents[0].n_dimensions)) * force, axis=1)
         force = np.sum(r.generate_uniform_random_number() * force, axis=1)
 
@@ -113,9 +144,8 @@ class GSA(Optimizer):
         """Updates an agent velocity.
 
         Args:
-            position (float): Agent's current position.
-            best_position (float): Global best position.
-            frequency (float): Agent's frequenct.
+            force ():
+            mass (np.array): An array of agents' mass.
             velocity (float): Agent's current velocity.
 
         Returns:
@@ -123,10 +153,10 @@ class GSA(Optimizer):
 
         """
 
-        #
+        # Calculates the acceleration using paper's equation 10
         acceleration = force / (mass + c.EPSILON)
 
-        #
+        # Calculates the new velocity
         new_velocity = r.generate_uniform_random_number() * velocity + acceleration
 
         return new_velocity
@@ -148,41 +178,33 @@ class GSA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, velocity, iteration):
+    def _update(self, agents, function, velocity, iteration):
         """Method that wraps Bat Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A function object.
             velocity (np.array): Array of current velocities.
-            iteration (int): Current iteration number.
+            iteration (int): Current iteration value.
 
         """
 
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        # Gathering the best and worst agents
-        best, worst = agents[0].fit, agents[-1].fit
-
-        # Calculating agents' masses
-        mass = [(agent.fit - worst) / (best - worst) for agent in agents]
-
-        # Normalizing agents' masses
-        norm_mass = mass / np.sum(mass)
-
         # Calculating the current gravity
         gravity = self.G / (iteration + 1)
 
+        # Calculating agents' mass
+        mass = self._calculate_mass(agents)
+
         # Calculating agents' attraction force
-        force = self._calculate_force(agents, norm_mass, gravity)
+        force = self._calculate_force(agents, mass, gravity)
 
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
-            velocity[i] = self._update_velocity(
-                force[i], norm_mass[i], velocity[i])
+            velocity[i] = self._update_velocity(force[i], mass[i], velocity[i])
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
@@ -222,7 +244,7 @@ class GSA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent, function, velocity, t)
+            self._update(space.agents, function, velocity, t)
 
             # Checking if agents meets the bounds limits
             space.check_limits()
