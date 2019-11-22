@@ -6,6 +6,9 @@ from opytimizer.math import benchmark
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
+# Random seed for experimental consistency
+np.random.seed(0)
+
 # Number of agents
 n_agents = 20
 
