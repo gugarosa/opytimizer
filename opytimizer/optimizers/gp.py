@@ -201,7 +201,7 @@ class GP(Optimizer):
             # We also need to copy the agent
             space.agents[worst] = copy.deepcopy(space.agents[s])
 
-            # Replaces the worst individua fitness with a minimum value
+            # Replaces the worst individual fitness with a minimum value
             fitness[worst] = 0
 
     def _mutation(self, space):
