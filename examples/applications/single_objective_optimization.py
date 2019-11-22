@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.foa import FOA
+from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Number of agents
@@ -13,7 +13,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 10
+n_iterations = 1000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -32,7 +32,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = FOA(hyperparams=hyperparams)
+p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)
