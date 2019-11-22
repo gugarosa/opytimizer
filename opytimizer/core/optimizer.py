@@ -107,7 +107,7 @@ class Optimizer:
                 # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self):
+    def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
 
         As each optimizer child can have a different

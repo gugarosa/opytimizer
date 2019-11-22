@@ -276,12 +276,15 @@ class BA(Optimizer):
                 # Decreasing loudness (Equation 6)
                 loudness[i] = self.A * alpha
 
-    def run(self, space, function):
+    def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
+            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (function): A function that receives the optimizer, space and function
+                and returns None. This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -304,11 +307,16 @@ class BA(Optimizer):
         pulse_rate = r.generate_uniform_random_number(
             0, self.r, space.n_agents)
 
+        # Check if there is a pre-evaluation hook
+        if pre_evaluation_hook:
+            # Applies the hook
+            pre_evaluation_hook(self, space, function)
+
         # Initial search space evaluation
         self._evaluate(space, function)
 
         # We will define a History object for further dumping
-        history = h.History()
+        history = h.History(store_best_only)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
@@ -320,6 +328,11 @@ class BA(Optimizer):
 
             # Checking if agents meets the bounds limits
             space.check_limits()
+
+            # Check if there is a pre-evaluation hook
+            if pre_evaluation_hook:
+                # Applies the hook
+                pre_evaluation_hook(self, space, function)
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function)

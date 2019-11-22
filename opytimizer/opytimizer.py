@@ -84,8 +84,13 @@ class Opytimizer:
 
         self._function = function
 
-    def start(self):
+    def start(self, store_best_only=False, pre_evaluation_hook=None):
         """Starts the optimization task.
+
+        Args
+            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (function): A function that receives the optimizer, space and function
+                and returns None. This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object describing the agents position and best fitness values
@@ -99,7 +104,7 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        opt_history = self.optimizer.run(self.space, self.function)
+        opt_history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation_hook)
 
         # Ending timer
         end = time.time()
