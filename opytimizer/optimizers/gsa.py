@@ -20,7 +20,7 @@ class GSA(Optimizer):
     variables and methods.
 
     References:
-
+        E. Rashedi, H. Nezamabadi-Pour and S. Saryazdi. GSA: a gravitational search algorithm. Information Sciences (2009).
 
     """
 
@@ -135,7 +135,6 @@ class GSA(Optimizer):
         force = np.asarray(force)
 
         # Applying a stochastic trait to the force
-        # force = np.sum(r.generate_uniform_random_number(size=(len(agents), agents[0].n_variables, agents[0].n_dimensions)) * force, axis=1)
         force = np.sum(r.generate_uniform_random_number() * force, axis=1)
 
         return force
