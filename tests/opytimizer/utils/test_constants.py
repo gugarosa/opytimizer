@@ -12,6 +12,8 @@ def test_constants():
 
     assert constants.HISTORY_KEYS == ['agents', 'best_agent', 'local']
 
+    assert constants.LIGHT_SPEED == 3e5
+
     assert constants.N_ARGS_FUNCTION == {
         'SUM': 2,
         'SUB': 2,

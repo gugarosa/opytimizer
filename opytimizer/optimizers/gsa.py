@@ -141,9 +141,9 @@ class GSA(Optimizer):
         """Updates an agent velocity.
 
         Args:
-            force ():
+            force (np.array): Matrix of attraction forces.
             mass (np.array): An array of agents' mass.
-            velocity (float): Agent's current velocity.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new velocity based on on GSA's paper equation 11.
@@ -162,8 +162,8 @@ class GSA(Optimizer):
         """Updates an agent position.
 
         Args:
-            position (float): Agent's current position.
-            velocity (float): Agent's current velocity.
+            position (np.array): Agent's current position.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new position based on GSA's paper equation 12.
@@ -176,7 +176,7 @@ class GSA(Optimizer):
         return new_position
 
     def _update(self, agents, function, velocity, iteration):
-        """Method that wraps Bat Algorithm over all agents and variables.
+        """Method that wraps Gravitational Search Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

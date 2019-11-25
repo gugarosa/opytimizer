@@ -41,11 +41,11 @@ class RPSO(PSO):
         """Updates a single particle velocity (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Global best position.
-            local_position (float): Agent's local best position.
+            agent_position (np.array): Agent's current position.
+            best_position (np.array): Global best position.
+            local_position (np.array): Agent's local best position.
             max_velocity (float): Maximum velocity of all agents.
-            velocity (float): Agent's current velocity.
+            velocity (np.array): Agent's current velocity.
             mass (float): Agent's mass.
 
         Returns:
