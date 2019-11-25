@@ -65,7 +65,7 @@ def test_deb1():
 
     y = benchmark.deb1(x)
 
-    assert y > 0
+    assert y < 0
 
 
 def test_deb2():
@@ -73,7 +73,7 @@ def test_deb2():
 
     y = benchmark.deb2(x)
 
-    assert y > 0
+    assert y < 0
 
 
 def test_exponential():
