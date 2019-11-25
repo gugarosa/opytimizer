@@ -1,6 +1,35 @@
 import numpy as np
 
 
+def ackley1(x):
+    """Ackley's First function.
+
+    It can be used with 'n' variables and has minimum at 0.
+    Also, it is expected to be within [-35, 35] bounds.
+
+    Args:
+        x (np.array): An n-dimensional input array.
+
+    Returns:
+        y = 20 - 20 * exp(-0.2 * sqrt(1 / n * sum(x^2))) + e - exp(1 / n * sum(cos(2 * pi * x)))
+
+    """
+
+    # Calculating the 1 / n term
+    inv = 1 / x.shape[0]
+
+    # Calculating first term
+    term1 = -0.2 * np.sqrt(inv * np.sum(x ** 2))
+
+    # Calculating second term
+    term2 = inv * np.sum(np.cos(2 * np.pi * x))
+
+    # Declaring Ackley's First function
+    y = 20 - 20 * np.exp(term1) + np.e - np.exp(term2)
+
+    return y
+
+
 def alpine1(x):
     """Alpine 1's function.
 
@@ -41,6 +70,14 @@ def alpine2(x):
     return -np.prod(y)
 
 
+def brown(x):
+    """Brown's function.
+
+    """
+
+    pass
+
+
 def chung_reynolds(x):
     """Chung Reynolds' function.
 
@@ -59,6 +96,14 @@ def chung_reynolds(x):
     s = sphere(x)
 
     return s ** 2
+
+
+def cosine(x):
+    """Cosine's function.
+
+    """
+
+    pass
 
 
 def csendes(x):
@@ -115,6 +160,14 @@ def csendes(x):
 #     return
 
 
+def dixon_price(x):
+    """Dixon-Price's function.
+
+    """
+
+    pass
+
+
 def exponential(x):
     """Exponential's function.
 
@@ -150,6 +203,54 @@ def exponential(x):
 #     """
 
 #     return
+
+
+def levy(x):
+    """Lévy's function.
+
+    """
+
+    pass
+
+
+def pathological(x):
+    """Pathological's function.
+
+    """
+
+    pass
+
+
+def powell_sum(x):
+    """Powell Sum's function.
+
+    """
+
+    pass
+
+
+def qing(x):
+    """Qing's function.
+
+    """
+
+    pass
+
+
+def quartic(x):
+    """Quartic's function.
+
+    """
+
+    pass
+
+
+def quintic(x):
+    """Quintic's function.
+
+    """
+
+    pass
 
 
 def rastringin(x):
@@ -195,6 +296,14 @@ def salomon(x):
     return 1 - np.cos(2 * np.pi * np.sqrt(s)) + 0.1 * np.sqrt(s)
 
 
+def schumer_steiglitz(x):
+    """Schumer Steiglitz's function.
+
+    """
+
+    pass
+
+
 def schwefel(x):
     """Schwefel's function.
 
@@ -233,3 +342,99 @@ def sphere(x):
     y = x ** 2
 
     return np.sum(y)
+
+
+def streched_v_sine_wave(x):
+    """Streched V Sine Wave's function.
+
+    """
+
+    pass
+
+
+def sum_different_powers(x):
+    """Sum of Different Powers' function.
+
+    """
+
+    pass
+
+
+def sum_squares(x):
+    """Sum of Squares' function.
+
+    """
+
+    pass
+
+
+def styblinski_tang(x):
+    """Styblinski-Tang's function.
+
+    """
+
+    pass
+
+
+def trigonometric1(x):
+    """Trigonometric 1's function.
+
+    """
+
+    pass
+
+
+def trigonometric2(x):
+    """Trigonometric 2's function.
+
+    """
+
+    pass
+
+
+def wavy(x):
+    """Wavy's function.
+
+    """
+
+    pass
+
+
+def xin_she_yang1(x):
+    """Xin-She Yang 1's function.
+
+    """
+
+    pass
+
+
+def xin_she_yang2(x):
+    """Xin-She Yang 2's function.
+
+    """
+
+    pass
+
+
+def xin_she_yang3(x):
+    """Xin-She Yang 3's function.
+
+    """
+
+    pass
+
+
+def xin_she_yang4(x):
+    """Xin-She Yang 4's function.
+
+    """
+
+    pass
+
+
+def zakharov(x):
+    """Zakharov's function.
+
+    """
+
+    pass

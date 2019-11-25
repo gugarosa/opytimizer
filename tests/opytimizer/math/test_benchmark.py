@@ -4,6 +4,14 @@ import pytest
 from opytimizer.math import benchmark
 
 
+def test_ackley1():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.ackley1(x)
+
+    assert y > 0
+
+
 def test_alpine1():
     x = np.array([0.5, 0.5, 1, 1])
 
