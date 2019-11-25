@@ -28,6 +28,14 @@ def test_alpine2():
     assert y < 0
 
 
+def test_brown():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.brown(x)
+
+    assert y > 0
+
+
 def test_chung_reynolds():
     x = np.array([0.5, 0.5, 1, 1])
 
@@ -36,10 +44,34 @@ def test_chung_reynolds():
     assert y > 0
 
 
+def test_cosine_mixture():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.cosine_mixture(x)
+
+    assert y > 0
+
+
 def test_csendes():
     x = np.array([0.5, 0.5, 1, 1])
 
     y = benchmark.csendes(x)
+
+    assert y > 0
+
+
+def test_deb1():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.deb1(x)
+
+    assert y > 0
+
+
+def test_deb2():
+    x = np.array([0.5, 0.5, 1, 1])
+
+    y = benchmark.deb2(x)
 
     assert y > 0
 
