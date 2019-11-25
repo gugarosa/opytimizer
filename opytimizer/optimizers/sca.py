@@ -138,8 +138,8 @@ class SCA(Optimizer):
         """Updates a single particle position (over a single variable).
 
         Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Best agent's position.
+            agent_position (np.array): Agent's current position.
+            best_position (np.array): Global best position.
             r1 (float): Controls the next position's region.
             r2 (float): Defines how far the movement should be.
             r3 (float): Random weight for emphasizing or deemphasizing the movement.

@@ -138,10 +138,10 @@ class PSO(Optimizer):
         """Updates a particle velocity.
 
         Args:
-            position (float): Agent's current position.
-            best_position (float): Global best position.
-            local_position (float): Agent's local best position.
-            velocity (float): Agent's current velocity.
+            position (np.array): Agent's current position.
+            best_position (np.array): Global best position.
+            local_position (np.array): Agent's local best position.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new velocity based on PSO's paper velocity update equation.
@@ -165,8 +165,8 @@ class PSO(Optimizer):
         """Updates a particle position.
 
         Args:
-            position (float): Agent's current position.
-            velocity (float): Agent's current velocity.
+            position (np.array): Agent's current position.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new position based PSO's paper position update equation.

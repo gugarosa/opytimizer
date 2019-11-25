@@ -135,8 +135,8 @@ class FPA(Optimizer):
         """Updates the agent's position based on a global pollination (Lévy's flight).
 
         Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Best agent's current position.
+            agent_position (np.array): Agent's current position.
+            best_position (np.array): Best agent's current position.
 
         Returns:
             A new position based on FPA's paper equation 1.
@@ -158,9 +158,9 @@ class FPA(Optimizer):
         """Updates the agent's position based on a local pollination.
 
         Args:
-            agent_position (float): Agent's current position.
-            k_position (float): Agent's (index k) current position.
-            l_position (float): Agent's (index l) current position.
+            agent_position (np.array): Agent's current position.
+            k_position (np.array): Agent's (index k) current position.
+            l_position (np.array): Agent's (index l) current position.
             epsilon (float): An uniform random generated number.
 
         Returns:

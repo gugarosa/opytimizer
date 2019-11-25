@@ -139,7 +139,7 @@ class CS(Optimizer):
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Current best agent.
+            best_agent (Agent): Global best agent.
 
         Returns:
             A new list of agents which can be seen as new nests (Equation 1).
