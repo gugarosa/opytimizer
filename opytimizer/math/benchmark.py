@@ -80,11 +80,20 @@ def brown(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 
+        y = sum((x_i^2)^(x_{i+1}^2+1) + (x_{i+1}^2)^(x_i^2+1))
 
     """
 
-    return
+    # Calculating first term squares
+    term1 = x[:-1] ** 2
+
+    # Calculating second term squares
+    term2 = x[1:] ** 2
+
+    # Declaring Brown's function
+    y = np.sum(term1 ** (term2 + 1) + term2 ** (term1 + 1))
+
+    return y
 
 
 def chung_reynolds(x):
@@ -117,11 +126,20 @@ def cosine_mixture(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 
+        y = 0.1 * sum(cos * PI * x) - sum(x^2)
 
     """
 
-    return
+    # Calculating first term
+    term1 = np.sum(np.cos * np.pi * x)
+
+    # Calculating second term
+    term2 = np.sum(x ** 2)
+
+    # Declaring Cosine's Mixture function
+    y = 0.1 * term1 - term2
+
+    return y
 
 
 def csendes(x):
@@ -147,7 +165,7 @@ def csendes(x):
 def deb1(x):
     """Deb 1's function.
 
-    It can be used with 'n' variables and has minimum at 5^n.
+    It can be used with 'n' variables and has minimum at -1.
     Also, it is expected to be within [-1, 1] bounds.
 
     Args:
@@ -158,13 +176,19 @@ def deb1(x):
 
     """
 
-    return
+    # Calculating partial term
+    term = np.sum(np.sin(5 * np.pi * x) ** 6)
+
+    # Declaring Deb 1's function
+    y = -1 / x.shape[0] * term
+
+    return y
 
 
-def deb3(x):
-    """Deb 3's function.
+def deb2(x):
+    """Deb 2's function.
 
-    It can be used with 'n' variables and has minimum at 5^n.
+    It can be used with 'n' variables and has minimum at -1.
     Also, it is expected to be within [-1, 1] bounds.
 
     Args:
@@ -175,7 +199,13 @@ def deb3(x):
 
     """
 
-    return
+    # Calculating partial term
+    term = np.sum(np.sin(5 * np.pi * (x ** (3/4) - 0.05)) ** 6)
+
+    # Declaring Deb 1's function
+    y = -1 / x.shape[0] * term
+
+    return y
 
 
 def dixon_price(x):
