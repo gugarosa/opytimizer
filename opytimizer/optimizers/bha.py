@@ -44,9 +44,6 @@ class BHA(Optimizer):
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
         """
 
         logger.debug('Running private method: build().')
@@ -56,7 +53,7 @@ class BHA(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm}.')
+            f'Algorithm: {self.algorithm} | Built: {self.built}.')
 
     def _update_position(self, agents, best_agent, function):
         """It updates every star position and calculates their event's horizon cost.
