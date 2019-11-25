@@ -126,12 +126,12 @@ def cosine_mixture(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 0.1 * sum(cos * PI * x) - sum(x^2)
+        y = 0.1 * sum(cos(5 * PI * x)) - sum(x^2)
 
     """
 
     # Calculating first term
-    term1 = np.sum(np.cos * np.pi * x)
+    term1 = np.sum(np.cos(5 * np.pi * x))
 
     # Calculating second term
     term2 = np.sum(x ** 2)
