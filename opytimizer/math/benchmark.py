@@ -208,21 +208,21 @@ def deb2(x):
     return y
 
 
-def dixon_price(x):
-    """Dixon-Price's function.
+# def dixon_price(x):
+#     """Dixon-Price's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-10, 10] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-10, 10] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
 
 
 def exponential(x):
@@ -245,106 +245,106 @@ def exponential(x):
     return -np.exp(-0.5 * s)
 
 
-def griewank(x):
-    """Griewank's function.
+# def griewank(x):
+#     """Griewank's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-100, 100] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-100, 100] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 1 + sum(x^2 / 4000) - prod(cos(x / sqrt(i)))
+#     Returns:
+#         y = 1 + sum(x^2 / 4000) - prod(cos(x / sqrt(i)))
 
-    """
+#     """
 
-    return
-
-
-def levy(x):
-    """Lévy's function.
-
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-10, 10] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return
 
 
-def pathological(x):
-    """Pathological's function.
+# def levy(x):
+#     """Lévy's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-100, 100] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-10, 10] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
-
-
-def powell_sum(x):
-    """Powell Sum's function.
-
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-1, 1] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return
 
 
-def qing(x):
-    """Qing's function.
+# def pathological(x):
+#     """Pathological's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-500, 500] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-100, 100] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
 
 
-def quartic(x):
-    """Quartic's function.
+# def powell_sum(x):
+#     """Powell Sum's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-1.28, 1.28] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-1, 1] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
+
+
+# def qing(x):
+#     """Qing's function.
+
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-500, 500] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
+
+
+# def quartic(x):
+#     """Quartic's function.
+
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-1.28, 1.28] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
 
 
 def quintic(x):
@@ -357,11 +357,15 @@ def quintic(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 
+        y = sum(abs(x^5 - 3x^4 + 4x^3 + 2x^2 - 10x - 4))
 
     """
 
-    return
+    # Declaring Quintic's function
+    y = np.sum(np.fabs(x ** 5 - 3 * x ** 4 + 4 *
+                       x ** 3 + 2 * x ** 2 - 10 * x - 4))
+
+    return y
 
 
 def rastringin(x):
@@ -417,11 +421,14 @@ def schumer_steiglitz(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 
+        y = sum(x^4)
 
     """
 
-    return
+    # Declaring Schumer Steiglitz's function
+    y = np.sum(x ** 4)
+
+    return y
 
 
 def schwefel(x):
@@ -464,55 +471,55 @@ def sphere(x):
     return np.sum(y)
 
 
-def streched_v_sine_wave(x):
-    """Streched V Sine Wave's function.
+# def streched_v_sine_wave(x):
+#     """Streched V Sine Wave's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [0, 10] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [0, 10] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
-
-
-def sum_different_powers(x):
-    """Sum of Different Powers' function.
-
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-1, 1] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return
 
 
-def sum_squares(x):
-    """Sum of Squares' function.
+# def sum_different_powers(x):
+#     """Sum of Different Powers' function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-10, 10] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-1, 1] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
+
+
+# def sum_squares(x):
+#     """Sum of Squares' function.
+
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-10, 10] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
 
 
 def styblinski_tang(x):
@@ -525,144 +532,156 @@ def styblinski_tang(x):
         x (np.array): An n-dimensional input array.
 
     Returns:
-        y = 
+        y = 1/2 * sum(x^4 - 16x^2 + 5x)
 
     """
 
-    return
+    # Calculating partial term
+    term = np.sum(x ** 4 - 16 * x ** 2 + 5 * x)
+
+    # Declaring Styblinski-Tang's function
+    y = 1 / 2 * term
+
+    return y
 
 
-def trigonometric1(x):
-    """Trigonometric 1's function.
+# def trigonometric1(x):
+#     """Trigonometric 1's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [0, PI] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [0, PI] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
-
-
-def trigonometric2(x):
-    """Trigonometric 2's function.
-
-    It can be used with 'n' variables and has minimum at 1.
-    Also, it is expected to be within [-500, 500] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return
 
 
-def wavy(x):
-    """Wavy's function.
+# def trigonometric2(x):
+#     """Trigonometric 2's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-PI, PI] bounds.
+#     It can be used with 'n' variables and has minimum at 1.
+#     Also, it is expected to be within [-500, 500] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
-
-
-def xin_she_yang1(x):
-    """Xin-She Yang 1's function.
-
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-5, 5] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return
 
 
-def xin_she_yang2(x):
-    """Xin-She Yang 2's function.
+# def wavy(x):
+#     """Wavy's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-2PI, 2PI] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-PI, PI] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y = 1/n * sum(1 - cos(10x) * e^(0.5 * x^2))
 
-    """
+#     """
 
-    return
+#     # Calculating partial term
+#     term =
 
+#     # Declaring Wavy's function
+#     y =
 
-def xin_she_yang3(x):
-    """Xin-She Yang 3's function.
-
-    It can be used with 'n' variables and has minimum at -1.
-    Also, it is expected to be within [-20, 20] bounds.
-
-    Args:
-        x (np.array): An n-dimensional input array.
-
-    Returns:
-        y = 
-
-    """
-
-    return
+#     return y
 
 
-def xin_she_yang4(x):
-    """Xin-She Yang 4's function.
+# def xin_she_yang1(x):
+#     """Xin-She Yang 1's function.
 
-    It can be used with 'n' variables and has minimum at -1.
-    Also, it is expected to be within [-10, 10] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-5, 5] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
 
 
-def zakharov(x):
-    """Zakharov's function.
+# def xin_she_yang2(x):
+#     """Xin-She Yang 2's function.
 
-    It can be used with 'n' variables and has minimum at 0.
-    Also, it is expected to be within [-5, 10] bounds.
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-2PI, 2PI] bounds.
 
-    Args:
-        x (np.array): An n-dimensional input array.
+#     Args:
+#         x (np.array): An n-dimensional input array.
 
-    Returns:
-        y = 
+#     Returns:
+#         y =
 
-    """
+#     """
 
-    return
+#     return
+
+
+# def xin_she_yang3(x):
+#     """Xin-She Yang 3's function.
+
+#     It can be used with 'n' variables and has minimum at -1.
+#     Also, it is expected to be within [-20, 20] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
+
+
+# def xin_she_yang4(x):
+#     """Xin-She Yang 4's function.
+
+#     It can be used with 'n' variables and has minimum at -1.
+#     Also, it is expected to be within [-10, 10] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
+
+
+# def zakharov(x):
+#     """Zakharov's function.
+
+#     It can be used with 'n' variables and has minimum at 0.
+#     Also, it is expected to be within [-5, 10] bounds.
+
+#     Args:
+#         x (np.array): An n-dimensional input array.
+
+#     Returns:
+#         y =
+
+#     """
+
+#     return
