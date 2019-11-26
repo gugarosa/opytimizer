@@ -8,53 +8,38 @@ from opytimizer.utils import constants
 
 def test_hc_hyperparams():
     hyperparams = {
-        'type': 'gaussian',
-        'r_min': 0,
-        'r_max': 0.1,
+        'r_mean': 0,
+        'r_var': 0.1,
     }
 
     new_hc = hc.HC(hyperparams=hyperparams)
 
-    assert new_hc.type == 'gaussian'
+    assert new_hc.r_mean == 0
 
-    assert new_hc.r_min == 0
-
-    assert new_hc.r_max == 0.1
+    assert new_hc.r_var == 0.1
 
 
 def test_hc_hyperparams_setter():
     new_hc = hc.HC()
 
     try:
-        new_hc.type = 'g'
+        new_hc.r_mean = 'a'
     except:
-        new_hc.type = 'gaussian'
+        new_hc.r_mean = 0.1
 
-    assert new_hc.type == 'gaussian'
+    assert new_hc.r_mean == 0.1
 
     try:
-        new_hc.r_min = 'b'
+        new_hc.r_var = 'b'
     except:
-        new_hc.r_min = 0.1
-
-    assert new_hc.r_min == 0.1
+        new_hc.r_var = 2
 
     try:
-        new_hc.r_max = 'c'
+        new_hc.r_var = -1
     except:
-        new_hc.r_max = 2
+        new_hc.r_var = 2
 
-    try:
-        new_hc.r_max = -1
-    except:
-        new_hc.r_max = 2
-
-    try:
-        new_hc.r_max = 0
-    except:
-        new_hc.r_max = 2
-
-    assert new_hc.r_max == 2
+    assert new_hc.r_var == 2
 
 
 def test_hc_build():
@@ -73,9 +58,8 @@ def test_hc_run():
     new_function = function.Function(pointer=square)
 
     hyperparams = {
-        'type': 'gaussian',
-        'r_min': 0,
-        'r_max': 0.1
+        'r_mean': 0,
+        'r_var': 0.1
     }
 
     new_hc = hc.HC(hyperparams=hyperparams)
@@ -85,14 +69,6 @@ def test_hc_run():
                                       upper_bound=[10, 10])
 
     history = new_hc.run(search_space, new_function, pre_evaluation_hook=hook)
-
-    hyperparams = {
-        'type': 'uniform',
-        'r_min': 0,
-        'r_max': 0.1
-    }
-
-    new_hc = hc.HC(hyperparams=hyperparams)
 
     history = new_hc.run(search_space, new_function, pre_evaluation_hook=hook)
 

@@ -69,6 +69,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - ihs
         - pso
         - rpso
+        - sa
         - sca
         - wca
     - spaces
