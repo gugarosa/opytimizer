@@ -16,7 +16,7 @@ class RPSO(PSO):
     variables and methods.
 
     References:
-
+        M. Roder, G. H. de Rosa, A. L. D. Rossi and J. P. Papa. Harnessing Particle Swarm Optimization Through Relativistic Velocity. To be published (2020).
 
     """
 
