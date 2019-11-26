@@ -1,3 +1,7 @@
+import copy
+
+import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
@@ -7,18 +11,18 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class HC(Optimizer):
-    """A HC class, inherited from Optimizer.
+class SA(Optimizer):
+    """A SA class, inherited from Optimizer.
 
-    This is the designed class to define HC-related
+    This is the designed class to define SA-related
     variables and methods.
 
     References:
-        S. Skiena. The Algorithm Design Manual (2010).
+        A. Khachaturyan, S. Semenovsovskaya and B. Vainshtein. The thermodynamic approach to the structure analysis of crystals. Acta Crystallographica (1981).
 
     """
 
-    def __init__(self, algorithm='HC', hyperparams={}):
+    def __init__(self, algorithm='SA', hyperparams={}):
         """Initialization method.
 
         Args:
@@ -27,16 +31,16 @@ class HC(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> HC.')
+        logger.info('Overriding class: Optimizer -> SA.')
 
         # Override its parent class with the receiving hyperparams
-        super(HC, self).__init__(algorithm=algorithm)
+        super(SA, self).__init__(algorithm=algorithm)
 
-        # Mean of noise distribution
-        self.r_mean = 0
+        # System's temperature
+        self.T = 100
 
-        # Variance of noise distribution
-        self.r_var = 0.1
+        # Temperature decay
+        self.beta = 0.999
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -44,36 +48,38 @@ class HC(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def r_mean(self):
-        """float: Mean of noise distribution.
+    def T(self):
+        """float: System's temperature.
 
         """
 
-        return self._r_mean
+        return self._T
 
-    @r_mean.setter
-    def r_mean(self, r_mean):
-        if not (isinstance(r_mean, float) or isinstance(r_mean, int)):
-            raise e.TypeError('`r_mean` should be a float or integer')
+    @T.setter
+    def T(self, T):
+        if not (isinstance(T, float) or isinstance(T, int)):
+            raise e.TypeError('`T` should be a float or integer')
+        if T < 0:
+            raise e.ValueError('`T` should be >= 0')
 
-        self._r_mean = r_mean
+        self._T = T
 
     @property
-    def r_var(self):
-        """float: Variance of noise distribution.
+    def beta(self):
+        """float: Temperature decay.
 
         """
 
-        return self._r_var
+        return self._beta
 
-    @r_var.setter
-    def r_var(self, r_var):
-        if not (isinstance(r_var, float) or isinstance(r_var, int)):
-            raise e.TypeError('`r_var` should be a float or integer')
-        if r_var < 0:
-            raise e.ValueError('`r_var` should be >= 0')
+    @beta.setter
+    def beta(self, beta):
+        if not (isinstance(beta, float) or isinstance(beta, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
 
-        self._r_var = r_var
+        self._beta = beta
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
@@ -94,34 +100,66 @@ class HC(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'r_mean' in hyperparams:
-                self.r_mean = hyperparams['r_mean']
-            if 'r_var' in hyperparams:
-                self.r_var = hyperparams['r_var']
+            if 'T' in hyperparams:
+                self.T = hyperparams['T']
+            if 'beta' in hyperparams:
+                self.beta = hyperparams['beta']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: r_mean = {self.r_mean}, r_var = {self.r_var} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | Hyperparameters: T = {self.T}, beta = {self.beta} | Built: {self.built}.')
 
-    def _update(self, agents):
-        """Method that wraps Hill Climbing over all agents and variables.
+    def _update(self, agents, function):
+        """Method that wraps Simulated Annealing over all agents and variables.
 
         Args:
             agents (list): List of agents.
+            function (Function): A function object.
 
         """
 
         # Iterate through all agents
         for i, agent in enumerate(agents):
-            # Creates a gaussian noise vector
-            noise = r.generate_gaussian_random_number(
-                self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions))
+            # Mimics its position
+            a = copy.deepcopy(agent)
 
-            # Updating agent's position
-            agent.position += noise
+            # Generating a random noise from a gaussian distribution
+            noise = r.generate_gaussian_random_number(
+                0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
+
+            # Applying the noise
+            a.position += noise
+
+            # Check agent limits
+            a.check_limits()
+
+            # Calculates the fitness for the temporary position
+            a.fit = function.pointer(a.position)
+
+            # Generates an uniform random number
+            r1 = r.generate_uniform_random_number()
+
+            # If new fitness is better than agent's fitness
+            if a.fit < agent.fit:
+                # Copy its position to the agent
+                agent.position = copy.deepcopy(a.position)
+
+                # And also copy its fitness
+                agent.fit = copy.deepcopy(a.fit)
+
+            # Checks if state should be updated or not
+            elif r1 < np.exp(-(a.fit - agent.fit) / self.T):
+                # Copy its position to the agent
+                agent.position = copy.deepcopy(a.position)
+
+                # And also copy its fitness
+                agent.fit = copy.deepcopy(a.fit)
+
+        # Decay the temperature
+        self.T *= self.beta
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
@@ -154,7 +192,7 @@ class HC(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents)
+            self._update(space.agents, function)
 
             # Checking if agents meets the bounds limits
             space.check_limits()
