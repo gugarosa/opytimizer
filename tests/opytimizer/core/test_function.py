@@ -31,8 +31,6 @@ def test_function_pointer_setter():
     except:
         new_function = function.Function(pointer=square)
 
-    assert new_function.pointer == square
-
 
 def test_function_built():
     new_function = function.Function()

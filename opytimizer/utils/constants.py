@@ -2,7 +2,7 @@ import sys
 
 # A constant value used to avoid division by zero, zero logarithms
 # and any possible mathematical error
-EPSILON = 10e-10
+EPSILON = 1e-10
 
 # When the agents are initialized, their fitness is defined as
 # the maximum float value possible
@@ -11,6 +11,10 @@ FLOAT_MAX = sys.float_info.max
 # If necessary, one can apply custom rxules to keys' dumping
 # when using the History object
 HISTORY_KEYS = ['agents', 'best_agent', 'local']
+
+# When working with relativity theories, it is necessary
+# to defined a constant for the speed of light
+LIGHT_SPEED = 3e5
 
 # When using Genetic Programming, each function node needs an unique number of arguments,
 # which is defined by this dictionary
@@ -29,7 +33,7 @@ N_ARGS_FUNCTION = {
 
 # A test passes if the best solution found by the agent in the target function
 # is smaller than this value
-TEST_EPSILON = 10
+TEST_EPSILON = 50
 
 # When using the Tournament Selection, one must provide the size of rounds,
 # where individuals will compete among themselves

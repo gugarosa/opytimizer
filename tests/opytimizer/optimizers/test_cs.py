@@ -87,6 +87,9 @@ def test_cs_run():
     def square(x):
         return np.sum(x**2)
 
+    def hook(optimizer, space, function):
+        return
+
     new_function = function.Function(pointer=square)
 
     new_cs = cs.CS()
@@ -95,7 +98,7 @@ def test_cs_run():
                                       n_variables=2, lower_bound=[-10, -10],
                                       upper_bound=[10, 10])
 
-    history = new_cs.run(search_space, new_function)
+    history = new_cs.run(search_space, new_function, pre_evaluation_hook=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

@@ -123,6 +123,9 @@ def test_wca_run():
     def square(x):
         return np.sum(x**2)
 
+    def hook(optimizer, space, function):
+        return
+
     new_function = function.Function(pointer=square)
 
     new_wca = wca.WCA()
@@ -131,7 +134,7 @@ def test_wca_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    history = new_wca.run(search_space, new_function)
+    history = new_wca.run(search_space, new_function, pre_evaluation_hook=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

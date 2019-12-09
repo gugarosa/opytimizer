@@ -1,4 +1,5 @@
 import numpy as np
+
 import opytimizer.math.hypercomplex as h
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
@@ -10,12 +11,15 @@ def sphere(x):
     # When using hypercomplex numbers, we always need to span them
     # before feeding into the function
     x_span = h.span(x, lower_bound, upper_bound)
-    
+
     # Declaring Sphere's function
     y = x_span ** 2
 
     return np.sum(y)
 
+
+# Random seed for experimental consistency
+np.random.seed(0)
 
 # Creating Function's object
 f = Function(pointer=sphere)
@@ -38,8 +42,8 @@ upper_bound = [10, 10]
 
 # Creating the HyperSpace class
 s = HyperSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, n_dimensions=n_dimensions,
-                lower_bound=lower_bound, upper_bound=upper_bound)
+               n_variables=n_variables, n_dimensions=n_dimensions,
+               lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
 hyperparams = {

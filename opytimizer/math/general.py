@@ -4,6 +4,24 @@ from itertools import islice
 import opytimizer.utils.constants as c
 
 
+def euclidean_distance(x, y):
+    """Calculates the euclidean distance between two n-dimensional points.
+
+    Args:
+        x (np.array): First n-dimensional point.
+        y (np.array): Second n-dimensional point.
+
+    Returns:
+        The euclidean distance between x and y.
+
+    """
+
+    # Calculates the euclidean distance
+    distance = np.linalg.norm(x - y) ** 2
+
+    return distance
+
+
 def pairwise(values):
     """Iterates over an iterator and returns pairwise samples from it.
 
