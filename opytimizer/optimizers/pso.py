@@ -134,14 +134,14 @@ class PSO(Optimizer):
         logger.debug(
             f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | Built: {self.built}.')
 
-    def _update_velocity(self, agent_position, best_position, local_position, current_velocity):
-        """Updates a single particle velocity (over a single variable).
+    def _update_velocity(self, position, best_position, local_position, velocity):
+        """Updates a particle velocity.
 
         Args:
-            agent_position (float): Agent's current position.
-            best_position (float): Global best position.
-            local_position (float): Agent's local best position.
-            current_velocity (float): Agent's current velocity.
+            position (np.array): Agent's current position.
+            best_position (np.array): Global best position.
+            local_position (np.array): Agent's local best position.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new velocity based on PSO's paper velocity update equation.
@@ -155,18 +155,18 @@ class PSO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Calculates new velocity
-        new_velocity = self.w * current_velocity + self.c1 * r1 * \
-            (local_position - agent_position) + self.c2 * \
-            r2 * (best_position - agent_position)
+        new_velocity = self.w * velocity + self.c1 * r1 * \
+            (local_position - position) + self.c2 * \
+            r2 * (best_position - position)
 
         return new_velocity
 
-    def _update_position(self, agent_position, current_velocity):
-        """Updates a single particle position (over a single variable).
+    def _update_position(self, position, velocity):
+        """Updates a particle position.
 
         Args:
-            agent_position (float): Agent's current position.
-            current_velocity (float): Agent's current velocity.
+            position (np.array): Agent's current position.
+            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new position based PSO's paper position update equation.
@@ -174,7 +174,7 @@ class PSO(Optimizer):
         """
 
         # Calculates new position
-        new_position = agent_position + current_velocity
+        new_position = position + velocity
 
         return new_position
 
@@ -229,12 +229,15 @@ class PSO(Optimizer):
                 # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function):
+    def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
+            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (function): A function that receives the optimizer, space and function
+                and returns None. This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -249,11 +252,16 @@ class PSO(Optimizer):
         velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions))
 
+        # Check if there is a pre-evaluation hook
+        if pre_evaluation_hook:
+            # Applies the hook
+            pre_evaluation_hook(self, space, function)
+
         # Initial search space evaluation
         self._evaluate(space, function, local_position)
 
         # We will define a History object for further dumping
-        history = h.History()
+        history = h.History(store_best_only)
 
         # These are the number of iterations to converge
         for t in range(space.n_iterations):
@@ -265,6 +273,11 @@ class PSO(Optimizer):
 
             # Checking if agents meets the bounds limits
             space.check_limits()
+
+            # Check if there is a pre-evaluation hook
+            if pre_evaluation_hook:
+                # Applies the hook
+                pre_evaluation_hook(self, space, function)
 
             # After the update, we need to re-evaluate the search space
             self._evaluate(space, function, local_position)

@@ -6,11 +6,13 @@ from opytimizer.utils import constants
 
 
 def test_constants():
-    assert constants.EPSILON == 10e-10
+    assert constants.EPSILON == 1e-10
 
     assert constants.FLOAT_MAX == sys.float_info.max
 
     assert constants.HISTORY_KEYS == ['agents', 'best_agent', 'local']
+
+    assert constants.LIGHT_SPEED == 3e5
 
     assert constants.N_ARGS_FUNCTION == {
         'SUM': 2,
@@ -25,6 +27,6 @@ def test_constants():
         'COS': 1
     }
 
-    assert constants.TEST_EPSILON == 10
+    assert constants.TEST_EPSILON == 50
 
     assert constants.TOURNAMENT_SIZE == 2

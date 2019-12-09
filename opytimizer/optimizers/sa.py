@@ -2,8 +2,6 @@ import copy
 
 import numpy as np
 
-import opytimizer.math.distribution as d
-import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
@@ -13,18 +11,18 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class FA(Optimizer):
-    """A FA class, inherited from Optimizer.
+class SA(Optimizer):
+    """A SA class, inherited from Optimizer.
 
-    This is the designed class to define FA-related
+    This is the designed class to define SA-related
     variables and methods.
 
     References:
-        X.-S. Yang. Firefly algorithms for multimodal optimization. International symposium on stochastic algorithms (2009).
+        A. Khachaturyan, S. Semenovsovskaya and B. Vainshtein. The thermodynamic approach to the structure analysis of crystals. Acta Crystallographica (1981).
 
     """
 
-    def __init__(self, algorithm='FA', hyperparams={}):
+    def __init__(self, algorithm='SA', hyperparams={}):
         """Initialization method.
 
         Args:
@@ -33,19 +31,16 @@ class FA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> FA.')
+        logger.info('Overriding class: Optimizer -> SA.')
 
         # Override its parent class with the receiving hyperparams
-        super(FA, self).__init__(algorithm=algorithm)
+        super(SA, self).__init__(algorithm=algorithm)
 
-        # Randomization parameter
-        self.alpha = 0.5
+        # System's temperature
+        self.T = 100
 
-        # Attractiveness
-        self.beta = 0.2
-
-        # Light absorption coefficient
-        self.gamma = 1.0
+        # Temperature decay
+        self.beta = 0.999
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -53,25 +48,25 @@ class FA(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def alpha(self):
-        """float: Randomization parameter.
+    def T(self):
+        """float: System's temperature.
 
         """
 
-        return self._alpha
+        return self._T
 
-    @alpha.setter
-    def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
-        if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+    @T.setter
+    def T(self, T):
+        if not (isinstance(T, float) or isinstance(T, int)):
+            raise e.TypeError('`T` should be a float or integer')
+        if T < 0:
+            raise e.ValueError('`T` should be >= 0')
 
-        self._alpha = alpha
+        self._T = T
 
     @property
     def beta(self):
-        """float: Attractiveness parameter.
+        """float: Temperature decay.
 
         """
 
@@ -85,23 +80,6 @@ class FA(Optimizer):
             raise e.ValueError('`beta` should be >= 0')
 
         self._beta = beta
-
-    @property
-    def gamma(self):
-        """float: Light absorption coefficient.
-
-        """
-
-        return self._gamma
-
-    @gamma.setter
-    def gamma(self, gamma):
-        if not (isinstance(gamma, float) or isinstance(gamma, int)):
-            raise e.TypeError('`gamma` should be a float or integer')
-        if gamma < 0:
-            raise e.ValueError('`gamma` should be >= 0')
-
-        self._gamma = gamma
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
@@ -122,59 +100,66 @@ class FA(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'alpha' in hyperparams:
-                self.alpha = hyperparams['alpha']
+            if 'T' in hyperparams:
+                self.T = hyperparams['T']
             if 'beta' in hyperparams:
                 self.beta = hyperparams['beta']
-            if 'gamma' in hyperparams:
-                self.gamma = hyperparams['gamma']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, gamma = {self.gamma} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | Hyperparameters: T = {self.T}, beta = {self.beta} | Built: {self.built}.')
 
-    def _update(self, agents, best_agent, function, n_iterations):
-        """Method that wraps Firefly Algorithm over all agents and variables.
+    def _update(self, agents, function):
+        """Method that wraps Simulated Annealing over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A function object.
-            n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Calculating current iteration delta
-        delta = 1 - ((10e-4) / 0.9) ** (1 / n_iterations)
+        # Iterate through all agents
+        for i, agent in enumerate(agents):
+            # Mimics its position
+            a = copy.deepcopy(agent)
 
-        # Applying update to alpha parameter
-        self.alpha *= (1 - delta)
+            # Generating a random noise from a gaussian distribution
+            noise = r.generate_gaussian_random_number(
+                0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
 
-        # We copy a temporary list for iterating purposes
-        temp_agents = copy.deepcopy(agents)
+            # Applying the noise
+            a.position += noise
 
-        # Iterating through 'i' agents
-        for agent in agents:
-            # Iterating through 'j' agents
-            for temp in temp_agents:
-                # Distance is calculated by an euclidean distance between 'i' and 'j' (Equation 8)
-                distance = g.euclidean_distance(agent.position, temp.position)
+            # Check agent limits
+            a.check_limits()
 
-                # If 'i' fit is bigger than 'j' fit
-                if (agent.fit > temp.fit):
-                    # Recalculate the attractiveness (Equation 6)
-                    beta = self.beta * np.exp(-self.gamma * distance)
+            # Calculates the fitness for the temporary position
+            a.fit = function.pointer(a.position)
 
-                    # Generates a random uniform distribution
-                    r1 = r.generate_uniform_random_number()
+            # Generates an uniform random number
+            r1 = r.generate_uniform_random_number()
 
-                    # Updates agent's position (Equation 9)
-                    agent.position = beta * \
-                        (temp.position + agent.position) + \
-                        self.alpha * (r1 - 0.5)
+            # If new fitness is better than agent's fitness
+            if a.fit < agent.fit:
+                # Copy its position to the agent
+                agent.position = copy.deepcopy(a.position)
+
+                # And also copy its fitness
+                agent.fit = copy.deepcopy(a.fit)
+
+            # Checks if state should be updated or not
+            elif r1 < np.exp(-(a.fit - agent.fit) / self.T):
+                # Copy its position to the agent
+                agent.position = copy.deepcopy(a.position)
+
+                # And also copy its fitness
+                agent.fit = copy.deepcopy(a.fit)
+
+        # Decay the temperature
+        self.T *= self.beta
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
@@ -207,8 +192,7 @@ class FA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent,
-                         function, space.n_iterations)
+            self._update(space.agents, function)
 
             # Checking if agents meets the bounds limits
             space.check_limits()
