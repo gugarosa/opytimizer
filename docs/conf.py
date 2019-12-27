@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'opytimizer'
-copyright = '2019, Gustavo de Rosa'
+copyright = '2020, Gustavo de Rosa'
 author = 'Gustavo de Rosa'
 
 # The short X.Y version
