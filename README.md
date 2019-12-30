@@ -30,6 +30,12 @@ Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
 
 ---
 
+## Citation
+
+If you use Opytimizer to fulfill any of your needs, please cite us:
+
+---
+
 ## Getting started: 60 seconds with Opytimizer
 
 First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage, and follow the example. We have high-level examples for most tasks we could think of and amazing integrations ([LibOPF](https://github.com/jppbsi/LibOPF), [PyTorch](https://github.com/pytorch/pytorch), [Scikit-Learn](https://github.com/scikit-learn/scikit-learn), [Recogners](https://github.com/recogna-lab/recogners)).
