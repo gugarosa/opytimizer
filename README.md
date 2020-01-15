@@ -26,7 +26,7 @@ Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
 2. **Installing** is also easy if you wish to read the code and bump yourself into, follow along.
 3. Note that there might be some **additional** steps in order to use our solutions.
 4. If there is a problem, please do not **hesitate**, call us.
-5. Finally, we focus on **minimization**. Take that in mind, when designing your problem.
+5. Finally, we focus on **minimization**. Take that in mind when designing your problem.
 
 ---
 
@@ -49,7 +49,7 @@ If you use Opytimizer to fulfill any of your needs, please cite us:
 
 ## Getting started: 60 seconds with Opytimizer
 
-First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage, and follow the example. We have high-level examples for most tasks we could think of and amazing integrations ([OPFython](https://github.com/gugarosa/OPFython), [PyTorch](https://github.com/pytorch/pytorch), [Scikit-Learn](https://github.com/scikit-learn/scikit-learn), [Recogners](https://github.com/recogna-lab/recogners)).
+First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage, and follow the example. We have high-level examples for most tasks we could think of and amazing integrations ([OPFython](https://github.com/gugarosa/OPFython), [PyTorch](https://github.com/pytorch/pytorch), [Scikit-Learn](https://github.com/scikit-learn/scikit-learn), [Recogners](https://github.com/recogna-lab/recogners), [Tensorflow](https://github.com/tensorflow/tensorflow)).
 
 Alternatively, if you wish to learn even more, please take a minute:
 
@@ -150,7 +150,7 @@ pip install .
 
 ## Environment configuration
 
-Note that sometimes, there is a need for additional implementation. If needed, from here you will be the one to know all of its details.
+Note that sometimes, there is a need for additional implementation. If needed, from here, you will be the one to know all of its details.
 
 ### Ubuntu
 
