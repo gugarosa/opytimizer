@@ -49,7 +49,7 @@ If you use Opytimizer to fulfill any of your needs, please cite us:
 
 ## Getting started: 60 seconds with Opytimizer
 
-First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage, and follow the example. We have high-level examples for most tasks we could think of and amazing integrations ([OPFython](https://github.com/gugarosa/OPFython), [PyTorch](https://github.com/pytorch/pytorch), [Scikit-Learn](https://github.com/scikit-learn/scikit-learn), [Recogners](https://github.com/recogna-lab/recogners), [Tensorflow](https://github.com/tensorflow/tensorflow)).
+First of all. We have examples. Yes, they are commented. Just browse to `examples/`, chose your subpackage, and follow the example. We have high-level examples for most tasks we could think of and amazing integrations ([NALP](https://github.com/gugarosa/NALP), [OPFython](https://github.com/gugarosa/OPFython), [PyTorch](https://github.com/pytorch/pytorch), [Scikit-Learn](https://github.com/scikit-learn/scikit-learn), [Recogners](https://github.com/recogna-lab/recogners), [Tensorflow](https://github.com/tensorflow/tensorflow)).
 
 Alternatively, if you wish to learn even more, please take a minute:
 
