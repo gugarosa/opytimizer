@@ -26,8 +26,9 @@ dataset = NextDataset(encoded_tokens, max_length=10, batch_size=64)
 
 
 def lstm(opytimizer):
-    # Gathering hyperparameters from opytimizer
-    lr = opytimizer[0][0]
+    # Gathering parameters from Opytimizer
+    # Pay extremely attention to their order when declaring due to their bounds
+    learning_rate = opytimizer[0][0]
 
     # Creating the LSTM
     lstm = LSTM(vocab_size=corpus.vocab_size,
@@ -37,7 +38,7 @@ def lstm(opytimizer):
     lstm.build((64, None))
 
     # Compiling the LSTM
-    lstm.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+    lstm.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(
                     from_logits=True),
                 metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy')])

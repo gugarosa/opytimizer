@@ -26,8 +26,9 @@ dataset = NextDataset(encoded_tokens, max_length=10, batch_size=64)
 
 
 def rnn(opytimizer):
-    # Gathering hyperparameters from opytimizer
-    lr = opytimizer[0][0]
+    # Gathering parameters from Opytimizer
+    # Pay extremely attention to their order when declaring due to their bounds
+    learning_rate = opytimizer[0][0]
 
     # Creating the RNN
     rnn = RNN(vocab_size=corpus.vocab_size,
@@ -37,7 +38,7 @@ def rnn(opytimizer):
     rnn.build((64, None))
 
     # Compiling the RNN
-    rnn.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+    rnn.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(
                     from_logits=True),
                 metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy')])
