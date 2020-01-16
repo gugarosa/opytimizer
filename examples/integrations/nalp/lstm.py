@@ -1,0 +1,89 @@
+import tensorflow as tf
+from nalp.corpus.text import TextCorpus
+from nalp.datasets.next import NextDataset
+from nalp.encoders.integer import IntegerEncoder
+from nalp.models.lstm import LSTM
+from opytimizer import Opytimizer
+from opytimizer.core.function import Function
+from opytimizer.optimizers.pso import PSO
+from opytimizer.spaces.search import SearchSpace
+
+# Creating a character TextCorpus from file
+corpus = TextCorpus(
+    from_file='examples/integrations/nalp/chapter1_harry.txt', type='char')
+
+# Creating an IntegerEncoder
+encoder = IntegerEncoder()
+
+# Learns the encoding based on the TextCorpus dictionary and reverse dictionary
+encoder.learn(corpus.vocab_index, corpus.index_vocab)
+
+# Applies the encoding on new data
+encoded_tokens = encoder.encode(corpus.tokens)
+
+# Creating next target Dataset
+dataset = NextDataset(encoded_tokens, max_length=10, batch_size=64)
+
+
+def lstm(opytimizer):
+    # Gathering hyperparameters from opytimizer
+    lr = opytimizer[0][0]
+
+    # Creating the LSTM
+    lstm = LSTM(vocab_size=corpus.vocab_size,
+              embedding_size=256, hidden_size=512)
+
+    # As NALP's LSTM are stateful, we need to build it with a fixed batch size
+    lstm.build((64, None))
+
+    # Compiling the LSTM
+    lstm.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(
+                    from_logits=True),
+                metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy')])
+
+    # Fitting the LSTM
+    history = lstm.fit(dataset.batches, epochs=100)
+
+    # Gathering last iteration's accuracy
+    acc = history.history['accuracy'][-1]
+
+    return 1 - acc
+
+
+# Creating Function's object
+f = Function(pointer=lstm)
+
+# Number of agents
+n_agents = 5
+
+# Number of decision variables
+n_variables = 1
+
+# Number of running iterations
+n_iterations = 3
+
+# Lower and upper bounds (has to be the same size as n_variables)
+lower_bound = [0]
+upper_bound = [1]
+
+# Creating the SearchSpace class
+s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
+                n_variables=n_variables, lower_bound=lower_bound,
+                upper_bound=upper_bound)
+
+# Hyperparameters for the optimizer
+hyperparams = {
+    'w': 0.7,
+    'c1': 1.7,
+    'c2': 1.7
+}
+
+# Creating PSO's optimizer
+p = PSO(hyperparams=hyperparams)
+
+# Finally, we can create an Opytimizer class
+o = Opytimizer(space=s, optimizer=p, function=f)
+
+# Running the optimization task
+history = o.start()
