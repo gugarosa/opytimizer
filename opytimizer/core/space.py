@@ -16,7 +16,7 @@ class Space:
 
     """
 
-    def __init__(self, n_agents=1, n_variables=1, n_dimensions=1, n_iterations=10, lower_bound=[0], upper_bound=[1]):
+    def __init__(self, n_agents=1, n_variables=1, n_dimensions=1, n_iterations=10):
         """Initialization method.
 
         Args:
@@ -24,8 +24,6 @@ class Space:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
             n_iterations (int): Number of iterations.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 

@@ -30,8 +30,8 @@ class HyperSpace(Space):
         logger.info('Overriding class: Space -> HyperSpace.')
 
         # Override its parent class with the receiving arguments
-        super(HyperSpace, self).__init__(n_agents=n_agents, n_variables=n_variables, n_dimensions=n_dimensions,
-                                         n_iterations=n_iterations, lower_bound=lower_bound, upper_bound=upper_bound)
+        super(HyperSpace, self).__init__(n_agents=n_agents, n_variables=n_variables,
+                                         n_dimensions=n_dimensions, n_iterations=n_iterations)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)

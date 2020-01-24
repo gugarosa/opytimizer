@@ -43,9 +43,8 @@ class TreeSpace(Space):
         self.n_trees = n_trees
 
         # Override its parent class with the receiving arguments
-        super(TreeSpace, self).__init__(n_agents=n_trees, n_variables=n_variables,
-                                        n_iterations=n_iterations, lower_bound=lower_bound, upper_bound=upper_bound)
-
+        super(TreeSpace, self).__init__(n_agents=n_trees,
+                                        n_variables=n_variables, n_iterations=n_iterations)
 
         # Number of terminal nodes
         self.n_terminals = n_terminals
