@@ -20,42 +20,45 @@ class Function:
         """Initialization method.
 
         Args:
-            function (callable): This should be a pointer to a function
-                that will return the fitness value.
+            pointer (callable): This should be a pointer to a function that will return the fitness value.
+            constraints (list): List of constraints to be applied to the fitness function.
 
         """
 
         logger.info('Creating class: Function.')
 
-        # Also, we need a callable to point to the actual function
-        self.pointer = self._wrapper(pointer, constraints)
+        # Defining a function property just for further inspection
+        self.function = pointer
 
         # Save the constraints for further inspection
         self.constraints = constraints
+
+        # Also, we need a callable to point to the actual function
+        self.pointer = self._wrapper(pointer, constraints)
 
         # Indicates whether the function is built or not
         self.built = True
 
         logger.info('Class created.')
         logger.debug(
-            f'Pointer: {pointer.__name__} | Constraints: {self.constraints} | Built: {self.built}')
+            f'Fitness Function: {self.function.__name__} | Constraints: {self.constraints} | Built: {self.built}')
 
     @property
-    def pointer(self):
-        """callable: Points to the actual function.
+    def function(self):
+        """callable: Fitness function to be used.
 
         """
 
-        return self._pointer
+        return self._function
 
-    @pointer.setter
-    def pointer(self, pointer):
-        if not callable(pointer):
-            raise e.TypeError('`pointer` should be a callable')
-        if len(signature(pointer).parameters) > 1:
-            raise e.ArgumentError('`pointer` should only have 1 argument')
+    @function.setter
+    def function(self, function):
+        if not callable(function):
+            raise e.TypeError('`function` should be a callable')
+        if len(signature(function).parameters) > 1:
+            raise e.ArgumentError('`function` should only have 1 argument')
 
-        self._pointer = pointer
+        self._function = function
 
     @property
     def constraints(self):
@@ -71,6 +74,21 @@ class Function:
             raise e.TypeError('`constraints` should be a list')
 
         self._constraints = constraints
+
+    @property
+    def pointer(self):
+        """callable: Points to the actual function.
+
+        """
+
+        return self._pointer
+
+    @pointer.setter
+    def pointer(self, pointer):
+        if not callable(pointer):
+            raise e.TypeError('`pointer` should be a callable')
+
+        self._pointer = pointer
 
     @property
     def built(self):

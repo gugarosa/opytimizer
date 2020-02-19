@@ -22,7 +22,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 1000
+n_iterations = 10
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]

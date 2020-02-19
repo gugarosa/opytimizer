@@ -2,15 +2,16 @@ import numpy as np
 import pytest
 
 from opytimizer.core import function
+from opytimizer.utils import constants
 
 
-def test_function_pointer():
+def test_function_function():
     new_function = function.Function()
 
-    assert new_function.pointer == callable
+    assert new_function.function == callable
 
 
-def test_function_pointer_setter():
+def test_function_function_setter():
     def square(x):
         return x**2
 
@@ -32,6 +33,42 @@ def test_function_pointer_setter():
         new_function = function.Function(pointer=square)
 
 
+def test_function_constraints():
+    new_function = function.Function()
+
+    assert new_function.constraints == []
+
+
+def test_function_constraints_setter():
+    def c_1(x):
+        return x**2
+
+    assert c_1(2) == 4
+
+    try:
+        new_function = function.Function(constraints=c_1)
+    except:
+        new_function = function.Function(constraints=[c_1])
+
+    assert len(new_function.constraints) == 1
+
+def test_function_pointer():
+    new_function = function.Function()
+
+    assert new_function.pointer.__name__ == 'f'
+
+
+def test_function_pointer_setter():
+    new_function = function.Function()
+
+    try:
+        new_function.pointer = 'a'
+    except:
+        new_function.pointer = callable
+
+    assert new_function.pointer.__class__.__name__ == 'builtin_function_or_method'
+
+
 def test_function_built():
     new_function = function.Function()
 
@@ -46,7 +83,19 @@ def test_function_built_setter():
     assert new_function.built == False
 
 
-def test_function_build():
-    new_function = function.Function()
+def test_function_wrapper():
+    def square(x):
+        return np.sum(x**2)
 
-    assert new_function.built == True
+    assert square(2) == 4
+
+    def c_1(x):
+        return x[0] + x[1] <= 0
+
+    assert c_1(np.zeros(2)) == True
+    
+    new_function = function.Function(pointer=square, constraints=[c_1])
+
+    assert new_function.pointer(np.zeros(2)) == 0
+
+    assert new_function.pointer(np.ones(2)) == constants.FLOAT_MAX
