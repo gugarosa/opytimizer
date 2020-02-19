@@ -1,5 +1,6 @@
 from inspect import signature
 
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -15,7 +16,7 @@ class Function:
 
     """
 
-    def __init__(self, pointer=callable):
+    def __init__(self, pointer=callable, constraints=[]):
         """Initialization method.
 
         Args:
@@ -27,15 +28,17 @@ class Function:
         logger.info('Creating class: Function.')
 
         # Also, we need a callable to point to the actual function
-        self.pointer = pointer
+        self.pointer = self._wrapper(pointer, constraints)
+
+        # Save the constraints for further inspection
+        self.constraints = constraints
 
         # Indicates whether the function is built or not
-        self.built = False
-
-        # Now, we need to build this class up
-        self._build(pointer)
+        self.built = True
 
         logger.info('Class created.')
+        logger.debug(
+            f'Pointer: {pointer.__name__} | Constraints: {self.constraints} | Built: {self.built}')
 
     @property
     def pointer(self):
@@ -55,6 +58,21 @@ class Function:
         self._pointer = pointer
 
     @property
+    def constraints(self):
+        """list: List of constraints to be applied to the fitness function.
+
+        """
+
+        return self._constraints
+
+    @constraints.setter
+    def constraints(self, constraints):
+        if not isinstance(constraints, list):
+            raise e.TypeError('`constraints` should be a list')
+
+        self._constraints = constraints
+
+    @property
     def built(self):
         """bool: Indicate whether the function is built.
 
@@ -66,25 +84,43 @@ class Function:
     def built(self, built):
         self._built = built
 
-    def _build(self, pointer):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
+    def _wrapper(self, pointer, constraints):
+        """Wraps the fitness function if there are any constraints to be evaluated.
 
         Args:
-            function (callable): This should be a pointer to a function
-                that will return the fitness value.
+            pointer (callable): Pointer to the actual function.
+            constraints (list): Constraints to be applied.
+
+        Returns:
+            The value of the fitness function.
 
         """
 
-        logger.debug('Running private method: build().')
+        def f(x):
+            """Applies the constraints and penalizes the fitness function if one of them are not valid.
 
-        # We apply to class pointer's the desired function
-        self.pointer = pointer
+            Args:
+                x (np.array): Array to be evaluated.
 
-        # Set built variable to 'True'
-        self.built = True
+            Returns:
+                The value of the fitness function.
 
-        # Logging attributes
-        logger.debug(f'Pointer: {self.pointer.__name__} | Built: {self.built}')
+            """
+
+            # For every possible constraint
+            for constraint in constraints:
+                # Check if constraint is valid
+                if constraint(x):
+                    # If yes, just keep going
+                    pass
+
+                # If a single constraint is not valid
+                else:
+                    # Penalizes and returns the maximum possible value for the fitness function
+                    return c.FLOAT_MAX
+
+            # If all constraints are satisfied, return the fitness function
+            return pointer(x)
+
+        # Returns the function
+        return f

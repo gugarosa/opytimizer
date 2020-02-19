@@ -6,6 +6,12 @@ from opytimizer.math import benchmark
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
+# Defining a constraint function for further usage
+# Note that it needs to return a boolean whether the
+# constraint is valid or not
+def c_1(x):
+    return x[0] + x[1] < 0
+
 # Random seed for experimental consistency
 np.random.seed(0)
 
@@ -16,7 +22,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 10000
+n_iterations = 1000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -34,11 +40,11 @@ hyperparams = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
-p = PSo(hyperparams=hyperparams)
+# Creating PSo's optimizer
+p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=benchmark.sphere)
+f = Function(pointer=benchmark.sphere, constraints=[c_1])
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
