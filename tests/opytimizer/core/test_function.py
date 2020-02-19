@@ -66,7 +66,7 @@ def test_function_pointer_setter():
     except:
         new_function.pointer = callable
 
-    assert new_function.pointer.__class__.__name__ == 'builtin_function_or_method'
+    assert new_function.pointer.__class__.__name__ == 'builtin_function_or_method' or 'builtin_function'
 
 
 def test_function_built():
