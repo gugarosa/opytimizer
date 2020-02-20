@@ -100,6 +100,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - logging
     - visualization
         - convergence
+        - surface
 ```
 
 ### Core

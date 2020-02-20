@@ -5,6 +5,7 @@ Everyone needs images and plots to help visualize what is happening, correct? Th
 
 .. toctree::
     opytimizer.visualization.convergence
+    opytimizer.visualization.surface
 
 .. automodule:: opytimizer.visualization
    :members:

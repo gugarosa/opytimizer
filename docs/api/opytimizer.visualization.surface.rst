@@ -1,7 +1,7 @@
-opytimizer.visualization.convergence
+opytimizer.visualization.surface
 =====================================
 
-.. automodule:: opytimizer.visualization.convergence
+.. automodule:: opytimizer.visualization.surface
     :members:
     :private-members:
     :special-members:
