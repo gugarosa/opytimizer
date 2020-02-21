@@ -13,7 +13,7 @@ setup(name='opytimizer',
       url='https://github.com/gugarosa/opytimizer',
       license='GPL-3.0',
       install_requires=['coverage>=5.0.3',
-                        'matplotlib>=3.1.2',
+                        'matplotlib>=3.0.3',
                         'numpy>=1.18.1',
                         'pylint>=2.4.4',
                         'pytest>=5.3.3'
