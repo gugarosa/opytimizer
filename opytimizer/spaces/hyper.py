@@ -30,8 +30,7 @@ class HyperSpace(Space):
         logger.info('Overriding class: Space -> HyperSpace.')
 
         # Override its parent class with the receiving arguments
-        super(HyperSpace, self).__init__(n_agents=n_agents, n_variables=n_variables,
-                                         n_dimensions=n_dimensions, n_iterations=n_iterations)
+        super(HyperSpace, self).__init__(n_agents, n_variables, n_dimensions, n_iterations)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -39,7 +38,6 @@ class HyperSpace(Space):
         # Initializing agents
         self._initialize_agents()
 
-        # We will log some important information
         logger.info('Class overrided.')
 
     def _initialize_agents(self):
@@ -49,24 +47,23 @@ class HyperSpace(Space):
 
         logger.debug('Running private method: initialize_agents().')
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in self.agents:
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, _ in enumerate(agent.position):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(
-                    size=agent.n_dimensions)
+                agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
 
         logger.debug('Agents initialized.')
 
-    def check_limits(self):
-        """Checks bounds limits of all agents and variables.
+    def clip_limits(self):
+        """Clips all agents' decision variables to [0, 1].
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in self.agents:
-            # Iterate through all decision variables
-            for j, (_, _) in enumerate(zip(self.lb, self.ub)):
-                # Clip the array between 0 and 1
+            # Iterates through all decision variables
+            for j in range(self.n_variables):
+                # Clips the array between 0 and 1
                 agent.position[j] = np.clip(agent.position[j], 0, 1)

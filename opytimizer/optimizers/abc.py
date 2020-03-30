@@ -116,7 +116,7 @@ class ABC(Optimizer):
             (agent.position - neighbour.position) * r1
 
         # Check agent limits
-        a.check_limits()
+        a.clip_limits()
 
         # Evaluating its fitness
         a.fit = function.pointer(a.position)
@@ -222,7 +222,7 @@ class ABC(Optimizer):
             a.position += r.generate_uniform_random_number(-1, 1)
 
             # Check agent limits
-            a.check_limits()
+            a.clip_limits()
 
             # Recalculates its fitness
             a.fit = function.pointer(a.position)
@@ -288,7 +288,7 @@ class ABC(Optimizer):
             self._update(space.agents, function, trials)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

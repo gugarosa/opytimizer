@@ -1,4 +1,5 @@
 import numpy as np
+
 import opytimizer.math.hypercomplex as h
 
 # Creating an array with ones

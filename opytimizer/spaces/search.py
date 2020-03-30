@@ -29,8 +29,7 @@ class SearchSpace(Space):
         logger.info('Overriding class: Space -> SearchSpace.')
 
         # Override its parent class with the receiving arguments
-        super(SearchSpace, self).__init__(n_agents=n_agents,
-                                          n_variables=n_variables, n_iterations=n_iterations)
+        super(SearchSpace, self).__init__(n_agents, n_variables, n_iterations=n_iterations)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -38,7 +37,6 @@ class SearchSpace(Space):
         # Initializing agents
         self._initialize_agents()
 
-        # We will log some important information
         logger.info('Class overrided.')
 
     def _initialize_agents(self):
@@ -53,10 +51,9 @@ class SearchSpace(Space):
             # Iterate through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=agent.n_dimensions)
+                agent.position[j] = r.generate_uniform_random_number(lb, ub, agent.n_dimensions)
 
-                # For each decision variable, we apply lower bound the agent's bound
+                # Applies the lower bound the agent's lower bound
                 agent.lb[j] = lb
 
                 # And also the upper bound
@@ -64,14 +61,14 @@ class SearchSpace(Space):
 
         logger.debug('Agents initialized.')
 
-    def check_limits(self):
-        """Checks bounds limits of all agents and variables.
+    def clip_limits(self):
+        """Clips all agents' decision variables to the bounds limits.
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in self.agents:
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-                # Clip the array based on variables' lower and upper bounds
+                # Clips the array based on variables' lower and upper bounds
                 agent.position[j] = np.clip(agent.position[j], lb, ub)

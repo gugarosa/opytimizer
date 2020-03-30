@@ -53,13 +53,13 @@ def generate_levy_distribution(beta=0.1, size=1):
     """
 
     # Calculates the equation's numerator
-    num = gamma(1+beta) * sin(pi*beta/2)
+    num = gamma(1 + beta) * sin(pi * beta / 2)
 
     # Calculates the equation's denominator
-    den = gamma((1+beta)/2) * beta * (2 ** ((beta-1)/2))
+    den = gamma((1 + beta) / 2) * beta * (2 ** ((beta - 1) / 2))
 
     # Calculates the sigma for further distribution generation
-    sigma = (num/den) ** (1/beta)
+    sigma = (num / den) ** (1 / beta)
 
     # Calculates the 'u' distribution
     u = r.generate_gaussian_random_number(size=size) * sigma

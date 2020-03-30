@@ -165,7 +165,7 @@ def test_tree_space_initialize_terminals():
 def test_tree_space_create_terminals():
     new_tree_space = tree.TreeSpace(n_terminals=2)
 
-    new_tree_space.terminals = new_tree_space._create_terminals()
+    new_tree_space._create_terminals()
 
     assert len(new_tree_space.terminals) == 2
 
@@ -173,7 +173,7 @@ def test_tree_space_create_terminals():
 def test_tree_space_create_trees():
     new_tree_space = tree.TreeSpace(n_trees=2)
 
-    new_tree_space.trees, new_tree_space.best_tree = new_tree_space._create_trees()
+    new_tree_space._create_trees()
 
     assert len(new_tree_space.trees) == 2
 

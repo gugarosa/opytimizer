@@ -225,7 +225,7 @@ class CS(Optimizer):
         # Iterating through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
             # Check agent limits
-            new_agent.check_limits()
+            new_agent.clip_limits()
 
             # Calculates the new agent fitness
             new_agent.fit = function.pointer(new_agent.position)
@@ -294,7 +294,7 @@ class CS(Optimizer):
             self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

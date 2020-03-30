@@ -43,8 +43,7 @@ class TreeSpace(Space):
         self.n_trees = n_trees
 
         # Override its parent class with the receiving arguments
-        super(TreeSpace, self).__init__(n_agents=n_trees,
-                                        n_variables=n_variables, n_iterations=n_iterations)
+        super(TreeSpace, self).__init__(n_trees, n_variables, n_iterations=n_iterations)
 
         # Number of terminal nodes
         self.n_terminals = n_terminals
@@ -65,12 +64,11 @@ class TreeSpace(Space):
         self._initialize_agents()
 
         # Creating the terminal nodes
-        self.terminals = self._create_terminals()
+        self._create_terminals()
 
-        # Creating the initial trees
-        self.trees, self.best_tree = self._create_trees()
+        # Creating the trees
+        self._create_trees()
 
-        # We will log some important information
         logger.info('Class overrided.')
 
     @property
@@ -211,12 +209,11 @@ class TreeSpace(Space):
 
         logger.debug('Running private method: create_terminals().')
 
-        terminals = [Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions)
-                     for _ in range(self.n_terminals)]
+        # Creating a list of terminals, which will be Agent instances
+        self.terminals = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_terminals)]
 
         logger.debug('Terminals created.')
 
-        return terminals
 
     def _create_trees(self, algorithm='GROW'):
         """Creates a list of random trees using a specific algorithm.
@@ -234,16 +231,14 @@ class TreeSpace(Space):
         # Checks if the chosen algorithm is GROW
         if algorithm == 'GROW':
             # Creates a list of random trees
-            trees = [self.grow(self.min_depth, self.max_depth)
-                     for _ in range(self.n_trees)]
+            self.trees = [self.grow(self.min_depth, self.max_depth) for _ in range(self.n_trees)]
 
-        # Apply the first tree as the best one
-        best_tree = copy.deepcopy(trees[0])
+        # Applies the first tree as the best one
+        self.best_tree = copy.deepcopy(self.trees[0])
 
         logger.debug(
-            f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | Terminals: {self.n_terminals} | Functions: {self.functions} | Algorithm: {algorithm}.')
-
-        return trees, best_tree
+            f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | ' 
+            f'Terminals: {self.n_terminals} | Functions: {self.functions} | Algorithm: {algorithm}.')
 
     def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
@@ -252,15 +247,14 @@ class TreeSpace(Space):
 
         logger.debug('Running private method: initialize_agents().')
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in self.agents:
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=agent.n_dimensions)
+                agent.position[j] = r.generate_uniform_random_number(lb, ub, agent.n_dimensions)
 
-                # For each decision variable, we apply lower bound the agent's bound
+                # Applies the lower bound the agent's lower bound
                 agent.lb[j] = lb
 
                 # And also the upper bound
@@ -273,25 +267,25 @@ class TreeSpace(Space):
 
         """
 
-        # Iterate through all terminals
+        # Iterates through all terminals
         for terminal in self.terminals:
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
                 # For each decision variable, we generate uniform random numbers
-                terminal.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=terminal.n_dimensions)
+                terminal.position[j] = r.generate_uniform_random_number(lb, ub, terminal.n_dimensions)
 
-                # For each decision variable, we apply lower bound the terminal's bound
+                # Applies the lower bound the terminal's lower bound
                 terminal.lb[j] = lb
 
                 # And also the upper bound
                 terminal.ub[j] = ub
 
-    def grow(self, min_depth, max_depth):
+    def grow(self, min_depth=1, max_depth=3):
         """It creates a random tree based on the GROW algorithm.
 
         References:
-            S. Lukw. Two Fast Tree-Creation Algorithms for Genetic Programming. IEEE Transactions on Evolutionary Computation (2000).
+            S. Lukw. Two Fast Tree-Creation Algorithms for Genetic Programming.
+            IEEE Transactions on Evolutionary Computation (2000).
 
         Args:
             min_depth (int): Minimum depth of the tree.
@@ -308,17 +302,15 @@ class TreeSpace(Space):
         # If minimum depth equals the maximum depth
         if min_depth == max_depth:
             # Generates a terminal identifier
-            terminal_id = int(
-                r.generate_uniform_random_number(0, self.n_terminals))
+            terminal_id = int(r.generate_uniform_random_number(0, self.n_terminals))
 
             # Return the terminal node with its id and corresponding position
-            return Node(name=terminal_id, type='TERMINAL', value=self.terminals[terminal_id].position)
+            return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
 
         # If minimum depth is not equal to the maximum depth
         else:
             # Generates a node identifier
-            node_id = int(r.generate_uniform_random_number(
-                0, len(self.functions) + self.n_terminals))
+            node_id = int(r.generate_uniform_random_number(0, len(self.functions) + self.n_terminals))
 
             # If the identifier is a terminal
             if node_id >= len(self.functions):
@@ -326,18 +318,17 @@ class TreeSpace(Space):
                 terminal_id = node_id - len(self.functions)
 
                 # Return the terminal node with its id and corresponding position
-                return Node(name=terminal_id, type='TERMINAL', value=self.terminals[terminal_id].position)
+                return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
 
             # If the identifier is a function
             else:
                 # Generates a new function node
-                function_node = Node(
-                    name=self.functions[node_id], type='FUNCTION')
+                function_node = Node(self.functions[node_id], 'FUNCTION')
 
                 # For every possible function argument
                 for i in range(c.N_ARGS_FUNCTION[self.functions[node_id]]):
                     # Calls recursively the grow function and creates a temporary node
-                    node = self.grow(min_depth+1, max_depth)
+                    node = self.grow(min_depth + 1, max_depth)
 
                     # If it is not the root
                     if not i:

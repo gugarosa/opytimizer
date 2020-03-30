@@ -102,13 +102,13 @@ def test_agent_ub_setter():
     assert new_agent.ub[0] == 1
 
 
-def test_agent_check_limits():
+def test_agent_clip_limits():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
     new_agent.lb = [10]
 
     new_agent.ub = [10]
 
-    new_agent.check_limits()
+    new_agent.clip_limits()
 
     assert new_agent.position[0] == 10

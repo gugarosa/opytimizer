@@ -134,7 +134,7 @@ class SA(Optimizer):
             a.position += noise
 
             # Check agent limits
-            a.check_limits()
+            a.clip_limits()
 
             # Calculates the fitness for the temporary position
             a.fit = function.pointer(a.position)
@@ -195,7 +195,7 @@ class SA(Optimizer):
             self._update(space.agents, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

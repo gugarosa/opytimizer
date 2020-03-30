@@ -1,5 +1,6 @@
-import numpy as np
 from itertools import islice
+
+import numpy as np
 
 import opytimizer.utils.constants as c
 
@@ -22,19 +23,19 @@ def euclidean_distance(x, y):
     return distance
 
 
-def pairwise(values):
+def pairwise(x):
     """Iterates over an iterator and returns pairwise samples from it.
 
     Args:
-        values (list): Values to be iterated over.
+        x (list): Values to be iterated over.
 
     Returns:
         Pairwise samples from the iterator.
 
     """
 
-    # Creats an iterator from values
-    iterator = iter(values)
+    # Creats an iterator from `x`
+    iterator = iter(x)
 
     # Splits into pairs and returns a new iterator
     return iter(lambda: tuple(islice(iterator, 2)), ())

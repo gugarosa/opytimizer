@@ -215,7 +215,7 @@ class FPA(Optimizer):
                     agent.position, agents[k].position, agents[l].position, epsilon)
 
             # Check agent limits
-            a.check_limits()
+            a.clip_limits()
 
             # Calculates the fitness for the temporary position
             a.fit = function.pointer(a.position)
@@ -262,7 +262,7 @@ class FPA(Optimizer):
             self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

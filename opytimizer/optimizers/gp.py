@@ -470,7 +470,7 @@ class GP(Optimizer):
             agent.position = copy.deepcopy(tree.position)
 
             # Checks the agent limits
-            agent.check_limits()
+            agent.clip_limits()
 
             # Calculates the fitness value of the agent
             agent.fit = function.pointer(agent.position)

@@ -1,4 +1,5 @@
 import numpy as np
+
 import opytimizer.math.benchmark as b
 
 # Creating an input vector

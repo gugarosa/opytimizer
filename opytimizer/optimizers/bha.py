@@ -81,7 +81,7 @@ class BHA(Optimizer):
             agent.position += r1 * (best_agent.position - agent.position)
 
             # Checking agents limits
-            agent.check_limits()
+            agent.clip_limits()
 
             # Evaluates agent
             agent.fit = function.pointer(agent.position)
@@ -175,7 +175,7 @@ class BHA(Optimizer):
             self._update(space.agents, space.best_agent, function)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

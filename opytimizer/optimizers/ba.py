@@ -260,7 +260,7 @@ class BA(Optimizer):
                     0.001 * e * np.mean(loudness)
 
             # Checks agent limits
-            agent.check_limits()
+            agent.clip_limits()
 
             # Evaluates agent
             agent.fit = function.pointer(agent.position)
@@ -327,7 +327,7 @@ class BA(Optimizer):
                          t, frequency, velocity, loudness, pulse_rate)
 
             # Checking if agents meets the bounds limits
-            space.check_limits()
+            space.clip_limits()
 
             # Check if there is a pre-evaluation hook
             if pre_evaluation_hook:

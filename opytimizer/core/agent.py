@@ -123,8 +123,8 @@ class Agent:
     def ub(self, ub):
         self._ub = ub
 
-    def check_limits(self):
-        """Checks the bounds limits of an agent.
+    def clip_limits(self):
+        """Clips the agent's decision variables to the bounds limits.
 
         """
 
