@@ -37,8 +37,8 @@ def plot(points, title='', subtitle='', style='winter', colorbar=True):
     ax.plot_wireframe(points[0], points[1], points[2], color='grey')
 
     # Plotting the surface
-    surface = ax.plot_surface(
-        points[0], points[1], points[2], rstride=1, cstride=1, cmap=style, edgecolor='none')
+    surface = ax.plot_surface(points[0], points[1], points[2],
+                              rstride=1, cstride=1, cmap=style, edgecolor='none')
 
     # If colorbar usage is true
     if colorbar:

@@ -5,6 +5,22 @@ import pytest
 from opytimizer.core import agent
 from opytimizer.utils import history
 
+def test_history_store_best_only():
+    new_history = history.History()
+
+    assert new_history.store_best_only is False
+
+
+def test_history_store_best_only_setter():
+    new_history = history.History()
+
+    try:
+        new_history.store_best_only = 'a'
+    except:
+        new_history.store_best_only = True
+
+    assert new_history.store_best_only is True
+
 
 def test_history_dump():
     new_history = history.History()

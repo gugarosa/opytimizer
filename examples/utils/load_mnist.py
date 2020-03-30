@@ -5,31 +5,31 @@ from os import path
 
 import numpy as np
 
-MNIST_FILES = ["train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz",
+FILES_MNIST = ["train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz",
                "t10k-images-idx3-ubyte.gz", "t10k-labels-idx1-ubyte.gz"]
 
 
-def download(url, file_path):
+def download(url, file_name):
     # Creates the directory path for further downloading
-    dir_path = path.dirname(file_path)
+    dir_name = path.dirname(file_name)
 
-    # Checks if path exists
-    if not path.exists(dir_path):
+    # Checks if the path exists
+    if not path.exists(dir_name):
         # If not, create its directory
-        os.makedirs(dir_path)
+        os.makedirs(dir_name)
 
     # Retrieves the file
-    request.urlretrieve(url, file_path)
+    request.urlretrieve(url, file_name)
 
 
-def download_mnist(file_path):
+def download_mnist(file_name):
     # URL for MNIST dataset
     url = 'http://yann.lecun.com/exdb/mnist/'
 
-    # For each file
-    for mnist in MNIST_FILES:
+    # For each possible file
+    for mnist in FILES_MNIST:
         # We create a path to download the file
-        mnist_path = os.path.join(file_path, mnist)
+        mnist_path = os.path.join(file_name, mnist)
 
         # If the path does not exists
         if not path.exists(mnist_path):
@@ -37,9 +37,9 @@ def download_mnist(file_path):
             download(url + mnist, mnist_path)
 
 
-def load_single_mnist(mnist_dir, mnist_file, bits, shape):
+def load_single_mnist(dir_mnist, file_mnist, bits, shape):
     # Trying to open desired file
-    with gzip.open(os.path.join(mnist_dir, mnist_file)) as fd:
+    with gzip.open(os.path.join(dir_mnist, file_mnist)) as fd:
         # Reading to buffer
         buf = fd.read()
 
@@ -54,38 +54,38 @@ def load_single_mnist(mnist_dir, mnist_file, bits, shape):
 
 def load_mnist():
     # Directory to MNIST dataset
-    mnist_dir = 'datasets/mnist/'
+    dir_mnist = 'datasets/mnist/'
 
     # If there is no directory
-    if not path.exists(mnist_dir):
+    if not path.exists(dir_mnist):
         # Downloads the dataset
-        download_mnist(mnist_dir)
+        download_mnist(dir_mnist)
 
     # If there is a directory
     else:
         # Check if files have been downloaded
-        exists = [path.exists(os.path.join(mnist_dir, f)) for f in MNIST_FILES]
+        exists = [path.exists(os.path.join(dir_mnist, f)) for f in FILES_MNIST]
 
         # If they have not been downloaded
         if not np.all(exists):
             # Downloads the dataset
-            download_mnist(mnist_dir)
+            download_mnist(dir_mnist)
 
     # Loading training samples
     X_train = load_single_mnist(
-        mnist_dir, 'train-images-idx3-ubyte.gz', 16, (60000, 28 * 28)).astype(float)
+        dir_mnist, 'train-images-idx3-ubyte.gz', 16, (60000, 28 * 28)).astype(float)
 
     # Loading training labels
     Y_train = load_single_mnist(
-        mnist_dir, 'train-labels-idx1-ubyte.gz', 8, (60000))
+        dir_mnist, 'train-labels-idx1-ubyte.gz', 8, (60000))
 
     # Loading validation samples
     X_val = load_single_mnist(
-        mnist_dir, 't10k-images-idx3-ubyte.gz', 16, (10000, 28 * 28)).astype(float)
+        dir_mnist, 't10k-images-idx3-ubyte.gz', 16, (10000, 28 * 28)).astype(float)
 
     # Loading validation labels
     Y_val = load_single_mnist(
-        mnist_dir, 't10k-labels-idx1-ubyte.gz', 8, (10000))
+        dir_mnist, 't10k-labels-idx1-ubyte.gz', 8, (10000))
 
     # Normalizing samples
     X_train /= 255.

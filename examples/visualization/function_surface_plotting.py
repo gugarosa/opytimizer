@@ -21,4 +21,5 @@ points = np.asarray([x, y, z])
 
 # Plotting the surface
 s.plot(points, title='3-D Function Surface Plot',
-       subtitle='Sphere: $f(x, y) = x^2 + y^2$', style='winter', colorbar=True)
+       subtitle='Sphere: $f(x, y) = x^2 + y^2$',
+       style='winter', colorbar=True)

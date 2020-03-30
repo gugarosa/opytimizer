@@ -18,29 +18,38 @@ class History:
         """Initialization method.
 
         Args:
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
 
         """
 
+        # Whether only the best agent should be stored or not
         self.store_best_only = store_best_only
 
+    @property
+    def store_best_only(self):
+        """bool: Whether only the best agent should be stored in the class or not.
+
+        """
+
+        return self._store_best_only
+
+    @store_best_only.setter
+    def store_best_only(self, store_best_only):
+        if not isinstance(store_best_only, bool):
+            raise e.TypeError('`store_best_only` should be a boolean')
+
+        self._store_best_only = store_best_only
+
     def __str__(self):
-        """Prints in a formatted way the history of agents' throughout the
+        """Prints in a formatted way the history of best agents throughout the
         optimization task.
 
         """
 
         # For every iteration
-        for i, (agents, best) in enumerate(zip(self.agents, self.best_agent)):
-            print(f'\nIteration {i+1}/{len(self.agents)}')
-
-            # Iterating through every agent
-            for j, agent in enumerate(agents):
-                # Prints an agent
-                print(f'Agent[{j}]: {agent[0]} | Fitness: {agent[1]}')
-
-            # Prints the best agent so far
-            print(f'\nBest: {best[0]} | Fitness: {best[1]}')
+        for i, best in enumerate(self.best_agent):
+            print(f'\nIteration {i+1}/{len(self.best_agent)}')
+            print(f'\nPosition: {best[0]} | Fitness: {best[1]}')
 
         return ''
 
@@ -161,9 +170,9 @@ class History:
         """
 
         # Trying to open the file
-        with open(file_name, "rb") as origin_file:
+        with open(file_name, "rb") as input_file:
             # Loading History from file
-            h = pickle.load(origin_file)
+            h = pickle.load(input_file)
 
             # Updating all values
             self.__dict__.update(h.__dict__)
