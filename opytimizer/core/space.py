@@ -203,21 +203,15 @@ class Space:
 
         Also defines a random best agent, only for initialization purposes.
 
-        Returns:
-            A list of agents and a best agent.
-
         """
 
         logger.debug('Running private method: create_agents().')
 
         # Creating a list of agents
-        agents = [Agent(n_variables=self.n_variables, n_dimensions=self.n_dimensions)
-                  for _ in range(self.n_agents)]
+        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
 
         # Apply the first agent as the best one
-        best_agent = copy.deepcopy(agents[0])
-
-        return agents, best_agent
+        self.best_agent = copy.deepcopy(self.agents[0])
 
     def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
@@ -226,7 +220,7 @@ class Space:
         you will need to implement it directly on child's class.
 
         Raises:
-            NotImplementedError
+            NotImplementedError.
 
         """
 
@@ -253,13 +247,13 @@ class Space:
         self.ub = np.asarray(upper_bound)
 
         # Creating agents
-        self.agents, self.best_agent = self._create_agents()
+        self._create_agents()
 
         # If no errors were shown, we can declared the Space as built
         self.built = True
 
         # Logging attributes
         logger.debug(
-            f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions})'
-            + f' | Iterations: {self.n_iterations} | Lower Bound: {self.lb}'
-            + f' | Upper Bound: {self.ub} | Built: {self.built}.')
+            f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions}) | '
+            f'Iterations: {self.n_iterations} | Lower Bound: {self.lb} | '
+            f'Upper Bound: {self.ub} | Built: {self.built}.')

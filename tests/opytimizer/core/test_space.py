@@ -165,7 +165,7 @@ def test_space_ub_setter():
 def test_space_create_agents():
     new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
 
-    new_space.agents, new_space.best_agent = new_space._create_agents()
+    new_space._create_agents()
 
     assert len(new_space.agents) == 2
 

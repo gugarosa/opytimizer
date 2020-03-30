@@ -71,12 +71,11 @@ class Optimizer:
     def _update(self):
         """Updates the agents' position array.
 
-        As each optimizer child can have a different
-        procedure of update, you will need to implement
-        it directly on child's class.
+        As each optimizer child can have a different procedure of update,
+        you will need to implement it directly on child's class.
 
         Raises:
-            NotImplementedError
+            NotImplementedError.
 
         """
 
@@ -89,14 +88,13 @@ class Optimizer:
 
         Args:
             space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that
-                will be used as the objective function.
+            function (Function): A Function object serving as an objective function.
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in space.agents:
-            # Calculate the fitness value of current agent
+            # Calculate sthe fitness value of current agent
             agent.fit = function.pointer(agent.position)
 
             # If agent's fitness is better than global fitness
@@ -110,12 +108,17 @@ class Optimizer:
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
 
-        As each optimizer child can have a different
-        optimization pipeline, you will need to implement
-        it directly on child's class.
+        As each optimizer child can have a different optimization pipeline,
+        you will need to implement it directly on child's class.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): Method to be executed before evaluating the `function` being optimized.
 
         Raises:
-            NotImplementedError
+            NotImplementedError.
 
         """
 
