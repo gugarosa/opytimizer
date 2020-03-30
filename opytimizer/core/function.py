@@ -27,38 +27,35 @@ class Function:
 
         logger.info('Creating class: Function.')
 
-        # Defining a function property just for further inspection
-        self.function = pointer
+        # Defining a property to hold the function's name
+        self.name = pointer.__name__
 
         # Save the constraints for further inspection
         self.constraints = constraints
 
-        # Also, we need a callable to point to the actual function
-        self.pointer = self._wrapper(pointer, constraints)
+        # Also, we need to create a callable to point to the actual function
+        self._create_pointer(pointer, constraints)
 
         # Indicates whether the function is built or not
         self.built = True
 
         logger.info('Class created.')
-        logger.debug(
-            f'Fitness Function: {self.function.__name__} | Constraints: {self.constraints} | Built: {self.built}')
+        logger.debug(f'Function: {self.name} | Constraints: {self.constraints} | Built: {self.built}')
 
     @property
-    def function(self):
-        """callable: Fitness function to be used.
+    def name(self):
+        """str: Name of the function.
 
         """
 
-        return self._function
+        return self._name
 
-    @function.setter
-    def function(self, function):
-        if not callable(function):
-            raise e.TypeError('`function` should be a callable')
-        if len(signature(function).parameters) > 1:
-            raise e.ArgumentError('`function` should only have 1 argument')
+    @name.setter
+    def name(self, name):
+        if not isinstance(name, str):
+            raise e.TypeError('`name` should be a string')
 
-        self._function = function
+        self._name = name
 
     @property
     def constraints(self):
@@ -102,19 +99,21 @@ class Function:
     def built(self, built):
         self._built = built
 
-    def _wrapper(self, pointer, constraints):
+    def _create_pointer(self, pointer, constraints):
         """Wraps the fitness function if there are any constraints to be evaluated.
 
         Args:
             pointer (callable): Pointer to the actual function.
             constraints (list): Constraints to be applied.
 
-        Returns:
-            The value of the fitness function.
-
         """
 
-        def f(x):
+        # Checks if provided function has only one parameter
+        if len(signature(pointer).parameters) > 1:
+            # If not, raises an ArgumentError
+            raise e.ArgumentError('`pointer` should only have 1 argument')
+
+        def f_constrained(x):
             """Applies the constraints and penalizes the fitness function if one of them are not valid.
 
             Args:
@@ -140,5 +139,5 @@ class Function:
             # If all constraints are satisfied, return the fitness function
             return pointer(x)
 
-        # Returns the function
-        return f
+        # Applying to the pointer property the return of constrained function
+        self.pointer = f_constrained

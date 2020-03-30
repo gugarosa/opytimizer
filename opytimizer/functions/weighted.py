@@ -11,12 +11,13 @@ class WeightedFunction:
 
     """
 
-    def __init__(self, functions=[], weights=[]):
+    def __init__(self, functions=[], weights=[], constraints=[]):
         """Initialization method.
 
         Args:
             functions (list): Pointers to functions that will return the fitness value.
             weights (list): Weights for weighted sum strategy.
+            constraints (list): List of constraints to be applied to the fitness functions.
 
         """
 
@@ -29,7 +30,7 @@ class WeightedFunction:
         self.weights = weights
 
         # Now, we need to build this class up
-        self._build(functions)
+        self._build(functions, constraints)
 
         logger.info('Class created.')
 
@@ -63,7 +64,35 @@ class WeightedFunction:
 
         self._weights = weights
 
-    def _build(self, functions):
+    def _create_multi_objective(self):
+        """Creates a multi-objective strategy as the real pointer.
+
+        """
+
+        def f_weighted(x):
+            """Weights and sums the functions according to their weights.
+
+            Args:
+                x (np.array): Array to be evaluated.
+
+            Returns:
+                The value of the weighted function.
+
+            """
+            # Defining value to hold strategy
+            z = 0
+
+            # Iterates through every function
+            for (f, w) in zip(self.functions, self.weights):
+                # Applies w * f(x)
+                z += w * f.pointer(x)
+
+            return z
+
+        # Applying to the pointer property the return of weighted method
+        self.pointer = f_weighted
+
+    def _build(self, functions, constraints):
         """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
@@ -71,41 +100,20 @@ class WeightedFunction:
 
         Args:
             functions (list): Pointers to functions that will return the fitness value.
+            constraints (list): List of constraints to be applied to the fitness function.
 
         """
 
         logger.debug('Running private method: build().')
 
         # Populating pointers with real functions
-        self.functions = [Function(pointer=f) for f in functions]
+        self.functions = [Function(f, constraints) for f in functions]
 
         # Creating a multi-objective method strategy as the real pointer
-        self.pointer = self._create_strategy()
+        self._create_multi_objective()
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Functions: {[f.pointer.__name__ for f in self.functions]} | Weights: {self.weights} | Built: {self.built}')
-
-    def _create_strategy(self):
-        """Creates a multi-objective strategy as the real pointer.
-
-        Returns:
-            A callable based on the strategy.
-
-        """
-
-        def pointer(x):
-            # Defining value to hold strategy
-            z = 0
-
-            # Iterate through every function
-            for (f, w) in zip(self.functions, self.weights):
-                # Apply w * f(x)
-                z += w * f.pointer(x)
-
-            return z
-
-        return pointer
+        logger.debug(f'Functions: {[f.name for f in self.functions]} | Weights: {self.weights} | Built: {self.built}')

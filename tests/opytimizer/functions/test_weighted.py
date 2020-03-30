@@ -48,7 +48,7 @@ def test_weighted_build():
     assert new_weighted.built == True
 
 
-def test_weighted_create_strategy():
+def test_weighted_create_multi_objective():
     def square(x):
         return x**2
 
@@ -62,6 +62,6 @@ def test_weighted_create_strategy():
     new_weighted = weighted.WeightedFunction(
         functions=[square, cube], weights=[0.5, 0.5])
 
-    new_weighted.pointer = new_weighted._create_strategy()
+    new_weighted._create_multi_objective()
 
     assert new_weighted.pointer(2) == 6
