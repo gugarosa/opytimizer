@@ -16,7 +16,8 @@ class BHA(Optimizer):
     variables and methods.
 
     References:
-        A. Hatamlou. Black hole: A new heuristic optimization approach for data clustering. Information Sciences (2013).
+        A. Hatamlou. Black hole: A new heuristic optimization approach for data clustering.
+        Information Sciences (2013).
 
     """
 
@@ -32,7 +33,7 @@ class BHA(Optimizer):
         logger.info('Overriding class: Optimizer -> BHA.')
 
         # Override its parent class with the receiving hyperparams
-        super(BHA, self).__init__(algorithm=algorithm)
+        super(BHA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build()
@@ -53,8 +54,7 @@ class BHA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Built: {self.built}.')
+        logger.debug(f'Algorithm: {self.algorithm} | Built: {self.built}.')
 
     def _update_position(self, agents, best_agent, function):
         """It updates every star position and calculates their event's horizon cost.
@@ -75,7 +75,7 @@ class BHA(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Generate an uniform random number
-            r1 = r.generate_uniform_random_number(0, 1)
+            r1 = r.generate_uniform_random_number()
 
             # Updates agent's position according to Equation 3
             agent.position += r1 * (best_agent.position - agent.position)
@@ -147,9 +147,8 @@ class BHA(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.

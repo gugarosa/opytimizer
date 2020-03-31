@@ -34,8 +34,7 @@ class Opytimizer:
         self.function = function
 
         # We will log some important information
-        logger.debug(
-            f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}.')
+        logger.debug(f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}.')
 
         logger.info('Class created.')
 
@@ -88,9 +87,8 @@ class Opytimizer:
         """Starts the optimization task.
 
         Args
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object describing the agents position and best fitness values
@@ -104,7 +102,7 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        opt_history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation_hook)
+        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation_hook)
 
         # Ending timer
         end = time.time()
@@ -113,9 +111,9 @@ class Opytimizer:
         opt_time = end - start
 
         # Dumping the elapsed time to optimization history
-        opt_history.dump(time=opt_time)
+        history.dump(time=opt_time)
 
         logger.info('Optimization task ended.')
         logger.info(f'It took {opt_time} seconds.')
 
-        return opt_history
+        return history

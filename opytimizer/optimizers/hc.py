@@ -30,7 +30,7 @@ class HC(Optimizer):
         logger.info('Overriding class: Optimizer -> HC.')
 
         # Override its parent class with the receiving hyperparams
-        super(HC, self).__init__(algorithm=algorithm)
+        super(HC, self).__init__(algorithm)
 
         # Mean of noise distribution
         self.r_mean = 0
@@ -104,7 +104,9 @@ class HC(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: r_mean = {self.r_mean}, r_var = {self.r_var} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | '
+            f'Hyperparameters: r_mean = {self.r_mean}, r_var = {self.r_var} | '
+            f'Built: {self.built}.')
 
     def _update(self, agents):
         """Method that wraps Hill Climbing over all agents and variables.
@@ -129,9 +131,8 @@ class HC(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.

@@ -19,7 +19,9 @@ class ABC(Optimizer):
     variables and methods.
 
     References:
-        D. Karaboga and B. Basturk. A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm. Journal of Global Optimization (2007). 
+        D. Karaboga and B. Basturk.
+        A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm.
+        Journal of Global Optimization (2007). 
 
     """
 
@@ -35,7 +37,7 @@ class ABC(Optimizer):
         logger.info('Overriding class: Optimizer -> ABC.')
 
         # Override its parent class with the receiving hyperparams
-        super(ABC, self).__init__(algorithm=algorithm)
+        super(ABC, self).__init__(algorithm)
 
         # Number of trial limits
         self.n_trials = 10
@@ -88,8 +90,7 @@ class ABC(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: n_trials = {self.n_trials}.')
+        logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: n_trials = {self.n_trials}.')
 
     def _evaluate_location(self, agent, neighbour, function, trial):
         """Evaluates a food source location and update its value if possible.
@@ -112,8 +113,7 @@ class ABC(Optimizer):
         a = copy.deepcopy(agent)
 
         # Change its location according to equation 2.2
-        a.position = agent.position + \
-            (agent.position - neighbour.position) * r1
+        a.position = agent.position + (agent.position - neighbour.position) * r1
 
         # Check agent limits
         a.clip_limits()
@@ -179,7 +179,7 @@ class ABC(Optimizer):
             # We iterate through every agent
             for i, agent in enumerate(agents):
                 # Creates a random uniform number
-                r1 = r.generate_uniform_random_number(0, 1)
+                r1 = r.generate_uniform_random_number()
 
                 # Calculates the food source's probability
                 probs = (agent.fit / (total + c.EPSILON)) + 0.1
@@ -257,9 +257,8 @@ class ABC(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.

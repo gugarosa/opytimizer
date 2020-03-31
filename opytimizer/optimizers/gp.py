@@ -35,7 +35,7 @@ class GP(Optimizer):
         logger.info('Overriding class: Optimizer -> GP.')
 
         # Override its parent class with the receiving hyperparams
-        super(GP, self).__init__(algorithm=algorithm)
+        super(GP, self).__init__(algorithm)
 
         # Probability of reproduction
         self.p_reproduction = 0.25
@@ -151,7 +151,10 @@ class GP(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, p_crossover = {self.p_crossover}, prunning_ratio = {self.prunning_ratio} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | '
+            f'Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, '
+            f'p_crossover = {self.p_crossover}, prunning_ratio = {self.prunning_ratio} | '
+            f'Built: {self.built}.')
 
     def _prune_nodes(self, n_nodes):
         """Prunes the amount of possible nodes used for mutation and crossover.
@@ -464,7 +467,7 @@ class GP(Optimizer):
 
         """
 
-        # Iterate through all (trees, agents)
+        # Iterates through all (trees, agents)
         for i, (tree, agent) in enumerate(zip(space.trees, space.agents)):
             # Runs through the tree and returns a position array
             agent.position = copy.deepcopy(tree.position)
@@ -492,9 +495,8 @@ class GP(Optimizer):
         Args:
             space (TreeSpace): A TreeSpace object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -529,7 +531,8 @@ class GP(Optimizer):
 
             # Every iteration, we need to dump agents and best agent
             history.dump(agents=space.agents,
-                         best_agent=space.best_agent, best_tree=space.best_tree)
+                         best_agent=space.best_agent,
+                         best_tree=space.best_tree)
 
             logger.info(f'Fitness: {space.best_agent.fit}')
             logger.info(f'Position: {space.best_agent.position}')

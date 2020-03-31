@@ -16,7 +16,9 @@ class WCA(Optimizer):
     variables and methods.
 
     References:
-        H. Eskandar. Water cycle algorithm – A novel metaheuristic optimization method for solving constrained engineering optimization problems. Computers & Structures (2012). 
+        H. Eskandar.
+        Water cycle algorithm – A novel metaheuristic optimization method for solving constrained engineering optimization problems.
+        Computers & Structures (2012). 
 
     """
 
@@ -32,7 +34,7 @@ class WCA(Optimizer):
         logger.info('Overriding class: Optimizer -> WCA.')
 
         # Override its parent class with the receiving hyperparams
-        super(WCA, self).__init__(algorithm=algorithm)
+        super(WCA, self).__init__(algorithm)
 
         # Number of rivers + sea
         self.nsr = 2
@@ -108,7 +110,8 @@ class WCA(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: nsr = {self.nsr}, d_max = {self.d_max} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | '
+            f'Hyperparameters: nsr = {self.nsr}, d_max = {self.d_max} | Built: {self.built}.')
 
     def _flow_intensity(self, agents):
         """Calculates the intensity of each possible flow.
@@ -231,9 +234,8 @@ class WCA(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.

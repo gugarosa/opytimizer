@@ -155,8 +155,8 @@ class IHS(HS):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): A function that receives the optimizer, space and function
                 and returns None. This function is executed before evaluating the function being optimized.
 
         Returns:

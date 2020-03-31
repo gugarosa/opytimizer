@@ -16,7 +16,8 @@ class SCA(Optimizer):
     variables and methods.
 
     References:
-        S. Mirjalili. SCA: A Sine Cosine Algorithm for solving optimization problems. Knowledge-Based Systems (2016).
+        S. Mirjalili. SCA: A Sine Cosine Algorithm for solving optimization problems.
+        Knowledge-Based Systems (2016).
 
     """
 
@@ -32,7 +33,7 @@ class SCA(Optimizer):
         logger.info('Overriding class: Optimizer -> SCA.')
 
         # Override its parent class with the receiving hyperparams
-        super(SCA, self).__init__(algorithm=algorithm)
+        super(SCA, self).__init__(algorithm)
 
         # Minimum function range
         self.r_min = 0
@@ -132,7 +133,9 @@ class SCA(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: r_min = {self.r_min}, r_max = {self.r_max}, a = {self.a} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | '
+            f'Hyperparameters: r_min = {self.r_min}, r_max = {self.r_max}, a = {self.a} | '
+            f'Built: {self.built}.')
 
     def _update_position(self, agent_position, best_position, r1, r2, r3, r4):
         """Updates a single particle position (over a single variable).
@@ -200,9 +203,8 @@ class SCA(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -225,8 +227,7 @@ class SCA(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.best_agent,
-                         function, t, space.n_iterations)
+            self._update(space.agents, space.best_agent, function, t, space.n_iterations)
 
             # Checking if agents meets the bounds limits
             space.clip_limits()

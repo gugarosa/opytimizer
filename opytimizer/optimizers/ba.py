@@ -18,7 +18,8 @@ class BA(Optimizer):
     variables and methods.
 
     References:
-        X.-S. Yang. A new metaheuristic bat-inspired algorithm. Nature inspired cooperative strategies for optimization (2010).
+        X.-S. Yang. A new metaheuristic bat-inspired algorithm.
+        Nature inspired cooperative strategies for optimization (2010).
 
     """
 
@@ -34,7 +35,7 @@ class BA(Optimizer):
         logger.info('Overriding class: Optimizer -> BA.')
 
         # Override its parent class with the receiving hyperparams
-        super(BA, self).__init__(algorithm=algorithm)
+        super(BA, self).__init__(algorithm)
 
         # Minimum frequency range
         self.f_min = 0
@@ -156,7 +157,9 @@ class BA(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | Built: {self.built}.')
+            f'Algorithm: {self.algorithm} | '
+            f'Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | '
+            f'Built: {self.built}.')
 
     def _update_frequency(self, min_frequency, max_frequency):
         """Updates an agent frequency.
@@ -194,8 +197,7 @@ class BA(Optimizer):
         """
 
         # Calculates new velocity
-        new_velocity = velocity + \
-            (position - best_position) * frequency
+        new_velocity = velocity + (position - best_position) * frequency
 
         return new_velocity
 
@@ -256,8 +258,7 @@ class BA(Optimizer):
             if p > pulse_rate[i]:
                 # Performing a local random walk (Equation 5)
                 # We apply 0.001 to limit the step size
-                agent.position = best_agent.position + \
-                    0.001 * e * np.mean(loudness)
+                agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
 
             # Checks agent limits
             agent.clip_limits()
@@ -282,9 +283,8 @@ class BA(Optimizer):
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (boolean): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (function): A function that receives the optimizer, space and function
-                and returns None. This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
