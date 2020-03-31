@@ -1,5 +1,7 @@
 import copy
 
+import numpy as np
+
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
