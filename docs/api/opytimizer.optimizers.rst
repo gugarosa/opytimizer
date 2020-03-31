@@ -5,7 +5,6 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
 
 .. toctree::
     opytimizer.optimizers.abc
-    opytimizer.optimizers.aiwpso
     opytimizer.optimizers.ba
     opytimizer.optimizers.bha
     opytimizer.optimizers.cs
@@ -15,9 +14,7 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
     opytimizer.optimizers.gsa
     opytimizer.optimizers.hc
     opytimizer.optimizers.hs
-    opytimizer.optimizers.ihs
     opytimizer.optimizers.pso
-    opytimizer.optimizers.rpso
     opytimizer.optimizers.sa
     opytimizer.optimizers.sca
     opytimizer.optimizers.wca

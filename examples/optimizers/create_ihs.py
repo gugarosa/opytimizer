@@ -1,4 +1,4 @@
-from opytimizer.optimizers.ihs import IHS
+from opytimizer.optimizers.hs import IHS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

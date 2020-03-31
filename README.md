@@ -73,7 +73,6 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - random
     - optimizers
         - abc
-        - aiwpso
         - ba
         - bha
         - cs
@@ -83,9 +82,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - gsa
         - hc
         - hs
-        - ihs
         - pso
-        - rpso
         - sa
         - sca
         - wca

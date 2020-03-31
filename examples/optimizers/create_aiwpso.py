@@ -1,4 +1,4 @@
-from opytimizer.optimizers.aiwpso import AIWPSO
+from opytimizer.optimizers.pso import AIWPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
