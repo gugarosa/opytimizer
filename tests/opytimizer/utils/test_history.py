@@ -5,6 +5,7 @@ import pytest
 from opytimizer.core import agent
 from opytimizer.utils import history
 
+
 def test_history_store_best_only():
     new_history = history.History()
 

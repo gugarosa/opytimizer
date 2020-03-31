@@ -3,8 +3,8 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
-from opytimizer.utils import constants
 from opytimizer.core.optimizer import Optimizer
+from opytimizer.utils import constants
 
 logger = l.get_logger(__name__)
 

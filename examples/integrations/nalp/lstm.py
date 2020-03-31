@@ -1,16 +1,16 @@
 import tensorflow as tf
 from nalp.corpus.text import TextCorpus
-from nalp.datasets.next import NextDataset
+from nalp.datasets.language_modeling import LanguageModelingDataset
 from nalp.encoders.integer import IntegerEncoder
-from nalp.models.lstm import LSTM
+from nalp.models.generators.lstm import LSTMGenerator
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Creating a character TextCorpus from file
-corpus = TextCorpus(
-    from_file='examples/integrations/nalp/chapter1_harry.txt', type='char')
+corpus = TextCorpus(from_file='examples/integrations/nalp/chapter1_harry.txt', type='char')
 
 # Creating an IntegerEncoder
 encoder = IntegerEncoder()
@@ -21,8 +21,8 @@ encoder.learn(corpus.vocab_index, corpus.index_vocab)
 # Applies the encoding on new data
 encoded_tokens = encoder.encode(corpus.tokens)
 
-# Creating next target Dataset
-dataset = NextDataset(encoded_tokens, max_length=10, batch_size=64)
+# Creating Language Modeling Dataset
+dataset = LanguageModelingDataset(encoded_tokens, max_length=10, batch_size=64)
 
 
 def lstm(opytimizer):
@@ -31,17 +31,15 @@ def lstm(opytimizer):
     learning_rate = opytimizer[0][0]
 
     # Creating the LSTM
-    lstm = LSTM(vocab_size=corpus.vocab_size,
-              embedding_size=256, hidden_size=512)
+    lstm = LSTMGenerator(vocab_size=corpus.vocab_size, embedding_size=256, hidden_size=512)
 
-    # As NALP's LSTM are stateful, we need to build it with a fixed batch size
+    # As NALP's LSTMs are stateful, we need to build it with a fixed batch size
     lstm.build((64, None))
 
     # Compiling the LSTM
-    lstm.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(
-                    from_logits=True),
-                metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy')])
+    lstm.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
+                loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=[tf.metrics.SparseCategoricalAccuracy(name='accuracy')])
 
     # Fitting the LSTM
     history = lstm.fit(dataset.batches, epochs=100)

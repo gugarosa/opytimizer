@@ -1,4 +1,5 @@
 import numpy as np
+
 from opytimizer.core.node import Node
 
 # Creating two new Nodes

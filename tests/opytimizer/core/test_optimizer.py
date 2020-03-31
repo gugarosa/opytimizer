@@ -4,11 +4,11 @@ import numpy as np
 import pytest
 
 from opytimizer import Opytimizer
-from opytimizer.spaces import search
-from opytimizer.optimizers.pso import PSO
-from opytimizer.spaces.search import SearchSpace
-from opytimizer.core.function import Function
 from opytimizer.core import function, optimizer
+from opytimizer.core.function import Function
+from opytimizer.optimizers.pso import PSO
+from opytimizer.spaces import search
+from opytimizer.spaces.search import SearchSpace
 
 
 def test_optimizer_algorithm():

@@ -6,6 +6,7 @@ from opytimizer.math import benchmark
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
+
 # Defining a constraint function for further usage
 # Note that it needs to return a boolean whether the
 # constraint is valid or not

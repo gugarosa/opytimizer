@@ -1,13 +1,13 @@
 import numpy as np
+import opfython.math.general as g
+import opfython.stream.splitter as s
+from opfython.models.unsupervised import UnsupervisedOPF
+from sklearn.datasets import load_digits
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-from sklearn.datasets import load_digits
-
-import opfython.math.general as g
-import opfython.stream.splitter as s
-from opfython.models.unsupervised import UnsupervisedOPF
 
 # Loading digits dataset
 digits = load_digits()
@@ -40,7 +40,7 @@ def unsupervised_opf_clustering(opytimizer):
     opf.propagate_labels()
 
     # Predicts new data
-    preds = opf.predict(X_test)
+    preds, _ = opf.predict(X_test)
 
     # Calculating accuracy
     acc = g.opf_accuracy(Y_test, preds)

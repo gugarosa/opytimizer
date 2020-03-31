@@ -1,11 +1,12 @@
 import gc
 
 import tensorflow as tf
+from tensorflow.keras import datasets, layers, models, optimizers
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-from tensorflow.keras import datasets, layers, models, optimizers
 
 # Loading CIFAR-10 data
 (X_train, Y_train), (X_val, Y_val) = datasets.cifar10.load_data()
