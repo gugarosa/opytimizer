@@ -18,7 +18,8 @@ class GS(Optimizer):
     variables and methods.
 
     References:
-
+    J. Bergstra, and Y. Bengio. Random search for hyper-parameter optimization.
+    Journal of machine learning research (2012).
 
     """
 

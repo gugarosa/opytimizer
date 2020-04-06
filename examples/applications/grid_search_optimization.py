@@ -15,9 +15,10 @@ lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
 # Creating the GridSpace class
-s = GridSpace(n_variables=n_variables, step=step, lower_bound=lower_bound, upper_bound=upper_bound)
+s = GridSpace(n_variables=n_variables, step=step,
+              lower_bound=lower_bound, upper_bound=upper_bound)
 
-# Creating grid search optimizer
+# Creating GS optimizer
 p = GS()
 
 # Creating Function's object
