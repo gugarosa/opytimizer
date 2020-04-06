@@ -57,8 +57,8 @@ class GridSpace(Space):
     def step(self, step):
         if not (isinstance(step, float) or isinstance(step, int)):
             raise e.TypeError('`step` should be a float or integer')
-        if step < 0:
-            raise e.ValueError('`step` should be >= 0')
+        if step <= 0:
+            raise e.ValueError('`step` should be > 0')
 
         self._step = step
 
