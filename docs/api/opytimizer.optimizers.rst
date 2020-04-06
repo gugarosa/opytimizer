@@ -11,6 +11,7 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
     opytimizer.optimizers.fa
     opytimizer.optimizers.fpa
     opytimizer.optimizers.gp
+    opytimizer.optimizers.gs
     opytimizer.optimizers.gsa
     opytimizer.optimizers.hc
     opytimizer.optimizers.hs

@@ -18,7 +18,7 @@ class GS(Optimizer):
     variables and methods.
 
     References:
-        
+
 
     """
 

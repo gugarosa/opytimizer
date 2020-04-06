@@ -79,6 +79,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - fa
         - fpa
         - gp
+        - gs
         - gsa
         - hc
         - hs
@@ -87,6 +88,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - sca
         - wca
     - spaces
+        - grid
         - hyper
         - search
         - tree
