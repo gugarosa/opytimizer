@@ -1,9 +1,5 @@
-import copy
-
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer

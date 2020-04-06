@@ -64,7 +64,7 @@ class GridSpace(Space):
 
     @property
     def grid(self):
-        """list: Possible search options.
+        """list: Grid with possible searching values.
 
         """
 
