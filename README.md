@@ -83,9 +83,11 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - gsa
         - hc
         - hs
+        - iwo
         - pso
         - sa
         - sca
+        - ssdo
         - wca
     - spaces
         - grid

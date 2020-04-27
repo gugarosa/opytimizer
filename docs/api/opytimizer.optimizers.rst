@@ -15,9 +15,11 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
     opytimizer.optimizers.gsa
     opytimizer.optimizers.hc
     opytimizer.optimizers.hs
+    opytimizer.optimizers.iwo
     opytimizer.optimizers.pso
     opytimizer.optimizers.sa
     opytimizer.optimizers.sca
+    opytimizer.optimizers.ssdo
     opytimizer.optimizers.wca
 
 .. automodule:: opytimizer.optimizers

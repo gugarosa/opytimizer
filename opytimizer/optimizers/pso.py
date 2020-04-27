@@ -173,7 +173,7 @@ class PSO(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based PSO's paper position update equation.
+            A new position based on PSO's paper position update equation.
 
         """
 
