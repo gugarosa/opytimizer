@@ -67,14 +67,14 @@ class AEO(Optimizer):
             n_iterations (int): Maximum number of iterations.
 
         Returns:
-            An updated producer.
+            An updated producer according to AEO's paper equation 1.
 
         """
 
         # Makes a deep copy of agent
         a = copy.deepcopy(agent)
 
-        # Calculates the alpha factor
+        # Calculates the alpha factor (equation 2)
         alpha = (1 - iteration / n_iterations) * r.generate_uniform_random_number()
 
         # For every possible decision variable
@@ -93,7 +93,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by a herbivore.
+            An updated consumption by a herbivore according to AEO's paper equation 6.
 
         """
 
@@ -115,7 +115,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by an omnivore.
+            An updated consumption by an omnivore according to AEO's paper equation 8.
 
         """
         
@@ -139,7 +139,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by a carnivore.
+            An updated consumption by a carnivore according to AEO's paper equation 7.
 
         """
 
@@ -185,7 +185,7 @@ class AEO(Optimizer):
                 # Generates another gaussian random number
                 v2 = r.generate_gaussian_random_number()
                 
-                # Calculates the consumption factor
+                # Calculates the consumption factor (equation 4)
                 C = 0.5 * v1 / np.abs(v2)
 
                 # If random number lies in the first third
@@ -224,7 +224,7 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)  
 
     def _update_decomposition(self, agents, best_agent, function):
-        """Method that wraps decomposition updates over all agents and variables.
+        """Method that wraps decomposition updates over all agents and variables according to AEO's paper equation 9.
 
         Args:
             agents (list): List of agents.
@@ -238,16 +238,16 @@ class AEO(Optimizer):
             # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Calculates the decomposition factor
+            # Calculates the decomposition factor (equation 10)
             D = 3 * r.generate_gaussian_random_number()
 
             # Generates the third random number
             r3 = r.generate_uniform_random_number()
 
-            # First weight coefficient
+            # First weight coefficient (equation 11)
             e = r3 * int(r.generate_uniform_random_number(1, 2)) - 1
 
-            # Second weight coefficient
+            # Second weight coefficient (equation 12)
             h = 2 * r3 - 1
 
             # Updates the new agent position
