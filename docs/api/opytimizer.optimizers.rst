@@ -5,11 +5,13 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
 
 .. toctree::
     opytimizer.optimizers.abc
+    opytimizer.optimizers.aeo
     opytimizer.optimizers.ba
     opytimizer.optimizers.bha
     opytimizer.optimizers.cs
     opytimizer.optimizers.fa
     opytimizer.optimizers.fpa
+    opytimizer.optimizers.gco
     opytimizer.optimizers.gp
     opytimizer.optimizers.gs
     opytimizer.optimizers.gsa

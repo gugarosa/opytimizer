@@ -226,7 +226,7 @@ class IWO(Optimizer):
         return a
 
     def _update(self, agents, n_agents, function):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps offsprings generations over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -241,7 +241,7 @@ class IWO(Optimizer):
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        # For every agent
+        # Iterate through all agents
         for agent in agents:
             # Calculate the seeding ratio based on its fitness
             ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit)
