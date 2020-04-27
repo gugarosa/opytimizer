@@ -1,6 +1,5 @@
 import torchvision
 from learnergy.models.dropout_rbm import DropoutRBM
-
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.pso import PSO

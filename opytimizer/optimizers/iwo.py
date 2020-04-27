@@ -1,7 +1,7 @@
 import copy
 
-import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -17,8 +17,9 @@ class IWO(Optimizer):
     variables and methods.
 
     References:
+        A. R. Mehrabian and C. Lucas. A novel numerical optimization algorithm inspired from weed colonization.
+        Ecological informatics (2006).
         
-
     """
 
     def __init__(self, algorithm='IWO', hyperparams={}):
@@ -33,22 +34,20 @@ class IWO(Optimizer):
         # Override its parent class with the receiving hyperparams
         super(IWO, self).__init__(algorithm)
 
+        # Minimum number of seeds
         self.min_seeds = 0
 
+        # Maximum number of seeds
         self.max_seeds = 5
 
-        self.init_sigma = 0.5
+        # Exponent to calculate the Spatial Dispersal
+        self.e = 2
 
-        self.end_sigma = 0.001
+        # Final standard deviation
+        self.final_sigma = 0.001
 
-        # Lévy flight control parameter
-        self.beta = 1.5
-
-        # Lévy flight scaling factor
-        self.eta = 0.2
-
-        # Probability of local pollination
-        self.p = 0.8
+        # Initial standard deviation
+        self.init_sigma = 3
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -56,55 +55,92 @@ class IWO(Optimizer):
         logger.info('Class overrided.')
 
     @property
-    def beta(self):
-        """float: Lévy flight control parameter.
+    def min_seeds(self):
+        """int: Minimum number of seeds.
 
         """
 
-        return self._beta
+        return self._min_seeds
 
-    @beta.setter
-    def beta(self, beta):
-        if not (isinstance(beta, float) or isinstance(beta, int)):
-            raise e.TypeError('`beta` should be a float or integer')
-        if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+    @min_seeds.setter
+    def min_seeds(self, min_seeds):
+        if not isinstance(min_seeds, int):
+            raise e.TypeError('`min_seeds` should be an integer')
+        if min_seeds < 0:
+            raise e.ValueError('`min_seeds` should be >= 0')
 
-        self._beta = beta
+        self._min_seeds = min_seeds
 
     @property
-    def eta(self):
-        """float: Lévy flight scaling factor.
+    def max_seeds(self):
+        """int: Maximum number of seeds.
 
         """
 
-        return self._eta
+        return self._max_seeds
 
-    @eta.setter
-    def eta(self, eta):
-        if not (isinstance(eta, float) or isinstance(eta, int)):
-            raise e.TypeError('`eta` should be a float or integer')
-        if eta < 0:
-            raise e.ValueError('`eta` should be >= 0')
+    @max_seeds.setter
+    def max_seeds(self, max_seeds):
+        if not isinstance(max_seeds, int):
+            raise e.TypeError('`max_seeds` should be an integer')
+        if max_seeds < self.min_seeds:
+            raise e.ValueError('`max_seeds` should be >= `min_seeds`')
 
-        self._eta = eta
+        self._max_seeds = max_seeds
 
     @property
-    def p(self):
-        """float: Probability of local pollination.
+    def e(self):
+        """float: Exponent used to calculate the Spatial Dispersal.
 
         """
 
-        return self._p
+        return self._e
 
-    @p.setter
-    def p(self, p):
-        if not (isinstance(p, float) or isinstance(p, int)):
-            raise e.TypeError('`p` should be a float or integer')
-        if p < 0 or p > 1:
-            raise e.ValueError('`p` should be between 0 and 1')
+    @e.setter
+    def e(self, e):
+        if not (isinstance(e, float) or isinstance(e, int)):
+            raise e.TypeError('`e` should be a float or integer')
+        if e < 0:
+            raise e.ValueError('`e` should be >= 0')
 
-        self._p = p
+        self._e = e
+
+    @property
+    def final_sigma(self):
+        """float: Final standard deviation.
+
+        """
+
+        return self._final_sigma
+
+    @final_sigma.setter
+    def final_sigma(self, final_sigma):
+        if not (isinstance(final_sigma, float) or isinstance(final_sigma, int)):
+            raise e.TypeError('`final_sigma` should be a float or integer')
+        if final_sigma < 0:
+            raise e.ValueError('`final_sigma` should be >= 0')
+
+
+        self._final_sigma = final_sigma
+
+    @property
+    def init_sigma(self):
+        """float: Initial standard deviation.
+
+        """
+
+        return self._init_sigma
+
+    @init_sigma.setter
+    def init_sigma(self, init_sigma):
+        if not (isinstance(init_sigma, float) or isinstance(init_sigma, int)):
+            raise e.TypeError('`init_sigma` should be a float or integer')
+        if init_sigma < 0:
+            raise e.ValueError('`init_sigma` should be >= 0')
+        if init_sigma < self.final_sigma:
+            raise e.ValueError('`init_sigma` should be >= `final_sigma`')
+
+        self._init_sigma = init_sigma
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
@@ -125,12 +161,16 @@ class IWO(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'beta' in hyperparams:
-                self.beta = hyperparams['beta']
-            if 'eta' in hyperparams:
-                self.eta = hyperparams['eta']
-            if 'p' in hyperparams:
-                self.p = hyperparams['p']
+            if 'min_seeds' in hyperparams:
+                self.min_seeds = hyperparams['min_seeds']
+            if 'max_seeds' in hyperparams:
+                self.max_seeds = hyperparams['max_seeds']
+            if 'e' in hyperparams:
+                self.e = hyperparams['e']
+            if 'final_sigma' in hyperparams:
+                self.final_sigma = hyperparams['final_sigma']
+            if 'init_sigma' in hyperparams:
+                self.init_sigma = hyperparams['init_sigma']
 
         # Set built variable to 'True'
         self.built = True
@@ -138,57 +178,92 @@ class IWO(Optimizer):
         # Logging attributes
         logger.debug(
             f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | '
+            f'Hyperparameters: min_seeds = {self.min_seeds}, max_seeds = {self.max_seeds}, e = {self.e}, '
+            f'init_sigma = {self.init_sigma}, final_sigma = {self.final_sigma} | '
             f'Built: {self.built}.')
+
+    def _spatial_dispersal(self, iteration, n_iterations):
+        """Calculates the Spatial Dispersal coefficient.
+
+        Args:
+            iteration (int): Current iteration number.
+            n_iterations (int): Maximum number of iterations.
+
+        """
+
+        # Calculating the iteration coefficient
+        coef = ((n_iterations - iteration) ** self.e) / ((n_iterations + c.EPSILON) ** self.e)
+
+        # Updating the Spatial Dispersial
+        self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
+
+    def _reproduce_offspring(self, agent, function):
+        """Reproduces and flowers a seed into a new offpsring.
+
+        Args:
+            agent (Agent): An agent instance to be reproduced.
+            function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            An evolved offspring.
+
+        """
+
+        # Makea a deepcopy on selected agent
+        a = copy.deepcopy(agent)
+
+        # For every possible decision variable
+        for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
+            # Updates its position
+            a.position[j] += self.sigma * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+
+        # Clips its limits
+        a.clip_limits()
+
+        # Calculates its fitness
+        a.fit = function.pointer(a.position)
+
+        return a
 
     def _update(self, agents, n_agents, function):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            n_agents (int): Number of possible agents in the space.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
-        new_agents = []
+        # Creating a list for the produced offsprings
+        offsprings = []
 
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        #
+        # For every agent
         for agent in agents:
-            #
+            # Calculate the seeding ratio based on its fitness
             ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit)
 
-            # print(ratio)
-
-            #
+            # Calculates the number of produced seeds
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)
 
-            #
+            # For every seed
             for _ in range(n_seeds):
-                #
-                a = copy.deepcopy(agent)
+                # Reproduces and flowers the seed into a new agent
+                a = self._reproduce_offspring(agent, function)
 
-                for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-                    a.position[j] += self.sigma * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+                # Appends the agent to the offsprings
+                offsprings.append(a)
 
-                #
-                a.fit = function.pointer(a.position)
+        # Joins both populations
+        agents += offsprings
 
-                #
-                new_agents.append(a)
-
-        #
-        agents += new_agents
-
-        #
+        # Performs a new sort on the merged population
         agents.sort(key=lambda x: x.fit)
 
-        #
         return agents[:n_agents]
-
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
@@ -219,8 +294,8 @@ class IWO(Optimizer):
         for t in range(space.n_iterations):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
-            #
-            self.sigma = ((space.n_iterations - t) / (space.n_iterations - 1)) ** 2 * (self.init_sigma - self.end_sigma) + self.end_sigma
+            # Calculates the current Spatial Dispersal
+            self._spatial_dispersal(t, space.n_iterations)
 
             # Updating agents
             space.agents = self._update(space.agents, space.n_agents, function)
