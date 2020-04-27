@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.ssdo import SSDO
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -16,7 +16,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 1000
+n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -29,13 +29,11 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
+    'c': 2.0
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = SSDO(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)
