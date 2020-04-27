@@ -11,10 +11,10 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class SSDO(Optimizer):
-    """An SSDO class, inherited from Optimizer.
+class SSD(Optimizer):
+    """An SSD class, inherited from Optimizer.
 
-    This is the designed class to define SSDO-related
+    This is the designed class to define SSD-related
     variables and methods.
 
     References:
@@ -24,7 +24,7 @@ class SSDO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SSDO', hyperparams={}):
+    def __init__(self, algorithm='SSD', hyperparams={}):
         """Initialization method.
 
         Args:
@@ -33,10 +33,10 @@ class SSDO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SSDO.')
+        logger.info('Overriding class: Optimizer -> SSD.')
 
         # Override its parent class with the receiving hyperparams
-        super(SSDO, self).__init__(algorithm)
+        super(SSD, self).__init__(algorithm)
 
         # Exploration parameter
         self.c = 2.0
@@ -123,7 +123,7 @@ class SSDO(Optimizer):
             gamma (np.array): 3rd agent's current position.
 
         Returns:
-            Mean global solution based on SSDO's paper mean global solution equation.
+            Mean global solution based on SSD's paper mean global solution equation.
 
         """
 
@@ -140,7 +140,7 @@ class SSDO(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on SSDO's paper position update equation.
+            A new position based on SSD's paper position update equation.
 
         """
 
@@ -159,7 +159,7 @@ class SSDO(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new velocity based on SSDO's paper velocity update equation.
+            A new velocity based on SSD's paper velocity update equation.
 
         """
 

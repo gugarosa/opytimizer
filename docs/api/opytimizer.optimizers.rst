@@ -19,7 +19,7 @@ This is why we are called Opytimizer. This is the heart of the heuristics, where
     opytimizer.optimizers.pso
     opytimizer.optimizers.sa
     opytimizer.optimizers.sca
-    opytimizer.optimizers.ssdo
+    opytimizer.optimizers.ssd
     opytimizer.optimizers.wca
 
 .. automodule:: opytimizer.optimizers
