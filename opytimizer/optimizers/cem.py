@@ -18,7 +18,7 @@ class CEM(Optimizer):
     References:
         R. Y. Rubinstein. Optimization of Computer simulation Models with Rare Events.
         European Journal of Operations Research (1997).
-        
+
     """
 
     def __init__(self, algorithm='CEM', hyperparams={}):
