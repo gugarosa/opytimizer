@@ -1,7 +1,7 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.optimizers import sca
+from opytimizer.optimizers.swarm import sca
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 

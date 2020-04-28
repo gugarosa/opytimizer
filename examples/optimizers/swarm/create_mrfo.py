@@ -1,4 +1,4 @@
-from opytimizer.optimizers.mrfo import MRFO
+from opytimizer.optimizers.swarm.mrfo import MRFO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

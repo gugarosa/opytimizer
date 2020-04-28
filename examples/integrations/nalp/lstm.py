@@ -5,7 +5,7 @@ from nalp.encoders.integer import IntegerEncoder
 from nalp.models.generators.lstm import LSTMGenerator
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Creating a character TextCorpus from file

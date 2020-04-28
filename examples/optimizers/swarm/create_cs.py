@@ -1,4 +1,4 @@
-from opytimizer.optimizers.cs import CS
+from opytimizer.optimizers.swarm.cs import CS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

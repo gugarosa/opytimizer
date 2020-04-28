@@ -1,7 +1,7 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.optimizers import bh
+from opytimizer.optimizers.science import bh
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 

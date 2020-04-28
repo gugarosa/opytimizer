@@ -2,7 +2,7 @@ import torchvision
 from learnergy.models.rbm import RBM
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Creating training and testing dataset

@@ -1,7 +1,7 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.optimizers import abc
+from opytimizer.optimizers.swarm import abc
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 

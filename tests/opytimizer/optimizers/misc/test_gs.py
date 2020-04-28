@@ -1,7 +1,7 @@
 import numpy as np
 
 from opytimizer.core import function
-from opytimizer.optimizers import gs
+from opytimizer.optimizers.misc import gs
 from opytimizer.spaces import grid
 from opytimizer.utils import constants
 

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.ssdo import SSDO
+from opytimizer.optimizers.social.ssd import SSD
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
@@ -7,5 +7,5 @@ hyperparams = {
     'decay': 0.99
 }
 
-# Creating an SSDO optimizer
-o = SSDO(hyperparams=hyperparams)
+# Creating an SSD optimizer
+o = SSD(hyperparams=hyperparams)

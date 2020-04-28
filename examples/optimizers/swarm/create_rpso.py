@@ -1,4 +1,4 @@
-from opytimizer.optimizers.pso import RPSO
+from opytimizer.optimizers.swarm.pso import RPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

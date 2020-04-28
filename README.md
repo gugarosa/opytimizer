@@ -72,27 +72,18 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - hypercomplex
         - random
     - optimizers
-        - abc
-        - aeo
-        - ba
-        - bha
-        - cem
-        - cs
-        - fa
-        - fpa
-        - gco
-        - gp
-        - gs
-        - gsa
-        - hc
-        - hs
-        - iwo
-        - mrfo
-        - pso
-        - sa
-        - sca
-        - ssd
-        - wca
+        - evolutionary
+            - gp, hs, iwo
+        - misc
+            - cem, gs, hc
+        - population
+            - aeo, gco
+        - science
+            - bh, gsa, sa, wca
+        - social
+            - ssd
+        - swarm
+            - abc, ba, cs, fa, fpa, mrfo, pso, sca
     - spaces
         - grid
         - hyper

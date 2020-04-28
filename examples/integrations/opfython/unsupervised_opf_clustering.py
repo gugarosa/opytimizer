@@ -5,7 +5,7 @@ import opfython.stream.splitter as s
 from opfython.models.unsupervised import UnsupervisedOPF
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 from sklearn.datasets import load_digits
 

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.gco import GCO
+from opytimizer.optimizers.population.gco import GCO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
