@@ -68,6 +68,15 @@ def generate_levy_distribution(beta=0.1, size=1):
     v = r.generate_gaussian_random_number(size=size)
 
     # Finally, we can calculate the Lévy distribution
-    step = u / np.fabs(v) ** (1 / beta)
+    levy_array = u / np.fabs(v) ** (1 / beta)
 
-    return step
+    return levy_array
+
+def generate_choice_distribution(n=1, probs=None, size=1):
+    """
+    """
+
+    #
+    choice_array = np.random.choice(n, size, p=probs)
+
+    return choice_array
