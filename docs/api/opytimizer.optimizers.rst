@@ -1,30 +1,15 @@
 opytimizer.optimizers
-=========================
+======================
 
 This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a broad number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Investigate over any module for more information.
 
 .. toctree::
-    opytimizer.optimizers.abc
-    opytimizer.optimizers.aeo
-    opytimizer.optimizers.ba
-    opytimizer.optimizers.bha
-    opytimizer.optimizers.cem
-    opytimizer.optimizers.cs
-    opytimizer.optimizers.fa
-    opytimizer.optimizers.fpa
-    opytimizer.optimizers.gco
-    opytimizer.optimizers.gp
-    opytimizer.optimizers.gs
-    opytimizer.optimizers.gsa
-    opytimizer.optimizers.hc
-    opytimizer.optimizers.hs
-    opytimizer.optimizers.iwo
-    opytimizer.optimizers.mrfo
-    opytimizer.optimizers.pso
-    opytimizer.optimizers.sa
-    opytimizer.optimizers.sca
-    opytimizer.optimizers.ssd
-    opytimizer.optimizers.wca
+    opytimizer.optimizers.evolutionary
+    opytimizer.optimizers.misc
+    opytimizer.optimizers.population
+    opytimizer.optimizers.science
+    opytimizer.optimizers.social
+    opytimizer.optimizers.swarm
 
 .. automodule:: opytimizer.optimizers
    :members:

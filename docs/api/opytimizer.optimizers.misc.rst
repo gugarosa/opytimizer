@@ -1,0 +1,11 @@
+opytimizer.optimizers.misc
+===========================
+
+.. toctree::
+    opytimizer.optimizers.misc.cem
+    opytimizer.optimizers.misc.gs
+    opytimizer.optimizers.misc.hc
+
+.. automodule:: opytimizer.optimizers.misc
+   :members:
+   :show-inheritance:
