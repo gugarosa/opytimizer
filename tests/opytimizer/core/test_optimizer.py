@@ -6,7 +6,7 @@ import pytest
 from opytimizer import Opytimizer
 from opytimizer.core import function, optimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.pso import PSO
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces import search
 from opytimizer.spaces.search import SearchSpace
 
