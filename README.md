@@ -73,17 +73,32 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - random
     - optimizers
         - evolutionary
-            - gp, hs, iwo
+            - gp
+            - hs
+            - iwo
         - misc
-            - cem, gs, hc
+            - cem
+            - gs
+            - hc
         - population
-            - aeo, gco
+            - aeo
+            - gco
         - science
-            - bh, gsa, sa, wca
+            - bh
+            - gsa
+            - sa
+            - wca
         - social
             - ssd
         - swarm
-            - abc, ba, cs, fa, fpa, mrfo, pso, sca
+            - abc
+            - ba
+            - cs
+            - fa
+            - fpa
+            - mrfo
+            - pso
+            - sca
     - spaces
         - grid
         - hyper
