@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.gp import GP
+from opytimizer.optimizers.evolutionary.gp import GP
 from opytimizer.spaces.tree import TreeSpace
 
 # Random seed for experimental consistency

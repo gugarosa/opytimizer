@@ -1,7 +1,7 @@
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.gs import GS
+from opytimizer.optimizers.misc.gs import GS
 from opytimizer.spaces.grid import GridSpace
 
 # Number of decision variables

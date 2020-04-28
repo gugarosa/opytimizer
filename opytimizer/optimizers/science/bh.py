@@ -9,10 +9,10 @@ from opytimizer.utils import constants
 logger = l.get_logger(__name__)
 
 
-class BHA(Optimizer):
-    """A BHA class, inherited from Optimizer.
+class BH(Optimizer):
+    """A BH class, inherited from Optimizer.
 
-    This is the designed class to define BHA-related
+    This is the designed class to define BH-related
     variables and methods.
 
     References:
@@ -21,7 +21,7 @@ class BHA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BHA', hyperparams={}):
+    def __init__(self, algorithm='BH', hyperparams={}):
         """Initialization method.
 
         Args:
@@ -30,10 +30,10 @@ class BHA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BHA.')
+        logger.info('Overriding class: Optimizer -> BH.')
 
         # Override its parent class with the receiving hyperparams
-        super(BHA, self).__init__(algorithm)
+        super(BH, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build()

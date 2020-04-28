@@ -3,7 +3,7 @@ import numpy as np
 import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
 from opytimizer.functions.weighted import WeightedFunction
-from opytimizer.optimizers.fa import FA
+from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
