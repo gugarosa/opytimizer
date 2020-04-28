@@ -36,6 +36,25 @@ def generate_bernoulli_distribution(prob=0.0, size=1):
     return bernoulli_array
 
 
+def generate_choice_distribution(n=1, probs=None, size=1):
+    """Generates a random choice distribution based on probabilities.
+
+    Args:
+        n (int): Amount of values to be picked from.
+        probs (np.array): Array of probabilities.
+        size (int): Size of array.
+
+    Returns:
+        A choice distribution array.
+
+    """
+
+    # Performs the random choice based on input probabilities
+    choice_array = np.random.choice(n, size, p=probs)
+
+    return choice_array
+
+
 def generate_levy_distribution(beta=0.1, size=1):
     """Generates a n-dimensional array based on a Lévy distribution.
 
@@ -71,12 +90,3 @@ def generate_levy_distribution(beta=0.1, size=1):
     levy_array = u / np.fabs(v) ** (1 / beta)
 
     return levy_array
-
-def generate_choice_distribution(n=1, probs=None, size=1):
-    """
-    """
-
-    #
-    choice_array = np.random.choice(n, size, p=probs)
-
-    return choice_array
