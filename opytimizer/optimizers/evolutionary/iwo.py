@@ -233,6 +233,9 @@ class IWO(Optimizer):
             n_agents (int): Number of possible agents in the space.
             function (Function): A Function object that will be used as the objective function.
 
+        Returns:
+            A new population with more fitted individuals.
+
         """
 
         # Creating a list for the produced offsprings

@@ -75,6 +75,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - evolutionary
             - de
             - ep
+            - es
             - gp
             - hs
             - iwo
