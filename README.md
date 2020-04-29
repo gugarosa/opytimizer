@@ -73,6 +73,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - random
     - optimizers
         - evolutionary
+            - de
             - gp
             - hs
             - iwo

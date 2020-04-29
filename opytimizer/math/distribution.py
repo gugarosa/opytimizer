@@ -50,7 +50,7 @@ def generate_choice_distribution(n=1, probs=None, size=1):
     """
 
     # Performs the random choice based on input probabilities
-    choice_array = np.random.choice(n, size, p=probs)
+    choice_array = np.random.choice(n, size, p=probs, replace=False)
 
     return choice_array
 

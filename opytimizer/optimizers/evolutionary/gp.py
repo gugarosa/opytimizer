@@ -68,6 +68,7 @@ class GP(Optimizer):
             raise e.TypeError('`p_reproduction` should be a float or integer')
         if p_reproduction < 0 or p_reproduction > 1:
             raise e.ValueError('`p_reproduction` should be between 0 and 1')
+
         self._p_reproduction = p_reproduction
 
     @property
@@ -84,6 +85,7 @@ class GP(Optimizer):
             raise e.TypeError('`p_mutation` should be a float or integer')
         if p_mutation < 0 or p_mutation > 1:
             raise e.ValueError('`p_mutation` should be between 0 and 1')
+
         self._p_mutation = p_mutation
 
     @property
@@ -100,6 +102,7 @@ class GP(Optimizer):
             raise e.TypeError('`p_crossover` should be a float or integer')
         if p_crossover < 0 or p_crossover > 1:
             raise e.ValueError('`p_crossover` should be between 0 and 1')
+
         self._p_crossover = p_crossover
 
     @property
@@ -116,6 +119,7 @@ class GP(Optimizer):
             raise e.TypeError('`prunning_ratio` should be a float or integer')
         if prunning_ratio < 0 or prunning_ratio > 1:
             raise e.ValueError('`prunning_ratio` should be between 0 and 1')
+        
         self._prunning_ratio = prunning_ratio
 
     def _build(self, hyperparams):
