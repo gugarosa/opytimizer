@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.swarm.pso import PSO
+from opytimizer.optimizers.evolutionary.ga import GA
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -16,7 +16,7 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 1000
+n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = [-10, -10]
@@ -35,7 +35,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = GA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)

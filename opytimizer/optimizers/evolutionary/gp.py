@@ -222,7 +222,7 @@ class GP(Optimizer):
         # Calculates a list of current trees' fitness
         fitness = [agent.fit for agent in space.agents]
 
-        # Number of individuals to be reproducted
+        # Number of individuals to be mutated
         n_individuals = int(space.n_trees * self.p_mutation)
 
         # Gathers a list of selected individuals to be replaced
@@ -313,10 +313,10 @@ class GP(Optimizer):
         # Calculates a list of current trees' fitness
         fitness = [agent.fit for agent in space.agents]
 
-        # Number of individuals to be reproducted
+        # Number of individuals to be crossovered
         n_individuals = int(space.n_trees * self.p_crossover)
 
-        # Checks if `n_individuals is an odd number`
+        # Checks if `n_individuals` is an odd number
         if n_individuals % 2 != 0:
             # If it is, increase it by one
             n_individuals += 1
