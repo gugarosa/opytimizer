@@ -21,7 +21,7 @@ class GA(Optimizer):
     variables and methods.
 
     References:
-        
+        M. Mitchell. An introduction to genetic algorithms. MIT Press (1998).
 
     """
 
@@ -137,120 +137,134 @@ class GA(Optimizer):
             f'Hyperparameters: p_selection = {self.p_selection}, p_mutation = {self.p_mutation}, '
             f'p_crossover = {self.p_crossover} | Built: {self.built}.')
 
-
     def _roulette_selection(self, n_agents, fitness):
         """Performs a roulette selection on the population.
 
         Args:
-            P (list): A list of agents belonging to a population.
-            F (list): A list of agents' fitness values.
+            n_agents (int): Number of agents allowed in the space.
+            fitness (list): A fitness list of every agent.
 
         Returns:
-            A newly roulette selected population.
+            The selected indexes of the population
 
         """
 
-        #
+        # Calculates the number of selected individuals
         n_individuals = int(n_agents * self.p_selection)
 
-        # Checks if `n_individuals is an odd number`
+        # Checks if `n_individuals` is an odd number
         if n_individuals % 2 != 0:
             # If it is, increase it by one
             n_individuals += 1
 
-        #
+        # Calculates the total fitness
         total_fitness = np.sum(fitness)
 
-        #
+        # Calculates the probability of each fitness
         probs = [fit / total_fitness for fit in fitness]
 
-        #
-        index = d.generate_choice_distribution(n_agents, probs, n_individuals)
+        # Performs the selection process
+        selected = d.generate_choice_distribution(
+            n_agents, probs, n_individuals)
 
-        return index
+        return selected
 
     def _crossover(self, father, mother):
-        """
+        """Performs the crossover between a pair of parents.
+
+        Args:
+            father (Agent): Father to produce the offsprings.
+            mother (Agent): Mother to produce the offsprings.
+
+        Returns:
+            Two generated offsprings based on parents.
+
         """
 
-        #
+        # Makes a deep copy of father and mother
         alpha, beta = copy.deepcopy(father), copy.deepcopy(mother)
 
-        #
+        # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        #
+        # If random number is smaller than crossover probability
         if r1 < self.p_crossover:
-            #
+            # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
 
-            #
+            # Calculates the crossover based on a linear combination between father and mother
             alpha.position = r2 * father.position + (1 - r2) * mother.position
 
-            #
+            # Calculates the crossover based on a linear combination between father and mother
             beta.position = r2 * mother.position + (1 - r2) * father.position
 
         return alpha, beta
 
     def _mutation(self, alpha, beta):
+        """Performs the mutation over offsprings.
+
+        Args:
+            alpha (Agent): First offspring.
+            beta (Agent): Second offspring.
+
+        Returns:
+            Two mutated offsprings.
+
         """
-        """
-        
-        #
+
+        # For every decision variable
         for j in range(alpha.n_variables):
-            #
+            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
-            #
+            # If random number is smaller than probability of mutation
             if r1 < self.p_mutation:
-                #
+                # Mutates the offspring
                 alpha.position[j] *= r.generate_gaussian_random_number()
 
-            #
+            # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
 
+            # If random number is smaller than probability of mutation
             if r2 < self.p_mutation:
-                #
+                # Mutates the offspring
                 beta.position[j] *= r.generate_gaussian_random_number()
 
         return alpha, beta
 
     def _update(self, agents, function):
-        """Method that wraps evolution over all agents and variables.
+        """Method that wraps selection, crossover and mutation over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            n_agents (int): Number of possible agents in the space.
             function (Function): A Function object that will be used as the objective function.
-            n_children (int): Number of possible children in the space.
-            strategy (np.array): An strategy array.
 
         """
 
         # Creating a list to hold the new population
         new_agents = []
 
-        #
+        # Retrieving the number of agents
         n_agents = len(agents)
 
-        #
+        # Calculates a list of fitness from every agent
         fitness = [agent.fit + c.EPSILON for agent in agents]
 
-        #
+        # Selects the parents
         selected = self._roulette_selection(n_agents, fitness)
 
-        #
-        for s in g.pairwise(selected): 
-            #
+        # For every pair of selected parents
+        for s in g.pairwise(selected):
+            # Performs the crossover
             alpha, beta = self._crossover(agents[s[0]], agents[s[1]])
 
-            #
+            # Performs the mutation
             alpha, beta = self._mutation(alpha, beta)
 
-            #
+            # Calculates new fitness for `alpha`
             alpha.fit = function.pointer(alpha.position)
 
-            #
+            # Calculates new fitness for `beta`
             beta.fit = function.pointer(beta.position)
 
             # Appends the mutated agent to the children
