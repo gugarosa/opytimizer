@@ -2,7 +2,6 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
-from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
 
 logger = l.get_logger(__name__)

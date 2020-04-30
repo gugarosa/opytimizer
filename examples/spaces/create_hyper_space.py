@@ -19,5 +19,5 @@ upper_bound = [0.2, 0.4, 2.0, 2.0, 2.0]
 
 # Creating the HyperSpace object
 s = HyperSpace(n_agents=n_agents, n_variables=n_variables,
-          n_dimensions=n_dimensions, n_iterations=n_iterations,
-          lower_bound=lower_bound, upper_bound=upper_bound)
+               n_dimensions=n_dimensions, n_iterations=n_iterations,
+               lower_bound=lower_bound, upper_bound=upper_bound)

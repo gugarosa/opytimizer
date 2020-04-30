@@ -6,29 +6,31 @@ from opytimizer.core.space import Space
 
 logger = l.get_logger(__name__)
 
-
-class SearchSpace(Space):
-    """A SearchSpace class for agents, variables and methods
-    related to the search space.
+class BooleanSpace(Space):
+    """A BooleanSpace class for agents, variables and methods
+    related to the boolean search space.
 
     """
-
-    def __init__(self, n_agents=1, n_variables=1, n_iterations=10, lower_bound=[0], upper_bound=[1]):
+    def __init__(self, n_agents=1, n_variables=1, n_iterations=10):
         """Initialization method.
 
         Args:
             n_agents (int): Number of agents.
             n_variables (int): Number of decision variables.
             n_iterations (int): Number of iterations.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
 
         """
 
-        logger.info('Overriding class: Space -> SearchSpace.')
+        logger.info('Overriding class: Space -> BooleanSpace.')
 
         # Override its parent class with the receiving arguments
-        super(SearchSpace, self).__init__(n_agents, n_variables, n_iterations=n_iterations)
+        super(BooleanSpace, self).__init__(n_agents, n_variables, n_iterations=n_iterations)
+
+        # Defining the lower bound as an array of zeros
+        lower_bound = np.zeros(n_variables)
+
+        # Defining the upper bound as an array of ones
+        upper_bound = np.ones(n_variables)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -36,10 +38,11 @@ class SearchSpace(Space):
         # Initializing agents
         self._initialize_agents()
 
+        # We will log some important information
         logger.info('Class overrided.')
 
     def _initialize_agents(self):
-        """Initialize agents' position array with uniform random numbers.
+        """Initialize agents' position array with boolean random numbers.
 
         """
 
@@ -50,7 +53,7 @@ class SearchSpace(Space):
             # Iterate through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(lb, ub, agent.n_dimensions)
+                agent.position[j] = int(r.generate_uniform_random_number(lb, ub, agent.n_dimensions))
 
                 # Applies the lower bound the agent's lower bound
                 agent.lb[j] = lb
