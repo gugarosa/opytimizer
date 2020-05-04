@@ -72,6 +72,8 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - hypercomplex
         - random
     - optimizers
+        - boolean
+            - pso
         - evolutionary
             - de
             - ep
