@@ -1,5 +1,3 @@
-import copy
-
 import numpy as np
 
 import opytimizer.math.distribution as d
@@ -159,9 +157,6 @@ class SBO(Optimizer):
 
         # Iterate through all agents
         for agent in agents:
-            # Makes a deepcopy of current agent
-            a = copy.deepcopy(agent)
-
             # For every decision variable
             for j in range(agent.n_variables):
                 # Selects a random individual based on its probability
@@ -171,7 +166,7 @@ class SBO(Optimizer):
                 lambda_k = self.alpha / (1 + probs[s])
 
                 # Updates the decision variable position
-                a.position[j] += lambda_k * ((agents[s].position[j] + best_agent.position[j]) / 2 - a.position[j])
+                agent.position[j] += lambda_k * ((agents[s].position[j] + best_agent.position[j]) / 2 - agent.position[j])
 
                 # Generates an uniform random number
                 r1 = r.generate_uniform_random_number()
@@ -179,21 +174,13 @@ class SBO(Optimizer):
                 # If random number is smaller than probability of mutation
                 if r1 < self.p_mutation:
                     # Mutates the decision variable position
-                    a.position[j] += sigma[j] * r.generate_gaussian_random_number()
+                    agent.position[j] += sigma[j] * r.generate_gaussian_random_number()
 
             # Check agent limits
-            a.clip_limits()
+            agent.clip_limits()
 
             # Calculates the fitness for the temporary position
-            a.fit = function.pointer(a.position)
-
-            # If new fitness is better than agent's fitness
-            if a.fit < agent.fit:
-                # Copy its position to the agent
-                agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
-                agent.fit = copy.deepcopy(a.fit)
+            agent.fit = function.pointer(agent.position)
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.

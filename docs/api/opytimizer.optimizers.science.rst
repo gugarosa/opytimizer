@@ -6,6 +6,7 @@ opytimizer.optimizers.science
     opytimizer.optimizers.science.gsa
     opytimizer.optimizers.science.sa
     opytimizer.optimizers.science.wca
+    opytimizer.optimizers.science.wdo
 
 .. automodule:: opytimizer.optimizers.science
    :members:
