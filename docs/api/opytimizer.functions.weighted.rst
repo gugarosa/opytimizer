@@ -1,5 +1,5 @@
 opytimizer.functions.weighted
-============================
+==============================
 
 .. automodule:: opytimizer.functions.weighted
     :members:
