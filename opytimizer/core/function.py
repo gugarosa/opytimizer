@@ -1,4 +1,4 @@
-from inspect import signature
+from inspect import isclass, signature
 
 import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
@@ -27,8 +27,15 @@ class Function:
 
         logger.info('Creating class: Function.')
 
-        # Defining a property to hold the function's name
-        self.name = pointer.__name__
+        # Checking if pointer is actually a callable
+        if hasattr(pointer, '__name__'):
+            # If yes, applies the callable name
+            self.name = pointer.__name__
+        
+        # If pointer comes from a class
+        else:
+            # Applies its name as the class' name
+            self.name = pointer.__class__.__name__
 
         # Save the constraints for further inspection
         self.constraints = constraints
