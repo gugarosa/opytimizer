@@ -45,7 +45,7 @@ class WDO(Optimizer):
         self.g = 0.6
 
         # Coriolis force
-        self.c = 1
+        self.c = 1.0
 
         # Pressure constant
         self.RT = 1.5

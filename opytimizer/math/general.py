@@ -2,6 +2,7 @@ from itertools import islice
 
 import numpy as np
 
+import opytimizer.math.random as r
 import opytimizer.utils.constants as c
 
 
@@ -65,3 +66,28 @@ def tournament_selection(fitness, n):
         selected.append(np.where(min(step) == fitness)[0][0])
 
     return selected
+
+
+def weighted_wheel_selection(weights):
+    """Selects an individual from a weight-based roulette.
+
+    Args:
+        weights (list): List of individuals weights.
+
+    Returns:
+        A roulette selected individual.
+
+    """
+
+    # Gathers the cumulative summatory
+    cumulative_sum = np.cumsum(weights)
+
+    # Defines the selection probability
+    prob = r.generate_uniform_random_number() * cumulative_sum[-1]
+
+    # For every individual
+    for i, c_sum in enumerate(cumulative_sum):
+        # If individual's cumulative sum is bigger than selection probability
+        if c_sum > prob:
+            # Returns the individual
+            return i
