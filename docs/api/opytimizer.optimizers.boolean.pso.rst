@@ -1,7 +1,7 @@
-opytimizer.optimizers.boolean.pso
-==================================
+opytimizer.optimizers.boolean.bpso
+===================================
 
-.. automodule:: opytimizer.optimizers.boolean.pso
+.. automodule:: opytimizer.optimizers.boolean.bpso
     :members:
     :private-members:
     :special-members:

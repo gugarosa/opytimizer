@@ -1,4 +1,4 @@
-from opytimizer.optimizers.boolean.pso import bPSO
+from opytimizer.optimizers.boolean.bpso import bPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

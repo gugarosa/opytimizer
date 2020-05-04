@@ -3,7 +3,7 @@ import numpy as np
 import opytimizer.math.distribution as d
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.boolean.pso import bPSO
+from opytimizer.optimizers.boolean.bpso import bPSO
 from opytimizer.spaces.boolean import BooleanSpace
 
 # Random seed for experimental consistency

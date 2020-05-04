@@ -2,7 +2,7 @@ opytimizer.optimizers.boolean
 ===================================
 
 .. toctree::
-    opytimizer.optimizers.boolean.pso
+    opytimizer.optimizers.boolean.bpso
 
 .. automodule:: opytimizer.optimizers.boolean
    :members:
