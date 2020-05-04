@@ -150,8 +150,7 @@ class AEO(Optimizer):
         a.position += C * (a.position - consumer.position) 
 
         return a
-
-
+        
     def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
         """Method that wraps production and consumption updates over all agents and variables.
 
@@ -298,17 +297,6 @@ class AEO(Optimizer):
 
             # Updating agents within the composition step
             self._update_composition(space.agents, space.best_agent, function, t, space.n_iterations)
-
-            # Checking if agents meets the bounds limits
-            space.clip_limits()
-
-            # Check if there is a pre-evaluation hook
-            if pre_evaluation_hook:
-                # Applies the hook
-                pre_evaluation_hook(self, space, function)
-
-            # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function)
 
             # Updating agents within the decomposition step
             self._update_decomposition(space.agents, space.best_agent, function)

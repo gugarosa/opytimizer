@@ -197,7 +197,7 @@ class IWO(Optimizer):
         # Updating the Spatial Dispersial
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
 
-    def _reproduce_offspring(self, agent, function):
+    def _produce_offspring(self, agent, function):
         """Reproduces and flowers a seed into a new offpsring.
 
         Args:
@@ -255,7 +255,7 @@ class IWO(Optimizer):
             # For every seed
             for _ in range(n_seeds):
                 # Reproduces and flowers the seed into a new agent
-                a = self._reproduce_offspring(agent, function)
+                a = self._produce_offspring(agent, function)
 
                 # Appends the agent to the offsprings
                 offsprings.append(a)

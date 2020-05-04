@@ -136,7 +136,7 @@ class SBO(Optimizer):
             f'Built: {self.built}.')
 
     def _update(self, agents, best_agent, function, sigma):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -179,7 +179,7 @@ class SBO(Optimizer):
             # Check agent limits
             agent.clip_limits()
 
-            # Calculates the fitness for the temporary position
+            # Calculates its fitness
             agent.fit = function.pointer(agent.position)
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
