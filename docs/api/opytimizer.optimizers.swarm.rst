@@ -9,6 +9,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.fpa
     opytimizer.optimizers.swarm.mrfo
     opytimizer.optimizers.swarm.pso
+    opytimizer.optimizers.swarm.sbo
     opytimizer.optimizers.swarm.sca
 
 .. automodule:: opytimizer.optimizers.swarm
