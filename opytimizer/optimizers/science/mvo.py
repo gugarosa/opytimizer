@@ -1,5 +1,3 @@
-import copy
-
 import numpy as np
 
 import opytimizer.math.general as g
@@ -19,8 +17,9 @@ class MVO(Optimizer):
     variables and methods.
 
     References:
-        X.-S. Yang. Flower pollination algorithm for global optimization.
-        International conference on unconventional computing and natural computation (2012).
+        S. Mirjalili, S. M. Mirjalili and A. Hatamlou. 
+        Multi-verse optimizer: a nature-inspired algorithm for global optimization.
+        Neural Computing and Applications (2016).
 
     """
 
