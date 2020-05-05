@@ -199,7 +199,7 @@ class SSD(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Calculates the new fitness
-            fit = function.pointer(agent.position)
+            fit = function(agent.position)
 
             # If new fitness is better than agent's fitness
             if fit < agent.fit:
@@ -236,7 +236,7 @@ class SSD(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
-            fit = function.pointer(agent.position)
+            fit = function(agent.position)
 
             # If fitness is better than agent's best fit
             if fit < agent.fit:

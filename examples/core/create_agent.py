@@ -7,3 +7,6 @@ n_dimensions = 2
 
 # Creating a new Agent
 a = Agent(n_variables=n_variables, n_dimensions=n_dimensions)
+
+# Printing out agent's object
+print(a)

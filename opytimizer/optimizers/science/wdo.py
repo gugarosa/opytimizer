@@ -247,7 +247,7 @@ class WDO(Optimizer):
             agent.clip_limits()
 
             # Evaluates agent
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.

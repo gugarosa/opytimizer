@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.math import benchmark
-from opytimizer.optimizers.swarm.pso import PSO
+from opytimizer.optimizers.swarm.fpa import FPA
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -35,7 +35,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = FPA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=benchmark.sphere)

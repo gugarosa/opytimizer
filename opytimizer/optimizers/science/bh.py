@@ -84,7 +84,7 @@ class BH(Optimizer):
             agent.clip_limits()
 
             # Evaluates agent
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
             # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:

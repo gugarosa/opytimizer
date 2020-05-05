@@ -264,7 +264,7 @@ class BA(Optimizer):
             agent.clip_limits()
 
             # Evaluates agent
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
             # Checks if probability is smaller than loudness and if fit is better
             if p < loudness[i] and agent.fit < best_agent.fit:

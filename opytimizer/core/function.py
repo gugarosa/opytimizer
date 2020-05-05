@@ -1,4 +1,4 @@
-from inspect import isclass, signature
+from inspect import signature
 
 import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
@@ -48,6 +48,19 @@ class Function:
 
         logger.info('Class created.')
         logger.debug(f'Function: {self.name} | Constraints: {self.constraints} | Built: {self.built}')
+
+    def __call__(self, x):
+        """Defines a callable to this class in order to avoid using directly the property.
+
+        Args:
+            x (np.array): Array of positions to be calculated.
+
+        Returns:
+            The output of the objective function.
+
+        """
+
+        return self.pointer(x)
 
     @property
     def name(self):

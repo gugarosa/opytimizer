@@ -194,7 +194,7 @@ class HS(Optimizer):
         agent = self._generate_new_harmony(agents[i])
 
         # Calculates the new harmony fitness
-        agent.fit = function.pointer(agent.position)
+        agent.fit = function(agent.position)
 
         # Sorting agents
         agents.sort(key=lambda x: x.fit)

@@ -138,7 +138,7 @@ class EP(Optimizer):
         a.clip_limits()
 
         # Calculates its fitness
-        a.fit = function.pointer(a.position)
+        a.fit = function(a.position)
 
         return a
 

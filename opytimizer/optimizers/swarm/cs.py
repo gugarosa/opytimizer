@@ -230,7 +230,7 @@ class CS(Optimizer):
             new_agent.clip_limits()
 
             # Calculates the new agent fitness
-            new_agent.fit = function.pointer(new_agent.position)
+            new_agent.fit = function(new_agent.position)
 
             # If new agent's fitness is better than agent's
             if new_agent.fit < agent.fit:

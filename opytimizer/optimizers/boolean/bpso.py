@@ -186,7 +186,7 @@ class bPSO(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
-            fit = function.pointer(agent.position)
+            fit = function(agent.position)
 
             # If fitness is better than agent's best fit
             if fit < agent.fit:

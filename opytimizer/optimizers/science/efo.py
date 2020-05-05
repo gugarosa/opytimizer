@@ -253,7 +253,7 @@ class EFO(Optimizer):
                 RI = 1
 
         # Calculates the agent's fitness
-        agent.fit = function.pointer(agent.position)
+        agent.fit = function(agent.position)
 
         # If newly generated agent fitness is better than worst fitness
         if agent.fit < agents[-1].fit:

@@ -55,9 +55,9 @@ def test_agent_position():
 def test_agent_position_setter():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
-    new_agent.position = 10
+    new_agent.position = np.array([10])
 
-    assert new_agent.position == 10
+    assert new_agent.position[0] == 10
 
 
 def test_agent_fit():
@@ -105,9 +105,9 @@ def test_agent_ub_setter():
 def test_agent_clip_limits():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
-    new_agent.lb = [10]
+    new_agent.lb = np.array([10])
 
-    new_agent.ub = [10]
+    new_agent.ub = np.array([10])
 
     new_agent.clip_limits()
 

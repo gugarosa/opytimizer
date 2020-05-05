@@ -262,10 +262,10 @@ class GA(Optimizer):
             alpha, beta = self._mutation(alpha, beta)
 
             # Calculates new fitness for `alpha`
-            alpha.fit = function.pointer(alpha.position)
+            alpha.fit = function(alpha.position)
 
             # Calculates new fitness for `beta`
-            beta.fit = function.pointer(beta.position)
+            beta.fit = function(beta.position)
 
             # Appends the mutated agent to the children
             new_agents.extend([alpha, beta])

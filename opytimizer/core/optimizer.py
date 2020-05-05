@@ -95,15 +95,12 @@ class Optimizer:
         # Iterates through all agents
         for agent in space.agents:
             # Calculate sthe fitness value of current agent
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's position to the best agent
-                space.best_agent.position = copy.deepcopy(agent.position)
-
-                # Also, copies its fitness from agent's fitness
-                space.best_agent.fit = copy.deepcopy(agent.fit)
+                # Makes a deep copy of agent's to the best agent
+                space.best_agent = copy.deepcopy(agent)
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.

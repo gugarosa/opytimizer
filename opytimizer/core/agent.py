@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 
 import opytimizer.utils.constants as c
@@ -85,6 +83,9 @@ class Agent:
 
     @position.setter
     def position(self, position):
+        if not isinstance(position, np.ndarray):
+            raise e.TypeError('`position` should be a numpy array')
+
         self._position = position
 
     @property
@@ -97,6 +98,9 @@ class Agent:
 
     @fit.setter
     def fit(self, fit):
+        if not (isinstance(fit, float) or isinstance(fit, int)):
+            raise e.TypeError('`fit` should be a float or integer')
+        
         self._fit = fit
 
     @property
@@ -109,6 +113,9 @@ class Agent:
 
     @lb.setter
     def lb(self, lb):
+        if not isinstance(lb, np.ndarray):
+            raise e.TypeError('`lb` should be a numpy array')
+
         self._lb = lb
 
     @property
@@ -121,6 +128,9 @@ class Agent:
 
     @ub.setter
     def ub(self, ub):
+        if not isinstance(ub, np.ndarray):
+            raise e.TypeError('`ub` should be a numpy array')
+
         self._ub = ub
 
     def clip_limits(self):

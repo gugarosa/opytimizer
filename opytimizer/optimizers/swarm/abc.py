@@ -119,7 +119,7 @@ class ABC(Optimizer):
         a.clip_limits()
 
         # Evaluating its fitness
-        a.fit = function.pointer(a.position)
+        a.fit = function(a.position)
 
         # Check if fitness is improved
         if a.fit < agent.fit:
@@ -225,7 +225,7 @@ class ABC(Optimizer):
             a.clip_limits()
 
             # Recalculates its fitness
-            a.fit = function.pointer(a.position)
+            a.fit = function(a.position)
 
             # If fitness is better
             if a.fit < agents[max_index].fit:

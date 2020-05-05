@@ -10,6 +10,9 @@ from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces import search
 from opytimizer.spaces.search import SearchSpace
 
+def square(x):
+    return np.sum(x**2)
+
 
 def test_optimizer_algorithm():
     new_optimizer = optimizer.Optimizer(algorithm='PSO')
@@ -58,9 +61,6 @@ def test_optimizer_update():
 
 
 def test_optimizer_evaluate():
-    def square(x):
-        return np.sum(x**2)
-
     new_function = function.Function(pointer=square)
 
     search_space = search.SearchSpace(n_agents=20, n_iterations=10,
@@ -86,7 +86,7 @@ def test_optimizer_run():
 def test_store_best_agent_only():
     pso = PSO()
     n_iters = 10
-    target_fn = Function(lambda x: x**2)
+    target_fn = Function(pointer=square)
     space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters)
 
     history = Opytimizer(space, pso, target_fn).start(store_best_only=True)
@@ -100,7 +100,7 @@ def test_store_all_agents():
     pso = PSO()
     n_iters = 10
     n_agents = 2
-    target_fn = Function(lambda x: x**2)
+    target_fn = Function(pointer=square)
     space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters, n_agents=n_agents)
 
     history = Opytimizer(space, pso, target_fn).start()
@@ -120,7 +120,7 @@ def test_hook():
     n_iters = 10
     counter = 0
 
-    target_fn = Function(lambda x: x**2)
+    target_fn = Function(pointer=square)
     space = SearchSpace(lower_bound=[-10], upper_bound=[10], n_iterations=n_iters, n_agents=15)
 
     def eval_hook(arg_opt, arg_space, arg_target_fn):

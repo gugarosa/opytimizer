@@ -19,7 +19,7 @@ g = WeightedFunction(
     functions=[test_function1, test_function2], weights=[0.5, 0.5])
 
 # Testing out your new Function class
-print(f'\nx: {x}')
+print(f'x: {x}')
 print(f'f(x): {g.functions[0].pointer(x)}')
 print(f'g(x): {g.functions[1].pointer(x)}')
 print(f'z(x) = 0.5f(x) + 0.5g(x): {g.pointer(x)}')

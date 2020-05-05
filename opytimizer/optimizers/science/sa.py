@@ -140,7 +140,7 @@ class SA(Optimizer):
             a.clip_limits()
 
             # Calculates the fitness for the temporary position
-            a.fit = function.pointer(a.position)
+            a.fit = function(a.position)
 
             # Generates an uniform random number
             r1 = r.generate_uniform_random_number()

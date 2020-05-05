@@ -91,9 +91,9 @@ def test_function_create_pointer():
 
     new_function = function.Function(pointer=square, constraints=[c_1])
 
-    assert new_function.pointer(np.zeros(2)) == 0
+    assert new_function(np.zeros(2)) == 0
 
-    assert new_function.pointer(np.ones(2)) == constants.FLOAT_MAX
+    assert new_function(np.ones(2)) == constants.FLOAT_MAX
 
     try:
         new_function = function.Function(pointer=square2)

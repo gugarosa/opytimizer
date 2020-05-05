@@ -480,7 +480,7 @@ class GP(Optimizer):
             agent.clip_limits()
 
             # Calculates the fitness value of the agent
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
             # If tree's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:

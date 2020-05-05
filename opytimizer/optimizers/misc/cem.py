@@ -133,7 +133,7 @@ class CEM(Optimizer):
             agent.clip_limits()
 
             # Calculates its new fitness
-            agent.fit = function.pointer(agent.position)
+            agent.fit = function(agent.position)
 
     def _update_mean(self, updates, mean):
         """Calculates and updates mean.

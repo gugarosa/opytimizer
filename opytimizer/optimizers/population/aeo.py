@@ -212,7 +212,7 @@ class AEO(Optimizer):
             a.clip_limits()
 
             # Calculates the fitness for the temporary position
-            a.fit = function.pointer(a.position)
+            a.fit = function(a.position)
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
@@ -256,7 +256,7 @@ class AEO(Optimizer):
             a.clip_limits()
 
             # Calculates the fitness for the temporary position
-            a.fit = function.pointer(a.position)
+            a.fit = function(a.position)
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
