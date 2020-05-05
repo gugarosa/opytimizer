@@ -258,7 +258,7 @@ class GCO(Optimizer):
         life = r.generate_uniform_random_number(70, 70, space.n_agents)
 
         # Instanciating array of counters
-        counter = np.zeros(space.n_agents)
+        counter = np.ones(space.n_agents)
 
         # Check if there is a pre-evaluation hook
         if pre_evaluation_hook:

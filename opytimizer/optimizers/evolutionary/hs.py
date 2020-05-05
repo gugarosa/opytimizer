@@ -201,8 +201,11 @@ class HS(Optimizer):
 
         # If newly generated agent fitness is better
         if agent.fit < agents[-1].fit:
-            # Updates the corresponding agent's object
-            agents[-1] = copy.deepcopy(agent)
+            # Updates the corresponding agent's position
+            agents[-1].position = copy.deepcopy(agent.position)
+
+            # And its fitness as well
+            agents[-1].fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
         """Runs the optimization pipeline.
