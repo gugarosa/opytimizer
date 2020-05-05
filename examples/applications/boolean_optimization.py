@@ -3,7 +3,7 @@ import numpy as np
 import opytimizer.math.distribution as d
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.boolean.bpso import bPSO
+from opytimizer.optimizers.boolean.bpso import BPSO
 from opytimizer.spaces.boolean import BooleanSpace
 
 # Random seed for experimental consistency
@@ -28,8 +28,8 @@ hyperparams = {
     'c2': d.generate_bernoulli_distribution(0.5, size=n_variables)
 }
 
-# Creating bPSO's optimizer
-p = bPSO(hyperparams=hyperparams)
+# Creating BPSO's optimizer
+p = BPSO(hyperparams=hyperparams)
 
 # Creating Function's object
 # f = Function(pointer=knapsack)

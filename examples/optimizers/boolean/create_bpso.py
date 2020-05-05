@@ -1,4 +1,4 @@
-from opytimizer.optimizers.boolean.bpso import bPSO
+from opytimizer.optimizers.boolean.bpso import BPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
@@ -8,5 +8,5 @@ hyperparams = {
     'c2': 1
 }
 
-# Creating a bPSO optimizer
-o = bPSO(hyperparams=hyperparams)
+# Creating a BPSO optimizer
+o = BPSO(hyperparams=hyperparams)

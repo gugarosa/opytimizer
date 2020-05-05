@@ -11,8 +11,8 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class bPSO(Optimizer):
-    """A bPSO class, inherited from Optimizer.
+class BPSO(Optimizer):
+    """A BPSO class, inherited from Optimizer.
 
     This is the designed class to define boolean PSO-related
     variables and methods.
@@ -33,19 +33,19 @@ class bPSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> bPSO.')
+        logger.info('Overriding class: Optimizer -> BPSO.')
 
         # Override its parent class with the receiving hyperparams
-        super(bPSO, self).__init__(algorithm=algorithm)
+        super(BPSO, self).__init__(algorithm=algorithm)
 
         # Inertia weight
-        self.w = 0
+        self.w = np.array([1])
 
         # Cognitive constant
-        self.c1 = 0
+        self.c1 = np.array([1])
 
         # Social constant
-        self.c2 = 0
+        self.c2 = np.array([1])
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -54,31 +54,46 @@ class bPSO(Optimizer):
 
     @property
     def w(self):
+        """float: Inertia weight.
+
+        """
 
         return self._w
 
     @w.setter
     def w(self, w):
+        if not isinstance(w, np.ndarray):
+            raise e.TypeError('`w` should be a numpy array')
 
         self._w = w
 
     @property
     def c1(self):
+        """float: Cognitive constant.
+
+        """
 
         return self._c1
 
     @c1.setter
     def c1(self, c1):
+        if not isinstance(c1, np.ndarray):
+            raise e.TypeError('`c1` should be a numpy array')
 
         self._c1 = c1
 
     @property
     def c2(self):
+        """float: Social constant.
+
+        """
 
         return self._c2
 
     @c2.setter
     def c2(self, c2):
+        if not isinstance(c2, np.ndarray):
+            raise e.TypeError('`c2` should be a numpy array')
 
         self._c2 = c2
 
