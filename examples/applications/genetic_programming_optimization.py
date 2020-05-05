@@ -1,8 +1,8 @@
 import numpy as np
+from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.math import benchmark
 from opytimizer.optimizers.evolutionary.gp import GP
 from opytimizer.spaces.tree import TreeSpace
 
@@ -52,7 +52,7 @@ hyperparams = {
 p = GP(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=benchmark.sphere)
+f = Function(pointer=Sphere())
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

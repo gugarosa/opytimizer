@@ -66,7 +66,6 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - functions
         - weighted
     - math
-        - benchmark
         - distribution
         - general
         - hypercomplex
@@ -117,6 +116,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - tree
     - utils
         - constants
+        - decorator
         - exception
         - history
         - logging

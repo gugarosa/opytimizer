@@ -1,6 +1,6 @@
 import numpy as np
+from opytimark.markers.n_dimensional import Exponential, Sphere
 
-import opytimizer.math.benchmark as b
 from opytimizer import Opytimizer
 from opytimizer.functions.weighted import WeightedFunction
 from opytimizer.optimizers.swarm.fa import FA
@@ -38,7 +38,7 @@ hyperparams = {
 p = FA(hyperparams=hyperparams)
 
 # Defining task's main function
-z = WeightedFunction(functions=[b.sphere, b.exponential], weights=[0.5, 0.5])
+z = WeightedFunction(functions=[Sphere(), Exponential()], weights=[0.5, 0.5])
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=z)

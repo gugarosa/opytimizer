@@ -15,8 +15,9 @@
 import os
 import sys
 
-import opytimizer
 import sphinx_rtd_theme
+
+import opytimizer
 
 sys.path.insert(0, os.path.abspath('.'))
 

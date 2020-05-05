@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -144,7 +145,7 @@ class BPSO(Optimizer):
             A new velocity based on boolean bPSO's paper velocity update equation.
 
         """
-
+        
         # Calculates new velocity
         new_velocity = np.logical_or(np.logical_and(self.w, velocity), np.logical_or(np.logical_and(
             self.c1, np.logical_xor(local_position, position)), np.logical_and(self.c2, np.logical_xor(best_position, position))))
@@ -189,7 +190,7 @@ class BPSO(Optimizer):
             agent.position = self._update_position(agent.position, velocity[i])
 
     @d.pre_evaluation
-    def _evaluate(self,, space, function, local_position):
+    def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
         Args:

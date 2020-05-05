@@ -1,6 +1,7 @@
+from opytimark.markers.n_dimensional import Sphere
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.math import benchmark
 from opytimizer.optimizers.misc.gs import GS
 from opytimizer.spaces.grid import GridSpace
 
@@ -22,7 +23,7 @@ s = GridSpace(n_variables=n_variables, step=step,
 p = GS()
 
 # Creating Function's object
-f = Function(pointer=benchmark.sphere)
+f = Function(pointer=Sphere())
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

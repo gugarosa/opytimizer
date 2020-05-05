@@ -1,8 +1,8 @@
 import numpy as np
+from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.math import benchmark
 from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
@@ -41,11 +41,11 @@ hyperparams = {
     'c2': 1.7
 }
 
-# Creating PSo's optimizer
+# Creating PSO's optimizer
 p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=benchmark.sphere, constraints=[c_1])
+f = Function(pointer=Sphere(), constraints=[c_1])
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

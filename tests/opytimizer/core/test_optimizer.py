@@ -10,6 +10,7 @@ from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces import search
 from opytimizer.spaces.search import SearchSpace
 
+
 def square(x):
     return np.sum(x**2)
 
