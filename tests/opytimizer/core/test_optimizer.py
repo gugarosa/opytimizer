@@ -131,7 +131,7 @@ def test_hook():
         nonlocal counter
         counter += 1
 
-    Opytimizer(space, pso, target_fn).start(pre_evaluation_hook=eval_hook)
+    Opytimizer(space, pso, target_fn).start(pre_evaluation=eval_hook)
 
     # The hook is evaluated for each iteration plus initialization
     assert counter == n_iters + 1

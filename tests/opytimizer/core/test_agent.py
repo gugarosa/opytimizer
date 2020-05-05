@@ -55,7 +55,10 @@ def test_agent_position():
 def test_agent_position_setter():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
-    new_agent.position = np.array([10])
+    try:
+        new_agent.position = 10
+    except:
+        new_agent.position = np.array([10])
 
     assert new_agent.position[0] == 10
 
@@ -69,7 +72,10 @@ def test_agent_fit():
 def test_agent_fit_setter():
     new_agent = agent.Agent(n_variables=5, n_dimensions=4)
 
-    new_agent.fit = 0
+    try:
+        new_agent.fit = np.array([0])
+    except:
+        new_agent.fit = 0
 
     assert new_agent.fit == 0
 
@@ -83,7 +89,10 @@ def test_agent_lb():
 def test_agent_lb_setter():
     new_agent = agent.Agent(n_variables=5, n_dimensions=4)
 
-    new_agent.lb[0] = 1
+    try:
+        new_agent.lb = [1]
+    except:
+        new_agent.lb = np.array([1])
 
     assert new_agent.lb[0] == 1
 
@@ -97,7 +106,10 @@ def test_agent_ub():
 def test_agent_ub_setter():
     new_agent = agent.Agent(n_variables=5, n_dimensions=4)
 
-    new_agent.ub[0] = 1
+    try:
+        new_agent.ub = [1]
+    except:
+        new_agent.ub = np.array([1])
 
     assert new_agent.ub[0] == 1
 

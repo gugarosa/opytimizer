@@ -118,7 +118,7 @@ def test_pso_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    history = new_pso.run(search_space, new_function, pre_evaluation_hook=hook)
+    history = new_pso.run(search_space, new_function, pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
@@ -231,7 +231,7 @@ def test_aiwpso_run():
                                       upper_bound=[10, 10])
 
     history = new_aiwpso.run(search_space, new_function,
-                             pre_evaluation_hook=hook)
+                             pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
@@ -338,7 +338,7 @@ def test_rpso_run():
                                       upper_bound=[10, 10])
 
     history = new_rpso.run(search_space, new_function,
-                           pre_evaluation_hook=hook)
+                           pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

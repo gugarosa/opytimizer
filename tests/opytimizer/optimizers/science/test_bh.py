@@ -57,7 +57,7 @@ def test_bh_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[5, 5])
 
-    history = new_bh.run(search_space, new_function, pre_evaluation_hook=hook)
+    history = new_bh.run(search_space, new_function, pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

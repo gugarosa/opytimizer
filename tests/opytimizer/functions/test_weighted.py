@@ -64,4 +64,4 @@ def test_weighted_create_multi_objective():
 
     new_weighted._create_multi_objective()
 
-    assert new_weighted.pointer(2) == 6
+    assert new_weighted(2) == 6

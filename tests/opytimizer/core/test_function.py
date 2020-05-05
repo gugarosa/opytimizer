@@ -101,3 +101,16 @@ def test_function_create_pointer():
         new_function = function.Function()
 
     assert new_function.name == 'callable'
+
+def test_function():
+    class Square():
+        def __call__(self, x):
+            return np.sum(x**2)
+
+    s = Square()
+
+    assert s(2) == 4
+
+    new_function = function.Function(pointer=s)
+
+    assert new_function.name == 'Square'

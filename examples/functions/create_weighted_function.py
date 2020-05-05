@@ -20,6 +20,6 @@ g = WeightedFunction(
 
 # Testing out your new Function class
 print(f'x: {x}')
-print(f'f(x): {g.functions[0].pointer(x)}')
-print(f'g(x): {g.functions[1].pointer(x)}')
-print(f'z(x) = 0.5f(x) + 0.5g(x): {g.pointer(x)}')
+print(f'f(x): {g.functions[0](x)}')
+print(f'g(x): {g.functions[1](x)}')
+print(f'z(x) = 0.5f(x) + 0.5g(x): {g(x)}')

@@ -228,14 +228,14 @@ class EP(Optimizer):
 
         return agents[:n_agents]
 
-    def run(self, space, function, store_best_only=False, pre_evaluation_hook=None):
+    def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -253,13 +253,8 @@ class EP(Optimizer):
                 # Initializes the strategy array with the proposed EP distance
                 strategy[i][j] = 0.05 * r.generate_uniform_random_number(0, ub - lb, size=space.agents[i].n_dimensions)
 
-        # Check if there is a pre-evaluation hook
-        if pre_evaluation_hook:
-            # Applies the hook
-            pre_evaluation_hook(self, space, function)
-
         # Initial search space evaluation
-        self._evaluate(space, function)
+        self._evaluate(space, function, hook=pre_evaluation)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -275,13 +270,8 @@ class EP(Optimizer):
             # Checking if agents meets the bounds limits
             space.clip_limits()
 
-            # Check if there is a pre-evaluation hook
-            if pre_evaluation_hook:
-                # Applies the hook
-                pre_evaluation_hook(self, space, function)
-
             # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function)
+            self._evaluate(space, function, hook=pre_evaluation)
 
             # Every iteration, we need to dump agents and best agent
             history.dump(agents=space.agents, best_agent=space.best_agent)

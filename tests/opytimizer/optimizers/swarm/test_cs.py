@@ -98,7 +98,7 @@ def test_cs_run():
                                       n_variables=2, lower_bound=[-10, -10],
                                       upper_bound=[10, 10])
 
-    history = new_cs.run(search_space, new_function, pre_evaluation_hook=hook)
+    history = new_cs.run(search_space, new_function, pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

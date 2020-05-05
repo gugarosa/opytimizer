@@ -16,9 +16,9 @@ class Opytimizer:
         """Initialization method.
 
         Args:
-            space (Space): A Space's object.
-            optimizer (Optimizer): An Optimizer's object, where it can be a child (e.g., PSO, BA, etc).
-            function (Function): A Function's object, where it can be a child (e.g., MultiFunction).
+            space (Space): A Space's object, where it has to be a child (e.g., SearchSpace, HyperSpace, etc).
+            optimizer (Optimizer): An Optimizer's object, where it has to be a child (e.g., PSO, BA, etc).
+            function (Function): A Function's object, where it can be a child (e.g., WeightedFunction).
 
         """
 
@@ -40,7 +40,8 @@ class Opytimizer:
 
     @property
     def space(self):
-        """Space: A Space's object.
+        """Space: A Space's object, where it has to be a child (SearchSpace, HyperSpace, etc).
+
         """
 
         return self._space
@@ -48,14 +49,14 @@ class Opytimizer:
     @space.setter
     def space(self, space):
         if not space.built:
-            raise e.BuildError(
-                '`space` should be built before using Opytimizer')
+            raise e.BuildError('`space` should be built before using Opytimizer')
 
         self._space = space
 
     @property
     def optimizer(self):
-        """Optimizer: An Optimizer's object, where it can be a child (PSO, BA, etc).
+        """Optimizer: An Optimizer's object, where it has to be a child (PSO, BA, etc).
+
         """
 
         return self._optimizer
@@ -63,14 +64,14 @@ class Opytimizer:
     @optimizer.setter
     def optimizer(self, optimizer):
         if not optimizer.built:
-            raise e.BuildError(
-                '`optimizer` should be built before using Opytimizer')
+            raise e.BuildError('`optimizer` should be built before using Opytimizer')
 
         self._optimizer = optimizer
 
     @property
     def function(self):
-        """Function: A Function's object, where it can be a child (External or Internal).
+        """Function: A Function's object, where it can be a child (WeightedFunction).
+
         """
 
         return self._function
@@ -78,17 +79,16 @@ class Opytimizer:
     @function.setter
     def function(self, function):
         if not function.built:
-            raise e.BuildError(
-                '`function` should be built before using Opytimizer')
+            raise e.BuildError('`function` should be built before using Opytimizer')
 
         self._function = function
 
-    def start(self, store_best_only=False, pre_evaluation_hook=None):
+    def start(self, store_best_only=False, pre_evaluation=None):
         """Starts the optimization task.
 
         Args
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation_hook (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object describing the agents position and best fitness values
@@ -102,7 +102,7 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation_hook)
+        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation)
 
         # Ending timer
         end = time.time()

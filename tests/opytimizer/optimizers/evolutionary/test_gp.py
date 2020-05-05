@@ -154,7 +154,7 @@ def test_gp_run():
                                 n_iterations=500, min_depth=1, max_depth=2,
                                 functions=['SUM', 'SUB', 'MUL', 'DIV'], lower_bound=[0], upper_bound=[10])
 
-    history = new_gp.run(tree_space, new_function, pre_evaluation_hook=hook)
+    history = new_gp.run(tree_space, new_function, pre_evaluation=hook)
 
     print(tree_space.best_tree)
     print(tree_space.best_tree.post_order)
@@ -163,7 +163,7 @@ def test_gp_run():
                                 n_iterations=500, min_depth=2, max_depth=3,
                                 functions=['EXP', 'LOG', 'SQRT', 'ABS', 'COS', 'SIN'], lower_bound=[0], upper_bound=[10])
 
-    history = new_gp.run(tree_space, new_function, pre_evaluation_hook=hook)
+    history = new_gp.run(tree_space, new_function, pre_evaluation=hook)
 
     print(tree_space.best_tree)
     print(tree_space.best_tree.post_order)
