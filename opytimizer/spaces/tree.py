@@ -214,7 +214,6 @@ class TreeSpace(Space):
 
         logger.debug('Terminals created.')
 
-
     def _create_trees(self, algorithm='GROW'):
         """Creates a list of random trees using a specific algorithm.
 
