@@ -25,7 +25,7 @@ class BPSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='bPSO', hyperparams={}):
+    def __init__(self, algorithm='BPSO', hyperparams={}):
         """Initialization method.
 
         Args:
@@ -39,9 +39,6 @@ class BPSO(Optimizer):
         # Override its parent class with the receiving hyperparams
         super(BPSO, self).__init__(algorithm=algorithm)
 
-        # Inertia weight
-        self.w = np.array([1])
-
         # Cognitive constant
         self.c1 = np.array([1])
 
@@ -52,21 +49,6 @@ class BPSO(Optimizer):
         self._build(hyperparams)
 
         logger.info('Class overrided.')
-
-    @property
-    def w(self):
-        """float: Inertia weight.
-
-        """
-
-        return self._w
-
-    @w.setter
-    def w(self, w):
-        if not isinstance(w, np.ndarray):
-            raise e.TypeError('`w` should be a numpy array')
-
-        self._w = w
 
     @property
     def c1(self):
@@ -117,8 +99,6 @@ class BPSO(Optimizer):
         # If one can find any hyperparam inside its object,
         # set them as the ones that will be used
         if hyperparams:
-            if 'w' in hyperparams:
-                self.w = hyperparams['w']
             if 'c1' in hyperparams:
                 self.c1 = hyperparams['c1']
             if 'c2' in hyperparams:
@@ -129,26 +109,36 @@ class BPSO(Optimizer):
 
         # Logging attributes
         logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | '
+            f'Algorithm: {self.algorithm} | Hyperparameters: c1 = {self.c1}, c2 = {self.c2} | '
             f'Built: {self.built}.')
 
-    def _update_velocity(self, position, best_position, local_position, velocity):
+    def _update_velocity(self, position, best_position, local_position):
         """Updates a particle velocity.
 
         Args:
             position (np.array): Agent's current position.
             best_position (np.array): Global best position.
             local_position (np.array): Agent's local best position.
-            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new velocity based on boolean bPSO's paper velocity update equation.
 
         """
-        
-        # Calculates new velocity
-        new_velocity = np.logical_or(np.logical_and(self.w, velocity), np.logical_or(np.logical_and(
-            self.c1, np.logical_xor(local_position, position)), np.logical_and(self.c2, np.logical_xor(best_position, position))))
+
+        # Defining a random binary number
+        r1 = r.generate_binary_random_number(position.shape)
+
+        # Defining another random binary number
+        r2 = r.generate_binary_random_number(position.shape)
+
+        # Calculating the local partial
+        local_partial = np.logical_and(self.c1, np.logical_xor(r1, np.logical_xor(local_position, position)))
+
+        # Calculating the global partial
+        global_partial = np.logical_and(self.c2, np.logical_xor(r2, np.logical_xor(best_position, position)))
+
+        # Updating new velocity
+        new_velocity = np.logical_or(local_partial, global_partial)
 
         return new_velocity
 
@@ -183,8 +173,7 @@ class BPSO(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, local_position[i], velocity[i])
+            velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i])
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])

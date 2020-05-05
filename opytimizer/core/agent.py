@@ -98,7 +98,8 @@ class Agent:
 
     @fit.setter
     def fit(self, fit):
-        if not (isinstance(fit, float) or isinstance(fit, int)):
+        if not (isinstance(fit, float) or isinstance(fit, int)
+                or isinstance(fit, np.int32) or isinstance(fit, np.int64)):
             raise e.TypeError('`fit` should be a float or integer')
         
         self._fit = fit

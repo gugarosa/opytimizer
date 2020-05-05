@@ -11,10 +11,10 @@ from opytimizer.spaces.boolean import BooleanSpace
 np.random.seed(0)
 
 # Number of agents
-n_agents = 10
+n_agents = 5
 
 # Number of decision variables
-n_variables = 3
+n_variables = 5
 
 # Number of running iterations
 n_iterations = 10
@@ -24,7 +24,6 @@ s = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations, n_variables=n_var
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'w': r.generate_binary_random_number(size=(n_variables, 1)),
     'c1': r.generate_binary_random_number(size=(n_variables, 1)),
     'c2': r.generate_binary_random_number(size=(n_variables, 1))
 }
@@ -33,7 +32,7 @@ hyperparams = {
 p = BPSO(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=Knapsack(costs=[5, 10, 15], weights=[10, 20, 30], max_capacity=50))
+f = Function(pointer=Knapsack(values=[55, 10, 47, 5, 4], weights=[95, 4, 60, 32, 23], max_capacity=100))
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)
