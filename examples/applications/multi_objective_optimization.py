@@ -38,7 +38,7 @@ hyperparams = {
 p = FA(hyperparams=hyperparams)
 
 # Defining task's main function
-z = WeightedFunction(functions=[Sphere(), Exponential()], weights=[0.5, 0.5])
+z = WeightedFunction(functions=[Exponential(), Sphere()], weights=[0.5, 0.5])
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=z)
