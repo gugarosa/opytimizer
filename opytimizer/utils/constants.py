@@ -33,7 +33,7 @@ N_ARGS_FUNCTION = {
 
 # A test passes if the best solution found by the agent in the target function
 # is smaller than this value
-TEST_EPSILON = 50
+TEST_EPSILON = 100
 
 # When using the Tournament Selection, one must provide the size of rounds,
 # where individuals will compete among themselves
