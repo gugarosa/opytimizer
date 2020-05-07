@@ -81,7 +81,7 @@ def test_sbo_update():
                                       upper_bound=[10, 10])
 
     new_sbo._update(search_space.agents,
-                    search_space.best_agent, new_function, 0.5)
+                    search_space.best_agent, new_function, np.array([0.5, 0.5]))
 
     assert search_space.agents[0].position[0] != 0
 

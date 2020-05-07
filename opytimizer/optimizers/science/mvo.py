@@ -61,7 +61,7 @@ class MVO(Optimizer):
     def WEP_min(self, WEP_min):
         if not (isinstance(WEP_min, float) or isinstance(WEP_min, int)):
             raise e.TypeError('`WEP_min` should be a float or integer')
-        if WEP_min < 0 and WEP_min > 1:
+        if (WEP_min < 0 or WEP_min > 1):
             raise e.ValueError('`WEP_min` should be >= 0 and < 1')
 
         self._WEP_min = WEP_min
@@ -78,7 +78,7 @@ class MVO(Optimizer):
     def WEP_max(self, WEP_max):
         if not (isinstance(WEP_max, float) or isinstance(WEP_max, int)):
             raise e.TypeError('`WEP_max` should be a float or integer')
-        if WEP_max < 0 and WEP_max > 1:
+        if (WEP_max < 0 or WEP_max > 1):
             raise e.ValueError('`WEP_max` should be >= 0 and < 1')
         if WEP_max < self.WEP_min:
             raise e.ValueError('`WEP_max` should be >= `WEP_min`')
