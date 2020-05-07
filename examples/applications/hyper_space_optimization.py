@@ -1,28 +1,15 @@
 import numpy as np
+from opytimark.markers.n_dimensional import Sphere
 
 import opytimizer.math.hypercomplex as h
+import opytimizer.utils.decorator as d
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.hyper import HyperSpace
 
-
-def sphere(x):
-    # When using hypercomplex numbers, we always need to span them
-    # before feeding into the function
-    x_span = h.span(x, lower_bound, upper_bound)
-
-    # Declaring Sphere's function
-    y = x_span ** 2
-
-    return np.sum(y)
-
-
 # Random seed for experimental consistency
 np.random.seed(0)
-
-# Creating Function's object
-f = Function(pointer=sphere)
 
 # Number of agents
 n_agents = 20
@@ -44,6 +31,16 @@ upper_bound = [10, 10]
 s = HyperSpace(n_agents=n_agents, n_iterations=n_iterations,
                n_variables=n_variables, n_dimensions=n_dimensions,
                lower_bound=lower_bound, upper_bound=upper_bound)
+
+# Wrapping the objective function with a spanning decorator
+# This decorator allows values to be spanned between lower and upper bounds
+@d.hyper_spanning(lower_bound, upper_bound)
+def wrapper(x):
+    s = Sphere()
+    return s(x)
+
+# Creating Function's object
+f = Function(pointer=wrapper)
 
 # Hyperparameters for the optimizer
 hyperparams = {
