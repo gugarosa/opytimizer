@@ -247,7 +247,7 @@ class IWO(Optimizer):
         # Iterate through all agents
         for agent in agents:
             # Calculate the seeding ratio based on its fitness
-            ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit)
+            ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit + c.EPSILON)
 
             # Calculates the number of produced seeds
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)

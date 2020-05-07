@@ -4,6 +4,7 @@ import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -217,7 +218,7 @@ class GCO(Optimizer):
             life[i] = 10
 
             # Calculates the current cell new life fitness
-            life_fit = (agent.fit - max_fit) / (min_fit - max_fit)
+            life_fit = (agent.fit - max_fit) / (min_fit - max_fit + c.EPSILON)
 
             # Adds 10 * new life fitness to cell's life
             life[i] += 10 * life_fit

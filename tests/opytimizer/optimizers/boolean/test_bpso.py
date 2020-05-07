@@ -18,6 +18,7 @@ def test_bpso_hyperparams():
     new_bpso = bpso.BPSO(hyperparams=hyperparams)
 
     assert new_bpso.c1 == 0 or new_bpso.c1 == 1
+    
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 

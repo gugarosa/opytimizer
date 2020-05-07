@@ -18,7 +18,9 @@ def test_pso_hyperparams():
     new_pso = pso.PSO(hyperparams=hyperparams)
 
     assert new_pso.w == 2
+
     assert new_pso.c1 == 1.7
+    
     assert new_pso.c2 == 1.7
 
 
