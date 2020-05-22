@@ -15,7 +15,7 @@ setup(name='opytimizer',
       install_requires=['coverage>=5.1',
                         'matplotlib>=3.2.1',
                         'numpy>=1.18.4',
-                        'opytimark>=1.0.2',
+                        'opytimark>=1.0.3',
                         'pylint>=2.5.2',
                         'pytest>=5.4.2'
                         ],
