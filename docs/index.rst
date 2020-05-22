@@ -10,7 +10,7 @@ Use Opytimizer if you need a library or wish to:
 * Mix-and-match different strategies to solve your problem.
 * Because it is fun to optimize things.
 
-Opytimizer is compatible with: **Python 3.6+** and **PyPy 3.5**.
+Opytimizer is compatible with: **Python 3.6+**.
 
 .. toctree::
     :maxdepth: 2
