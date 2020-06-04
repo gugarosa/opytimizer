@@ -267,7 +267,7 @@ class GA(Optimizer):
             # Calculates new fitness for `beta`
             beta.fit = function(beta.position)
 
-            # Appends the mutated agent to the children
+            # Appends the mutated agents to the children
             new_agents.extend([alpha, beta])
 
         # Joins both populations

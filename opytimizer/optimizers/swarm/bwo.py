@@ -140,7 +140,7 @@ class BWO(Optimizer):
             f'Built: {self.built}.')
 
     def _procreating(self, x1, x2):
-        """Performs the reproduction between a pair of parents.
+        """Procreates a pair of parents into offsprings.
 
         Args:
             x1 (Agent): Father to produce the offsprings.
@@ -154,36 +154,42 @@ class BWO(Optimizer):
         # Makes a deep copy of father and mother
         y1, y2 = copy.deepcopy(x1), copy.deepcopy(x2)
 
-        # Generates another uniform random number
+        # Generates a uniform random number
         alpha = r.generate_uniform_random_number()
 
-        # Calculates the crossover based on a linear combination between father and mother
+        # Calculates the first crossover
         y1.position = alpha * x1.position + (1 - alpha) * x2.position
 
-        # Calculates the crossover based on a linear combination between father and mother
+        # Calculates the second crossover
         y2.position = alpha * x2.position + (1 - alpha) * x1.position
 
         return y1, y2
 
     def _mutation(self, alpha):
-        """Performs the mutation over offsprings.
+        """Performs the mutation over an offspring
 
         Args:
-            alpha (Agent): First offspring.
+            alpha (Agent): Offspring to be mutated.
 
         Returns:
             The mutated offspring.
 
         """
-        
-        beta = copy.deepcopy(alpha)
 
-        # TODO: select non duplicate random parents
-        r1, r2 = random.sample(range(len(alpha.position)), 2)
+        # Checks if the number of variables is bigger than one
+        if alpha.n_variables > 1:
+            # Samples a random integer
+            r1 = r2 = int(r.generate_uniform_random_number(0, alpha.n_variables))
+
+            # While the sampled intergers are equal
+            while r1 == r2:
+                # Continues to sample the second integer
+                r2 = int(r.generate_uniform_random_number(0, alpha.n_variables))
+
+            # Swaps the randomly selected variables
+            alpha.position[r1], alpha.position[r2] = alpha.position[r2], alpha.position[r1]
         
-        beta.position[r1], beta.position[r2] = beta.position[r2], beta.position[r1]
-        
-        return beta
+        return alpha
 
     def _update(self, agents, n_variables, function):
         """Method that wraps procreation, cannibalism and mutation over all agents and variables.
@@ -198,58 +204,65 @@ class BWO(Optimizer):
         # Retrieving the number of agents
         n_agents = len(agents)
         
-        # Number of reproduction
-        nr = int(n_agents * self.pp)
-        
-        # Number of mutation children
-        nm = int(n_agents * self.pm)
+        # Calculates the number agents that reproduces, are cannibals and mutates
+        n_reproduct, n_cannibals, n_mutate = int(n_agents * self.pp), int(n_agents * self.cr), int(n_agents * self.pm)
         
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
-        
-        # Select the best nr solutions in pop and save them in pop1
-        pop1 = copy.deepcopy(agents[:nr])
-        pop2 = []
-        
-        for i in range(0, nr):
 
-            father, mother = random.sample(pop1, 2)
+        # Selecting the best solutions and saving in auxiliary population
+        agents1 = copy.deepcopy(agents[:n_reproduct])
+        
+        # Creating an empty auxiliary population
+        agents2 = []
+
+        # For every possible reproducting agent
+        for _ in range(0, n_reproduct):
+            # Sampling random uniform integers as indexes
+            idx = r.generate_uniform_random_number(0, n_agents, size=2)
+
+            # Making a deepcopy of father and mother
+            father, mother = copy.deepcopy(agents[int(idx[0])]), copy.deepcopy(agents[int(idx[1])])
             
+            # Creating an empty list of auxiliary agents
             new_agents = []
             
-            for j in range(0, int(n_variables/2)):
+            # For every possible pair of variables
+            for _ in range(0, int(n_variables / 2)):
+                # Procreates parents into two new offsprings
+                y1, y2 = self._procreating(father, mother)
                 
-                # Performs the procreating
-                alpha, beta = self._procreating(father, mother)
-                
-                # Calculates new fitness for `alpha`
-                alpha.fit = function(alpha.position)
+                # Calculates new fitness for `y1`
+                y1.fit = function(y1.position)
 
-                # Calculates new fitness for `beta`
-                beta.fit = function(beta.position)
+                # Calculates new fitness for `y2`
+                y2.fit = function(y2.position)
 
-                new_agents.extend([copy.deepcopy(mother), alpha, beta])
+                # Appends the mother and mutated agents to the new population
+                new_agents.extend([mother, y1, y2])
 
-            # Sorting agents
+            # Sorting new population
             new_agents.sort(key=lambda x: x.fit)
             
-            new_agents = new_agents[:int(self.cr * len(new_agents))]
-            pop2.extend(new_agents)
+            # Extending auxiliary population with the number of cannibals
+            agents2.extend(new_agents[:n_cannibals])
         
-        for i in range(0, nm):
-            
-            rand = int(r.generate_uniform_random_number(0, nr-1))
+        # For every possible mutating agent
+        for _ in range(0, n_mutate):
+            # Sampling a random uniform integer as index
+            idx = int(r.generate_uniform_random_number(0, n_reproduct))
             
             # Performs the mutation
-            agent = self._mutation(pop1[rand])
+            alpha = self._mutation(agents1[idx])
             
-            # Calculates new fitness for `temp`
-            agent.fit = function(agent.position)
+            # Calculates new fitness for `alpha`
+            alpha.fit = function(alpha.position)
             
-            pop2.extend([agent])
+            # Appends the mutated agent to the auxiliary population
+            agents2.extend([alpha])
             
         # Joins both populations
-        agents += pop2
+        agents += agents2
 
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
@@ -281,7 +294,7 @@ class BWO(Optimizer):
             logger.info(f'Iteration {t+1}/{space.n_iterations}')
 
             # Updating agents
-            self._update(space.agents, space.n_variables, function)
+            space.agents = self._update(space.agents, space.n_variables, function)
 
             # Checking if agents meets the bounds limits
             space.clip_limits()
