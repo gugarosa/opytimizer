@@ -94,4 +94,3 @@ def test_mrfo_run():
 
     best_fitness = history.best_agent[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm mrfo failed to converge.'
-

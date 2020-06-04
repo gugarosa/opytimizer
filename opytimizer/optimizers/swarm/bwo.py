@@ -1,12 +1,8 @@
 import copy
-import random
-
-import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
-from opytimizer.core import agent
 from opytimizer.core.optimizer import Optimizer
 
 logger = l.get_logger(__name__)

@@ -1,5 +1,5 @@
-import pytest
 import numpy as np
+import pytest
 
 from opytimizer.utils import decorator
 
