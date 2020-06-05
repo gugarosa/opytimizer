@@ -78,8 +78,8 @@ class BWO(Optimizer):
     def cr(self, cr):
         if not (isinstance(cr, float) or isinstance(cr, int)):
             raise e.TypeError('`cr` should be a float or integer')
-        if cr < 0:
-            raise e.ValueError('`cr` should be >= 0')
+        if cr < 0 or cr > 1:
+            raise e.ValueError('`cr` should be between 0 and 1')
 
         self._cr = cr
 
