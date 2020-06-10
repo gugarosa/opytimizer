@@ -9,9 +9,9 @@
 Did you ever reach a bottleneck in your computational experiments? Are you tired of selecting suitable parameters for a chosen technique? If yes, Opytimizer is the real deal! This package provides an easy-to-go implementation of meta-heuristic optimizations. From agents to search space, from internal functions to external communication, we will foster all research related to optimizing stuff.
 
 Use Opytimizer if you need a library or wish to:
-* Create your optimization algorithm.
-* Design or use pre-loaded optimization tasks.
-* Mix-and-match different strategies to solve your problem.
+* Create your optimization algorithm;
+* Design or use pre-loaded optimization tasks;
+* Mix-and-match different strategies to solve your problem;
 * Because it is fun to optimize things.
 
 Read the docs at [opytimizer.readthedocs.io](https://opytimizer.readthedocs.io).

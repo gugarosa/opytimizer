@@ -5,9 +5,9 @@ Did you ever reach a bottleneck in your computational experiments? Are you tired
 
 Use Opytimizer if you need a library or wish to:
 
-* Create your own optimization algorithm.
-* Design or use pre-loaded optimization tasks.
-* Mix-and-match different strategies to solve your problem.
+* Create your own optimization algorithm;
+* Design or use pre-loaded optimization tasks;
+* Mix-and-match different strategies to solve your problem;
 * Because it is fun to optimize things.
 
 Opytimizer is compatible with: **Python 3.6+**.
