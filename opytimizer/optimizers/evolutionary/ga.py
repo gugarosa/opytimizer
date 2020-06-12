@@ -261,6 +261,12 @@ class GA(Optimizer):
             # Performs the mutation
             alpha, beta = self._mutation(alpha, beta)
 
+            # Checking `alpha` limits
+            alpha.clip_limits()
+
+            # Checking `beta` limits
+            beta.clip_limits()
+
             # Calculates new fitness for `alpha`
             alpha.fit = function(alpha.position)
 

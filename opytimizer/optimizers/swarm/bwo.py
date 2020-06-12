@@ -227,6 +227,12 @@ class BWO(Optimizer):
             for _ in range(0, int(n_variables / 2)):
                 # Procreates parents into two new offsprings
                 y1, y2 = self._procreating(father, mother)
+
+                # Checking `y1` limits
+                y1.clip_limits()
+
+                # Checking `y2` limits
+                y2.clip_limits()
                 
                 # Calculates new fitness for `y1`
                 y1.fit = function(y1.position)
@@ -250,6 +256,9 @@ class BWO(Optimizer):
             
             # Performs the mutation
             alpha = self._mutation(agents1[idx])
+
+            # Checking `alpha` limits
+            alpha.clip_limits()
             
             # Calculates new fitness for `alpha`
             alpha.fit = function(alpha.position)

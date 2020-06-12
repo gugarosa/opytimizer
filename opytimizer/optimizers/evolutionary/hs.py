@@ -193,6 +193,9 @@ class HS(Optimizer):
         # Generates a new harmony
         agent = self._generate_new_harmony(agents[i])
 
+        # Checking agent limits
+        agent.clip_limits()
+
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 

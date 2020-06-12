@@ -220,6 +220,9 @@ class SSD(Optimizer):
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
 
+            # Checking agent limits
+            agent.clip_limits()
+
             # Updates current agent velocities
             velocity[i] = self._update_velocity(
                 agent.position, mean, local_position[i], velocity[i])
