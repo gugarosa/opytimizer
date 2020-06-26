@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
@@ -515,22 +516,28 @@ class GP(Optimizer):
         # We will define a History object for further dumping
         history = h.History(store_best_only)
 
-        # These are the number of iterations to converge
-        for t in range(space.n_iterations):
-            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+        # Initializing a progress bar
+        with tqdm(total=space.n_iterations) as b:
+            # These are the number of iterations to converge
+            for t in range(space.n_iterations):
+                logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
-            # Updating trees with designed operators
-            self._update(space)
-            
-            # After the update, we need to re-evaluate the tree space
-            self._evaluate(space, function, hook=pre_evaluation)
+                # Updating trees with designed operators
+                self._update(space)
+                
+                # After the update, we need to re-evaluate the tree space
+                self._evaluate(space, function, hook=pre_evaluation)
 
-            # Every iteration, we need to dump agents and best agent
-            history.dump(agents=space.agents,
-                         best_agent=space.best_agent,
-                         best_tree=space.best_tree)
+                # Every iteration, we need to dump agents and best agent
+                history.dump(agents=space.agents,
+                            best_agent=space.best_agent,
+                            best_tree=space.best_tree)
 
-            logger.info(f'Fitness: {space.best_agent.fit}')
-            logger.info(f'Position: {space.best_agent.position}')
+                # Updates the `tqdm` status
+                b.set_postfix(fitness=space.best_agent.fit)
+                b.update()
+
+                logger.file(f'Fitness: {space.best_agent.fit}')
+                logger.file(f'Position: {space.best_agent.position}')
 
         return history

@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
@@ -251,32 +252,38 @@ class WCA(Optimizer):
         # We will define a History object for further dumping
         history = h.History(store_best_only)
 
-        # These are the number of iterations to converge
-        for t in range(space.n_iterations):
-            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+        # Initializing a progress bar
+        with tqdm(total=space.n_iterations) as b:
+            # These are the number of iterations to converge
+            for t in range(space.n_iterations):
+                logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
-            # Updating agents
-            self._update(space.agents, space.best_agent, flows)
+                # Updating agents
+                self._update(space.agents, space.best_agent, flows)
 
-            # Checking if agents meets the bounds limits
-            space.clip_limits()
+                # Checking if agents meets the bounds limits
+                space.clip_limits()
 
-            # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function, hook=pre_evaluation)
+                # After the update, we need to re-evaluate the search space
+                self._evaluate(space, function, hook=pre_evaluation)
 
-            # Sorting agents
-            space.agents.sort(key=lambda x: x.fit)
+                # Sorting agents
+                space.agents.sort(key=lambda x: x.fit)
 
-            # Performs the raining process (Equation 12)
-            self._raining_process(space.agents, space.best_agent)
+                # Performs the raining process (Equation 12)
+                self._raining_process(space.agents, space.best_agent)
 
-            # Updates the evaporation condition
-            self.d_max -= (self.d_max / space.n_iterations)
+                # Updates the evaporation condition
+                self.d_max -= (self.d_max / space.n_iterations)
 
-            # Every iteration, we need to dump agents and best agent
-            history.dump(agents=space.agents, best_agent=space.best_agent)
+                # Every iteration, we need to dump agents and best agent
+                history.dump(agents=space.agents, best_agent=space.best_agent)
 
-            logger.info(f'Fitness: {space.best_agent.fit}')
-            logger.info(f'Position: {space.best_agent.position}')
+                # Updates the `tqdm` status
+                b.set_postfix(fitness=space.best_agent.fit)
+                b.update()
+
+                logger.file(f'Fitness: {space.best_agent.fit}')
+                logger.file(f'Position: {space.best_agent.position}')
 
         return history

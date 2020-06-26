@@ -1,14 +1,14 @@
 import numpy as np
-
 import torch
-from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from torch import optim
 from torch.autograd import Variable
+
+from opytimizer import Opytimizer
+from opytimizer.core.function import Function
+from opytimizer.optimizers.swarm.pso import PSO
+from opytimizer.spaces.search import SearchSpace
 
 # Loading digits dataset
 digits = load_digits()

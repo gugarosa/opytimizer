@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.decorator as d
@@ -287,28 +288,34 @@ class SSD(Optimizer):
         # We will define a History object for further dumping
         history = h.History(store_best_only)
 
-        # These are the number of iterations to converge
-        for t in range(space.n_iterations):
-            logger.info(f'Iteration {t+1}/{space.n_iterations}')
+        # Initializing a progress bar
+        with tqdm(total=space.n_iterations) as b:
+            # These are the number of iterations to converge
+            for t in range(space.n_iterations):
+                logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
-            # Updating agents
-            self._update(space.agents, function,
-                         local_position, velocity)
+                # Updating agents
+                self._update(space.agents, function,
+                            local_position, velocity)
 
-            # Checking if agents meets the bounds limits
-            space.clip_limits()
+                # Checking if agents meets the bounds limits
+                space.clip_limits()
 
-            # After the update, we need to re-evaluate the search space
-            self._evaluate(space, function, local_position, hook=pre_evaluation)
+                # After the update, we need to re-evaluate the search space
+                self._evaluate(space, function, local_position, hook=pre_evaluation)
 
-            # Reducing exploration parameter
-            self.c *= self.decay
+                # Reducing exploration parameter
+                self.c *= self.decay
 
-            # Every iteration, we need to dump agents, local positions and best agent
-            history.dump(agents=space.agents, local=local_position,
-                         best_agent=space.best_agent)
+                # Every iteration, we need to dump agents, local positions and best agent
+                history.dump(agents=space.agents, local=local_position,
+                            best_agent=space.best_agent)
 
-            logger.info(f'Fitness: {space.best_agent.fit}')
-            logger.info(f'Position: {space.best_agent.position}')
+                # Updates the `tqdm` status
+                b.set_postfix(fitness=space.best_agent.fit)
+                b.update()
+
+                logger.file(f'Fitness: {space.best_agent.fit}')
+                logger.file(f'Position: {space.best_agent.position}')
 
         return history
