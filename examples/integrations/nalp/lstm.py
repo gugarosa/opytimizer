@@ -3,7 +3,6 @@ from nalp.corpus.text import TextCorpus
 from nalp.datasets.language_modeling import LanguageModelingDataset
 from nalp.encoders.integer import IntegerEncoder
 from nalp.models.generators.lstm import LSTMGenerator
-
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
