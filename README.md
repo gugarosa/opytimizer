@@ -90,8 +90,8 @@ Opytimizer is based on the following structure, and you should pay attention to 
             - gco
         - science
             - bh
-            - gsa
             - efo
+            - gsa
             - mvo
             - sa
             - wca

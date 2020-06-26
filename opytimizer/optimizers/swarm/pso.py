@@ -272,7 +272,7 @@ class PSO(Optimizer):
 
                 # Updating agents
                 self._update(space.agents, space.best_agent,
-                            local_position, velocity)
+                             local_position, velocity)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()
@@ -282,10 +282,6 @@ class PSO(Optimizer):
 
                 # Every iteration, we need to dump agents, local positions and best agent
                 history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
 
                 # Updates the `tqdm` status
                 b.set_postfix(fitness=space.best_agent.fit)
