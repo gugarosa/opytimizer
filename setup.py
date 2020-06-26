@@ -17,7 +17,8 @@ setup(name='opytimizer',
                         'numpy>=1.18.4',
                         'opytimark>=1.0.3',
                         'pylint>=2.5.2',
-                        'pytest>=5.4.2'
+                        'pytest>=5.4.2',
+                        'tqdm>=4.46.0'
                         ],
       extras_require={
           'tests': ['coverage',
