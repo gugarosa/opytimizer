@@ -53,7 +53,7 @@ class BooleanSpace(Space):
             # Iterate through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
                 # For each decision variable, we generate uniform random numbers
-                agent.position[j] = np.round(r.generate_uniform_random_number(lb, ub, agent.n_dimensions))
+                agent.position[j] = r.generate_binary_random_number(size=agent.n_dimensions)
 
                 # Applies the lower bound the agent's lower bound
                 agent.lb[j] = lb
