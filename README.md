@@ -73,6 +73,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
     - optimizers
         - boolean
             - bpso
+            - udma
         - evolutionary
             - de
             - ep

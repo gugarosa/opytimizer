@@ -4,7 +4,7 @@ from opytimark.markers.boolean import Knapsack
 import opytimizer.math.random as r
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.boolean.bpso import BPSO
+from opytimizer.optimizers.boolean.udma import UDMA
 from opytimizer.spaces.boolean import BooleanSpace
 
 # Random seed for experimental consistency
@@ -24,12 +24,12 @@ s = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations, n_variables=n_var
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'c1': r.generate_binary_random_number(size=(n_variables, 1)),
-    'c2': r.generate_binary_random_number(size=(n_variables, 1))
+    'lower_bound': 0.01,
+    'upper_bound': -1
 }
 
 # Creating BPSO's optimizer
-p = BPSO(hyperparams=hyperparams)
+p = UDMA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=Knapsack(values=[55, 10, 47, 5, 4], weights=[95, 4, 60, 32, 23], max_capacity=100))
