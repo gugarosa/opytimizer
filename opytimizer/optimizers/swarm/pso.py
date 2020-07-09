@@ -629,3 +629,105 @@ class RPSO(PSO):
                 logger.file(f'Position: {space.best_agent.position}')
 
         return history
+
+
+class SAVPSO(PSO):
+    """An SAVPSO class, inherited from Optimizer.
+
+    This is the designed class to define SAVPSO-related
+    variables and methods.
+
+    References:
+        H. Lu and W. Chen. Self-adaptive velocity particle swarm optimization for solving constrained optimization problems.
+        Journal of global optimization (2008).
+
+    """
+
+    def __init__(self, algorithm='SAVPSO', hyperparams={}):
+        """Initialization method.
+
+        Args:
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
+        """
+
+        logger.info('Overriding class: PSO -> SAVPSO.')
+
+        # Override its parent class with the receiving hyperparams
+        super(SAVPSO, self).__init__(algorithm, hyperparams)
+
+        logger.info('Class overrided.')
+
+    def _update_velocity(self, agent_position, best_position, local_position, selected_position, velocity):
+        """Updates a single particle velocity (over a single variable).
+
+        Args:
+            agent_position (np.array): Agent's current position.
+            best_position (np.array): Global best position.
+            local_position (np.array): Agent's local best position.
+            selected_position (np.array): Selected agent's position.
+            velocity (np.array): Agent's current velocity.
+
+        Returns:
+            A new velocity based on self-adaptive proposal.
+
+        """
+
+        # Generating a random number
+        r1 = r.generate_uniform_random_number()
+
+        # Calculates new velocity
+        new_velocity = self.w * np.fabs(selected_position - local_position) * np.sign(velocity) + r1 * (
+            local_position - agent_position) + (1 - r1) * (best_position - agent_position)
+
+        return new_velocity
+
+    def _update(self, agents, best_agent, local_position, velocity):
+        """Method that wraps velocity and position updates over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            best_agent (Agent): Global best agent.
+            local_position (np.array): Array of local best posisitons.
+            velocity (np.array): Array of current velocities.
+
+        """
+
+        # Creates an array of positions
+        positions = np.zeros((agents[0].position.shape[0], agents[0].position.shape[1]))
+
+        # For every agent
+        for agent in agents:
+            # Sums up its position
+            positions += agent.position
+
+        # Divides by the number of agents
+        positions /= len(agents)
+
+        # Iterate through all agents
+        for i, agent in enumerate(agents):
+            # Generates a random index for selecting an agent
+            idx = int(r.generate_uniform_random_number(0, len(agents)))
+
+            # Updates current agent's velocity
+            velocity[i] = self._update_velocity(
+                agent.position, best_agent.position, local_position[i], local_position[idx], velocity[i])
+
+            # Updates current agent's position
+            agent.position = self._update_position(agent.position, velocity[i])
+
+            # For every decision variable
+            for j in range(agent.n_variables):
+                # Generates a random number
+                r4 = r.generate_uniform_random_number(0, 1)
+
+                # If position is greater than upper bound
+                if agent.position[j] > agent.ub[j]:
+                    # Replace its value
+                    agent.position[j] = positions[j] + 1 * r4 * (agent.ub[0] - positions[j])
+
+                # If position is smaller than lower bound
+                if agent.position[j] < agent.lb[j]:
+                    # Replace its value
+                    agent.position[j] = positions[j] + 1 * r4 * (agent.lb[j] - positions[j])
