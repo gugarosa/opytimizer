@@ -178,7 +178,7 @@ class UDMA(Optimizer):
         r1 = r.generate_uniform_random_number(size=(probs.shape[0], probs.shape[1]))
 
         # Samples new positions
-        new_position = np.where(probs < r1, 1, 0)
+        new_position = np.where(probs < r1, True, False)
 
         return new_position
 

@@ -5,7 +5,7 @@ import numpy as np
 import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import bpso
-from opytimizer.spaces import search
+from opytimizer.spaces import boolean
 from opytimizer.utils import constants
 
 
@@ -18,7 +18,7 @@ def test_bpso_hyperparams():
     new_bpso = bpso.BPSO(hyperparams=hyperparams)
 
     assert new_bpso.c1 == 0 or new_bpso.c1 == 1
-    
+
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
@@ -69,17 +69,16 @@ def test_bpso_evaluate():
 
     new_function = function.Function(pointer=square)
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    boolean_space = boolean.BooleanSpace(
+        n_agents=2, n_iterations=10, n_variables=2)
 
     new_bpso = bpso.BPSO()
 
     local_position = np.zeros((2, 2, 1))
 
-    new_bpso._evaluate(search_space, new_function, local_position)
+    new_bpso._evaluate(boolean_space, new_function, local_position)
 
-    assert search_space.best_agent.fit < sys.float_info.max
+    assert boolean_space.best_agent.fit < sys.float_info.max
 
 
 def test_bpso_run():
@@ -93,11 +92,10 @@ def test_bpso_run():
 
     new_bpso = bpso.BPSO()
 
-    search_space = search.SearchSpace(n_agents=5, n_iterations=20,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    boolean_space = boolean.BooleanSpace(
+        n_agents=5, n_iterations=20, n_variables=2)
 
-    history = new_bpso.run(search_space, new_function, pre_evaluation=hook)
+    history = new_bpso.run(boolean_space, new_function, pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

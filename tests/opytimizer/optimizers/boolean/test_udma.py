@@ -5,7 +5,7 @@ import numpy as np
 import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import udma
-from opytimizer.spaces import search
+from opytimizer.spaces import boolean
 from opytimizer.utils import constants
 
 
@@ -87,11 +87,10 @@ def test_udma_build():
 def test_udma_calculate_probability():
     new_udma = udma.UDMA()
 
-    search_space = search.SearchSpace(n_agents=5, n_iterations=20,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    boolean_space = boolean.BooleanSpace(
+        n_agents=5, n_iterations=20, n_variables=2)
 
-    probs = new_udma._calculate_probability(search_space.agents)
+    probs = new_udma._calculate_probability(boolean_space.agents)
 
     assert probs.shape == (2, 1)
 
@@ -117,11 +116,10 @@ def test_udma_run():
 
     new_udma = udma.UDMA()
 
-    search_space = search.SearchSpace(n_agents=5, n_iterations=20,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    boolean_space = boolean.BooleanSpace(
+        n_agents=5, n_iterations=20, n_variables=2)
 
-    history = new_udma.run(search_space, new_function, pre_evaluation=hook)
+    history = new_udma.run(boolean_space, new_function, pre_evaluation=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

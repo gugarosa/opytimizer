@@ -227,11 +227,11 @@ class BPSO(Optimizer):
 
         # Instanciating array of local positions
         local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
 
         # And also an array of velocities
         velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
 
         # Initial search space evaluation
         self._evaluate(space, function, local_position, hook=pre_evaluation)
@@ -257,7 +257,7 @@ class BPSO(Optimizer):
 
                 # Every iteration, we need to dump agents, local positions and best agent
                 history.dump(agents=space.agents, local=local_position,
-                            best_agent=space.best_agent)
+                             best_agent=space.best_agent)
 
                 # Updates the `tqdm` status
                 b.set_postfix(fitness=space.best_agent.fit)
