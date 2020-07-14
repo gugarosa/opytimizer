@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 
 from opytimizer.core import function

@@ -1,5 +1,3 @@
-import pytest
-
 from opytimizer.spaces import hyper
 
 

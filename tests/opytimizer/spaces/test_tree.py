@@ -1,5 +1,3 @@
-import pytest
-
 from opytimizer.core import node
 from opytimizer.spaces import tree
 

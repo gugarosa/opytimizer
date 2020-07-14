@@ -1,7 +1,5 @@
 import sys
 
-import pytest
-
 from opytimizer.utils import constants
 
 

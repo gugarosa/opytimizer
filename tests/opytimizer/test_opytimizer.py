@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 import opytimizer
 from opytimizer.core import function

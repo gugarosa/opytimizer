@@ -1,5 +1,3 @@
-import pytest
-
 from opytimizer.utils import history
 from opytimizer.visualization import convergence
 
