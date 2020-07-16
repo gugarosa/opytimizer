@@ -126,7 +126,7 @@ class EP(Optimizer):
 
         """
 
-        # Makea a deepcopy on selected agent
+        # Makes a deepcopy on selected agent
         a = copy.deepcopy(agent)
 
         # Generates a uniform random number
