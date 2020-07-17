@@ -17,7 +17,7 @@ class BMRFO(Optimizer):
     variables and methods.
 
     References:
-        Not yet published.
+        Publication pending.
 
     """
 

@@ -3,7 +3,7 @@ from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.kh import KH
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -29,12 +29,13 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
 
 # Hyperparameters for the optimizer
 hyperparams = {
-    'Cr': 0,
-    'Mu': 0
+    'w': 0.7,
+    'c1': 1.7,
+    'c2': 1.7
 }
 
 # Creating PSO's optimizer
-p = KH(hyperparams=hyperparams)
+p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=Sphere())

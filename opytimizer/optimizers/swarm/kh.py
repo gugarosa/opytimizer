@@ -547,6 +547,9 @@ class KH(Optimizer):
             motion (np.array): Array of motions.
             foraging (np.array): Array of foraging motions.
 
+        Returns:
+            The updated position.
+
         """
 
         # Calculates the neighbour motion
@@ -567,74 +570,77 @@ class KH(Optimizer):
 
         return new_position
 
-    # def _crossover(self, i, agents):
+    def _crossover(self, agents, idx):
+        """Performs the crossover between selected agent and a randomly agent.
 
-    #     Cr = self.Cr * (agents[i].fit - agents[0].fit) / \
-    #         ((agents[-1].fit - agents[0].fit) + c.EPSILON)
+        Args:
+            agents (list): List of agents.
+            idx (int): Selected agent.
 
-    #     # Generating a random number
-    #     r1 = r.generate_uniform_random_number()
+        Returns:
+            An agent after suffering a crossover operator.
 
-    #     # Makes a deep copy of agent
-    #     a = copy.deepcopy(agents[i])
+        """
 
-    #     # Retrieving the number of agents
-    #     n_agents = len(agents)
+        # Makes a deepcopy of an agent
+        a = copy.deepcopy(agents[idx])
 
-    #     # Samples a random integer
-    #     p = int(r.generate_uniform_random_number(0, n_agents))
+        # Samples a random integer
+        m = int(r.generate_uniform_random_number(0, len(agents)))
 
-    #     # While the sampled intergers are equal
-    #     while i == p:
-    #         # Continues to sample the second integer
-    #         p = int(r.generate_uniform_random_number(0, n_agents))
+        # Calculates the current crossover probability
+        Cr = self.Cr * ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON))
 
-    #     for j in range(a.n_variables):
-    #         if r1 < Cr:
-    #             a.position[j] = agents[p].position[j]
-    #         else:
-    #             a.position[j] = agents[i].position[j]
+        # Iterates through all variables
+        for j in range(a.n_variables):
+            # Generating a uniform random number
+            r1 = r.generate_uniform_random_number()
 
-    #     return a
+            # If sampled uniform number if smaller than crossover probability
+            if r1 < Cr:
+                # Gathers the position from the selected agent
+                a.position[j] = copy.deepcopy(agents[m].position[j])
 
-    # def _mutation(self, i, agents):
+        return a
 
-    #     Mu = self.Mu / ((agents[i].fit - agents[0].fit) /
-    #                     ((agents[-1].fit - agents[0].fit) + c.EPSILON) + c.EPSILON)
+    def _mutation(self, agents, idx):
+        """Performs the mutation between selected agent and randomly agents.
 
-    #     # Generating a random number
-    #     r1 = r.generate_uniform_random_number()
+        Args:
+            agents (list): List of agents.
+            idx (int): Selected agent.
 
-    #     # Generating a random number
-    #     r2 = r.generate_uniform_random_number()
+        Returns:
+            An agent after suffering a mutation operator.
 
-    #     # Makes a deep copy of agent
-    #     a = copy.deepcopy(agents[i])
+        """
 
-    #     # Retrieving the number of agents
-    #     n_agents = len(agents)
+        # Makes a deepcopy of agent
+        a = copy.deepcopy(agents[idx])
 
-    #     # Samples a random integer
-    #     p = q = int(r.generate_uniform_random_number(0, n_agents))
+        # Samples a random integer
+        p = int(r.generate_uniform_random_number(0, len(agents)))
 
-    #     # While the sampled intergers are equal
-    #     while i == p:
-    #         # Continues to sample the second integer
-    #         p = int(r.generate_uniform_random_number(0, n_agents))
+        # Samples a random integer
+        q = int(r.generate_uniform_random_number(0, len(agents)))
 
-    #     # While the sampled intergers are equal
-    #     while i == q:
-    #         # Continues to sample the second integer
-    #         q = int(r.generate_uniform_random_number(0, n_agents))
+        # Calculates the current mutation probability
+        Mu = self.Mu / ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON) + c.EPSILON)
 
-    #     for j in range(a.n_variables):
-    #         if r1 < Mu:
-    #             a.position[j] = agents[0].position[j] + r2 * \
-    #                 (agents[p].position[j] - agents[q].position[j])
-    #         else:
-    #             a.position[j] = agents[i].position[j]
+        # Iterates through all variables
+        for j in range(a.n_variables):
+            # Generating a uniform random number
+            r1 = r.generate_uniform_random_number()
 
-    #     return a
+            # If sampled uniform number if smaller than mutation probability
+            if r1 < Mu:
+                # Generating another uniform random number
+                r2 = r.generate_uniform_random_number()
+
+                # Mutates the current position
+                a.position[j] = agents[0].position[j] + r2 * (agents[p].position[j] - agents[q].position[j])
+
+        return a
 
     def _update(self, agents, function, iteration, n_iterations, motion, foraging):
         """Method that wraps motion and genetic updates over all agents and variables.
@@ -661,10 +667,10 @@ class KH(Optimizer):
             agents[i].position = self._update_position(agents, i, iteration, n_iterations, food, motion[i], foraging[i])
 
             # Performs the crossover
-            # agents[i] = self._crossover(i, agents)
+            agents[i] = self._crossover(agents, i)
 
             # Performs the mutation
-            # agents[i] = self._mutation(i, agents)
+            agents[i] = self._mutation(agents, i)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
