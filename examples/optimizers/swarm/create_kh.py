@@ -11,7 +11,7 @@ hyperparams = {
     'D_max': 0.002,
     'C_t': 0.5,
     'Cr': 0.2,
-    'Mu': 0.8
+    'Mu': 0.05
 }
 
 # Creating a KH optimizer

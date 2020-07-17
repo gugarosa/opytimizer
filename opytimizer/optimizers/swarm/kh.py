@@ -63,7 +63,7 @@ class KH(Optimizer):
         self.Cr = 0.2
 
         # Mutation probability
-        self.Mu = 0.8
+        self.Mu = 0.05
 
         # Now, we need to build this class up
         self._build(hyperparams)
@@ -284,10 +284,10 @@ class KH(Optimizer):
         food = copy.deepcopy(agents[0])
 
         # Calculates the sum of inverse of agents' fitness * agents' position
-        sum_fitness_pos = np.sum([1 / agent.fit * agent.position for agent in agents], axis=0)
+        sum_fitness_pos = np.sum([1 / (agent.fit + c.EPSILON) * agent.position for agent in agents], axis=0)
 
         # Calculates the sum of inverse of agents' fitness
-        sum_fitness = np.sum([1 / agent.fit for agent in agents])
+        sum_fitness = np.sum([1 / (agent.fit + c.EPSILON) for agent in agents])
 
         # Calculates the new food's position
         food.position = sum_fitness_pos / sum_fitness
