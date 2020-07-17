@@ -189,7 +189,7 @@ class HS(Optimizer):
         """
 
         # Calculates a random index
-        i = int(r.generate_uniform_random_number(0, len(agents)))
+        i = r.generate_integer_random_number(0, len(agents))
 
         # Generates a new harmony
         agent = self._generate_new_harmony(agents[i])

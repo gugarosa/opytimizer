@@ -153,7 +153,7 @@ class ABC(Optimizer):
         # Iterate through all food sources
         for i, agent in enumerate(agents):
             # Gathering a random source to be used
-            source = int(r.generate_uniform_random_number(0, len(agents)))
+            source = r.generate_integer_random_number(0, len(agents))
 
             # Measuring food source location
             trials[i] = self._evaluate_location(

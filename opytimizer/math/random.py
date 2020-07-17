@@ -18,6 +18,36 @@ def generate_binary_random_number(size=1):
     return binary_array
 
 
+def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None):
+    """Generates a random number or array based on an integer distribution.
+
+    Args:
+        low (int): Lower interval.
+        high (int): Higher interval.
+        exclude_value (int): Value to be excluded from array.
+        size (int): Size of array.
+
+    Returns:
+        An integer random number or array.
+
+    """
+
+    # Generates a random integer number or array
+    integer_array = np.random.randint(low, high, size)
+
+    # Checks if a value is supposed to be excluded
+    if exclude_value is not None:
+        # Creates a boolean array based on excluded value
+        bool_array = (integer_array == exclude_value)
+
+        # If the excluded value is present
+        if np.any(bool_array):
+            # Re-calls the function with same arguments
+            return generate_integer_random_number(low, high, exclude_value, size)
+
+    return integer_array
+
+
 def generate_uniform_random_number(low=0.0, high=1.0, size=1):
     """Generates a random number or array based on an uniform distribution.
 

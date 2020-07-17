@@ -203,8 +203,8 @@ class CS(Optimizer):
             r1 = r.generate_uniform_random_number()
 
             # Then, we select two random nests
-            k = int(r.generate_uniform_random_number(0, len(agents)-1))
-            l = int(r.generate_uniform_random_number(0, len(agents)-1))
+            k = r.generate_integer_random_number(0, len(agents)-1)
+            l = r.generate_integer_random_number(0, len(agents)-1, exclude_value=k)
 
             # Calculating the random walk between these two nests
             step_size = r1 * (agents[k].position - agents[l].position)

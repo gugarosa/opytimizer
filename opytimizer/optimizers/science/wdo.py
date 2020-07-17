@@ -232,7 +232,7 @@ class WDO(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Generates a random index based on the number of agents
-            index = int(r.generate_uniform_random_number(0, len(velocity)))
+            index = r.generate_integer_random_number(0, len(agents))
 
             # Updating velocity
             velocity[i] = self._update_velocity(

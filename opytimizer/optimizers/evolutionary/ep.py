@@ -216,7 +216,7 @@ class EP(Optimizer):
             # Iterate through all tournament individuals
             for _ in range(n_individuals):
                 # Gathers a random index
-                index = int(r.generate_uniform_random_number(0, len(agents)))
+                index = r.generate_integer_random_number(0, len(agents))
 
                 # If current agent's fitness is smaller than selected one
                 if agents[i].fit < agents[index].fit:

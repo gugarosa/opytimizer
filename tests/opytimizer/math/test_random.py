@@ -7,6 +7,16 @@ def test_generate_binary_random_number():
     assert binary_array.shape == (5, )
 
 
+def test_generate_integer_random_number():
+    integer_array = random.generate_integer_random_number(0, 1, None, 5)
+
+    assert integer_array.shape == (5, )
+
+    integer_array = random.generate_integer_random_number(0, 10, 1, 5)
+
+    assert integer_array.shape == (5, )
+
+
 def test_generate_uniform_random_number():
     uniform_array = random.generate_uniform_random_number(0, 1, 5)
 

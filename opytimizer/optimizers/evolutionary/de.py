@@ -132,7 +132,7 @@ class DE(Optimizer):
         a = copy.deepcopy(agent)
 
         # Generates a random index for further comparison
-        R = int(r.generate_uniform_random_number(0, agent.n_variables))
+        R = r.generate_integer_random_number(0, agent.n_variables)
 
         # For every decision variable
         for j in range(a.n_variables):

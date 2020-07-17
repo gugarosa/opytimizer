@@ -210,10 +210,10 @@ class FPA(Optimizer):
                 epsilon = r.generate_uniform_random_number()
 
                 # Generates an index for flower k
-                k = int(r.generate_uniform_random_number(0, len(agents)-1))
+                k = r.generate_integer_random_number(0, len(agents)-1)
 
                 # Generates an index for flower l
-                l = int(r.generate_uniform_random_number(0, len(agents)-1))
+                l = r.generate_integer_random_number(0, len(agents)-1, exclude_value=k)
 
                 # Update a temporary position according to local pollination
                 a.position = self._local_pollination(

@@ -586,7 +586,7 @@ class KH(Optimizer):
         a = copy.deepcopy(agents[idx])
 
         # Samples a random integer
-        m = int(r.generate_uniform_random_number(0, len(agents)))
+        m = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
         # Calculates the current crossover probability
         Cr = self.Cr * ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON))
@@ -619,10 +619,10 @@ class KH(Optimizer):
         a = copy.deepcopy(agents[idx])
 
         # Samples a random integer
-        p = int(r.generate_uniform_random_number(0, len(agents)))
+        p = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
-        # Samples a random integer
-        q = int(r.generate_uniform_random_number(0, len(agents)))
+        # Samples another random integer
+        q = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
         # Calculates the current mutation probability
         Mu = self.Mu / ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON) + c.EPSILON)

@@ -177,12 +177,10 @@ class BWO(Optimizer):
         # Checks if the number of variables is bigger than one
         if alpha.n_variables > 1:
             # Samples a random integer
-            r1 = r2 = int(r.generate_uniform_random_number(0, alpha.n_variables))
+            r1 = r.generate_integer_random_number(0, alpha.n_variables)
 
-            # While the sampled intergers are equal
-            while r1 == r2:
-                # Continues to sample the second integer
-                r2 = int(r.generate_uniform_random_number(0, alpha.n_variables))
+            # Samples the second integer
+            r2 = r.generate_integer_random_number(0, alpha.n_variables, exclude_value=r1)
 
             # Swaps the randomly selected variables
             alpha.position[r1], alpha.position[r2] = alpha.position[r2], alpha.position[r1]
@@ -253,7 +251,7 @@ class BWO(Optimizer):
         
         # For every possible mutating agent
         for _ in range(0, n_mutate):
-            # Sampling a random uniform integer as index
+            # Sampling a random integer as index
             idx = int(r.generate_uniform_random_number(0, n_reproduct))
             
             # Performs the mutation

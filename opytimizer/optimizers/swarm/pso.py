@@ -708,7 +708,7 @@ class SAVPSO(PSO):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Generates a random index for selecting an agent
-            idx = int(r.generate_uniform_random_number(0, len(agents)))
+            idx = r.generate_integer_random_number(0, len(agents))
 
             # Updates current agent's velocity
             velocity[i] = self._update_velocity(

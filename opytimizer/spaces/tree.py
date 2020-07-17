@@ -301,7 +301,7 @@ class TreeSpace(Space):
         # If minimum depth equals the maximum depth
         if min_depth == max_depth:
             # Generates a terminal identifier
-            terminal_id = int(r.generate_uniform_random_number(0, self.n_terminals))
+            terminal_id = r.generate_integer_random_number(0, self.n_terminals)
 
             # Return the terminal node with its id and corresponding position
             return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
@@ -309,7 +309,7 @@ class TreeSpace(Space):
         # If minimum depth is not equal to the maximum depth
         else:
             # Generates a node identifier
-            node_id = int(r.generate_uniform_random_number(0, len(self.functions) + self.n_terminals))
+            node_id = r.generate_integer_random_number(0, len(self.functions) + self.n_terminals)
 
             # If the identifier is a terminal
             if node_id >= len(self.functions):
