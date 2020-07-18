@@ -1,3 +1,6 @@
+"""Customizable convergence plots.
+"""
+
 import matplotlib.pyplot as plt
 
 import opytimizer.utils.exception as e
@@ -19,19 +22,19 @@ def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
     """
 
     # Creating figure and axis subplots
-    fig, ax = plt.subplots(figsize=(7, 5))
+    _, axis = plt.subplots(figsize=(7, 5))
 
     # Defining some properties, such as axis labels
-    ax.set(xlabel='iteration', ylabel='value')
+    axis.set(xlabel='iteration', ylabel='value')
 
     # Setting both title and subtitles
-    ax.set_title(title, loc='left', fontsize=14)
-    ax.set_title(subtitle, loc='right', fontsize=8, color='grey')
+    axis.set_title(title, loc='left', fontsize=14)
+    axis.set_title(subtitle, loc='right', fontsize=8, color='grey')
 
     # If grid usage is true
     if grid:
         # Adds the grid property to the axis
-        ax.grid()
+        axis.grid()
 
     # Check if labels argument exists
     if labels:
@@ -50,12 +53,12 @@ def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
 
     # Plotting the axis
     for (arg, label) in zip(args, labels):
-        ax.plot(arg, label=label)
+        axis.plot(arg, label=label)
 
     # If legend usage is true
     if legend:
         # Adds the legend property to the axis
-        ax.legend()
+        axis.legend()
 
     # Displaying the plot
     plt.show()

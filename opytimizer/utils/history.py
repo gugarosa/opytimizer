@@ -1,3 +1,6 @@
+"""History-based object that helps in saving the optimization history.
+"""
+
 import pickle
 
 import numpy as np
@@ -18,7 +21,8 @@ class History:
         """Initialization method.
 
         Args:
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
+            store_best_only (bool): If True, only the best agent of each iteration
+                is stored in History.
 
         """
 
@@ -71,12 +75,12 @@ class History:
             return [(v.position.tolist(), v.fit) for v in value]
 
         # Checks if the key is `best_agent`
-        elif key == 'best_agent':
+        if key == 'best_agent':
             # Returns the best agent's tuple (position, fit)
             return (value.position.tolist(), value.fit)
 
         # Checks if the key is `local`
-        elif key == 'local':
+        if key == 'local':
             # Returns a list of local positions
             return [v.tolist() for v in value]
 
@@ -89,28 +93,28 @@ class History:
         """
 
         # For every key-value pair
-        for (k, v) in kwargs.items():
+        for (key, value) in kwargs.items():
             # Checks if current key has a specific rule
-            if k in c.HISTORY_KEYS:
+            if key in c.HISTORY_KEYS:
                 # Checks if it is supposed to only store the best agent
-                if k != 'best_agent' and self.store_best_only:
+                if key != 'best_agent' and self.store_best_only:
                     continue
 
                 # Parses information using specific rules, if defined
-                out = self._parse(k, v)
+                out = self._parse(key, value)
             else:
                 # Just applies the information
-                out = v
+                out = value
 
             # If there is no attribute
-            if not hasattr(self, k):
+            if not hasattr(self, key):
                 # Sets its initial value as a list
-                setattr(self, k, [out])
+                setattr(self, key, [out])
 
             # If there is already an attribute
             else:
                 # Appends the new value to the attribute
-                getattr(self, k).append(out)
+                getattr(self, key).append(out)
 
     def get(self, key, index):
         """Gets the desired key based on the input index.
@@ -120,8 +124,8 @@ class History:
             index (tuple): A tuple indicating which indexes should be retrieved.
 
         Returns:
-            All key's values based on the input index. Note that this method returns all records, i.e.,
-            all values from the `t` iterations.
+            All key's values based on the input index.
+            Note that this method returns all records, i.e., all values from the `t` iterations.
 
         """
 
@@ -172,7 +176,7 @@ class History:
         # Trying to open the file
         with open(file_name, "rb") as input_file:
             # Loading History from file
-            h = pickle.load(input_file)
+            history = pickle.load(input_file)
 
             # Updating all values
-            self.__dict__.update(h.__dict__)
+            self.__dict__.update(history.__dict__)

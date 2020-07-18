@@ -1,3 +1,6 @@
+"""Constants.
+"""
+
 import sys
 
 # A constant value used to avoid division by zero, zero logarithms

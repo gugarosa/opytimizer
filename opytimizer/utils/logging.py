@@ -1,3 +1,6 @@
+"""Logging-based methods and helpers.
+"""
+
 import logging
 import sys
 from logging.handlers import TimedRotatingFileHandler
@@ -12,17 +15,6 @@ class Logger(logging.Logger):
     """A customized Logger file that enables the possibility of only logging to file.
 
     """
-
-    def __init__(self, name, level=logging.NOTSET):
-        """Initialization method.
-
-        Args:
-            name (str): Name of the logger.
-            level (int): Level of logger.
-
-        """
-
-        return super(Logger, self).__init__(name, level)
 
     def file(self, msg, *args, **kwargs):
         """Logs the message only to the logging file.
