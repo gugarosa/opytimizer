@@ -64,7 +64,7 @@ def test_ssd_mean_global_solution():
 def test_ssd_update_velocity():
     new_ssd = ssd.SSD()
 
-    velocity = new_ssd._update_velocity(0.5, 10, 25, 12)
+    velocity = new_ssd._update_velocity(0.5, 10, 25)
 
     assert velocity[0] != 0
 
