@@ -1,3 +1,6 @@
+"""Weighted-based multi-objective functions.
+"""
+
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.function import Function
@@ -11,7 +14,7 @@ class WeightedFunction:
 
     """
 
-    def __init__(self, functions=[], weights=[], constraints=[]):
+    def __init__(self, functions=None, weights=None, constraints=None):
         """Initialization method.
 
         Args:
@@ -23,14 +26,20 @@ class WeightedFunction:
 
         logger.info('Creating class: WeightedFunction.')
 
-        # Creating a list to hold further Function's instances
-        self.functions = functions
+        # Creating the functions property
+        if functions is None:
+            self.functions = []
+        else:
+            self.functions = functions
 
-        # Creating a list of weights
-        self.weights = weights
+        # Creating the weights property
+        if weights is None:
+            self.weights = []
+        else:
+            self.weights = weights
 
         # Now, we need to build this class up
-        self._build(functions, constraints)
+        self._build(constraints)
 
         logger.info('Class created.')
 
@@ -105,14 +114,13 @@ class WeightedFunction:
         # Applying to the pointer property the return of weighted method
         self.pointer = f_weighted
 
-    def _build(self, functions, constraints):
+    def _build(self, constraints):
         """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
         needs to be on its initialization.
 
         Args:
-            functions (list): Pointers to functions that will return the fitness value.
             constraints (list): List of constraints to be applied to the fitness function.
 
         """
@@ -120,7 +128,7 @@ class WeightedFunction:
         logger.debug('Running private method: build().')
 
         # Populating pointers with real functions
-        self.functions = [Function(f, constraints) for f in functions]
+        self.functions = [Function(f, constraints) for f in self.functions]
 
         # Creating a multi-objective method strategy as the real pointer
         self._create_multi_objective()
@@ -129,4 +137,5 @@ class WeightedFunction:
         self.built = True
 
         # Logging attributes
-        logger.debug(f'Functions: {[f.name for f in self.functions]} | Weights: {self.weights} | Built: {self.built}')
+        logger.debug('Functions: %s | Weights: %s | Built: %s',
+                     [f.name for f in self.functions], self.weights, self.built)

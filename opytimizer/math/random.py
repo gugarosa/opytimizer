@@ -1,3 +1,6 @@
+"""Random-based mathematical generators.
+"""
+
 import numpy as np
 
 

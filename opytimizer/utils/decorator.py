@@ -6,63 +6,63 @@ from functools import wraps
 import opytimizer.math.hypercomplex as h
 
 
-def hyper_spanning(lower_bound, upper_bound):
+def hyper_spanning(lb, ub):
     """Spans a hyper-value between lower and upper bounds.
 
     Args:
-        lower_bound (list | np.array): Lower bounds.
-        upper_bound (list | np.array): Upper bounds.
+        lb (list | np.array): Lower bounds.
+        ub (list | np.array): Upper bounds.
 
     Returns:
         The output of the incoming objective function with a spanned input.
 
     """
 
-    def _hyper_spanning(f_call):
+    def _hyper_spanning(f):
         """Actually decorates the incoming objective function.
 
         Args:
-            f_call (callable): Incoming objective function.
+            f (callable): Incoming objective function.
 
         Returns:
             The wrapped objective function.
 
         """
 
-        @wraps(f_call)
-        def __hyper_spanning(hyper_x):
+        @wraps(f)
+        def __hyper_spanning(x):
             """Wraps the objective function for calculating its output.
 
             Args:
-                hyper_x (np.array): Array of hyper-values.
+                x (np.array): Array of hyper-values.
 
             Returns:
                 The objective function itself.
 
             """
 
-            # Spans `hyper_x` between lower and upper bounds
-            hyper_x = h.span(hyper_x, lower_bound, upper_bound)
+            # Spans `x` between lower and upper bounds
+            x = h.span(x, lb, ub)
 
-            return f_call(hyper_x)
+            return f(x)
 
         return __hyper_spanning
 
     return _hyper_spanning
 
 
-def pre_evaluation(f_call):
+def pre_evaluation(f):
     """Pre-evaluates an objective function.
 
     Args:
-        f_call (callable): Incoming objective function.
+        f (callable): Incoming objective function.
 
     Returns:
         The incoming objective function with its pre-evaluation.
 
     """
 
-    @wraps(f_call)
+    @wraps(f)
     def _pre_evaluation(*args, **kwargs):
         """Wraps the objective function for calculating its pre-evaluation.
 
@@ -82,6 +82,6 @@ def pre_evaluation(f_call):
                 # optimizer, space, function
                 hook(args[0], args[1], args[2])
 
-        return f_call(*args)
+        return f(*args)
 
     return _pre_evaluation

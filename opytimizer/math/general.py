@@ -1,3 +1,6 @@
+"""General-based mathematical functions.
+"""
+
 from itertools import islice
 
 import numpy as np
@@ -91,3 +94,5 @@ def weighted_wheel_selection(weights):
         if c_sum > prob:
             # Returns the individual
             return i
+
+    return 0

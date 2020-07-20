@@ -1,3 +1,6 @@
+"""Hypercomplex-based mathematical helpers.
+"""
+
 import numpy as np
 
 

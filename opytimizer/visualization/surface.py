@@ -20,24 +20,24 @@ def plot(points, title='', subtitle='', style='winter', colorbar=True):
     fig = plt.figure(figsize=(9, 5))
 
     # Creating the axis
-    axis = plt.axes(projection='3d')
+    ax = plt.axes(projection='3d')
 
     # Defining some properties, such as axis labels
-    axis.set(xlabel='$x$', ylabel='$y$', zlabel='$f(x, y)$')
+    ax.set(xlabel='$x$', ylabel='$y$', zlabel='$f(x, y)$')
 
     # Reducing the size of the ticks
-    axis.tick_params(labelsize=8)
+    ax.tick_params(labelsize=8)
 
     # Setting both title and subtitles
-    axis.set_title(title, loc='left', fontsize=14)
-    axis.set_title(subtitle, loc='right', fontsize=8, color='grey')
+    ax.set_title(title, loc='left', fontsize=14)
+    ax.set_title(subtitle, loc='right', fontsize=8, color='grey')
 
     # PLotting the wireframe
-    axis.plot_wireframe(points[0], points[1], points[2], color='grey')
+    ax.plot_wireframe(points[0], points[1], points[2], color='grey')
 
     # Plotting the surface
-    surface = axis.plot_surface(points[0], points[1], points[2],
-                                rstride=1, cstride=1, cmap=style, edgecolor='none')
+    surface = ax.plot_surface(points[0], points[1], points[2],
+                              rstride=1, cstride=1, cmap=style, edgecolor='none')
 
     # If colorbar usage is true
     if colorbar:

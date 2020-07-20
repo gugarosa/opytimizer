@@ -16,7 +16,7 @@ class Function:
 
     """
 
-    def __init__(self, pointer=callable, constraints=[]):
+    def __init__(self, pointer=callable, constraints=None):
         """Initialization method.
 
         Args:
@@ -38,16 +38,19 @@ class Function:
             self.name = pointer.__class__.__name__
 
         # Save the constraints for further inspection
-        self.constraints = constraints
+        if constraints is None:
+            self.constraints = []
+        else:
+            self.constraints = constraints
 
         # Also, we need to create a callable to point to the actual function
-        self._create_pointer(pointer, constraints)
+        self._create_pointer(pointer)
 
         # Indicates whether the function is built or not
         self.built = True
 
         logger.info('Class created.')
-        logger.debug(f'Function: {self.name} | Constraints: {self.constraints} | Built: {self.built}')
+        logger.debug('Function: %s | Constraints: %s | Built: %s', self.name, self.constraints, self.built)
 
     def __call__(self, x):
         """Defines a callable to this class in order to avoid using directly the property.
@@ -119,12 +122,11 @@ class Function:
     def built(self, built):
         self._built = built
 
-    def _create_pointer(self, pointer, constraints):
+    def _create_pointer(self, pointer):
         """Wraps the fitness function if there are any constraints to be evaluated.
 
         Args:
             pointer (callable): Pointer to the actual function.
-            constraints (list): Constraints to be applied.
 
         """
 
@@ -145,7 +147,7 @@ class Function:
             """
 
             # For every possible constraint
-            for constraint in constraints:
+            for constraint in self.constraints:
                 # Check if constraint is valid
                 if constraint(x):
                     # If yes, just keep going

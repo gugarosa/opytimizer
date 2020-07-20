@@ -1,3 +1,6 @@
+"""Distribution-based mathematical generators.
+"""
+
 from math import gamma, pi, sin
 
 import numpy as np
@@ -26,7 +29,7 @@ def generate_bernoulli_distribution(prob=0.0, size=1):
     # For each dimension
     for i in range(size):
         # If random generated number if smaller than probability
-        if (r1[i] < prob):
+        if r1[i] < prob:
             # Mark as one
             bernoulli_array[i] = 1
         else:

@@ -15,8 +15,7 @@ x = 0
 
 # Functions can be used if your objective
 # function is an internal python code
-g = WeightedFunction(
-    functions=[test_function1, test_function2], weights=[0.5, 0.5])
+g = WeightedFunction(functions=[test_function1, test_function2], weights=[0.5, 0.5])
 
 # Testing out your new Function class
 print(f'x: {x}')
