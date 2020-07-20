@@ -1,3 +1,6 @@
+"""Optimizer structure.
+"""
+
 import copy
 
 import opytimizer.utils.decorator as d

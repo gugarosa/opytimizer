@@ -1,3 +1,6 @@
+"""Node structure.
+"""
+
 import numpy as np
 
 import opytimizer.utils.constants as c
@@ -9,12 +12,12 @@ class Node:
 
     """
 
-    def __init__(self, name, type, value=None, left=None, right=None, parent=None):
+    def __init__(self, name, node_type, value=None, left=None, right=None, parent=None):
         """Initialization method.
 
         Args:
             name (str | int): Name of the node (e.g., it should be the terminal identifier or function name).
-            type (str): Type of the node (e.g., TERMINAL or FUNCTION).
+            node_type (str): Type of the node (e.g., TERMINAL or FUNCTION).
             value (np.array): Value of the node (only used if it is a terminal).
             left (Node): Pointer to node's left child.
             right (Node): Pointer to node's right child.
@@ -26,7 +29,7 @@ class Node:
         self.name = name
 
         # Type of the node (e.g., TERMINAL or FUNCTION)
-        self.type = type
+        self.node_type = node_type
 
         # Value of the node (only if it is a terminal node)
         self.value = value
@@ -48,7 +51,7 @@ class Node:
 
         """
 
-        return f'{self.type}:{self.name}:{self.flag}'
+        return f'{self.node_type}:{self.name}:{self.flag}'
 
     def __str__(self):
         """Object representation as an informal string.
@@ -70,25 +73,25 @@ class Node:
 
     @name.setter
     def name(self, name):
-        if not (isinstance(name, str) or isinstance(name, int)):
+        if not isinstance(name, (str, int)):
             raise e.TypeError('`name` should be a string or integer')
 
         self._name = name
 
     @property
-    def type(self):
+    def node_type(self):
         """str: Type of the node (e.g., TERMINAL or FUNCTION).
 
         """
 
-        return self._type
+        return self._node_type
 
-    @type.setter
-    def type(self, type):
-        if type not in ['TERMINAL', 'FUNCTION']:
-            raise e.ValueError('`type` should be `TERMINAL` or `FUNCTION`')
+    @node_type.setter
+    def node_type(self, node_type):
+        if node_type not in ['TERMINAL', 'FUNCTION']:
+            raise e.ValueError('`node_type` should be `TERMINAL` or `FUNCTION`')
 
-        self._type = type
+        self._node_type = node_type
 
     @property
     def value(self):
@@ -100,12 +103,11 @@ class Node:
 
     @value.setter
     def value(self, value):
-        if self.type != 'TERMINAL':
+        if self.node_type != 'TERMINAL':
             self._value = None
         else:
             if not isinstance(value, np.ndarray):
-                raise e.TypeError(
-                    '`value` should be an N-dimensional numpy array')
+                raise e.TypeError('`value` should be an N-dimensional numpy array')
 
             self._value = value
 
@@ -320,18 +322,16 @@ class Node:
             node = pre_order[position]
 
             # If the node is a terminal
-            if node.type == 'TERMINAL':
+            if node.node_type == 'TERMINAL':
                 return node.parent, node.flag
 
             # If the node is a function
-            elif node.type == 'FUNCTION':
+            if node.node_type == 'FUNCTION':
                 # If it is a function node, we need to return the parent of its parent
                 if node.parent.parent:
                     return node.parent.parent, node.parent.flag
 
-                # If there is no parent of parent
-                else:
-                    return None, False
+                return None, False
 
         return None, False
 
@@ -486,50 +486,48 @@ def _evaluate(node):
         y = _evaluate(node.right)
 
         # If the node is an agent or constant
-        if node.type == 'TERMINAL':
+        if node.node_type == 'TERMINAL':
             return node.value
 
-        # If the node is a function
-        else:
-            # Checks if its a summation
-            if node.name == 'SUM':
-                return x + y
+        # Checks if its a summation
+        if node.name == 'SUM':
+            return x + y
 
-            # Checks if its a subtraction
-            elif node.name == 'SUB':
-                return x - y
+        # Checks if its a subtraction
+        if node.name == 'SUB':
+            return x - y
 
-            # Checks if its a multiplication
-            elif node.name == 'MUL':
-                return x * y
+        # Checks if its a multiplication
+        if node.name == 'MUL':
+            return x * y
 
-            # Checks if its a division
-            elif node.name == 'DIV':
-                return x / (y + c.EPSILON)
+        # Checks if its a division
+        if node.name == 'DIV':
+            return x / (y + c.EPSILON)
 
-            # Checks if its an exponential
-            elif node.name == 'EXP':
-                return np.exp(x)
+        # Checks if its an exponential
+        if node.name == 'EXP':
+            return np.exp(x)
 
-            # Checks if its a square root
-            elif node.name == 'SQRT':
-                return np.sqrt(np.abs(x))
+        # Checks if its a square root
+        if node.name == 'SQRT':
+            return np.sqrt(np.abs(x))
 
-            # Checks if its a logarithm
-            elif node.name == 'LOG':
-                return np.log(np.abs(x) + c.EPSILON)
+        # Checks if its a logarithm
+        if node.name == 'LOG':
+            return np.log(np.abs(x) + c.EPSILON)
 
-            # Checks if its an absolute value
-            elif node.name == 'ABS':
-                return np.abs(x)
+        # Checks if its an absolute value
+        if node.name == 'ABS':
+            return np.abs(x)
 
-            # Checks if its a sine value
-            elif node.name == 'SIN':
-                return np.sin(x)
+        # Checks if its a sine value
+        if node.name == 'SIN':
+            return np.sin(x)
 
-            # Checks if its a cosine value
-            elif node.name == 'COS':
-                return np.cos(x)
+        # Checks if its a cosine value
+        if node.name == 'COS':
+            return np.cos(x)
 
     # If the node does not exists
     else:
@@ -569,12 +567,12 @@ def _properties(node):
         next_nodes = []
 
         # For each node in the current ones
-        for node in nodes:
+        for n in nodes:
             # Increases the number of nodes
             n_nodes += 1
 
             # If the node is a leaf
-            if node.left is None and node.right is None:
+            if n.left is None and n.right is None:
                 # If minimum depth is equal to 0
                 if min_depth == 0:
                     # Minimum depth will be equal to maximum depth
@@ -584,14 +582,14 @@ def _properties(node):
                 n_leaves += 1
 
             # If there is a child in the left
-            if node.left is not None:
+            if n.left is not None:
                 # Appends the left child node
-                next_nodes.append(node.left)
+                next_nodes.append(n.left)
 
             # If there is a child in the right
-            if node.right is not None:
+            if n.right is not None:
                 # Appends the right child node
-                next_nodes.append(node.right)
+                next_nodes.append(n.right)
 
         # Current nodes will receive the list of the next depth
         nodes = next_nodes

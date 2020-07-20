@@ -1,3 +1,6 @@
+"""Agent structure.
+"""
+
 import numpy as np
 
 import opytimizer.utils.constants as c
@@ -98,10 +101,9 @@ class Agent:
 
     @fit.setter
     def fit(self, fit):
-        if not (isinstance(fit, float) or isinstance(fit, int)
-                or isinstance(fit, np.int32) or isinstance(fit, np.int64)):
+        if not isinstance(fit, (float, int, np.int32, np.int64)):
             raise e.TypeError('`fit` should be a float or integer')
-        
+
         self._fit = fit
 
     @property

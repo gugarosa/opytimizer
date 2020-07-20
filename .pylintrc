@@ -142,7 +142,8 @@ disable=print-statement,
         invalid-name,
         arguments-differ,
         no-member,
-        attribute-defined-outside-init
+        attribute-defined-outside-init,
+        self-cls-assignment
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -570,10 +571,10 @@ max-attributes=20
 max-bool-expr=5
 
 # Maximum number of branch for function / method body.
-max-branches=12
+max-branches=15
 
 # Maximum number of locals for function / method body.
-max-locals=15
+max-locals=25
 
 # Maximum number of parents for a class (see R0901).
 max-parents=7
@@ -582,7 +583,7 @@ max-parents=7
 max-public-methods=20
 
 # Maximum number of return / yield for function / method body.
-max-returns=6
+max-returns=15
 
 # Maximum number of statements in function / method body.
 max-statements=50
