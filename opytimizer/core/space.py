@@ -1,8 +1,10 @@
+"""Standard search space.
+"""
+
 import copy
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.agent import Agent
@@ -208,7 +210,8 @@ class Space:
         logger.debug('Running private method: create_agents().')
 
         # Creating a list of agents
-        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
+        self.agents = [Agent(self.n_variables, self.n_dimensions)
+                       for _ in range(self.n_agents)]
 
         # Apply the first agent as the best one
         self.best_agent = copy.deepcopy(self.agents[0])
@@ -253,7 +256,8 @@ class Space:
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Agents: {self.n_agents} | Size: ({self.n_variables}, {self.n_dimensions}) | '
-            f'Iterations: {self.n_iterations} | Lower Bound: {self.lb} | '
-            f'Upper Bound: {self.ub} | Built: {self.built}.')
+        logger.debug('Agents: %d | Size: (%d, %d) | '
+                     'Iterations: %d | Lower Bound: %s | '
+                     'Upper Bound: %s | Built: %s.',
+                     self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
+                     self.lb, self.ub, self.built)

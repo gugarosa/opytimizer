@@ -1,3 +1,6 @@
+"""Hypercomplex-based search space.
+"""
+
 import numpy as np
 
 import opytimizer.math.random as r
@@ -13,7 +16,8 @@ class HyperSpace(Space):
 
     """
 
-    def __init__(self, n_agents=1, n_variables=1, n_dimensions=2, n_iterations=10, lower_bound=[0], upper_bound=[1]):
+    def __init__(self, n_agents=1, n_variables=1, n_dimensions=2, n_iterations=10,
+                 lower_bound=(0,), upper_bound=(1,)):
         """Initialization method.
 
         Args:
@@ -21,8 +25,8 @@ class HyperSpace(Space):
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
             n_iterations (int): Number of iterations.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
+            lower_bound (tuple): Lower bound tuple with the minimum possible values.
+            upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
         """
 

@@ -1,6 +1,7 @@
-import copy
+"""Tree-based search space.
+"""
 
-import numpy as np
+import copy
 
 import opytimizer.math.random as r
 import opytimizer.utils.constants as c
@@ -20,8 +21,8 @@ class TreeSpace(Space):
     """
 
     def __init__(self, n_trees=1, n_terminals=1, n_variables=1, n_iterations=10,
-                 min_depth=1, max_depth=3, functions=[],
-                 lower_bound=[0], upper_bound=[1]):
+                 min_depth=1, max_depth=3, functions=None,
+                 lower_bound=(0,), upper_bound=(1,)):
         """Initialization method.
 
         Args:
@@ -31,9 +32,9 @@ class TreeSpace(Space):
             n_iterations (int): Number of iterations.
             min_depth (int): Minimum depth of the trees.
             max_depth (int): Maximum depth of the trees.
-            functions (list): Functions nodes.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
+            functions (tuple): Functions nodes.
+            lower_bound (tuple): Lower bound tuple with the minimum possible values.
+            upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
         """
 
@@ -55,7 +56,10 @@ class TreeSpace(Space):
         self.max_depth = max_depth
 
         # List of functions nodes
-        self.functions = functions
+        if functions is None:
+            self.functions = []
+        else:
+            self.functions = functions
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -235,9 +239,9 @@ class TreeSpace(Space):
         # Applies the first tree as the best one
         self.best_tree = copy.deepcopy(self.trees[0])
 
-        logger.debug(
-            f'Trees: {self.n_trees} | Depth: [{self.min_depth}, {self.max_depth}] | ' 
-            f'Terminals: {self.n_terminals} | Functions: {self.functions} | Algorithm: {algorithm}.')
+        logger.debug('Trees: %d | Depth: [%d, %d] | '
+                     'Terminals: %d | Functions: %s | Algorithm: %s.',
+                     self.n_trees, self.min_depth, self.max_depth, self.n_terminals, self.functions, algorithm)
 
     def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.
@@ -306,43 +310,39 @@ class TreeSpace(Space):
             # Return the terminal node with its id and corresponding position
             return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
 
-        # If minimum depth is not equal to the maximum depth
-        else:
-            # Generates a node identifier
-            node_id = r.generate_integer_random_number(0, len(self.functions) + self.n_terminals)
+        # Generates a node identifier
+        node_id = r.generate_integer_random_number(0, len(self.functions) + self.n_terminals)
 
-            # If the identifier is a terminal
-            if node_id >= len(self.functions):
-                # Gathers its real identifier
-                terminal_id = node_id - len(self.functions)
+        # If the identifier is a terminal
+        if node_id >= len(self.functions):
+            # Gathers its real identifier
+            terminal_id = node_id - len(self.functions)
 
-                # Return the terminal node with its id and corresponding position
-                return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
+            # Return the terminal node with its id and corresponding position
+            return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
 
-            # If the identifier is a function
+        # Generates a new function node
+        function_node = Node(self.functions[node_id], 'FUNCTION')
+
+        # For every possible function argument
+        for i in range(c.N_ARGS_FUNCTION[self.functions[node_id]]):
+            # Calls recursively the grow function and creates a temporary node
+            node = self.grow(min_depth + 1, max_depth)
+
+            # If it is not the root
+            if not i:
+                # The left child receives the temporary node
+                function_node.left = node
+
+            # If it is the first node
             else:
-                # Generates a new function node
-                function_node = Node(self.functions[node_id], 'FUNCTION')
+                # The right child receives the temporary node
+                function_node.right = node
 
-                # For every possible function argument
-                for i in range(c.N_ARGS_FUNCTION[self.functions[node_id]]):
-                    # Calls recursively the grow function and creates a temporary node
-                    node = self.grow(min_depth + 1, max_depth)
+                # Flag to identify whether the node is a left child
+                node.flag = False
 
-                    # If it is not the root
-                    if not i:
-                        # The left child receives the temporary node
-                        function_node.left = node
+            # The parent of the temporary node is the function node
+            node.parent = function_node
 
-                    # If it is the first node
-                    else:
-                        # The right child receives the temporary node
-                        function_node.right = node
-
-                        # Flag to identify whether the node is a left child
-                        node.flag = False
-
-                    # The parent of the temporary node is the function node
-                    node.parent = function_node
-
-                return function_node
+        return function_node

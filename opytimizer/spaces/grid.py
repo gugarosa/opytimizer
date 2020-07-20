@@ -1,3 +1,6 @@
+"""Grid-based search space.
+"""
+
 import numpy as np
 
 import opytimizer.math.random as r
@@ -14,14 +17,14 @@ class GridSpace(Space):
 
     """
 
-    def __init__(self, n_variables=1, step=0.1, lower_bound=[0], upper_bound=[1]):
+    def __init__(self, n_variables=1, step=0.1, lower_bound=(0,), upper_bound=(1,)):
         """Initialization method.
 
         Args:
             n_variables (int): Number of decision variables.
             step (float): Size of each step in the grid.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
+            lower_bound (tuple): Lower bound tuple with the minimum possible values.
+            upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
         """
 
@@ -54,7 +57,7 @@ class GridSpace(Space):
 
     @step.setter
     def step(self, step):
-        if not (isinstance(step, float) or isinstance(step, int)):
+        if not isinstance(step, (float, int)):
             raise e.TypeError('`step` should be a float or integer')
         if step <= 0:
             raise e.ValueError('`step` should be > 0')
@@ -81,8 +84,8 @@ class GridSpace(Space):
 
         Args:
             step (float): Size of each step in the grid.
-            lower_bound (list): Lower bound list with the minimum possible values.
-            upper_bound (list): Upper bound list with the maximum possible values.
+            lower_bound (tuple): Lower bound tuple with the minimum possible values.
+            upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
         Returns:
             The number of possible searches.
@@ -98,7 +101,7 @@ class GridSpace(Space):
         # Transforming the meshgrid into a list of possible searches
         self.grid = np.array(([m.ravel() for m in mesh])).T
 
-        logger.debug(f'Grid created with step size equal to {step}.')
+        logger.debug('Grid created with step size equal to %f.', step)
 
         return len(self.grid)
 

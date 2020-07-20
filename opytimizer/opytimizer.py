@@ -1,3 +1,6 @@
+"""Opytimizer entry point.
+"""
+
 import time
 
 import opytimizer.utils.exception as e
@@ -16,9 +19,12 @@ class Opytimizer:
         """Initialization method.
 
         Args:
-            space (Space): A Space's object, where it has to be a child (e.g., SearchSpace, HyperSpace, etc).
-            optimizer (Optimizer): An Optimizer's object, where it has to be a child (e.g., PSO, BA, etc).
-            function (Function): A Function's object, where it can be a child (e.g., WeightedFunction).
+            space (Space): A Space's object,
+                where it has to be a child (e.g., SearchSpace, HyperSpace, etc).
+            optimizer (Optimizer): An Optimizer's object,
+                where it has to be a child (e.g., PSO, BA, etc).
+            function (Function): A Function's object,
+                where it can be a child (e.g., WeightedFunction).
 
         """
 
@@ -34,7 +40,8 @@ class Opytimizer:
         self.function = function
 
         # We will log some important information
-        logger.debug(f'Space: {self.space} | Optimizer: {self.optimizer} | Function: {self.function}.')
+        logger.debug('Space: %s | Optimizer: %s| Function: %s.',
+                     self.space, self.optimizer, self.function)
 
         logger.info('Class created.')
 
@@ -87,8 +94,10 @@ class Opytimizer:
         """Starts the optimization task.
 
         Args
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            store_best_only (bool): If True, only the best agent
+                of each iteration is stored in History.
+            pre_evaluation (callable): This function is executed
+                before evaluating the function being optimized.
 
         Returns:
             A History object describing the agents position and best fitness values
@@ -114,6 +123,6 @@ class Opytimizer:
         history.dump(time=opt_time)
 
         logger.info('Optimization task ended.')
-        logger.info(f'It took {opt_time} seconds.')
+        logger.info('It took %f seconds.', opt_time)
 
         return history

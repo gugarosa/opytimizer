@@ -1,3 +1,6 @@
+"""Standard objective function.
+"""
+
 from inspect import signature
 
 import opytimizer.utils.constants as c
@@ -31,7 +34,7 @@ class Function:
         if hasattr(pointer, '__name__'):
             # If yes, applies the callable name
             self.name = pointer.__name__
-        
+
         # If pointer comes from a class
         else:
             # Applies its name as the class' name
@@ -50,7 +53,8 @@ class Function:
         self.built = True
 
         logger.info('Class created.')
-        logger.debug('Function: %s | Constraints: %s | Built: %s', self.name, self.constraints, self.built)
+        logger.debug('Function: %s | Constraints: %s | Built: %s',
+                     self.name, self.constraints, self.built)
 
     def __call__(self, x):
         """Defines a callable to this class in order to avoid using directly the property.
