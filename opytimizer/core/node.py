@@ -371,8 +371,7 @@ def _build_string(node):
     left_branch, left_width, left_start, left_end = _build_string(node.left)
 
     # Iterate recursively through the right branch
-    right_branch, right_width, right_start, right_end = _build_string(
-        node.right)
+    right_branch, right_width, right_start, right_end = _build_string(node.right)
 
     # If left branch width is greater than 0
     if left_width > 0:

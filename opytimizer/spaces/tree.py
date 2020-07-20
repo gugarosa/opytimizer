@@ -241,7 +241,8 @@ class TreeSpace(Space):
 
         logger.debug('Trees: %d | Depth: [%d, %d] | '
                      'Terminals: %d | Functions: %s | Algorithm: %s.',
-                     self.n_trees, self.min_depth, self.max_depth, self.n_terminals, self.functions, algorithm)
+                     self.n_trees, self.min_depth, self.max_depth,
+                     self.n_terminals, self.functions, algorithm)
 
     def _initialize_agents(self):
         """Initialize agents' position array with uniform random numbers.

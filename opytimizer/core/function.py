@@ -53,8 +53,7 @@ class Function:
         self.built = True
 
         logger.info('Class created.')
-        logger.debug('Function: %s | Constraints: %s | Built: %s',
-                     self.name, self.constraints, self.built)
+        logger.debug('Function: %s | Constraints: %s | Built: %s', self.name, self.constraints, self.built)
 
     def __call__(self, x):
         """Defines a callable to this class in order to avoid using directly the property.

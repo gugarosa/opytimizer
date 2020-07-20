@@ -1,3 +1,6 @@
+"""Social Ski Driver.
+"""
+
 import copy
 
 import numpy as np
@@ -61,7 +64,7 @@ class SSD(Optimizer):
 
     @c.setter
     def c(self, c):
-        if not (isinstance(c, float) or isinstance(c, int)):
+        if not isinstance(c, (float, int)):
             raise e.TypeError('`c` should be a float or integer')
         if c < 0:
             raise e.ValueError('`c` should be >= 0')
@@ -78,7 +81,7 @@ class SSD(Optimizer):
 
     @decay.setter
     def decay(self, decay):
-        if not (isinstance(decay, float) or isinstance(decay, int)):
+        if not isinstance(decay, (float, int)):
             raise e.TypeError('`decay` should be a float or integer')
         if decay < 0 or decay > 1:
             raise e.ValueError('`decay` should be between 0 and 1')
@@ -112,9 +115,8 @@ class SSD(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: c = {self.c}, decay = {self.decay} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: c = %f, decay = %f | Built: %s.',
+                     self.algorithm, self.c, self.decay, self.built)
 
     def _mean_global_solution(self, alpha, beta, gamma):
         """Calculates the mean global solution.
@@ -151,14 +153,13 @@ class SSD(Optimizer):
 
         return new_position
 
-    def _update_velocity(self, position, mean, local_position, velocity):
+    def _update_velocity(self, position, mean, local_position):
         """Updates a particle velocity.
 
         Args:
             position (np.array): Agent's current position.
             mean (np.array): Mean global best position.
             local_position (np.array): Agent's local best position.
-            velocity (np.array): Agent's current velocity.
 
         Returns:
             A new velocity based on SSD's paper velocity update equation.
@@ -174,16 +175,12 @@ class SSD(Optimizer):
         # If random number is smaller than or equal to 0.5
         if r2 <= 0.5:
             # Updates its velocity based on sine wave
-            new_velocity = self.c * \
-                np.sin(r1) * (local_position - position) + \
-                np.sin(r1) * (mean - position)
+            new_velocity = self.c * np.sin(r1) * (local_position - position) + np.sin(r1) * (mean - position)
 
         # If random number is bigger than 0.5
         else:
             # Updates its velocity based on cosine wave
-            new_velocity = self.c * \
-                np.cos(r1) * (local_position - position) + \
-                np.cos(r1) * (mean - position)
+            new_velocity = self.c * np.cos(r1) * (local_position - position) + np.cos(r1) * (mean - position)
 
         return new_velocity
 
@@ -215,8 +212,7 @@ class SSD(Optimizer):
             agents.sort(key=lambda x: x.fit)
 
             # Calculates the mean global solution
-            mean = self._mean_global_solution(
-                agents[0].position, agents[1].position, agents[2].position)
+            mean = self._mean_global_solution(agents[0].position, agents[1].position, agents[2].position)
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
@@ -225,8 +221,7 @@ class SSD(Optimizer):
             agent.clip_limits()
 
             # Updates current agent velocities
-            velocity[i] = self._update_velocity(
-                agent.position, mean, local_position[i], velocity[i])
+            velocity[i] = self._update_velocity(agent.position, mean, local_position[i])
 
     @d.pre_evaluation
     def _evaluate(self, space, function, local_position):
@@ -275,12 +270,10 @@ class SSD(Optimizer):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
-        velocity = r.generate_uniform_random_number(
-            size=(space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, local_position, hook=pre_evaluation)
@@ -295,8 +288,7 @@ class SSD(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, function,
-                            local_position, velocity)
+                self._update(space.agents, function, local_position, velocity)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()
@@ -308,8 +300,7 @@ class SSD(Optimizer):
                 self.c *= self.decay
 
                 # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents, local=local_position,
-                            best_agent=space.best_agent)
+                history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
 
                 # Updates the `tqdm` status
                 b.set_postfix(fitness=space.best_agent.fit)

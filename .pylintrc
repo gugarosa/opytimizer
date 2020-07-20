@@ -143,7 +143,9 @@ disable=print-statement,
         arguments-differ,
         no-member,
         attribute-defined-outside-init,
-        self-cls-assignment
+        self-cls-assignment,
+        unexpected-keyword-arg,
+        logging-too-many-args
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

@@ -1,3 +1,6 @@
+"""Boolean Particle Swarm Optimization.
+"""
+
 import copy
 
 import numpy as np
@@ -22,7 +25,7 @@ class BPSO(Optimizer):
     References:
         F. Afshinmanesh, A. Marandi and A. Rahimi-Kian.
         A Novel Binary Particle Swarm Optimization Method Using Artificial Immune System.
-        IEEE International Conference on Smart Technologies (2005). 
+        IEEE International Conference on Smart Technologies (2005).
 
     """
 
@@ -109,9 +112,8 @@ class BPSO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: c1 = {self.c1}, c2 = {self.c2} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: c1 = %s, c2 = %s | Built: %s.',
+                     self.algorithm, self.c1, self.c2, self.built)
 
     def _update_velocity(self, position, best_position, local_position):
         """Updates a particle velocity.
@@ -226,12 +228,10 @@ class BPSO(Optimizer):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
 
         # And also an array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
 
         # Initial search space evaluation
         self._evaluate(space, function, local_position, hook=pre_evaluation)
@@ -246,8 +246,7 @@ class BPSO(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                            local_position, velocity)
+                self._update(space.agents, space.best_agent, local_position, velocity)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()
@@ -256,8 +255,7 @@ class BPSO(Optimizer):
                 self._evaluate(space, function, local_position, hook=pre_evaluation)
 
                 # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents, local=local_position,
-                             best_agent=space.best_agent)
+                history.dump(agents=space.agents, local=local_position, best_agent=space.best_agent)
 
                 # Updates the `tqdm` status
                 b.set_postfix(fitness=space.best_agent.fit)

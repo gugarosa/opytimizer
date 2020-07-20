@@ -210,8 +210,7 @@ class Space:
         logger.debug('Running private method: create_agents().')
 
         # Creating a list of agents
-        self.agents = [Agent(self.n_variables, self.n_dimensions)
-                       for _ in range(self.n_agents)]
+        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
 
         # Apply the first agent as the best one
         self.best_agent = copy.deepcopy(self.agents[0])
@@ -256,8 +255,7 @@ class Space:
         self.built = True
 
         # Logging attributes
-        logger.debug('Agents: %d | Size: (%d, %d) | '
-                     'Iterations: %d | Lower Bound: %s | '
-                     'Upper Bound: %s | Built: %s.',
+        logger.debug('Agents: %d | Size: (%d, %d) | Iterations: %d | '
+                     'Lower Bound: %s | Upper Bound: %s | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
                      self.lb, self.ub, self.built)

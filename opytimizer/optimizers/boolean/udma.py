@@ -1,3 +1,6 @@
+"""Univariate Marginal Distribution Algorithm.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -17,7 +20,7 @@ class UDMA(Optimizer):
 
     References:
         M. Pelikan and M. Heinz. Marginal distributions in evolutionary algorithms.
-        Proceedings of the International Conference on Genetic Algorithms Mendel (1998).    
+        Proceedings of the International Conference on Genetic Algorithms Mendel (1998).
 
     """
 
@@ -57,7 +60,7 @@ class UDMA(Optimizer):
 
     @p_selection.setter
     def p_selection(self, p_selection):
-        if not (isinstance(p_selection, float) or isinstance(p_selection, int)):
+        if not isinstance(p_selection, (float, int)):
             raise e.TypeError('`p_selection` should be a float or integer')
         if p_selection < 0 or p_selection > 1:
             raise e.ValueError('`p_selection` should be between 0 and 1')
@@ -74,7 +77,7 @@ class UDMA(Optimizer):
 
     @lower_bound.setter
     def lower_bound(self, lower_bound):
-        if not (isinstance(lower_bound, float) or isinstance(lower_bound, int)):
+        if not isinstance(lower_bound, (float, int)):
             raise e.TypeError('`lower_bound` should be a float or integer')
         if lower_bound < 0 or lower_bound > 1:
             raise e.ValueError('`lower_bound` should be between 0 and 1')
@@ -91,7 +94,7 @@ class UDMA(Optimizer):
 
     @upper_bound.setter
     def upper_bound(self, upper_bound):
-        if not (isinstance(upper_bound, float) or isinstance(upper_bound, int)):
+        if not isinstance(upper_bound, (float, int)):
             raise e.TypeError('`upper_bound` should be a float or integer')
         if upper_bound < 0 or upper_bound > 1:
             raise e.ValueError('`upper_bound` should be between 0 and 1')
@@ -131,10 +134,10 @@ class UDMA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: p_selection = {self.p_selection}, bounds = ({self.lower_bound}, {self.upper_bound}) | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: {self.algorithm} | Hyperparameters: p_selection = %f, bounds = ({%f, %f) | '
+                     'Built: %s.',
+                     self.algorithm, self.p_selection, self.lower_bound, self.upper_bound,
+                     self.built)
 
     def _calculate_probability(self, agents):
         """Calculates probabilities based on pre-selected agents' variables occurrence.
@@ -183,7 +186,8 @@ class UDMA(Optimizer):
         return new_position
 
     def _update(self, agents):
-        """Method that wraps selection, probability calculation and position sampling over all agents and variables.
+        """Method that wraps selection, probability calculation and
+        position sampling over all agents and variables.
 
         Args:
             agents (list): List of agents.

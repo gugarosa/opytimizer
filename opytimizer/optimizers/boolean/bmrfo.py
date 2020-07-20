@@ -1,14 +1,19 @@
+"""Boolean Manta Ray Foraging Optimization.
+"""
+
 import copy
 
 import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
 logger = l.get_logger(__name__)
+
 
 class BMRFO(Optimizer):
     """A BMRFO class, inherited from Optimizer.
@@ -83,8 +88,8 @@ class BMRFO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: S = {self.S} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: S = %s | Built: %s.',
+                     self.algorithm, self.S, self.built)
 
     def _cyclone_foraging(self, agents, best_position, i, iteration, n_iterations):
         """Performs the cyclone foraging procedure.
@@ -103,7 +108,6 @@ class BMRFO(Optimizer):
 
         # Generates binary random numbers
         r1 = r.generate_binary_random_number(best_position.shape)
-        r2 = r.generate_binary_random_number(best_position.shape)
         beta = r.generate_binary_random_number(best_position.shape)
 
         # Generates a uniform random number
@@ -115,32 +119,32 @@ class BMRFO(Optimizer):
             r_position = r.generate_binary_random_number(size=(agents[i].n_variables, agents[i].n_dimensions))
 
             # Checks if the index is equal to zero
-            if (i == 0):
+            if i == 0:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r2, np.logical_xor(r_position, agents[i].position))
+                partial_one = np.logical_or(r1, np.logical_xor(r_position, agents[i].position))
                 partial_two = np.logical_or(beta, np.logical_xor(r_position, agents[i].position))
                 cyclone_foraging = np.logical_and(r_position, np.logical_and(partial_one, partial_two))
 
             # If index is different than zero
             else:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r2, np.logical_xor(agents[i - 1].position, agents[i].position))
+                partial_one = np.logical_or(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
                 partial_two = np.logical_or(beta, np.logical_xor(r_position, agents[i].position))
                 cyclone_foraging = np.logical_and(r_position, np.logical_and(partial_one, partial_two))
 
         # If current iteration proportion is bigger than random generated number
         else:
             # Checks if the index is equal to zero
-            if (i == 0):
+            if i == 0:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r2, np.logical_xor(best_position, agents[i].position))
+                partial_one = np.logical_or(r1, np.logical_xor(best_position, agents[i].position))
                 partial_two = np.logical_or(beta, np.logical_xor(best_position, agents[i].position))
                 cyclone_foraging = np.logical_and(best_position, np.logical_and(partial_one, partial_two))
 
             # If index is different than zero
             else:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r2, np.logical_xor(agents[i - 1].position, agents[i].position))
+                partial_one = np.logical_or(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
                 partial_two = np.logical_or(beta, np.logical_xor(best_position, agents[i].position))
                 cyclone_foraging = np.logical_and(best_position, np.logical_and(partial_one, partial_two))
 
@@ -161,20 +165,19 @@ class BMRFO(Optimizer):
 
         # Generates binary random numbers
         r1 = r.generate_binary_random_number(best_position.shape)
-        r2 = r.generate_binary_random_number(best_position.shape)
         alpha = r.generate_binary_random_number(best_position.shape)
 
         # Checks if the index is equal to zero
         if i == 0:
             # Calculates the chain foraging
-            partial_one = np.logical_and(r2, np.logical_xor(best_position, agents[i].position))
+            partial_one = np.logical_and(r1, np.logical_xor(best_position, agents[i].position))
             partial_two = np.logical_and(alpha, np.logical_xor(best_position, agents[i].position))
             chain_foraging = np.logical_or(agents[i].position, np.logical_or(partial_one, partial_two))
 
         # If index is different than zero
         else:
             # Calculates the chain foraging
-            partial_one = np.logical_and(r2, np.logical_xor(agents[i - 1].position, agents[i].position))
+            partial_one = np.logical_and(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
             partial_two = np.logical_and(alpha, np.logical_xor(best_position, agents[i].position))
             chain_foraging = np.logical_or(agents[i].position, np.logical_or(partial_one, partial_two))
 
@@ -197,7 +200,8 @@ class BMRFO(Optimizer):
         r2 = r.generate_binary_random_number(best_position.shape)
 
         # Calculates the somersault foraging
-        somersault_foraging = np.logical_or(position, np.logical_and(self.S, np.logical_xor(np.logical_xor(r1, best_position), np.logical_xor(r2, position))))
+        somersault_foraging = np.logical_or(position, np.logical_and(self.S, np.logical_xor(
+            np.logical_xor(r1, best_position), np.logical_xor(r2, position))))
 
         return somersault_foraging
 
