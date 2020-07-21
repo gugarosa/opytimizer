@@ -1,3 +1,6 @@
+"""Multi-Verse Optimizer.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -60,7 +63,7 @@ class MVO(Optimizer):
 
     @WEP_min.setter
     def WEP_min(self, WEP_min):
-        if not (isinstance(WEP_min, float) or isinstance(WEP_min, int)):
+        if not isinstance(WEP_min, (float, int)):
             raise e.TypeError('`WEP_min` should be a float or integer')
         if (WEP_min < 0 or WEP_min > 1):
             raise e.ValueError('`WEP_min` should be >= 0 and < 1')
@@ -77,7 +80,7 @@ class MVO(Optimizer):
 
     @WEP_max.setter
     def WEP_max(self, WEP_max):
-        if not (isinstance(WEP_max, float) or isinstance(WEP_max, int)):
+        if not isinstance(WEP_max, (float, int)):
             raise e.TypeError('`WEP_max` should be a float or integer')
         if (WEP_max < 0 or WEP_max > 1):
             raise e.ValueError('`WEP_max` should be >= 0 and < 1')
@@ -96,7 +99,7 @@ class MVO(Optimizer):
 
     @p.setter
     def p(self, p):
-        if not (isinstance(p, float) or isinstance(p, int)):
+        if not isinstance(p, (float, int)):
             raise e.TypeError('`p` should be a float or integer')
         if p < 0:
             raise e.ValueError('`p` should be >= 0')
@@ -133,10 +136,10 @@ class MVO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: WEP_min = {self.WEP_min}, WEP_max = {self.WEP_max}, p = {self.p} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %f, WEP_max = %f, p = %f| '
+                     'Built: %s.',
+                     self.algorithm, self.WEP_min, self.WEP_max, self.p,
+                     self.built)
 
     def _update(self, agents, best_agent, function, WEP, TDR):
         """Method that wraps global and local pollination updates over all agents and variables.

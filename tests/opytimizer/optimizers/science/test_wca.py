@@ -88,7 +88,7 @@ def test_wca_update_stream():
 
     flows = new_wca._flow_intensity(search_space.agents)
 
-    new_wca._update_stream(search_space.agents, search_space.best_agent, flows)
+    new_wca._update_stream(search_space.agents, flows)
 
     assert search_space.agents[-1].position[0] != 0
 

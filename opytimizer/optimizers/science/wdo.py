@@ -1,3 +1,6 @@
+"""Wind Driven Optimization.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -66,7 +69,7 @@ class WDO(Optimizer):
 
     @v_max.setter
     def v_max(self, v_max):
-        if not (isinstance(v_max, float) or isinstance(v_max, int)):
+        if not isinstance(v_max, (float, int)):
             raise e.TypeError('`v_max` should be a float or integer')
         if v_max < 0:
             raise e.ValueError('`v_max` should be >= 0')
@@ -83,7 +86,7 @@ class WDO(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+        if not isinstance(alpha, (float, int)):
             raise e.TypeError('`alpha` should be a float or integer')
         if alpha < 0 or alpha > 1:
             raise e.ValueError('`alpha` should be between 0 and 1')
@@ -100,7 +103,7 @@ class WDO(Optimizer):
 
     @g.setter
     def g(self, g):
-        if not (isinstance(g, float) or isinstance(g, int)):
+        if not isinstance(g, (float, int)):
             raise e.TypeError('`g` should be a float or integer')
         if g < 0:
             raise e.ValueError('`g` should be >= 0')
@@ -117,7 +120,7 @@ class WDO(Optimizer):
 
     @c.setter
     def c(self, c):
-        if not (isinstance(c, float) or isinstance(c, int)):
+        if not isinstance(c, (float, int)):
             raise e.TypeError('`c` should be a float or integer')
         if c < 0:
             raise e.ValueError('`c` should be >= 0')
@@ -134,7 +137,7 @@ class WDO(Optimizer):
 
     @RT.setter
     def RT(self, RT):
-        if not (isinstance(RT, float) or isinstance(RT, int)):
+        if not isinstance(RT, (float, int)):
             raise e.TypeError('`RT` should be a float or integer')
         if RT < 0:
             raise e.ValueError('`RT` should be >= 0')
@@ -175,10 +178,10 @@ class WDO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: v_max = {self.v_max}, alpha = {self.alpha}, g = {self.g}, c = {self.c}, RT = {self.RT} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: v_max = %f, alpha = %f, g = %f, '
+                     'c = %f, RT = %f | Built: %s.',
+                     self.algorithm, self.v_max, self.alpha, self.g,
+                     self.c, self.RT, self.built)
 
     def _update_velocity(self, position, best_position, velocity, alt_velocity, index):
         """Updates an agent velocity.
@@ -235,8 +238,7 @@ class WDO(Optimizer):
             index = r.generate_integer_random_number(0, len(agents))
 
             # Updating velocity
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, velocity[i], velocity[index], i + 1)
+            velocity[i] = self._update_velocity(agent.position, best_agent.position, velocity[i], velocity[index], i + 1)
 
             # Clips the velocity values between (-v_max, v_max)
             velocity = np.clip(velocity, -self.v_max, self.v_max)
@@ -265,8 +267,7 @@ class WDO(Optimizer):
         """
 
         # Instanciating array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)

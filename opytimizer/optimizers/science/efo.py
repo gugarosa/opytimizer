@@ -1,3 +1,6 @@
+"""Electromagnetic Field Optimization.
+"""
+
 import copy
 
 import numpy as np
@@ -64,7 +67,7 @@ class EFO(Optimizer):
 
     @positive_field.setter
     def positive_field(self, positive_field):
-        if not (isinstance(positive_field, float) or isinstance(positive_field, int)):
+        if not isinstance(positive_field, (float, int)):
             raise e.TypeError('`positive_field` should be a float or integer')
         if positive_field < 0 or positive_field > 1:
             raise e.ValueError('`positive_field` should be between 0 and 1')
@@ -81,7 +84,7 @@ class EFO(Optimizer):
 
     @negative_field.setter
     def negative_field(self, negative_field):
-        if not (isinstance(negative_field, float) or isinstance(negative_field, int)):
+        if not isinstance(negative_field, (float, int)):
             raise e.TypeError('`negative_field` should be a float or integer')
         if negative_field < 0 or negative_field > 1:
             raise e.ValueError('`negative_field` should be between 0 and 1')
@@ -101,7 +104,7 @@ class EFO(Optimizer):
 
     @ps_ratio.setter
     def ps_ratio(self, ps_ratio):
-        if not (isinstance(ps_ratio, float) or isinstance(ps_ratio, int)):
+        if not isinstance(ps_ratio, (float, int)):
             raise e.TypeError('`ps_ratio` should be a float or integer')
         if ps_ratio < 0 or ps_ratio > 1:
             raise e.ValueError('`ps_ratio` should be between 0 and 1')
@@ -118,7 +121,7 @@ class EFO(Optimizer):
 
     @r_ratio.setter
     def r_ratio(self, r_ratio):
-        if not (isinstance(r_ratio, float) or isinstance(r_ratio, int)):
+        if not isinstance(r_ratio, (float, int)):
             raise e.TypeError('`r_ratio` should be a float or integer')
         if r_ratio < 0 or r_ratio > 1:
             raise e.ValueError('`r_ratio` should be between 0 and 1')
@@ -157,11 +160,10 @@ class EFO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: positive_field = {self.positive_field}, negative_field = {self.negative_field}, '
-            f'ps_ratio = {self.ps_ratio}, r_ratio = {self.r_ratio} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: positive_field = %f, negative_field = %f, '
+                     'ps_ratio = %f, r_ratio = %f | Built: %s.',
+                     self.algorithm, self.positive_field, self.negative_field,
+                     self.ps_ratio, self.r_ratio, self.built)
 
     def _calculate_indexes(self, n_agents):
         """Calculates the indexes of positive, negative and neutral particles.
@@ -175,12 +177,10 @@ class EFO(Optimizer):
         """
 
         # Calculates a positive particle's index
-        positive_index = int(r.generate_uniform_random_number(
-            0, n_agents * self.positive_field))
+        positive_index = int(r.generate_uniform_random_number(0, n_agents * self.positive_field))
 
         # Calculates a negative particle's index
-        negative_index = int(r.generate_uniform_random_number(
-            n_agents * (1 - self.negative_field), n_agents))
+        negative_index = int(r.generate_uniform_random_number(n_agents * (1 - self.negative_field), n_agents))
 
         # Calculates a neutral particle's index
         neutral_index = int(r.generate_uniform_random_number(
@@ -208,9 +208,6 @@ class EFO(Optimizer):
         # Making a deepcopy of current's best agent
         agent = copy.deepcopy(agents[0])
 
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number()
-
         # Generates a uniform random number for the force
         force = r.generate_uniform_random_number()
 
@@ -219,11 +216,11 @@ class EFO(Optimizer):
             # Calculates the index of positive, negative and neutral particles
             pos, neg, neu = self._calculate_indexes(n_agents)
 
-            # Generates another uniform random number
-            r2 = r.generate_uniform_random_number()
+            # Generates a uniform random number
+            r1 = r.generate_uniform_random_number()
 
             # If random number is smaller than the probability of selecting eletromagnets
-            if r2 < self.ps_ratio:
+            if r1 < self.ps_ratio:
                 # Applies agent's position as positive particle's position
                 agent.position[j] = agents[pos].position[j]
 
@@ -237,10 +234,10 @@ class EFO(Optimizer):
         agent.clip_limits()
 
         # Generates a third uniform random number
-        r3 = r.generate_uniform_random_number()
+        r2 = r.generate_uniform_random_number()
 
         # If random number is smaller than probability of changing a random eletromagnet
-        if r3 < self.r_ratio:
+        if r2 < self.r_ratio:
             # Update agent's position based on RI
             agent.position[RI] = r.generate_uniform_random_number(
                 agent.lb[RI], agent.ub[RI])

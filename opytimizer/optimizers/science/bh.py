@@ -1,3 +1,6 @@
+"""Black Hole.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -22,12 +25,11 @@ class BH(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BH', hyperparams={}):
+    def __init__(self, algorithm='BH'):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -55,7 +57,7 @@ class BH(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(f'Algorithm: {self.algorithm} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def _update_position(self, agents, best_agent, function):
         """It updates every star position and calculates their event's horizon cost.
@@ -74,7 +76,7 @@ class BH(Optimizer):
         cost = 0
 
         # Iterate through all agents
-        for i, agent in enumerate(agents):
+        for agent in agents:
             # Generate an uniform random number
             r1 = r.generate_uniform_random_number()
 
@@ -114,7 +116,7 @@ class BH(Optimizer):
         radius = best_agent.fit / max(cost, constants.EPSILON)
 
         # Iterate through every agent
-        for i, agent in enumerate(agents):
+        for agent in agents:
             # Calculates distance between star and black hole
             distance = (np.linalg.norm(best_agent.position - agent.position))
 
@@ -123,8 +125,7 @@ class BH(Optimizer):
                 # Generates a new random star
                 for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
                     # For each decision variable, we generate uniform random numbers
-                    agent.position[j] = r.generate_uniform_random_number(
-                        lb, ub, size=agent.n_dimensions)
+                    agent.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
 
     def _update(self, agents, best_agent, function):
         """Method that wraps the update pipeline over all agents and variables.

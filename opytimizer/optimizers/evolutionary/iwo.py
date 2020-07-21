@@ -1,10 +1,13 @@
+"""Invasive Weed Optimization.
+"""
+
 import copy
 
 from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constants as c
-import opytimizer.utils.exception as e
+import opytimizer.utils.exception as ex
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -21,7 +24,7 @@ class IWO(Optimizer):
     References:
         A. R. Mehrabian and C. Lucas. A novel numerical optimization algorithm inspired from weed colonization.
         Ecological informatics (2006).
-        
+
     """
 
     def __init__(self, algorithm='IWO', hyperparams={}):
@@ -67,9 +70,9 @@ class IWO(Optimizer):
     @min_seeds.setter
     def min_seeds(self, min_seeds):
         if not isinstance(min_seeds, int):
-            raise e.TypeError('`min_seeds` should be an integer')
+            raise ex.TypeError('`min_seeds` should be an integer')
         if min_seeds < 0:
-            raise e.ValueError('`min_seeds` should be >= 0')
+            raise ex.ValueError('`min_seeds` should be >= 0')
 
         self._min_seeds = min_seeds
 
@@ -84,9 +87,9 @@ class IWO(Optimizer):
     @max_seeds.setter
     def max_seeds(self, max_seeds):
         if not isinstance(max_seeds, int):
-            raise e.TypeError('`max_seeds` should be an integer')
+            raise ex.TypeError('`max_seeds` should be an integer')
         if max_seeds < self.min_seeds:
-            raise e.ValueError('`max_seeds` should be >= `min_seeds`')
+            raise ex.ValueError('`max_seeds` should be >= `min_seeds`')
 
         self._max_seeds = max_seeds
 
@@ -100,10 +103,10 @@ class IWO(Optimizer):
 
     @e.setter
     def e(self, e):
-        if not (isinstance(e, float) or isinstance(e, int)):
-            raise e.TypeError('`e` should be a float or integer')
+        if not isinstance(e, (float, int)):
+            raise ex.TypeError('`e` should be a float or integer')
         if e < 0:
-            raise e.ValueError('`e` should be >= 0')
+            raise ex.ValueError('`e` should be >= 0')
 
         self._e = e
 
@@ -117,11 +120,10 @@ class IWO(Optimizer):
 
     @final_sigma.setter
     def final_sigma(self, final_sigma):
-        if not (isinstance(final_sigma, float) or isinstance(final_sigma, int)):
-            raise e.TypeError('`final_sigma` should be a float or integer')
+        if not isinstance(final_sigma, (float, int)):
+            raise ex.TypeError('`final_sigma` should be a float or integer')
         if final_sigma < 0:
-            raise e.ValueError('`final_sigma` should be >= 0')
-
+            raise ex.ValueError('`final_sigma` should be >= 0')
 
         self._final_sigma = final_sigma
 
@@ -135,12 +137,12 @@ class IWO(Optimizer):
 
     @init_sigma.setter
     def init_sigma(self, init_sigma):
-        if not (isinstance(init_sigma, float) or isinstance(init_sigma, int)):
-            raise e.TypeError('`init_sigma` should be a float or integer')
+        if not isinstance(init_sigma, (float, int)):
+            raise ex.TypeError('`init_sigma` should be a float or integer')
         if init_sigma < 0:
-            raise e.ValueError('`init_sigma` should be >= 0')
+            raise ex.ValueError('`init_sigma` should be >= 0')
         if init_sigma < self.final_sigma:
-            raise e.ValueError('`init_sigma` should be >= `final_sigma`')
+            raise ex.ValueError('`init_sigma` should be >= `final_sigma`')
 
         self._init_sigma = init_sigma
 
@@ -178,11 +180,10 @@ class IWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: min_seeds = {self.min_seeds}, max_seeds = {self.max_seeds}, e = {self.e}, '
-            f'init_sigma = {self.init_sigma}, final_sigma = {self.final_sigma} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %f, '
+                     'init_sigma = %f, final_sigma = %f | Built: %s.',
+                     self.algorithm, self.min_seeds, self.max_seeds, self.e,
+                     self.init_sigma, self.final_sigma, self.built)
 
     def _spatial_dispersal(self, iteration, n_iterations):
         """Calculates the Spatial Dispersal coefficient.

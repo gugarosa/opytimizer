@@ -1,3 +1,6 @@
+"""Evolution Strategies.
+"""
+
 import copy
 
 import numpy as np
@@ -54,7 +57,7 @@ class ES(Optimizer):
 
     @child_ratio.setter
     def child_ratio(self, child_ratio):
-        if not (isinstance(child_ratio, float) or isinstance(child_ratio, int)):
+        if not isinstance(child_ratio, (float, int)):
             raise e.TypeError('`child_ratio` should be a float or integer')
         if child_ratio < 0 or child_ratio > 1:
             raise e.ValueError('`child_ratio` should be between 0 and 1')
@@ -87,8 +90,8 @@ class ES(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: child_ratio = {self.child_ratio} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: child_ratio = %f | Built: %s.',
+                     self.algorithm, self.child_ratio, self.built)
 
     def _mutate_parent(self, agent, function, strategy):
         """Mutates a parent into a new child.
@@ -141,12 +144,10 @@ class ES(Optimizer):
         tau_p = 1 / np.sqrt(2 * np.sqrt(n_variables))
 
         # Generates a uniform random number
-        r1 = r.generate_gaussian_random_number(
-            size=(n_variables, n_dimensions))
+        r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
         # Generates another uniform random number
-        r2 = r.generate_gaussian_random_number(
-            size=(n_variables, n_dimensions))
+        r2 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
         # Calculates the new strategy
         new_strategy = strategy * np.exp(tau_p * r1 + tau * r2)
@@ -205,15 +206,15 @@ class ES(Optimizer):
         n_children = int(space.n_agents * self.child_ratio)
 
         # Instantiate an array of strategies
-        strategy = np.zeros(
-            (n_children, space.n_variables, space.n_dimensions))
+        strategy = np.zeros((n_children, space.n_variables, space.n_dimensions))
 
         # Iterate through all possible children
         for i in range(n_children):
             # For every decision variable
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
                 # Initializes the strategy array with the proposed ES distance
-                strategy[i][j] = 0.05 * r.generate_uniform_random_number(0, ub - lb, size=space.agents[i].n_dimensions)
+                strategy[i][j] = 0.05 * r.generate_uniform_random_number(
+                    0, ub - lb, size=space.agents[i].n_dimensions)
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
@@ -228,8 +229,7 @@ class ES(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                space.agents = self._update(
-                    space.agents, space.n_agents, function, n_children, strategy)
+                space.agents = self._update(space.agents, space.n_agents, function, n_children, strategy)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

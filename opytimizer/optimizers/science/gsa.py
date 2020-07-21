@@ -1,3 +1,6 @@
+"""Gravitational Search Algorithm.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -56,7 +59,7 @@ class GSA(Optimizer):
 
     @G.setter
     def G(self, G):
-        if not (isinstance(G, float) or isinstance(G, int)):
+        if not isinstance(G, (float, int)):
             raise e.TypeError('`G` should be a float or integer')
         if G < 0:
             raise e.ValueError('`G` should be >= 0')
@@ -89,8 +92,8 @@ class GSA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: G = {self.G} | Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: G = %f | Built: %s.',
+                     self.algorithm, self.G, self.built)
 
     def _calculate_mass(self, agents):
         """Calculates agents' mass.
@@ -177,12 +180,11 @@ class GSA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, function, velocity, iteration):
+    def _update(self, agents, velocity, iteration):
         """Method that wraps Gravitational Search Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            function (Function): A function object.
             velocity (np.array): Array of current velocities.
             iteration (int): Current iteration value.
 
@@ -223,8 +225,7 @@ class GSA(Optimizer):
         """
 
         # Creates an array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
@@ -239,7 +240,7 @@ class GSA(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, function, velocity, t)
+                self._update(space.agents, velocity, t)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

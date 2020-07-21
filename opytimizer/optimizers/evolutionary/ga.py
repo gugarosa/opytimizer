@@ -1,3 +1,6 @@
+"""Genetic Algorithm.
+"""
+
 import copy
 
 import numpy as np
@@ -62,7 +65,7 @@ class GA(Optimizer):
 
     @p_selection.setter
     def p_selection(self, p_selection):
-        if not (isinstance(p_selection, float) or isinstance(p_selection, int)):
+        if not isinstance(p_selection, (float, int)):
             raise e.TypeError('`p_selection` should be a float or integer')
         if p_selection < 0 or p_selection > 1:
             raise e.ValueError('`p_selection` should be between 0 and 1')
@@ -79,7 +82,7 @@ class GA(Optimizer):
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
-        if not (isinstance(p_mutation, float) or isinstance(p_mutation, int)):
+        if not isinstance(p_mutation, (float, int)):
             raise e.TypeError('`p_mutation` should be a float or integer')
         if p_mutation < 0 or p_mutation > 1:
             raise e.ValueError('`p_mutation` should be between 0 and 1')
@@ -96,7 +99,7 @@ class GA(Optimizer):
 
     @p_crossover.setter
     def p_crossover(self, p_crossover):
-        if not (isinstance(p_crossover, float) or isinstance(p_crossover, int)):
+        if not isinstance(p_crossover, (float, int)):
             raise e.TypeError('`p_crossover` should be a float or integer')
         if p_crossover < 0 or p_crossover > 1:
             raise e.ValueError('`p_crossover` should be between 0 and 1')
@@ -133,10 +136,10 @@ class GA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: p_selection = {self.p_selection}, p_mutation = {self.p_mutation}, '
-            f'p_crossover = {self.p_crossover} | Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %f, p_mutation = %f, '
+                     'p_crossover = %f | Built: %s.',
+                     self.algorithm, self.p_selection, self.p_mutation,
+                     self.p_crossover, self.built)
 
     def _roulette_selection(self, n_agents, fitness):
         """Performs a roulette selection on the population.
@@ -165,8 +168,7 @@ class GA(Optimizer):
         probs = [fit / total_fitness for fit in fitness]
 
         # Performs the selection process
-        selected = d.generate_choice_distribution(
-            n_agents, probs, n_individuals)
+        selected = d.generate_choice_distribution(n_agents, probs, n_individuals)
 
         return selected
 

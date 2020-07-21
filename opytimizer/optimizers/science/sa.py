@@ -1,3 +1,6 @@
+"""Simulated Annealing.
+"""
+
 import copy
 
 import numpy as np
@@ -60,7 +63,7 @@ class SA(Optimizer):
 
     @T.setter
     def T(self, T):
-        if not (isinstance(T, float) or isinstance(T, int)):
+        if not isinstance(T, (float, int)):
             raise e.TypeError('`T` should be a float or integer')
         if T < 0:
             raise e.ValueError('`T` should be >= 0')
@@ -77,7 +80,7 @@ class SA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
-        if not (isinstance(beta, float) or isinstance(beta, int)):
+        if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta < 0:
             raise e.ValueError('`beta` should be >= 0')
@@ -112,9 +115,8 @@ class SA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: T = {self.T}, beta = {self.beta} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: T = %f, beta = %f | Built: %s.',
+                     self.algorithm, self.T, self.beta, self.built)
 
     def _update(self, agents, function):
         """Method that wraps Simulated Annealing over all agents and variables.
@@ -126,13 +128,12 @@ class SA(Optimizer):
         """
 
         # Iterate through all agents
-        for i, agent in enumerate(agents):
+        for agent in agents:
             # Mimics its position
             a = copy.deepcopy(agent)
 
             # Generating a random noise from a gaussian distribution
-            noise = r.generate_gaussian_random_number(
-                0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
+            noise = r.generate_gaussian_random_number(0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
 
             # Applying the noise
             a.position += noise

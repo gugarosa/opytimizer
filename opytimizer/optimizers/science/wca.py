@@ -1,3 +1,6 @@
+"""Water Cycle Algorithm.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -19,7 +22,7 @@ class WCA(Optimizer):
     References:
         H. Eskandar.
         Water cycle algorithm – A novel metaheuristic optimization method for solving constrained engineering optimization problems.
-        Computers & Structures (2012). 
+        Computers & Structures (2012).
 
     """
 
@@ -75,7 +78,7 @@ class WCA(Optimizer):
 
     @d_max.setter
     def d_max(self, d_max):
-        if not (isinstance(d_max, float) or isinstance(d_max, int)):
+        if not isinstance(d_max, (float, int)):
             raise e.TypeError('`d_max` should be a float or integer')
         if d_max < 0:
             raise e.ValueError('`d_max` should be >= 0')
@@ -110,9 +113,8 @@ class WCA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: nsr = {self.nsr}, d_max = {self.d_max} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: nsr = %d, d_max = %d| Built: %s.',
+                     self.algorithm, self.nsr, self.d_max, self.built)
 
     def _flow_intensity(self, agents):
         """Calculates the intensity of each possible flow.
@@ -139,8 +141,7 @@ class WCA(Optimizer):
         # Iterating again over rivers + sea
         for i in range(self.nsr):
             # Calculates its particular flow intensity
-            flows[i] = round(np.fabs(agents[i].fit / cost)
-                             * (len(agents) - self.nsr))
+            flows[i] = round(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
 
         return flows
 
@@ -156,24 +157,21 @@ class WCA(Optimizer):
         # Iterate through every raindrop
         for k in range(self.nsr, len(agents)):
             # Calculate the euclidean distance between sea and raindrop / strream
-            distance = (np.linalg.norm(
-                best_agent.position - agents[k].position))
+            distance = (np.linalg.norm(best_agent.position - agents[k].position))
 
             # If distance if smaller than evaporation condition
             if distance > self.d_max:
                 # Generates a new random gaussian number
-                r1 = r.generate_gaussian_random_number(
-                    1, agents[k].n_variables)
+                r1 = r.generate_gaussian_random_number(1, agents[k].n_variables)
 
                 # Changes the stream position
                 agents[k].position = best_agent.position + np.sqrt(0.1) * r1
 
-    def _update_stream(self, agents, best_agent, flows):
+    def _update_stream(self, agents, flows):
         """Updates every stream position.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             flows (np.array): Array of flows' intensity.
 
         """
@@ -192,8 +190,7 @@ class WCA(Optimizer):
                 r1 = r.generate_uniform_random_number()
 
                 # Updates stream position
-                agents[i].position += r1 * 2 * \
-                    (agents[i].position - agents[k].position)
+                agents[i].position += r1 * 2 * (agents[i].position - agents[k].position)
 
     def _update_river(self, agents, best_agent):
         """Updates every river position.
@@ -210,8 +207,7 @@ class WCA(Optimizer):
             r1 = r.generate_uniform_random_number()
 
             # Updates river position
-            agents[k].position += r1 * 2 * \
-                (best_agent.position - agents[k].position)
+            agents[k].position += r1 * 2 * (best_agent.position - agents[k].position)
 
     def _update(self, agents, best_agent, flows):
         """Updates the agents position.
@@ -224,7 +220,7 @@ class WCA(Optimizer):
         """
 
         # Updates every stream position (Equation 8)
-        self._update_stream(agents, best_agent, flows)
+        self._update_stream(agents, flows)
 
         # Updates every river position (Equation 9)
         self._update_river(agents, best_agent)

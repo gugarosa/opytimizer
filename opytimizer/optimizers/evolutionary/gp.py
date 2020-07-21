@@ -1,3 +1,6 @@
+"""Genetic Programming.
+"""
+
 import copy
 
 import numpy as np
@@ -66,7 +69,7 @@ class GP(Optimizer):
 
     @p_reproduction.setter
     def p_reproduction(self, p_reproduction):
-        if not (isinstance(p_reproduction, float) or isinstance(p_reproduction, int)):
+        if not isinstance(p_reproduction, (float, int)):
             raise e.TypeError('`p_reproduction` should be a float or integer')
         if p_reproduction < 0 or p_reproduction > 1:
             raise e.ValueError('`p_reproduction` should be between 0 and 1')
@@ -83,7 +86,7 @@ class GP(Optimizer):
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
-        if not (isinstance(p_mutation, float) or isinstance(p_mutation, int)):
+        if not isinstance(p_mutation, (float, int)):
             raise e.TypeError('`p_mutation` should be a float or integer')
         if p_mutation < 0 or p_mutation > 1:
             raise e.ValueError('`p_mutation` should be between 0 and 1')
@@ -100,7 +103,7 @@ class GP(Optimizer):
 
     @p_crossover.setter
     def p_crossover(self, p_crossover):
-        if not (isinstance(p_crossover, float) or isinstance(p_crossover, int)):
+        if not isinstance(p_crossover, (float, int)):
             raise e.TypeError('`p_crossover` should be a float or integer')
         if p_crossover < 0 or p_crossover > 1:
             raise e.ValueError('`p_crossover` should be between 0 and 1')
@@ -117,11 +120,11 @@ class GP(Optimizer):
 
     @prunning_ratio.setter
     def prunning_ratio(self, prunning_ratio):
-        if not (isinstance(prunning_ratio, float) or isinstance(prunning_ratio, int)):
+        if not isinstance(prunning_ratio, (float, int)):
             raise e.TypeError('`prunning_ratio` should be a float or integer')
         if prunning_ratio < 0 or prunning_ratio > 1:
             raise e.ValueError('`prunning_ratio` should be between 0 and 1')
-        
+
         self._prunning_ratio = prunning_ratio
 
     def _build(self, hyperparams):
@@ -156,11 +159,10 @@ class GP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: p_reproduction = {self.p_reproduction}, p_mutation = {self.p_mutation}, '
-            f'p_crossover = {self.p_crossover}, prunning_ratio = {self.prunning_ratio} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %f, p_mutation = %f, '
+                     'p_crossover = %f, prunning_ratio = %f | Built: %s.',
+                     self.algorithm, self.p_reproduction, self.p_mutation,
+                     self.p_crossover, self.prunning_ratio, self.built)
 
     def _prune_nodes(self, n_nodes):
         """Prunes the amount of possible nodes used for mutation and crossover.
@@ -475,7 +477,7 @@ class GP(Optimizer):
         """
 
         # Iterates through all (trees, agents)
-        for i, (tree, agent) in enumerate(zip(space.trees, space.agents)):
+        for (tree, agent) in zip(space.trees, space.agents):
             # Runs through the tree and returns a position array
             agent.position = copy.deepcopy(tree.position)
 
@@ -524,14 +526,14 @@ class GP(Optimizer):
 
                 # Updating trees with designed operators
                 self._update(space)
-                
+
                 # After the update, we need to re-evaluate the tree space
                 self._evaluate(space, function, hook=pre_evaluation)
 
                 # Every iteration, we need to dump agents and best agent
                 history.dump(agents=space.agents,
-                            best_agent=space.best_agent,
-                            best_tree=space.best_tree)
+                             best_agent=space.best_agent,
+                             best_tree=space.best_tree)
 
                 # Updates the `tqdm` status
                 b.set_postfix(fitness=space.best_agent.fit)

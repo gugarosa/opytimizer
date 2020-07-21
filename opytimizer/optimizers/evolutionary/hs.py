@@ -1,3 +1,6 @@
+"""Harmony Search-based algorithms.
+"""
+
 import copy
 
 import numpy as np
@@ -7,7 +10,6 @@ import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
-from opytimizer.core.agent import Agent
 from opytimizer.core.optimizer import Optimizer
 
 logger = l.get_logger(__name__)
@@ -63,7 +65,7 @@ class HS(Optimizer):
 
     @HMCR.setter
     def HMCR(self, HMCR):
-        if not (isinstance(HMCR, float) or isinstance(HMCR, int)):
+        if not isinstance(HMCR, (float, int)):
             raise e.TypeError('`HMCR` should be a float or integer')
         if HMCR < 0 or HMCR > 1:
             raise e.ValueError('`HMCR` should be between 0 and 1')
@@ -80,7 +82,7 @@ class HS(Optimizer):
 
     @PAR.setter
     def PAR(self, PAR):
-        if not (isinstance(PAR, float) or isinstance(PAR, int)):
+        if not isinstance(PAR, (float, int)):
             raise e.TypeError('`PAR` should be a float or integer')
         if PAR < 0 or PAR > 1:
             raise e.ValueError('`PAR` should be between 0 and 1')
@@ -97,7 +99,7 @@ class HS(Optimizer):
 
     @bw.setter
     def bw(self, bw):
-        if not (isinstance(bw, float) or isinstance(bw, int)):
+        if not isinstance(bw, (float, int)):
             raise e.TypeError('`bw` should be a float or integer')
         if bw < 0:
             raise e.ValueError('`bw` should be >= 0')
@@ -134,10 +136,8 @@ class HS(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: HMCR = {self.HMCR}, PAR = {self.PAR}, bw = {self.bw} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: HMCR = %f, PAR = %f, bw = %f | Built: %s.',
+                     self.algorithm, self.HMCR, self.PAR, self.bw, self.built)
 
     def _generate_new_harmony(self, agent):
         """It generates a new harmony.
@@ -174,8 +174,7 @@ class HS(Optimizer):
             # Generates a new random harmony
             for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
                 # For each decision variable, we generate uniform random numbers
-                a.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=agent.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
 
         return a
 
@@ -258,6 +257,7 @@ class HS(Optimizer):
 
         return history
 
+
 class IHS(HS):
     """An IHS class, inherited from HS.
 
@@ -312,7 +312,7 @@ class IHS(HS):
 
     @PAR_min.setter
     def PAR_min(self, PAR_min):
-        if not (isinstance(PAR_min, float) or isinstance(PAR_min, int)):
+        if not isinstance(PAR_min, (float, int)):
             raise e.TypeError('`PAR_min` should be a float or integer')
         if PAR_min < 0 or PAR_min > 1:
             raise e.ValueError('`PAR_min` should be between 0 and 1')
@@ -329,7 +329,7 @@ class IHS(HS):
 
     @PAR_max.setter
     def PAR_max(self, PAR_max):
-        if not (isinstance(PAR_max, float) or isinstance(PAR_max, int)):
+        if not isinstance(PAR_max, (float, int)):
             raise e.TypeError('`PAR_max` should be a float or integer')
         if PAR_max < 0 or PAR_max > 1:
             raise e.ValueError('`PAR_max` should be between 0 and 1')
@@ -348,7 +348,7 @@ class IHS(HS):
 
     @bw_min.setter
     def bw_min(self, bw_min):
-        if not (isinstance(bw_min, float) or isinstance(bw_min, int)):
+        if not isinstance(bw_min, (float, int)):
             raise e.TypeError('`bw_min` should be a float or integer')
         if bw_min < 0:
             raise e.ValueError('`bw_min` should be >= 0')
@@ -365,7 +365,7 @@ class IHS(HS):
 
     @bw_max.setter
     def bw_max(self, bw_max):
-        if not (isinstance(bw_max, float) or isinstance(bw_max, int)):
+        if not isinstance(bw_max, (float, int)):
             raise e.TypeError('`bw_max` should be a float or integer')
         if bw_max < 0:
             raise e.ValueError('`bw_max` should be >= 0')
@@ -397,9 +397,10 @@ class IHS(HS):
                 self.bw_max = self.hyperparams['bw_max']
 
         # Logging attributes
-        logger.debug(
-            f'Additional hyperparameters: PAR_min = {self.PAR_min}, PAR_max = {self.PAR_max}, '
-            f'bw_min = {self.bw_min}, bw_max = {self.bw_max}.')
+        logger.debug('Additional hyperparameters: PAR_min = %f, PAR_max = %f, '
+                     'bw_min = %f, bw_max = %f.',
+                     self.PAR_min, self.PAR_max,
+                     self.bw_min, self.bw_max)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -428,12 +429,10 @@ class IHS(HS):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating pitch adjusting rate
-                self.PAR = self.PAR_min + \
-                    (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
+                self.PAR = self.PAR_min + (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
 
                 # Updating bandwidth parameter
-                self.bw = self.bw_max * \
-                    np.exp((np.log(self.bw_min / self.bw_max) / space.n_iterations) * t)
+                self.bw = self.bw_max * np.exp((np.log(self.bw_min / self.bw_max) / space.n_iterations) * t)
 
                 # Updating agents
                 self._update(space.agents, function)
