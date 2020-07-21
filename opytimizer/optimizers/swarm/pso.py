@@ -1,3 +1,6 @@
+"""Particle Swarm Optimization-based algorithms.
+"""
+
 import copy
 
 import numpy as np
@@ -22,7 +25,7 @@ class PSO(Optimizer):
 
     References:
         J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence.
-        Artificial Intelligence (2001). 
+        Artificial Intelligence (2001).
 
     """
 
@@ -64,7 +67,7 @@ class PSO(Optimizer):
 
     @w.setter
     def w(self, w):
-        if not (isinstance(w, float) or isinstance(w, int)):
+        if not isinstance(w, (float, int)):
             raise e.TypeError('`w` should be a float or integer')
         if w < 0:
             raise e.ValueError('`w` should be >= 0')
@@ -81,7 +84,7 @@ class PSO(Optimizer):
 
     @c1.setter
     def c1(self, c1):
-        if not (isinstance(c1, float) or isinstance(c1, int)):
+        if not isinstance(c1, (float, int)):
             raise e.TypeError('`c1` should be a float or integer')
         if c1 < 0:
             raise e.ValueError('`c1` should be >= 0')
@@ -98,7 +101,7 @@ class PSO(Optimizer):
 
     @c2.setter
     def c2(self, c2):
-        if not (isinstance(c2, float) or isinstance(c2, int)):
+        if not isinstance(c2, (float, int)):
             raise e.TypeError('`c2` should be a float or integer')
         if c2 < 0:
             raise e.ValueError('`c2` should be >= 0')
@@ -135,10 +138,10 @@ class PSO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: w = {self.w}, c1 = {self.c1}, c2 = {self.c2} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: w = %f, c1 = %f, c2 = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.w, self.c1, self.c2,
+                     self.built)
 
     def _update_velocity(self, position, best_position, local_position, velocity):
         """Updates a particle velocity.
@@ -161,8 +164,7 @@ class PSO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Calculates new velocity
-        new_velocity = self.w * velocity + self.c1 * r1 * \
-            (local_position - position) + self.c2 * \
+        new_velocity = self.w * velocity + self.c1 * r1 * (local_position - position) + self.c2 * \
             r2 * (best_position - position)
 
         return new_velocity
@@ -198,8 +200,7 @@ class PSO(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, local_position[i], velocity[i])
+            velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i], velocity[i])
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
@@ -251,12 +252,10 @@ class PSO(Optimizer):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, local_position, hook=pre_evaluation)
@@ -342,7 +341,7 @@ class AIWPSO(PSO):
 
     @w_min.setter
     def w_min(self, w_min):
-        if not (isinstance(w_min, float) or isinstance(w_min, int)):
+        if not isinstance(w_min, (float, int)):
             raise e.TypeError('`w_min` should be a float or integer')
         if w_min < 0:
             raise e.ValueError('`w_min` should be >= 0')
@@ -359,7 +358,7 @@ class AIWPSO(PSO):
 
     @w_max.setter
     def w_max(self, w_max):
-        if not (isinstance(w_max, float) or isinstance(w_max, int)):
+        if not isinstance(w_max, (float, int)):
             raise e.TypeError('`w_max` should be a float or integer')
         if w_max < 0:
             raise e.ValueError('`w_max` should be >= 0')
@@ -387,8 +386,7 @@ class AIWPSO(PSO):
                 self.w_max = self.hyperparams['w_max']
 
         # Logging attributes
-        logger.debug(
-            f'Additional hyperparameters: w_min = {self.w_min}, w_max = {self.w_max}.')
+        logger.debug('Additional hyperparameters: w_min = %f, w_max = %f.', self.w_min, self.w_max)
 
     def _compute_success(self, agents, fitness):
         """Computes the particles' success for updating inertia weight.
@@ -430,12 +428,10 @@ class AIWPSO(PSO):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # An array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of best particle's fitness
         fitness = np.zeros(space.n_agents)
@@ -540,8 +536,7 @@ class RPSO(PSO):
         gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / c.LIGHT_SPEED ** 2))
 
         # Calculates new velocity
-        new_velocity = mass * velocity * gamma + self.c1 * r1 * \
-            (local_position - position) + self.c2 * \
+        new_velocity = mass * velocity * gamma + self.c1 * r1 * (local_position - position) + self.c2 * \
             r2 * (best_position - position)
 
         return new_velocity
@@ -585,12 +580,10 @@ class RPSO(PSO):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # An array of velocities
-        velocity = np.ones(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And finally, an array of masses
         mass = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
@@ -638,7 +631,8 @@ class SAVPSO(PSO):
     variables and methods.
 
     References:
-        H. Lu and W. Chen. Self-adaptive velocity particle swarm optimization for solving constrained optimization problems.
+        H. Lu and W. Chen.
+        Self-adaptive velocity particle swarm optimization for solving constrained optimization problems.
         Journal of global optimization (2008).
 
     """
@@ -781,14 +775,12 @@ class VPSO(PSO):
         r2 = r.generate_uniform_random_number()
 
         # Calculates new velocity
-        new_velocity = self.w * velocity + self.c1 * r1 * \
-            (local_position - position) + self.c2 * \
+        new_velocity = self.w * velocity + self.c1 * r1 * (local_position - position) + self.c2 * \
             r2 * (best_position - position)
 
         # Calculates new vertical velocity
-        new_v_velocity = v_velocity - \
-            (np.dot(new_velocity.T, v_velocity) /
-             np.dot(new_velocity.T, new_velocity)) * new_velocity
+        new_v_velocity = v_velocity - (np.dot(new_velocity.T, v_velocity) /
+                                       np.dot(new_velocity.T, new_velocity)) * new_velocity
 
         return new_velocity, new_v_velocity
 
@@ -849,16 +841,13 @@ class VPSO(PSO):
         """
 
         # Instanciating array of local positions
-        local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of velocities
-        velocity = np.ones(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of vertical velocities
-        v_velocity = np.ones(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        v_velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, local_position, hook=pre_evaluation)
@@ -873,8 +862,7 @@ class VPSO(PSO):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                             local_position, velocity, v_velocity)
+                self._update(space.agents, space.best_agent, local_position, velocity, v_velocity)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

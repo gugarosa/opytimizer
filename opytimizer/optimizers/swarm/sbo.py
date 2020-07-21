@@ -1,3 +1,6 @@
+"""Satin Bowerbird Optimizer.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -18,7 +21,7 @@ class SBO(Optimizer):
     variables and methods.
 
     References:
-        S. H. S. Moosavi and V. K. Bardsiri. 
+        S. H. S. Moosavi and V. K. Bardsiri.
         Satin bowerbird optimizer: a new optimization algorithm to optimize ANFIS for software development effort estimation.
         Engineering Applications of Artificial Intelligence (2017).
 
@@ -60,7 +63,7 @@ class SBO(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+        if not isinstance(alpha, (float, int)):
             raise e.TypeError('`alpha` should be a float or integer')
         if alpha < 0:
             raise e.ValueError('`alpha` should be >= 0')
@@ -77,7 +80,7 @@ class SBO(Optimizer):
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
-        if not (isinstance(p_mutation, float) or isinstance(p_mutation, int)):
+        if not isinstance(p_mutation, (float, int)):
             raise e.TypeError('`p_mutation` should be a float or integer')
         if p_mutation < 0 or p_mutation > 1:
             raise e.ValueError('`p_mutation` should be between 0 and 1')
@@ -94,7 +97,7 @@ class SBO(Optimizer):
 
     @z.setter
     def z(self, z):
-        if not (isinstance(z, float) or isinstance(z, int)):
+        if not isinstance(z, (float, int)):
             raise e.TypeError('`z` should be a float or integer')
         if z < 0 or z > 1:
             raise e.ValueError('`z` should be between 0 and 1')
@@ -131,10 +134,10 @@ class SBO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: alpha = {self.alpha}, p_mutation = {self.p_mutation}, z = {self.z} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: alpha = %f, p_mutation = %f, z = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.alpha, self.p_mutation, self.z,
+                     self.built)
 
     def _update(self, agents, best_agent, function, sigma):
         """Method that wraps updates over all agents and variables.

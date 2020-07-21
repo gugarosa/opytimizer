@@ -1,9 +1,11 @@
+"""Firefly Algorithm.
+"""
+
 import copy
 
 import numpy as np
 from tqdm import tqdm
 
-import opytimizer.math.distribution as d
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
@@ -64,7 +66,7 @@ class FA(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+        if not isinstance(alpha, (float, int)):
             raise e.TypeError('`alpha` should be a float or integer')
         if alpha < 0:
             raise e.ValueError('`alpha` should be >= 0')
@@ -81,7 +83,7 @@ class FA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
-        if not (isinstance(beta, float) or isinstance(beta, int)):
+        if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta < 0:
             raise e.ValueError('`beta` should be >= 0')
@@ -98,7 +100,7 @@ class FA(Optimizer):
 
     @gamma.setter
     def gamma(self, gamma):
-        if not (isinstance(gamma, float) or isinstance(gamma, int)):
+        if not isinstance(gamma, (float, int)):
             raise e.TypeError('`gamma` should be a float or integer')
         if gamma < 0:
             raise e.ValueError('`gamma` should be >= 0')
@@ -135,18 +137,16 @@ class FA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, gamma = {self.gamma} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: alpha = %f, beta = %f, gamma = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.alpha, self.beta, self.gamma,
+                     self.built)
 
-    def _update(self, agents, best_agent, function, n_iterations):
+    def _update(self, agents, n_iterations):
         """Method that wraps Firefly Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
             n_iterations (int): Maximum number of iterations.
 
         """
@@ -168,7 +168,7 @@ class FA(Optimizer):
                 distance = g.euclidean_distance(agent.position, temp.position)
 
                 # If 'i' fit is bigger than 'j' fit
-                if (agent.fit > temp.fit):
+                if agent.fit > temp.fit:
                     # Recalculate the attractiveness (Equation 6)
                     beta = self.beta * np.exp(-self.gamma * distance)
 
@@ -176,9 +176,7 @@ class FA(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (Equation 9)
-                    agent.position = beta * \
-                        (temp.position + agent.position) + \
-                        self.alpha * (r1 - 0.5)
+                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -207,8 +205,7 @@ class FA(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                            function, space.n_iterations)
+                self._update(space.agents, space.n_iterations)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

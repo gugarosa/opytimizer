@@ -1,3 +1,6 @@
+"""Sine Cosine Algorithm.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -60,7 +63,7 @@ class SCA(Optimizer):
 
     @r_min.setter
     def r_min(self, r_min):
-        if not (isinstance(r_min, float) or isinstance(r_min, int)):
+        if not isinstance(r_min, (float, int)):
             raise e.TypeError('`r_min` should be a float or integer')
         if r_min < 0:
             raise e.ValueError('`r_min` should be >= 0')
@@ -77,7 +80,7 @@ class SCA(Optimizer):
 
     @r_max.setter
     def r_max(self, r_max):
-        if not (isinstance(r_max, float) or isinstance(r_max, int)):
+        if not isinstance(r_max, (float, int)):
             raise e.TypeError('`r_max` should be a float or integer')
         if r_max < 0:
             raise e.ValueError('`r_max` should be >= 0')
@@ -96,7 +99,7 @@ class SCA(Optimizer):
 
     @a.setter
     def a(self, a):
-        if not (isinstance(a, float) or isinstance(a, int)):
+        if not isinstance(a, (float, int)):
             raise e.TypeError('`a` should be a float or integer')
         if a < 0:
             raise e.ValueError('`a` should be >= 0')
@@ -133,10 +136,10 @@ class SCA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: r_min = {self.r_min}, r_max = {self.r_max}, a = {self.a} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: r_min = %f, r_max = %f, a = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.r_min, self.r_max, self.a,
+                     self.built)
 
     def _update_position(self, agent_position, best_position, r1, r2, r3, r4):
         """Updates a single particle position (over a single variable).
@@ -157,24 +160,21 @@ class SCA(Optimizer):
         # If random number is smaller than threshold
         if r4 < 0.5:
             # Updates the position using sine
-            new_position = agent_position + r1 * \
-                np.sin(r2) * np.fabs(r3 * best_position - agent_position)
+            new_position = agent_position + r1 * np.sin(r2) * np.fabs(r3 * best_position - agent_position)
 
         # If the random number is bigger than threshold
         else:
             # Updates the posistion using cosine
-            new_position = agent_position + r1 * \
-                np.cos(r2) * np.fabs(r3 * best_position - agent_position)
+            new_position = agent_position + r1 * np.cos(r2) * np.fabs(r3 * best_position - agent_position)
 
         return new_position
 
-    def _update(self, agents, best_agent, function, iteration, n_iterations):
+    def _update(self, agents, best_agent, iteration, n_iterations):
         """Method that wraps Bat Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
-            function (Function): A function object.
             iteration (int): Current iteration value.
             n_iterations (int): Maximum number of iterations.
 
@@ -195,8 +195,7 @@ class SCA(Optimizer):
         # Iterate through all agents
         for agent in agents:
             # Updates agent's position
-            agent.position = self._update_position(
-                agent.position, best_agent.position, r1, r2, r3, r4)
+            agent.position = self._update_position(agent.position, best_agent.position, r1, r2, r3, r4)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -225,7 +224,7 @@ class SCA(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent, function, t, space.n_iterations)
+                self._update(space.agents, space.best_agent, t, space.n_iterations)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

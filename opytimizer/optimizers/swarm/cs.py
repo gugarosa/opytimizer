@@ -1,3 +1,6 @@
+"""Cuckoo Search.
+"""
+
 import copy
 
 import numpy as np
@@ -7,10 +10,10 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
-import opytimizer.utils.logging as l
+import opytimizer.utils.logging as log
 from opytimizer.core.optimizer import Optimizer
 
-logger = l.get_logger(__name__)
+logger = log.get_logger(__name__)
 
 
 class CS(Optimizer):
@@ -62,7 +65,7 @@ class CS(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+        if not isinstance(alpha, (float, int)):
             raise e.TypeError('`alpha` should be a float or integer')
         if alpha < 0:
             raise e.ValueError('`alpha` should be >= 0')
@@ -79,7 +82,7 @@ class CS(Optimizer):
 
     @beta.setter
     def beta(self, beta):
-        if not (isinstance(beta, float) or isinstance(beta, int)):
+        if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta < 0:
             raise e.ValueError('`beta` should be >= 0')
@@ -96,7 +99,7 @@ class CS(Optimizer):
 
     @p.setter
     def p(self, p):
-        if not (isinstance(p, float) or isinstance(p, int)):
+        if not isinstance(p, (float, int)):
             raise e.TypeError('`p` should be a float or integer')
         if p < 0 or p > 1:
             raise e.ValueError('`p` should be between 0 and 1')
@@ -133,10 +136,10 @@ class CS(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: alpha = {self.alpha}, beta = {self.beta}, p = {self.p} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: alpha = %f, beta = %f, p = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.alpha, self.beta, self.p,
+                     self.built)
 
     def _generate_new_nests(self, agents, best_agent):
         """Generate new nests according to Yang's implementation.
@@ -156,16 +159,14 @@ class CS(Optimizer):
         # Then, we iterate for every agent
         for new_agent in new_agents:
             # Calculating the Lévy distribution
-            step = d.generate_levy_distribution(
-                self.beta, new_agent.n_variables)
+            step = d.generate_levy_distribution(self.beta, new_agent.n_variables)
 
             # Expanding its dimension to perform entrywise multiplication
             step = np.expand_dims(step, axis=1)
 
             # Calculating the difference vector between local and best positions
             # Alpha controls the intensity of the step size
-            step_size = self.alpha * step * \
-                (new_agent.position - best_agent.position)
+            step_size = self.alpha * step * (new_agent.position - best_agent.position)
 
             # Generates a random normal distribution
             g = r.generate_gaussian_random_number(size=new_agent.n_variables)

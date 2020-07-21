@@ -1,3 +1,6 @@
+"""Krill Herd.
+"""
+
 import copy
 
 import numpy as np
@@ -80,7 +83,7 @@ class KH(Optimizer):
 
     @N_max.setter
     def N_max(self, N_max):
-        if not (isinstance(N_max, float) or isinstance(N_max, int)):
+        if not isinstance(N_max, (float, int)):
             raise e.TypeError('`N_max` should be a float or integer')
         if N_max < 0:
             raise e.ValueError('`N_max` should be >= 0')
@@ -97,7 +100,7 @@ class KH(Optimizer):
 
     @w_n.setter
     def w_n(self, w_n):
-        if not (isinstance(w_n, float) or isinstance(w_n, int)):
+        if not isinstance(w_n, (float, int)):
             raise e.TypeError('`w_n` should be a float or integer')
         if w_n < 0 or w_n > 1:
             raise e.ValueError('`w_n` should be between 0 and 1')
@@ -131,7 +134,7 @@ class KH(Optimizer):
 
     @V_f.setter
     def V_f(self, V_f):
-        if not (isinstance(V_f, float) or isinstance(V_f, int)):
+        if not isinstance(V_f, (float, int)):
             raise e.TypeError('`V_f` should be a float or integer')
         if V_f < 0:
             raise e.ValueError('`V_f` should be >= 0')
@@ -148,7 +151,7 @@ class KH(Optimizer):
 
     @w_f.setter
     def w_f(self, w_f):
-        if not (isinstance(w_f, float) or isinstance(w_f, int)):
+        if not isinstance(w_f, (float, int)):
             raise e.TypeError('`w_f` should be a float or integer')
         if w_f < 0 or w_f > 1:
             raise e.ValueError('`w_f` should be between 0 and 1')
@@ -165,7 +168,7 @@ class KH(Optimizer):
 
     @D_max.setter
     def D_max(self, D_max):
-        if not (isinstance(D_max, float) or isinstance(D_max, int)):
+        if not isinstance(D_max, (float, int)):
             raise e.TypeError('`D_max` should be a float or integer')
         if D_max < 0:
             raise e.ValueError('`D_max` should be >= 0')
@@ -181,7 +184,7 @@ class KH(Optimizer):
 
     @C_t.setter
     def C_t(self, C_t):
-        if not (isinstance(C_t, float) or isinstance(C_t, int)):
+        if not isinstance(C_t, (float, int)):
             raise e.TypeError('`C_t` should be a float or integer')
         if C_t < 0 or C_t > 2:
             raise e.ValueError('`C_t` should be between 0 and 2')
@@ -198,7 +201,7 @@ class KH(Optimizer):
 
     @Cr.setter
     def Cr(self, Cr):
-        if not (isinstance(Cr, float) or isinstance(Cr, int)):
+        if not isinstance(Cr, (float, int)):
             raise e.TypeError('`Cr` should be a float or integer')
         if Cr < 0 or Cr > 1:
             raise e.ValueError('`Cr` should be between 0 and 1')
@@ -215,7 +218,7 @@ class KH(Optimizer):
 
     @Mu.setter
     def Mu(self, Mu):
-        if not (isinstance(Mu, float) or isinstance(Mu, int)):
+        if not isinstance(Mu, (float, int)):
             raise e.TypeError('`Mu` should be a float or integer')
         if Mu < 0 or Mu > 1:
             raise e.ValueError('`Mu` should be between 0 and 1')
@@ -261,12 +264,12 @@ class KH(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: N_max = {self.N_max}, w_n = {self.w_n}, NN = {self.NN}, '
-            f'V_f = {self.V_f}, w_f = {self.w_f}, D_max = {self.D_max}, C_t = {self.C_t}, '
-            f'Cr = {self.Cr}, Mu = {self.Mu} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: N_max = %f, w_n = %f, NN = %d, '
+                     'V_f = %f, w_f = %f, D_max = %f, C_t = %f, '
+                     'Cr = %f, Mu = %f | Built: %s.',
+                     self.algorithm, self.N_max, self.w_n, self.NN,
+                     self.V_f, self.w_f, self.D_max, self.C_t,
+                     self.Cr, self.Mu, self.built)
 
     def _food_location(self, agents, function):
         """Calculates the food location.
@@ -338,7 +341,7 @@ class KH(Optimizer):
         neighbours = []
 
         # Iterates through all agents and euclidean distances
-        for i, (agent, dist) in enumerate(zip(agents, eucl_distance)):
+        for i, dist in enumerate(eucl_distance):
             # If selected agent is different from current agent
             # and the sensing distance is greather than its euclidean distance
             if idx != i and sensing_distance > dist:
@@ -662,7 +665,7 @@ class KH(Optimizer):
         food = self._food_location(agents, function)
 
         # Iterate through all agents
-        for i, agent in enumerate(agents):
+        for i, _ in enumerate(agents):
             # Updates current agent's position
             agents[i].position = self._update_position(agents, i, iteration, n_iterations, food, motion[i], foraging[i])
 

@@ -1,3 +1,6 @@
+"""Artificial Bee Colony.
+"""
+
 import copy
 
 import numpy as np
@@ -22,7 +25,7 @@ class ABC(Optimizer):
     References:
         D. Karaboga and B. Basturk.
         A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm.
-        Journal of Global Optimization (2007). 
+        Journal of Global Optimization (2007).
 
     """
 
@@ -91,7 +94,7 @@ class ABC(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(f'Algorithm: {self.algorithm} | Hyperparameters: n_trials = {self.n_trials}.')
+        logger.debug('Algorithm: %s | Hyperparameters: n_trials = %d.', self.algorithm, self.n_trials)
 
     def _evaluate_location(self, agent, neighbour, function, trial):
         """Evaluates a food source location and update its value if possible.
@@ -156,8 +159,7 @@ class ABC(Optimizer):
             source = r.generate_integer_random_number(0, len(agents))
 
             # Measuring food source location
-            trials[i] = self._evaluate_location(
-                agent, agents[source], function, trials[i])
+            trials[i] = self._evaluate_location(agent, agents[source], function, trials[i])
 
     def _send_onlooker(self, agents, function, trials):
         """Sends onlooker bees to select new food sources.
@@ -191,12 +193,10 @@ class ABC(Optimizer):
                     k += 1
 
                     # Gathers a random source to be used
-                    source = int(
-                        r.generate_uniform_random_number(0, len(agents)))
+                    source = int(r.generate_uniform_random_number(0, len(agents)))
 
                     # Evaluate its location
-                    trials[i] = self._evaluate_location(
-                        agent, agents[source], function, trials[i])
+                    trials[i] = self._evaluate_location(agent, agents[source], function, trials[i])
 
     def _send_scout(self, agents, function, trials):
         """Sends scout bees to scout for new possible food sources.

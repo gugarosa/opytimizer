@@ -1,3 +1,6 @@
+"""Flower Pollination Algorithm.
+"""
+
 import copy
 
 from tqdm import tqdm
@@ -6,10 +9,10 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
-import opytimizer.utils.logging as l
+import opytimizer.utils.logging as log
 from opytimizer.core.optimizer import Optimizer
 
-logger = l.get_logger(__name__)
+logger = log.get_logger(__name__)
 
 
 class FPA(Optimizer):
@@ -60,7 +63,7 @@ class FPA(Optimizer):
 
     @beta.setter
     def beta(self, beta):
-        if not (isinstance(beta, float) or isinstance(beta, int)):
+        if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta < 0:
             raise e.ValueError('`beta` should be >= 0')
@@ -77,7 +80,7 @@ class FPA(Optimizer):
 
     @eta.setter
     def eta(self, eta):
-        if not (isinstance(eta, float) or isinstance(eta, int)):
+        if not isinstance(eta, (float, int)):
             raise e.TypeError('`eta` should be a float or integer')
         if eta < 0:
             raise e.ValueError('`eta` should be >= 0')
@@ -94,7 +97,7 @@ class FPA(Optimizer):
 
     @p.setter
     def p(self, p):
-        if not (isinstance(p, float) or isinstance(p, int)):
+        if not isinstance(p, (float, int)):
             raise e.TypeError('`p` should be a float or integer')
         if p < 0 or p > 1:
             raise e.ValueError('`p` should be between 0 and 1')
@@ -131,10 +134,10 @@ class FPA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: beta = {self.beta}, eta = {self.eta}, p = {self.p} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: beta = %f, eta = %f, p = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.beta, self.eta, self.p,
+                     self.built)
 
     def _global_pollination(self, agent_position, best_position):
         """Updates the agent's position based on a global pollination (Lévy's flight).
@@ -202,8 +205,7 @@ class FPA(Optimizer):
             # Check if generated random number is bigger than probability
             if r1 > self.p:
                 # Update a temporary position according to global pollination
-                a.position = self._global_pollination(
-                    agent.position, best_agent.position)
+                a.position = self._global_pollination(agent.position, best_agent.position)
 
             else:
                 # Generates an uniform random number
@@ -216,8 +218,7 @@ class FPA(Optimizer):
                 l = r.generate_integer_random_number(0, len(agents), exclude_value=k)
 
                 # Update a temporary position according to local pollination
-                a.position = self._local_pollination(
-                    agent.position, agents[k].position, agents[l].position, epsilon)
+                a.position = self._local_pollination(agent.position, agents[k].position, agents[l].position, epsilon)
 
             # Check agent limits
             a.clip_limits()

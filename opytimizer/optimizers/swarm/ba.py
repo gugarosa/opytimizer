@@ -1,10 +1,13 @@
+"""Bat Algorithm.
+"""
+
 import copy
 
 import numpy as np
 from tqdm import tqdm
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
+import opytimizer.math.random as rnd
+import opytimizer.utils.exception as ex
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -65,10 +68,10 @@ class BA(Optimizer):
 
     @f_min.setter
     def f_min(self, f_min):
-        if not (isinstance(f_min, float) or isinstance(f_min, int)):
-            raise e.TypeError('`f_min` should be a float or integer')
+        if not isinstance(f_min, (float, int)):
+            raise ex.TypeError('`f_min` should be a float or integer')
         if f_min < 0:
-            raise e.ValueError('`f_min` should be >= 0')
+            raise ex.ValueError('`f_min` should be >= 0')
 
         self._f_min = f_min
 
@@ -82,12 +85,12 @@ class BA(Optimizer):
 
     @f_max.setter
     def f_max(self, f_max):
-        if not (isinstance(f_max, float) or isinstance(f_max, int)):
-            raise e.TypeError('`f_max` should be a float or integer')
+        if not isinstance(f_max, (float, int)):
+            raise ex.TypeError('`f_max` should be a float or integer')
         if f_max < 0:
-            raise e.ValueError('`f_max` should be >= 0')
+            raise ex.ValueError('`f_max` should be >= 0')
         if f_max < self.f_min:
-            raise e.ValueError('`f_max` should be >= `f_min`')
+            raise ex.ValueError('`f_max` should be >= `f_min`')
 
         self._f_max = f_max
 
@@ -101,10 +104,10 @@ class BA(Optimizer):
 
     @A.setter
     def A(self, A):
-        if not (isinstance(A, float) or isinstance(A, int)):
-            raise e.TypeError('`A` should be a float or integer')
+        if not isinstance(A, (float, int)):
+            raise ex.TypeError('`A` should be a float or integer')
         if A < 0:
-            raise e.ValueError('`A` should be >= 0')
+            raise ex.ValueError('`A` should be >= 0')
 
         self._A = A
 
@@ -118,10 +121,10 @@ class BA(Optimizer):
 
     @r.setter
     def r(self, r):
-        if not (isinstance(r, float) or isinstance(r, int)):
-            raise e.TypeError('`r` should be a float or integer')
+        if not isinstance(r, (float, int)):
+            raise ex.TypeError('`r` should be a float or integer')
         if r < 0:
-            raise e.ValueError('`r` should be >= 0')
+            raise ex.ValueError('`r` should be >= 0')
 
         self._r = r
 
@@ -157,10 +160,10 @@ class BA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: f_min = {self.f_min}, f_max = {self.f_max}, A = {self.A}, r = {self.r} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: f_min = %f, f_max = %f, A = %f, r = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.f_min, self.f_max, self.A, self.r,
+                     self.built)
 
     def _update_frequency(self, min_frequency, max_frequency):
         """Updates an agent frequency.
@@ -175,7 +178,7 @@ class BA(Optimizer):
         """
 
         # Generating beta random number
-        beta = r.generate_uniform_random_number()
+        beta = rnd.generate_uniform_random_number()
 
         # Calculating new frequency
         # Note that we have to apply (min - max) instead of (max - min) or it will not converge
@@ -243,17 +246,16 @@ class BA(Optimizer):
             frequency[i] = self._update_frequency(self.f_min, self.f_max)
 
             # Updating velocity
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, frequency[i], velocity[i])
+            velocity[i] = self._update_velocity(agent.position, best_agent.position, frequency[i], velocity[i])
 
             # Updating agent's position
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Generating a random probability
-            p = r.generate_uniform_random_number()
+            p = rnd.generate_uniform_random_number()
 
             # Generating a random number
-            e = r.generate_gaussian_random_number()
+            e = rnd.generate_gaussian_random_number()
 
             # Check if probability is bigger than current pulse rate
             if p > pulse_rate[i]:
@@ -293,20 +295,16 @@ class BA(Optimizer):
         """
 
         # Instanciating array of frequencies
-        frequency = r.generate_uniform_random_number(
-            self.f_min, self.f_max, space.n_agents)
+        frequency = rnd.generate_uniform_random_number(self.f_min, self.f_max, space.n_agents)
 
         # Instanciating array of velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # And also an array of loudnesses
-        loudness = r.generate_uniform_random_number(
-            0, self.A, space.n_agents)
+        loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
 
         # Finally, an array of pulse rates
-        pulse_rate = r.generate_uniform_random_number(
-            0, self.r, space.n_agents)
+        pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
@@ -321,8 +319,7 @@ class BA(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent, function,
-                            t, frequency, velocity, loudness, pulse_rate)
+                self._update(space.agents, space.best_agent, function, t, frequency, velocity, loudness, pulse_rate)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

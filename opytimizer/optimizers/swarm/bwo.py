@@ -1,8 +1,12 @@
+"""Black Widow Optimization.
+"""
+
 import copy
 
 from tqdm import tqdm
 
 import opytimizer.math.random as r
+import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -17,7 +21,7 @@ class BWO(Optimizer):
     variables and methods.
 
     References:
-        V. Hayyolalam and A. Kazem. 
+        V. Hayyolalam and A. Kazem.
         Black Widow Optimization Algorithm: A novel meta-heuristic approach for solving engineering optimization problems.
         Engineering Applications of Artificial Intelligence (2020).
 
@@ -61,7 +65,7 @@ class BWO(Optimizer):
 
     @pp.setter
     def pp(self, pp):
-        if not (isinstance(pp, float) or isinstance(pp, int)):
+        if not isinstance(pp, (float, int)):
             raise e.TypeError('`pp` should be a float or integer')
         if pp < 0 or pp > 1:
             raise e.ValueError('`pp` should be between 0 and 1')
@@ -78,7 +82,7 @@ class BWO(Optimizer):
 
     @cr.setter
     def cr(self, cr):
-        if not (isinstance(cr, float) or isinstance(cr, int)):
+        if not isinstance(cr, (float, int)):
             raise e.TypeError('`cr` should be a float or integer')
         if cr < 0 or cr > 1:
             raise e.ValueError('`cr` should be between 0 and 1')
@@ -95,7 +99,7 @@ class BWO(Optimizer):
 
     @pm.setter
     def pm(self, pm):
-        if not (isinstance(pm, float) or isinstance(pm, int)):
+        if not isinstance(pm, (float, int)):
             raise e.TypeError('`pm` should be a float or integer')
         if pm < 0 or pm > 1:
             raise e.ValueError('`pm` should be between 0 and 1')
@@ -132,10 +136,10 @@ class BWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: pp = {self.pp}, cr = {self.cr}, pm = {self.pm} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: pp = %f, cr = %f, pm = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.pp, self.cr, self.pm,
+                     self.built)
 
     def _procreating(self, x1, x2):
         """Procreates a pair of parents into offsprings.
@@ -184,31 +188,31 @@ class BWO(Optimizer):
 
             # Swaps the randomly selected variables
             alpha.position[r1], alpha.position[r2] = alpha.position[r2], alpha.position[r1]
-        
+
         return alpha
 
     def _update(self, agents, n_variables, function):
         """Method that wraps procreation, cannibalism and mutation over all agents and variables.
-        
+
         Args:
             agents (list): List of agents.
             n_variables (int): Number of decision variables.
             function (Function): A Function object that will be used as the objective function.
 
         """
-        
+
         # Retrieving the number of agents
         n_agents = len(agents)
-        
+
         # Calculates the number agents that reproduces, are cannibals and mutates
         n_reproduct, n_cannibals, n_mutate = int(n_agents * self.pp), int(n_agents * self.cr), int(n_agents * self.pm)
-        
+
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
         # Selecting the best solutions and saving in auxiliary population
         agents1 = copy.deepcopy(agents[:n_reproduct])
-        
+
         # Creating an empty auxiliary population
         agents2 = []
 
@@ -219,10 +223,10 @@ class BWO(Optimizer):
 
             # Making a deepcopy of father and mother
             father, mother = copy.deepcopy(agents[int(idx[0])]), copy.deepcopy(agents[int(idx[1])])
-            
+
             # Creating an empty list of auxiliary agents
             new_agents = []
-            
+
             # For every possible pair of variables
             for _ in range(0, int(n_variables / 2)):
                 # Procreates parents into two new offsprings
@@ -233,7 +237,7 @@ class BWO(Optimizer):
 
                 # Checking `y2` limits
                 y2.clip_limits()
-                
+
                 # Calculates new fitness for `y1`
                 y1.fit = function(y1.position)
 
@@ -245,27 +249,27 @@ class BWO(Optimizer):
 
             # Sorting new population
             new_agents.sort(key=lambda x: x.fit)
-            
+
             # Extending auxiliary population with the number of cannibals
             agents2.extend(new_agents[:n_cannibals])
-        
+
         # For every possible mutating agent
         for _ in range(0, n_mutate):
             # Sampling a random integer as index
             idx = int(r.generate_uniform_random_number(0, n_reproduct))
-            
+
             # Performs the mutation
             alpha = self._mutation(agents1[idx])
 
             # Checking `alpha` limits
             alpha.clip_limits()
-            
+
             # Calculates new fitness for `alpha`
             alpha.fit = function(alpha.position)
-            
+
             # Appends the mutated agent to the auxiliary population
             agents2.extend([alpha])
-            
+
         # Joins both populations
         agents += agents2
 
