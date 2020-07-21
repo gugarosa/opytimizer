@@ -78,8 +78,7 @@ def test_gco_update():
                                       n_variables=2, lower_bound=[1, 1],
                                       upper_bound=[10, 10])
 
-    new_gco._update(search_space.agents, search_space.best_agent,
-                    new_function, np.array([70, 70, 70, 70]), np.array([1, 1, 1, 1]))
+    new_gco._update(search_space.agents, new_function, np.array([70, 70, 70, 70]), np.array([1, 1, 1, 1]))
 
     assert search_space.agents[0].position[0] != 0
 

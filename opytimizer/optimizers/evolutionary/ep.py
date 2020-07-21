@@ -1,3 +1,6 @@
+"""Evolutionary Programming.
+"""
+
 import copy
 
 import numpy as np
@@ -57,7 +60,7 @@ class EP(Optimizer):
 
     @bout_size.setter
     def bout_size(self, bout_size):
-        if not (isinstance(bout_size, float) or isinstance(bout_size, int)):
+        if not isinstance(bout_size, (float, int)):
             raise e.TypeError('`bout_size` should be a float or integer')
         if bout_size < 0 or bout_size > 1:
             raise e.ValueError('`bout_size` should be between 0 and 1')
@@ -74,7 +77,7 @@ class EP(Optimizer):
 
     @clip_ratio.setter
     def clip_ratio(self, clip_ratio):
-        if not (isinstance(clip_ratio, float) or isinstance(clip_ratio, int)):
+        if not isinstance(clip_ratio, (float, int)):
             raise e.TypeError('`clip_ratio` should be a float or integer')
         if clip_ratio < 0 or clip_ratio > 1:
             raise e.ValueError('`clip_ratio` should be between 0 and 1')
@@ -109,9 +112,10 @@ class EP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: bout_size = {self.bout_size}, clip_ratio = {self.clip_ratio} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %f, clip_ratio = %f | '
+                     'Built: %s.',
+                     self.algorithm, self.bout_size, self.clip_ratio,
+                     self.built)
 
     def _mutate_parent(self, agent, function, strategy):
         """Mutates a parent into a new child.
@@ -168,8 +172,7 @@ class EP(Optimizer):
         # For every decision variable
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
             # Uses the clip ratio to help the convergence
-            new_strategy[j] = np.clip(
-                new_strategy[j], lb, ub) * self.clip_ratio
+            new_strategy[j] = np.clip(new_strategy[j], lb, ub) * self.clip_ratio
 
         return new_strategy
 
@@ -196,8 +199,7 @@ class EP(Optimizer):
             a = self._mutate_parent(agent, function, strategy[i])
 
             # Updates the strategy
-            strategy[i] = self._update_strategy(
-                strategy[i], agent.lb, agent.ub)
+            strategy[i] = self._update_strategy(strategy[i], agent.lb, agent.ub)
 
             # Appends the mutated agent to the children
             children.append(a)
@@ -212,14 +214,14 @@ class EP(Optimizer):
         wins = np.zeros(len(agents))
 
         # Iterate through all agents in the new population
-        for i in range(len(agents)):
+        for i, agent in enumerate(agents):
             # Iterate through all tournament individuals
             for _ in range(n_individuals):
                 # Gathers a random index
                 index = r.generate_integer_random_number(0, len(agents))
 
                 # If current agent's fitness is smaller than selected one
-                if agents[i].fit < agents[index].fit:
+                if agent.fit < agents[index].fit:
                     # Increases its winning by one
                     wins[i] += 1
 
@@ -244,15 +246,15 @@ class EP(Optimizer):
         """
 
         # Instantiate an array of strategies
-        strategy = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Iterate through all agents
         for i in range(space.n_agents):
             # For every decision variable
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
                 # Initializes the strategy array with the proposed EP distance
-                strategy[i][j] = 0.05 * r.generate_uniform_random_number(0, ub - lb, size=space.agents[i].n_dimensions)
+                strategy[i][j] = 0.05 * r.generate_uniform_random_number(
+                    0, ub - lb, size=space.agents[i].n_dimensions)
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
@@ -267,8 +269,7 @@ class EP(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                space.agents = self._update(
-                    space.agents, space.n_agents, function, strategy)
+                space.agents = self._update(space.agents, space.n_agents, function, strategy)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

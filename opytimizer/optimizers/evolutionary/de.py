@@ -1,3 +1,6 @@
+"""Differential Evolution.
+"""
+
 import copy
 
 import numpy as np
@@ -58,7 +61,7 @@ class DE(Optimizer):
 
     @CR.setter
     def CR(self, CR):
-        if not (isinstance(CR, float) or isinstance(CR, int)):
+        if not isinstance(CR, (float, int)):
             raise e.TypeError('`CR` should be a float or integer')
         if CR < 0 or CR > 1:
             raise e.ValueError('`CR` should be between 0 and 1')
@@ -75,7 +78,7 @@ class DE(Optimizer):
 
     @F.setter
     def F(self, F):
-        if not (isinstance(F, float) or isinstance(F, int)):
+        if not isinstance(F, (float, int)):
             raise e.TypeError('`F` should be a float or integer')
         if F < 0 or F > 2:
             raise e.ValueError('`F` should be between 0 and 2')
@@ -110,9 +113,8 @@ class DE(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: CR = {self.CR}, F = {self.F} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: CR = %f, F = %f| Built: %s.',
+                     self.algorithm, self.CR, self.F, self.built)
 
     def _mutate_agent(self, agent, alpha, beta, gamma):
         """Mutates a new agent based on pre-picked distinct agents.
@@ -142,17 +144,15 @@ class DE(Optimizer):
             # If random number is smaller than crossover or `j` equals to the sampled index
             if r1 < self.CR or j == R:
                 # Updates the mutated agent position
-                a.position[j] = alpha.position[j] + self.F * \
-                    (beta.position[j] - gamma.position[j])
+                a.position[j] = alpha.position[j] + self.F * (beta.position[j] - gamma.position[j])
 
         return a
 
-    def _update(self, agents, best_agent, function):
+    def _update(self, agents, function):
         """Method that wraps selection and mutation updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
 
         """
@@ -160,12 +160,10 @@ class DE(Optimizer):
         # Iterate through all agents
         for i, agent in enumerate(agents):
             # Randomly picks three distinct other agents, not including current one
-            C = d.generate_choice_distribution(
-                np.setdiff1d(range(0, len(agents)), i), size=3)
+            C = d.generate_choice_distribution(np.setdiff1d(range(0, len(agents)), i), size=3)
 
             # Mutates the current agent
-            a = self._mutate_agent(
-                agent, agents[C[0]], agents[C[1]], agents[C[2]])
+            a = self._mutate_agent(agent, agents[C[0]], agents[C[1]], agents[C[2]])
 
             # Check agent limits
             a.clip_limits()
@@ -208,7 +206,7 @@ class DE(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent, function)
+                self._update(space.agents, function)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

@@ -1,3 +1,6 @@
+"""Cross-Entropy Method.
+"""
+
 import numpy as np
 from tqdm import tqdm
 
@@ -72,7 +75,7 @@ class CEM(Optimizer):
 
     @alpha.setter
     def alpha(self, alpha):
-        if not (isinstance(alpha, float) or isinstance(alpha, int)):
+        if not isinstance(alpha, (float, int)):
             raise e.TypeError('`alpha` should be a float or integer')
         if alpha < 0:
             raise e.ValueError('`alpha` should be >= 0')
@@ -107,9 +110,8 @@ class CEM(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: n_updates = {self.n_updates}, alpha = {self.alpha} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: n_updates = %d, alpha = %f | Built: %s.',
+                     self.algorithm, self.n_updates, self.alpha, self.built)
 
     def _create_new_samples(self, agents, function, mean, std):
         """Creates new agents based on current mean and standard deviation.
@@ -127,8 +129,7 @@ class CEM(Optimizer):
             # Iterate through all decision variables
             for j, (m, s) in enumerate(zip(mean, std)):
                 # For each decision variable, we generate gaussian numbers based on mean and std
-                agent.position[j] = r.generate_gaussian_random_number(
-                    m, s, agent.n_dimensions)
+                agent.position[j] = r.generate_gaussian_random_number(m, s, agent.n_dimensions)
 
             # Clips the agent limits
             agent.clip_limits()
@@ -167,8 +168,7 @@ class CEM(Optimizer):
         """
 
         # Calculates the new standard deviation based on update formula
-        new_std = self.alpha * std + \
-            (1 - self.alpha) * np.sqrt(np.mean((updates - mean) ** 2))
+        new_std = self.alpha * std + (1 - self.alpha) * np.sqrt(np.mean((updates - mean) ** 2))
 
         return new_std
 
@@ -190,8 +190,7 @@ class CEM(Optimizer):
         agents.sort(key=lambda x: x.fit)
 
         # Gathering the update positions
-        update_position = np.array(
-            [agent.position for agent in agents[:self.n_updates]])
+        update_position = np.array([agent.position for agent in agents[:self.n_updates]])
 
         # For every decision variable
         for j in range(mean.shape[0]):
@@ -199,8 +198,7 @@ class CEM(Optimizer):
             mean[j] = self._update_mean(update_position[:, j, :], mean[j])
 
             # Update its standard deviation
-            std[j] = self._update_std(
-                update_position[:, j, :], mean[j], std[j])
+            std[j] = self._update_std(update_position[:, j, :], mean[j], std[j])
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.

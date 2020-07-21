@@ -1,3 +1,6 @@
+"""Germinal Center Optimization.
+"""
+
 import copy
 
 import numpy as np
@@ -59,7 +62,7 @@ class GCO(Optimizer):
 
     @CR.setter
     def CR(self, CR):
-        if not (isinstance(CR, float) or isinstance(CR, int)):
+        if not isinstance(CR, (float, int)):
             raise e.TypeError('`CR` should be a float or integer')
         if CR < 0 or CR > 1:
             raise e.ValueError('`CR` should be between 0 and 1')
@@ -76,7 +79,7 @@ class GCO(Optimizer):
 
     @F.setter
     def F(self, F):
-        if not (isinstance(F, float) or isinstance(F, int)):
+        if not isinstance(F, (float, int)):
             raise e.TypeError('`F` should be a float or integer')
         if F < 0:
             raise e.ValueError('`F` should be >= 0')
@@ -111,9 +114,8 @@ class GCO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Hyperparameters: CR = {self.CR}, F = {self.F} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s | Hyperparameters: CR = %f, F = %f | Built: %s.',
+                     self.algorithm, self.CR, self.F, self.built)
 
     def _mutate_cell(self, agent, alpha, beta, gamma):
         """Mutates a new cell based on distinct cells.
@@ -140,17 +142,15 @@ class GCO(Optimizer):
             # If random number is smaller than cross-ratio
             if r2 < self.CR:
                 # Updates the cell position
-                a.position[j] = alpha.position[j] + self.F * \
-                    (beta.position[j] - gamma.position[j])
+                a.position[j] = alpha.position[j] + self.F * (beta.position[j] - gamma.position[j])
 
         return a
 
-    def _dark_zone(self, agents, best_agent, function, life, counter):
+    def _dark_zone(self, agents, function, life, counter):
         """Performs the dark-zone update process.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
             life (np.array): An array holding each cell's current life.
             counter (np.array): An array holding each cell's copy counter.
@@ -173,12 +173,10 @@ class GCO(Optimizer):
                 counter[i] = 1
 
             # Generates the counting distribution and pick three cells
-            C = d.generate_choice_distribution(
-                len(agents), counter / np.sum(counter), size=3)
+            C = d.generate_choice_distribution(len(agents), counter / np.sum(counter), size=3)
 
             # Mutates a new cell based on current and pre-picked cells
-            a = self._mutate_cell(
-                agent, agents[C[0]], agents[C[1]], agents[C[2]])
+            a = self._mutate_cell(agent, agents[C[0]], agents[C[1]], agents[C[2]])
 
             # Check agent limits
             a.clip_limits()
@@ -197,13 +195,12 @@ class GCO(Optimizer):
                 # Increases the life of cell by ten
                 life[i] += 10
 
-    def _light_zone(self, agents, life, counter):
+    def _light_zone(self, agents, life):
         """Performs the light-zone update process.
 
         Args:
             agents (list): List of agents.
             life (np.array): An array holding each cell's current life.
-            counter (np.array): An array holding each cell's copy counter.
 
         """
 
@@ -224,12 +221,11 @@ class GCO(Optimizer):
             # Adds 10 * new life fitness to cell's life
             life[i] += 10 * life_fit
 
-    def _update(self, agents, best_agent, function, life, counter):
+    def _update(self, agents, function, life, counter):
         """Method that wraps dark- and light-zone updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
             life (np.array): An array holding each cell's current life.
             counter (np.array): An array holding each cell's copy counter.
@@ -237,10 +233,10 @@ class GCO(Optimizer):
         """
 
         # Performs the dark-zone update process
-        self._dark_zone(agents, best_agent, function, life, counter)
+        self._dark_zone(agents, function, life, counter)
 
         # Performs the light-zone update process
-        self._light_zone(agents, life, counter)
+        self._light_zone(agents, life)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -275,8 +271,7 @@ class GCO(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                            function, life, counter)
+                self._update(space.agents, function, life, counter)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

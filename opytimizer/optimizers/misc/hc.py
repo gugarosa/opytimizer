@@ -1,3 +1,6 @@
+"""Hill-Climbing.
+"""
+
 from tqdm import tqdm
 
 import opytimizer.math.random as r
@@ -55,7 +58,7 @@ class HC(Optimizer):
 
     @r_mean.setter
     def r_mean(self, r_mean):
-        if not (isinstance(r_mean, float) or isinstance(r_mean, int)):
+        if not isinstance(r_mean, (float, int)):
             raise e.TypeError('`r_mean` should be a float or integer')
 
         self._r_mean = r_mean
@@ -70,7 +73,7 @@ class HC(Optimizer):
 
     @r_var.setter
     def r_var(self, r_var):
-        if not (isinstance(r_var, float) or isinstance(r_var, int)):
+        if not isinstance(r_var, (float, int)):
             raise e.TypeError('`r_var` should be a float or integer')
         if r_var < 0:
             raise e.ValueError('`r_var` should be >= 0')
@@ -105,10 +108,8 @@ class HC(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | '
-            f'Hyperparameters: r_mean = {self.r_mean}, r_var = {self.r_var} | '
-            f'Built: {self.built}.')
+        logger.debug('Algorithm: %s| Hyperparameters: r_mean = %f, r_var = %f | Built: %s.',
+                     self.algorithm, self.r_mean, self.r_var, self.built)
 
     def _update(self, agents):
         """Method that wraps Hill Climbing over all agents and variables.
@@ -119,7 +120,7 @@ class HC(Optimizer):
         """
 
         # Iterate through all agents
-        for i, agent in enumerate(agents):
+        for agent in agents:
             # Creates a gaussian noise vector
             noise = r.generate_gaussian_random_number(
                 self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions))

@@ -1,4 +1,6 @@
-import numpy as np
+"""Grid-Search.
+"""
+
 from tqdm import tqdm
 
 import opytimizer.utils.history as h
@@ -20,12 +22,11 @@ class GS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GS', hyperparams={}):
+    def __init__(self, algorithm='GS'):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,7 +54,7 @@ class GS(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(f'Algorithm: {self.algorithm}  Built: {self.built}.')
+        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.

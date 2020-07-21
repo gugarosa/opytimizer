@@ -1,3 +1,6 @@
+"""Artificial Ecosystem-based Optimization.
+"""
+
 import copy
 
 import numpy as np
@@ -18,18 +21,17 @@ class AEO(Optimizer):
     variables and methods.
 
     References:
-        W. Zhao, L. Wang, and Z. Zhang. 
+        W. Zhao, L. Wang, and Z. Zhang.
         Artificial ecosystem-based optimization: a novel nature-inspired meta-heuristic algorithm.
         Neural Computing and Applications (2019).
 
     """
 
-    def __init__(self, algorithm='AEO', hyperparams={}):
+    def __init__(self, algorithm='AEO'):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -55,8 +57,7 @@ class AEO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug(
-            f'Algorithm: {self.algorithm} | Built: {self.built}.')
+        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def _production(self, agent, best_agent, iteration, n_iterations):
         """Performs the producer update.
@@ -81,7 +82,8 @@ class AEO(Optimizer):
         # For every possible decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             # Updates its position
-            a.position[j] = (1 - alpha) * best_agent.position[j] + alpha * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+            a.position[j] = (1 - alpha) * best_agent.position[j] + alpha * \
+                r.generate_uniform_random_number(lb, ub, a.n_dimensions)
 
         return a
 
@@ -119,7 +121,7 @@ class AEO(Optimizer):
             An updated consumption by an omnivore according to AEO's paper equation 8.
 
         """
-        
+
         # Makes a deep copy of agent
         a = copy.deepcopy(agent)
 
@@ -127,7 +129,8 @@ class AEO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Updates its position
-        a.position += C * r2 * (a.position - producer.position) + (1 - r2) * (a.position - consumer.position)
+        a.position += C * r2 * (a.position - producer.position) + \
+            (1 - r2) * (a.position - consumer.position)
 
         return a
 
@@ -148,10 +151,10 @@ class AEO(Optimizer):
         a = copy.deepcopy(agent)
 
         # Updates its position
-        a.position += C * (a.position - consumer.position) 
+        a.position += C * (a.position - consumer.position)
 
         return a
-        
+
     def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
         """Method that wraps production and consumption updates over all agents and variables.
 
@@ -173,7 +176,7 @@ class AEO(Optimizer):
             if i == 0:
                 # It will surely be a producer
                 a = self._production(agent, best_agent, iteration, n_iterations)
-            
+
             # If it is not the first agent
             else:
                 # Generates the first random number
@@ -184,7 +187,7 @@ class AEO(Optimizer):
 
                 # Generates another gaussian random number
                 v2 = r.generate_gaussian_random_number()
-                
+
                 # Calculates the consumption factor (equation 4)
                 C = 0.5 * v1 / np.abs(v2)
 
@@ -192,7 +195,7 @@ class AEO(Optimizer):
                 if r1 < 1/3:
                     # It will surely be a herbivore
                     a = self._herbivore_consumption(agent, agents[0], C)
-                
+
                 # If random number lies in the second third
                 elif 1/3 <= r1 <= 2/3:
                     # Generates a random index from the population
@@ -200,7 +203,7 @@ class AEO(Optimizer):
 
                     # It will surely be a omnivore
                     a = self._omnivore_consumption(agent, agents[0], agents[j], C)
-                
+
                 # If random number lies in the last third
                 else:
                     # Generates a random index from the population
@@ -208,7 +211,7 @@ class AEO(Optimizer):
 
                     # It will surely be a carnivore
                     a = self._carnivore_consumption(agent, agents[j], C)
-            
+
             # Check agent limits
             a.clip_limits()
 
@@ -221,10 +224,11 @@ class AEO(Optimizer):
                 agent.position = copy.deepcopy(a.position)
 
                 # And also copy its fitness
-                agent.fit = copy.deepcopy(a.fit)  
+                agent.fit = copy.deepcopy(a.fit)
 
     def _update_decomposition(self, agents, best_agent, function):
-        """Method that wraps decomposition updates over all agents and variables according to AEO's paper equation 9.
+        """Method that wraps decomposition updates over all
+        agents and variables according to AEO's paper equation 9.
 
         Args:
             agents (list): List of agents.
@@ -248,10 +252,10 @@ class AEO(Optimizer):
             e = r3 * int(r.generate_uniform_random_number(1, 2)) - 1
 
             # Second weight coefficient (equation 12)
-            h = 2 * r3 - 1
+            _h = 2 * r3 - 1
 
             # Updates the new agent position
-            a.position = best_agent.position + D * (e * best_agent.position - h * agent.position)
+            a.position = best_agent.position + D * (e * best_agent.position - _h * agent.position)
 
             # Check agent limits
             a.clip_limits()
@@ -265,7 +269,7 @@ class AEO(Optimizer):
                 agent.position = copy.deepcopy(a.position)
 
                 # And also copy its fitness
-                agent.fit = copy.deepcopy(a.fit)     
+                agent.fit = copy.deepcopy(a.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
