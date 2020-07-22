@@ -40,11 +40,11 @@ class TreeSpace(Space):
 
         logger.info('Overriding class: Space -> TreeSpace.')
 
-        # Override its parent class with the receiving arguments
-        super(TreeSpace, self).__init__(n_trees, n_variables, n_iterations=n_iterations)
-
         # Number of trees
         self.n_trees = n_trees
+
+        # Override its parent class with the receiving arguments
+        super(TreeSpace, self).__init__(n_trees, n_variables, n_iterations=n_iterations)
 
         # Number of terminal nodes
         self.n_terminals = n_terminals

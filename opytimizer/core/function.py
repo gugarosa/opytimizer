@@ -19,12 +19,13 @@ class Function:
 
     """
 
-    def __init__(self, pointer=callable, constraints=None):
+    def __init__(self, pointer=callable, constraints=None, penalty=1.0):
         """Initialization method.
 
         Args:
             pointer (callable): This should be a pointer to a function that will return the fitness value.
             constraints (list): List of constraints to be applied to the fitness function.
+            penalty (float): Penalization factor when a constraint is not valid.
 
         """
 
@@ -46,6 +47,9 @@ class Function:
         else:
             self.constraints = constraints
 
+        # Creates a property for holding the penalization factor
+        self.penalty = penalty
+
         # Also, we need to create a callable to point to the actual function
         self._create_pointer(pointer)
 
@@ -53,7 +57,8 @@ class Function:
         self.built = True
 
         logger.info('Class created.')
-        logger.debug('Function: %s | Constraints: %s | Built: %s', self.name, self.constraints, self.built)
+        logger.debug('Function: %s | Constraints: %s | Penalty: %s | Built: %s',
+                     self.name, self.constraints, self.penalty, self.built)
 
     def __call__(self, x):
         """Defines a callable to this class in order to avoid using directly the property.
@@ -99,6 +104,23 @@ class Function:
         self._constraints = constraints
 
     @property
+    def penalty(self):
+        """float: Constraint penalization factor.
+
+        """
+
+        return self._penalty
+
+    @penalty.setter
+    def penalty(self, penalty):
+        if not isinstance(penalty, (float, int)):
+            raise e.TypeError('`penalty` should be a float or integer')
+        if penalty < 0:
+            raise e.ValueError('`penalty` should be >= 0')
+
+        self._penalty = penalty
+
+    @property
     def pointer(self):
         """callable: Points to the actual function.
 
@@ -138,7 +160,7 @@ class Function:
             # If not, raises an ArgumentError
             raise e.ArgumentError('`pointer` should only have 1 argument')
 
-        def f_constrained(x):
+        def constrain_pointer(x):
             """Applies the constraints and penalizes the fitness function if one of them are not valid.
 
             Args:
@@ -149,6 +171,9 @@ class Function:
 
             """
 
+            # Calculates the fitness function
+            fitness = pointer(x)
+
             # For every possible constraint
             for constraint in self.constraints:
                 # Check if constraint is valid
@@ -156,13 +181,13 @@ class Function:
                     # If yes, just keep going
                     pass
 
-                # If a single constraint is not valid
+                # If a constraint is not valid
                 else:
-                    # Penalizes and returns the maximum possible value for the fitness function
-                    return c.FLOAT_MAX
+                    # Penalizes the objective function
+                    fitness += self.penalty * fitness
 
             # If all constraints are satisfied, return the fitness function
-            return pointer(x)
+            return fitness
 
         # Applying to the pointer property the return of constrained function
-        self.pointer = f_constrained
+        self.pointer = constrain_pointer

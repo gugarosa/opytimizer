@@ -41,10 +41,32 @@ def test_function_constraints_setter():
     assert len(new_function.constraints) == 1
 
 
+def test_function_penalty():
+    new_function = function.Function()
+
+    assert new_function.penalty == 1.0
+
+
+def test_function_penalty_setter():
+    new_function = function.Function()
+
+    try:
+        new_function.penalty = 'a'
+    except:
+        new_function.penalty = 1
+
+    try:
+        new_function.penalty = -1
+    except:
+        new_function.penalty = 1
+
+    assert new_function.penalty == 1
+
+
 def test_function_pointer():
     new_function = function.Function()
 
-    assert new_function.pointer.__name__ == 'f_constrained'
+    assert new_function.pointer.__name__ == 'constrain_pointer'
 
 
 def test_function_pointer_setter():
@@ -88,11 +110,11 @@ def test_function_create_pointer():
 
     assert c_1(np.zeros(2)) == True
 
-    new_function = function.Function(pointer=square, constraints=[c_1])
+    new_function = function.Function(pointer=square, constraints=[c_1], penalty=100)
 
     assert new_function(np.zeros(2)) == 0
 
-    assert new_function(np.ones(2)) == constants.FLOAT_MAX
+    assert new_function(np.ones(2)) == 202
 
     try:
         new_function = function.Function(pointer=square2)
@@ -100,6 +122,7 @@ def test_function_create_pointer():
         new_function = function.Function()
 
     assert new_function.name == 'callable'
+
 
 def test_function():
     class Square():
