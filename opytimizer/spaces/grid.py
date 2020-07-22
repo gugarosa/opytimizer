@@ -34,10 +34,10 @@ class GridSpace(Space):
         self.step = step
 
         # Creating the searching grid
-        n_agents = self._create_grid(step, lower_bound, upper_bound)
+        self._create_grid(step, lower_bound, upper_bound)
 
         # Override its parent class with the receiving arguments
-        super(GridSpace, self).__init__(n_agents, n_variables, n_iterations=1)
+        super(GridSpace, self).__init__(len(self.grid), n_variables, n_iterations=1)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
@@ -87,39 +87,34 @@ class GridSpace(Space):
             lower_bound (tuple): Lower bound tuple with the minimum possible values.
             upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
-        Returns:
-            The number of possible searches.
-
         """
 
         logger.debug('Running private method: create_grid().')
 
-        # Creating a meshgrid with all possible search options
+        # Creating a meshgrid with all possible searches
         mesh = np.meshgrid(*[step * np.arange(lb / step, ub / step)
                              for lb, ub in zip(lower_bound, upper_bound)])
 
         # Transforming the meshgrid into a list of possible searches
         self.grid = np.array(([m.ravel() for m in mesh])).T
 
-        logger.debug('Grid created with step size equal to %f.', step)
-
-        return len(self.grid)
+        logger.debug('Grid created with step size equal to %s.', step)
 
     def _initialize_agents(self):
-        """Initialize agents' position array with uniform random numbers.
+        """Initialize agents' position array with grid values.
 
         """
 
         logger.debug('Running private method: initialize_agents().')
 
-        # Iterate through all agents and grid options
+        # Iterates through all agents and grid options
         for agent, grid in zip(self.agents, self.grid):
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, (lb, ub, g) in enumerate(zip(self.lb, self.ub, grid)):
-                # For each decision variable, we generate uniform random numbers
+                # For each decision variable, we use the grid values
                 agent.position[j] = r.generate_uniform_random_number(g, g, agent.n_dimensions)
 
-                # Applies the lower bound the agent's lower bound
+                # Applies the lower bound to the agent's lower bound
                 agent.lb[j] = lb
 
                 # And also the upper bound

@@ -215,11 +215,43 @@ class Space:
         # Apply the first agent as the best one
         self.best_agent = copy.deepcopy(self.agents[0])
 
+    def _build(self, lower_bound, upper_bound):
+        """This method serves as the object building process.
+
+        One can define several commands here that does not necessarily
+        needs to be on its initialization.
+
+        Args:
+            lower_bound (tuple): Lower bound array with the minimum possible values.
+            upper_bound (tuple): Upper bound array with the maximum possible values.
+
+        """
+
+        logger.debug('Running private method: build().')
+
+        # Creating lower bound array from tuple
+        self.lb = np.asarray(lower_bound)
+
+        # Creating upper bound array from tuple
+        self.ub = np.asarray(upper_bound)
+
+        # Creating agents
+        self._create_agents()
+
+        # If no errors were shown, we can declare the Space as built
+        self.built = True
+
+        # Logging attributes
+        logger.debug('Agents: %d | Size: (%d, %d) | Iterations: %d | '
+                     'Lower Bound: %s | Upper Bound: %s | Built: %s.',
+                     self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
+                     self.lb, self.ub, self.built)
+
     def _initialize_agents(self):
-        """Initialize agents' position array with uniform random numbers.
+        """Initialize agents' position array.
 
         As each space child can have a different procedure of initializing agents,
-        you will need to implement it directly on child's class.
+        you will need to implement it directly on the child's class.
 
         Raises:
             NotImplementedError.
@@ -228,34 +260,12 @@ class Space:
 
         raise NotImplementedError
 
-    def _build(self, lower_bound, upper_bound):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            lower_bound (list): Lower bound array with the minimum possible values.
-            upper_bound (list): Upper bound array with the maximum possible values.
+    def clip_limits(self):
+        """Clips the space agents' position to the bounds limits.
 
         """
 
-        logger.debug('Running private method: build().')
-
-        # Creating lower bound array from list
-        self.lb = np.asarray(lower_bound)
-
-        # Creating upper bound array from list
-        self.ub = np.asarray(upper_bound)
-
-        # Creating agents
-        self._create_agents()
-
-        # If no errors were shown, we can declared the Space as built
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Agents: %d | Size: (%d, %d) | Iterations: %d | '
-                     'Lower Bound: %s | Upper Bound: %s | Built: %s.',
-                     self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
-                     self.lb, self.ub, self.built)
+        # Iterates through all agents
+        for agent in self.agents:
+            # Clips the agent's limits
+            agent.clip_limits()

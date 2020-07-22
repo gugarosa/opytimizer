@@ -36,10 +36,10 @@ class Agent:
         # Fitness value is initialized with float's largest number
         self.fit = c.FLOAT_MAX
 
-        # Lower bounds are initialized as zero
+        # Lower bounds are initialized as zeros
         self.lb = np.zeros(n_variables)
 
-        # Upper bounds are initialized as one
+        # Upper bounds are initialized as ones
         self.ub = np.ones(n_variables)
 
     @property

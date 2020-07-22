@@ -32,7 +32,7 @@ class TreeSpace(Space):
             n_iterations (int): Number of iterations.
             min_depth (int): Minimum depth of the trees.
             max_depth (int): Maximum depth of the trees.
-            functions (tuple): Functions nodes.
+            functions (list): Functions nodes.
             lower_bound (tuple): Lower bound tuple with the minimum possible values.
             upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
@@ -40,11 +40,11 @@ class TreeSpace(Space):
 
         logger.info('Overriding class: Space -> TreeSpace.')
 
-        # Number of trees
-        self.n_trees = n_trees
-
         # Override its parent class with the receiving arguments
         super(TreeSpace, self).__init__(n_trees, n_variables, n_iterations=n_iterations)
+
+        # Number of trees
+        self.n_trees = n_trees
 
         # Number of terminal nodes
         self.n_terminals = n_terminals
@@ -203,6 +203,28 @@ class TreeSpace(Space):
 
         self._best_tree = best_tree
 
+    def _initialize_agents(self):
+        """Initialize agents' position array with uniform random numbers.
+
+        """
+
+        logger.debug('Running private method: initialize_agents().')
+
+        # Iterates through all agents
+        for agent in self.agents:
+            # Iterates through all decision variables
+            for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
+                # For each decision variable, we generate uniform random numbers
+                agent.position[j] = r.generate_uniform_random_number(lb, ub, agent.n_dimensions)
+
+                # Applies the lower bound to the agent's lower bound
+                agent.lb[j] = lb
+
+                # And also the upper bound
+                agent.ub[j] = ub
+
+        logger.debug('Agents initialized.')
+
     def _create_terminals(self):
         """Creates a list of terminals based on the Agent class.
 
@@ -244,28 +266,6 @@ class TreeSpace(Space):
                      self.n_trees, self.min_depth, self.max_depth,
                      self.n_terminals, self.functions, algorithm)
 
-    def _initialize_agents(self):
-        """Initialize agents' position array with uniform random numbers.
-
-        """
-
-        logger.debug('Running private method: initialize_agents().')
-
-        # Iterates through all agents
-        for agent in self.agents:
-            # Iterates through all decision variables
-            for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-                # For each decision variable, we generate uniform random numbers
-                agent.position[j] = r.generate_uniform_random_number(lb, ub, agent.n_dimensions)
-
-                # Applies the lower bound the agent's lower bound
-                agent.lb[j] = lb
-
-                # And also the upper bound
-                agent.ub[j] = ub
-
-        logger.debug('Agents initialized.')
-
     def _initialize_terminals(self):
         """Initialize terminals' position array with uniform random numbers.
 
@@ -278,7 +278,7 @@ class TreeSpace(Space):
                 # For each decision variable, we generate uniform random numbers
                 terminal.position[j] = r.generate_uniform_random_number(lb, ub, terminal.n_dimensions)
 
-                # Applies the lower bound the terminal's lower bound
+                # Applies the lower bound to the terminal's lower bound
                 terminal.lb[j] = lb
 
                 # And also the upper bound
