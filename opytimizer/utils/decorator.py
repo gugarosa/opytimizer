@@ -10,8 +10,8 @@ def hyper_spanning(lb, ub):
     """Spans a hyper-value between lower and upper bounds.
 
     Args:
-        lb (list | np.array): Lower bounds.
-        ub (list | np.array): Upper bounds.
+        lb (tuple, np.array): Lower bounds.
+        ub (tuple, np.array): Upper bounds.
 
     Returns:
         The output of the incoming objective function with a spanned input.

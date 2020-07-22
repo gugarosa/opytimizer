@@ -10,5 +10,4 @@ n_variables = 5
 n_iterations = 10
 
 # Creating the BooleanSpace object
-s = BooleanSpace(n_agents=n_agents, n_variables=n_variables,
-                 n_iterations=n_iterations)
+s = BooleanSpace(n_agents=n_agents, n_variables=n_variables, n_iterations=n_iterations)

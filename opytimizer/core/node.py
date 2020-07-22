@@ -16,7 +16,7 @@ class Node:
         """Initialization method.
 
         Args:
-            name (str | int): Name of the node (e.g., it should be the terminal identifier or function name).
+            name (str, int): Name of the node (e.g., it should be the terminal identifier or function name).
             node_type (str): Type of the node (e.g., TERMINAL or FUNCTION).
             value (np.array): Value of the node (only used if it is a terminal).
             left (Node): Pointer to node's left child.
@@ -346,7 +346,7 @@ def _build_string(node):
         node (Node): An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        An output solution of size (n_variables x n_dimensions).
+        A formatted string ready to be printed.
 
     """
 
