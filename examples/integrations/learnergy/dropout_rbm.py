@@ -1,5 +1,5 @@
 import torchvision
-from learnergy.models.dropout_rbm import DropoutRBM
+from learnergy.models.binary import DropoutRBM
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
@@ -19,7 +19,7 @@ def dropout_rbm(opytimizer):
                        momentum=0, decay=0, temperature=1, dropout=dropout, use_gpu=False)
 
     # Training an RBM
-    error, pl = model.fit(train, batch_size=128, epochs=5)
+    error, _ = model.fit(train, batch_size=128, epochs=5)
 
     return error
 
@@ -37,8 +37,8 @@ n_variables = 1
 n_iterations = 5
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0]
-upper_bound = [1]
+lower_bound = (0,)
+upper_bound = (1,)
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,

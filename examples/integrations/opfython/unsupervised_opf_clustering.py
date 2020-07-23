@@ -1,5 +1,3 @@
-import numpy as np
-
 import opfython.math.general as g
 import opfython.stream.splitter as s
 from opfython.models.unsupervised import UnsupervisedOPF
@@ -61,8 +59,8 @@ n_variables = 1
 n_iterations = 3
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [1]
-upper_bound = [15]
+lower_bound = (1,)
+upper_bound = (15,)
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,

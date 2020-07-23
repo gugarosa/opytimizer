@@ -44,8 +44,8 @@ n_variables = 1
 n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [1]
-upper_bound = [100]
+lower_bound = (1,)
+upper_bound = (100,)
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,

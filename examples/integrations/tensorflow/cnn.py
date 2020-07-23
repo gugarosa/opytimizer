@@ -40,8 +40,7 @@ def cnn(opytimizer):
                   metrics=['accuracy'])
 
     # Fitting the model
-    history = model.fit(X_train, Y_train, epochs=3,
-                        validation_data=(X_val, Y_val))
+    history = model.fit(X_train, Y_train, epochs=3, validation_data=(X_val, Y_val))
 
     # Gathering validation accuracy
     val_acc = history.history['val_accuracy'][-1]
@@ -69,8 +68,8 @@ n_variables = 2
 n_iterations = 3
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [0, 0]
-upper_bound = [0.001, 1]
+lower_bound = (0, 0)
+upper_bound = (0.001, 1)
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
