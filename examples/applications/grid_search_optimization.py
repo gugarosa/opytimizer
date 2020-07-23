@@ -12,8 +12,8 @@ n_variables = 2
 step = 0.1
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [-10, -10]
-upper_bound = [10, 10]
+lower_bound = (-10, -10)
+upper_bound = (10, 10)
 
 # Creating the GridSpace class
 s = GridSpace(n_variables=n_variables, step=step,

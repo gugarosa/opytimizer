@@ -28,8 +28,8 @@ def span(array, lb, ub):
 
     Args:
         array (np.array): A 2-dimensional input array.
-        lb (list | np.array): Lower bounds to be spanned.
-        ub (list | np.array): Upper bounds to be spanned.
+        lb (tuple, np.array): Lower bounds to be spanned.
+        ub (tuple, np.array): Upper bounds to be spanned.
 
     Returns:
         A spanned value that can be used as decision variable in order to

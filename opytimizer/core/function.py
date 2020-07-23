@@ -3,7 +3,6 @@
 
 from inspect import signature
 
-import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -19,7 +18,7 @@ class Function:
 
     """
 
-    def __init__(self, pointer=callable, constraints=None, penalty=1.0):
+    def __init__(self, pointer=callable, constraints=None, penalty=0.0):
         """Initialization method.
 
         Args:

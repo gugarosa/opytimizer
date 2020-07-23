@@ -11,8 +11,8 @@ n_iterations = 10
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
-lower_bound = [0.1, 0.3, 0.5, 0.7, 0.9]
-upper_bound = [0.2, 0.4, 0.6, 0.8, 1.0]
+lower_bound = (0.1, 0.3, 0.5, 0.7, 0.9)
+upper_bound = (0.2, 0.4, 0.6, 0.8, 1.0)
 
 # Creating the SearchSpace object
 s = SearchSpace(n_agents=n_agents, n_variables=n_variables,

@@ -44,7 +44,7 @@ def test_function_constraints_setter():
 def test_function_penalty():
     new_function = function.Function()
 
-    assert new_function.penalty == 1.0
+    assert new_function.penalty == 0.0
 
 
 def test_function_penalty_setter():

@@ -14,13 +14,14 @@ class WeightedFunction:
 
     """
 
-    def __init__(self, functions=None, weights=None, constraints=None):
+    def __init__(self, functions=None, weights=None, constraints=None, penalty=0.0):
         """Initialization method.
 
         Args:
             functions (list): Pointers to functions that will return the fitness value.
             weights (list): Weights for weighted sum strategy.
             constraints (list): List of constraints to be applied to the fitness functions.
+            penalty (float): Penalization factor when a constraint is not valid.
 
         """
 
@@ -39,7 +40,7 @@ class WeightedFunction:
             self.weights = weights
 
         # Now, we need to build this class up
-        self._build(constraints)
+        self._build(constraints, penalty)
 
         logger.info('Class created.')
 
@@ -114,7 +115,7 @@ class WeightedFunction:
         # Applying to the pointer property the return of weighted method
         self.pointer = f_weighted
 
-    def _build(self, constraints):
+    def _build(self, constraints, penalty):
         """This method serves as the object building process.
 
         One can define several commands here that does not necessarily
@@ -122,13 +123,14 @@ class WeightedFunction:
 
         Args:
             constraints (list): List of constraints to be applied to the fitness function.
+            penalty (float): Penalization factor when a constraint is not valid.
 
         """
 
         logger.debug('Running private method: build().')
 
         # Populating pointers with real functions
-        self.functions = [Function(f, constraints) for f in self.functions]
+        self.functions = [Function(f, constraints, penalty) for f in self.functions]
 
         # Creating a multi-objective method strategy as the real pointer
         self._create_multi_objective()

@@ -46,8 +46,7 @@ class Optimizer:
 
     @property
     def hyperparams(self):
-        """dict: Contains the key-value parameters
-            to meta-heuristics.
+        """dict: Contains the key-value parameters to meta-heuristics.
 
         """
 
@@ -99,7 +98,7 @@ class Optimizer:
 
         # Iterates through all agents
         for agent in space.agents:
-            # Calculate sthe fitness value of current agent
+            # Calculates the fitness value of current agent
             agent.fit = function(agent.position)
 
             # If agent's fitness is better than global fitness
