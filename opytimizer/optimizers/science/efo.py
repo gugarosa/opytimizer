@@ -160,8 +160,8 @@ class EFO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: positive_field = %f, negative_field = %f, '
-                     'ps_ratio = %f, r_ratio = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: positive_field = %s, negative_field = %s, '
+                     'ps_ratio = %s, r_ratio = %s | Built: %s.',
                      self.algorithm, self.positive_field, self.negative_field,
                      self.ps_ratio, self.r_ratio, self.built)
 

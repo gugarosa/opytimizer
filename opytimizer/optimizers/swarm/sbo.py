@@ -134,7 +134,7 @@ class SBO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: alpha = %f, p_mutation = %f, z = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: alpha = %s, p_mutation = %s, z = %s | '
                      'Built: %s.',
                      self.algorithm, self.alpha, self.p_mutation, self.z,
                      self.built)

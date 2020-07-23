@@ -136,7 +136,7 @@ class HS(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: HMCR = %f, PAR = %f, bw = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: HMCR = %s, PAR = %s, bw = %s | Built: %s.',
                      self.algorithm, self.HMCR, self.PAR, self.bw, self.built)
 
     def _generate_new_harmony(self, agent):
@@ -397,8 +397,8 @@ class IHS(HS):
                 self.bw_max = self.hyperparams['bw_max']
 
         # Logging attributes
-        logger.debug('Additional hyperparameters: PAR_min = %f, PAR_max = %f, '
-                     'bw_min = %f, bw_max = %f.',
+        logger.debug('Additional hyperparameters: PAR_min = %s, PAR_max = %s, '
+                     'bw_min = %s, bw_max = %s.',
                      self.PAR_min, self.PAR_max,
                      self.bw_min, self.bw_max)
 

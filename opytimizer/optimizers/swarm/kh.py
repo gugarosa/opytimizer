@@ -264,9 +264,9 @@ class KH(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: N_max = %f, w_n = %f, NN = %d, '
-                     'V_f = %f, w_f = %f, D_max = %f, C_t = %f, '
-                     'Cr = %f, Mu = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: N_max = %s, w_n = %s, NN = %d, '
+                     'V_f = %s, w_f = %s, D_max = %s, C_t = %s, '
+                     'Cr = %s, Mu = %s | Built: %s.',
                      self.algorithm, self.N_max, self.w_n, self.NN,
                      self.V_f, self.w_f, self.D_max, self.C_t,
                      self.Cr, self.Mu, self.built)

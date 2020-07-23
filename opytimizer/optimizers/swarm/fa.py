@@ -137,7 +137,7 @@ class FA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: alpha = %f, beta = %f, gamma = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: alpha = %s, beta = %s, gamma = %s | '
                      'Built: %s.',
                      self.algorithm, self.alpha, self.beta, self.gamma,
                      self.built)

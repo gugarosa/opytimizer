@@ -115,7 +115,7 @@ class SSD(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: c = %f, decay = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: c = %s, decay = %s | Built: %s.',
                      self.algorithm, self.c, self.decay, self.built)
 
     def _mean_global_solution(self, alpha, beta, gamma):

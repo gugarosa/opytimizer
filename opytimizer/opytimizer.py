@@ -123,6 +123,6 @@ class Opytimizer:
         history.dump(time=opt_time)
 
         logger.info('Optimization task ended.')
-        logger.info('It took %f seconds.', opt_time)
+        logger.info('It took %s seconds.', opt_time)
 
         return history

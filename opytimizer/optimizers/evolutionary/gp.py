@@ -159,8 +159,8 @@ class GP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %f, p_mutation = %f, '
-                     'p_crossover = %f, prunning_ratio = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %s, p_mutation = %s, '
+                     'p_crossover = %s, prunning_ratio = %s | Built: %s.',
                      self.algorithm, self.p_reproduction, self.p_mutation,
                      self.p_crossover, self.prunning_ratio, self.built)
 

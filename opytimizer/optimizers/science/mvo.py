@@ -136,7 +136,7 @@ class MVO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %f, WEP_max = %f, p = %f| '
+        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %s, WEP_max = %s, p = %s| '
                      'Built: %s.',
                      self.algorithm, self.WEP_min, self.WEP_max, self.p,
                      self.built)

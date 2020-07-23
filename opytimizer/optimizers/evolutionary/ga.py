@@ -136,8 +136,8 @@ class GA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %f, p_mutation = %f, '
-                     'p_crossover = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %s, p_mutation = %s, '
+                     'p_crossover = %s | Built: %s.',
                      self.algorithm, self.p_selection, self.p_mutation,
                      self.p_crossover, self.built)
 

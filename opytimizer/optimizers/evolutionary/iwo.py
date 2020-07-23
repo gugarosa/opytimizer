@@ -180,8 +180,8 @@ class IWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %f, '
-                     'init_sigma = %f, final_sigma = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %s, '
+                     'init_sigma = %s, final_sigma = %s | Built: %s.',
                      self.algorithm, self.min_seeds, self.max_seeds, self.e,
                      self.init_sigma, self.final_sigma, self.built)
 

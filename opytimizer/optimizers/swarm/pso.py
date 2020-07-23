@@ -138,7 +138,7 @@ class PSO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: w = %f, c1 = %f, c2 = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: w = %s, c1 = %s, c2 = %s | '
                      'Built: %s.',
                      self.algorithm, self.w, self.c1, self.c2,
                      self.built)
@@ -386,7 +386,7 @@ class AIWPSO(PSO):
                 self.w_max = self.hyperparams['w_max']
 
         # Logging attributes
-        logger.debug('Additional hyperparameters: w_min = %f, w_max = %f.', self.w_min, self.w_max)
+        logger.debug('Additional hyperparameters: w_min = %s, w_max = %s.', self.w_min, self.w_max)
 
     def _compute_success(self, agents, fitness):
         """Computes the particles' success for updating inertia weight.

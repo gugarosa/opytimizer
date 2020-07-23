@@ -93,7 +93,7 @@ class MRFO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: S = %f | Built: %s.', self.algorithm, self.S, self.built)
+        logger.debug('Algorithm: %s | Hyperparameters: S = %s | Built: %s.', self.algorithm, self.S, self.built)
 
     def _cyclone_foraging(self, agents, best_position, i, iteration, n_iterations):
         """Performs the cyclone foraging procedure.

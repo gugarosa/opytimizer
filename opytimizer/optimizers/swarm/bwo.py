@@ -136,7 +136,7 @@ class BWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: pp = %f, cr = %f, pm = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: pp = %s, cr = %s, pm = %s | '
                      'Built: %s.',
                      self.algorithm, self.pp, self.cr, self.pm,
                      self.built)

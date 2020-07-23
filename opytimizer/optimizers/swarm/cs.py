@@ -136,7 +136,7 @@ class CS(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: alpha = %f, beta = %f, p = %f | '
+        logger.debug('Algorithm: %s| Hyperparameters: alpha = %s, beta = %s, p = %s | '
                      'Built: %s.',
                      self.algorithm, self.alpha, self.beta, self.p,
                      self.built)

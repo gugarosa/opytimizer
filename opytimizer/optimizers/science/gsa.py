@@ -92,7 +92,7 @@ class GSA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: G = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: G = %s | Built: %s.',
                      self.algorithm, self.G, self.built)
 
     def _calculate_mass(self, agents):

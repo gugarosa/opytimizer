@@ -90,7 +90,7 @@ class ES(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: child_ratio = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: child_ratio = %s | Built: %s.',
                      self.algorithm, self.child_ratio, self.built)
 
     def _mutate_parent(self, agent, function, strategy):

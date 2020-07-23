@@ -110,7 +110,7 @@ class CEM(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: n_updates = %d, alpha = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: n_updates = %d, alpha = %s | Built: %s.',
                      self.algorithm, self.n_updates, self.alpha, self.built)
 
     def _create_new_samples(self, agents, function, mean, std):

@@ -178,8 +178,8 @@ class WDO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: v_max = %f, alpha = %f, g = %f, '
-                     'c = %f, RT = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: v_max = %s, alpha = %s, g = %s, '
+                     'c = %s, RT = %s | Built: %s.',
                      self.algorithm, self.v_max, self.alpha, self.g,
                      self.c, self.RT, self.built)
 

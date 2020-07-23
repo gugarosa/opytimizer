@@ -112,7 +112,7 @@ class EP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %f, clip_ratio = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %s, clip_ratio = %s | '
                      'Built: %s.',
                      self.algorithm, self.bout_size, self.clip_ratio,
                      self.built)

@@ -136,7 +136,7 @@ class SCA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: r_min = %f, r_max = %f, a = %f | '
+        logger.debug('Algorithm: %s| Hyperparameters: r_min = %s, r_max = %s, a = %s | '
                      'Built: %s.',
                      self.algorithm, self.r_min, self.r_max, self.a,
                      self.built)

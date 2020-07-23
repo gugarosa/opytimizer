@@ -160,7 +160,7 @@ class BA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: f_min = %f, f_max = %f, A = %f, r = %f | '
+        logger.debug('Algorithm: %s| Hyperparameters: f_min = %s, f_max = %s, A = %s, r = %s | '
                      'Built: %s.',
                      self.algorithm, self.f_min, self.f_max, self.A, self.r,
                      self.built)

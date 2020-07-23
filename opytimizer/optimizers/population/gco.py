@@ -114,7 +114,7 @@ class GCO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: CR = %f, F = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: CR = %s, F = %s | Built: %s.',
                      self.algorithm, self.CR, self.F, self.built)
 
     def _mutate_cell(self, agent, alpha, beta, gamma):
