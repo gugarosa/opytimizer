@@ -116,7 +116,7 @@ class BPSO(Optimizer):
                      self.algorithm, self.c1, self.c2, self.built)
 
     def _update_velocity(self, position, best_position, local_position):
-        """Updates a particle velocity (Equation 1).
+        """Updates a particle velocity (eq. 1).
 
         Args:
             position (np.array): Agent's current position.
@@ -146,7 +146,7 @@ class BPSO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a particle position (Equation 2).
+        """Updates a particle position (eq. 2).
 
         Args:
             position (np.array): Agent's current position.

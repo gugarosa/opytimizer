@@ -5,6 +5,8 @@ from opytimizer.optimizers.misc import cem
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_cem_hyperparams():
     hyperparams = {

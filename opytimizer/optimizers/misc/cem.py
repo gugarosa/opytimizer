@@ -25,7 +25,7 @@ class CEM(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CEM', hyperparams={}):
+    def __init__(self, algorithm='CEM', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -173,7 +173,7 @@ class CEM(Optimizer):
         return new_std
 
     def _update(self, agents, function, mean, std):
-        """Method that wraps generation, mean, and standard deviation updates over all agents and variables.
+        """Method that wraps sampling, mean, and standard deviation updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

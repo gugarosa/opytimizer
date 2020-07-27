@@ -60,7 +60,7 @@ class AEO(Optimizer):
         logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def _production(self, agent, best_agent, iteration, n_iterations):
-        """Performs the producer update.
+        """Performs the producer update (eq. 1).
 
         Args:
             agent (Agent): Current agent.
@@ -69,7 +69,7 @@ class AEO(Optimizer):
             n_iterations (int): Maximum number of iterations.
 
         Returns:
-            An updated producer according to AEO's paper equation 1.
+            An updated producer.
 
         """
 
@@ -88,7 +88,7 @@ class AEO(Optimizer):
         return a
 
     def _herbivore_consumption(self, agent, producer, C):
-        """Performs the consumption update by a herbivore.
+        """Performs the consumption update by a herbivore (eq. 6).
 
         Args:
             agent (Agent): Current agent.
@@ -96,7 +96,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by a herbivore according to AEO's paper equation 6.
+            An updated consumption by a herbivore/
 
         """
 
@@ -109,7 +109,7 @@ class AEO(Optimizer):
         return a
 
     def _omnivore_consumption(self, agent, producer, consumer, C):
-        """Performs the consumption update by an omnivore.
+        """Performs the consumption update by an omnivore (eq. 8)
 
         Args:
             agent (Agent): Current agent.
@@ -118,7 +118,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by an omnivore according to AEO's paper equation 8.
+            An updated consumption by an omnivore.
 
         """
 
@@ -135,7 +135,7 @@ class AEO(Optimizer):
         return a
 
     def _carnivore_consumption(self, agent, consumer, C):
-        """Performs the consumption update by a carnivore.
+        """Performs the consumption update by a carnivore (eq. 7).
 
         Args:
             agent (Agent): Current agent.
@@ -143,7 +143,7 @@ class AEO(Optimizer):
             C (float): Consumption factor.
 
         Returns:
-            An updated consumption by a carnivore according to AEO's paper equation 7.
+            An updated consumption by a carnivore.
 
         """
 
@@ -156,7 +156,8 @@ class AEO(Optimizer):
         return a
 
     def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps production and consumption updates over all agents and variables.
+        """Method that wraps production and consumption updates over all
+        agents and variables (eq. 1-8).
 
         Args:
             agents (list): List of agents.
@@ -228,7 +229,7 @@ class AEO(Optimizer):
 
     def _update_decomposition(self, agents, best_agent, function):
         """Method that wraps decomposition updates over all
-        agents and variables according to AEO's paper equation 9.
+        agents and variables (eq. 9).
 
         Args:
             agents (list): List of agents.
@@ -271,6 +272,24 @@ class AEO(Optimizer):
                 # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
+    def _update(self, agents, best_agent, function, iteration, n_iterations):
+        """Method that wraps composition and decomposition.
+
+        Args:
+            agents (list): List of agents.
+            best_agent (Agent): Global best agent.
+            function (Function): A Function object that will be used as the objective function.
+            iteration (int): Number of current iteration.
+            n_iterations (int): Maximum number of iterations.
+
+        """
+
+        # Updating agents within the composition step
+        self._update_composition(agents, best_agent, function, iteration, n_iterations)
+
+        # Updating agents within the decomposition step
+        self._update_decomposition(agents, best_agent, function)
+
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
 
@@ -297,11 +316,8 @@ class AEO(Optimizer):
             for t in range(space.n_iterations):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents within the composition step
-                self._update_composition(space.agents, space.best_agent, function, t, space.n_iterations)
-
-                # Updating agents within the decomposition step
-                self._update_decomposition(space.agents, space.best_agent, function)
+                # Updating agents
+                self._update(space.agents, space.best_agent, function, t, space.n_iterations)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

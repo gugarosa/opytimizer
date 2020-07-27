@@ -29,7 +29,7 @@ class GCO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GCO', hyperparams={}):
+    def __init__(self, algorithm='GCO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -118,7 +118,7 @@ class GCO(Optimizer):
                      self.algorithm, self.CR, self.F, self.built)
 
     def _mutate_cell(self, agent, alpha, beta, gamma):
-        """Mutates a new cell based on distinct cells.
+        """Mutates a new cell based on distinct cells (alg. 2).
 
         Args:
             agent (Agent): Current agent.
@@ -147,7 +147,7 @@ class GCO(Optimizer):
         return a
 
     def _dark_zone(self, agents, function, life, counter):
-        """Performs the dark-zone update process.
+        """Performs the dark-zone update process (alg. 1).
 
         Args:
             agents (list): List of agents.
@@ -196,7 +196,7 @@ class GCO(Optimizer):
                 life[i] += 10
 
     def _light_zone(self, agents, life):
-        """Performs the light-zone update process.
+        """Performs the light-zone update process (alg. 1).
 
         Args:
             agents (list): List of agents.

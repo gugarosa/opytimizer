@@ -140,7 +140,7 @@ class UMDA(Optimizer):
                      self.built)
 
     def _calculate_probability(self, agents):
-        """Calculates probabilities based on pre-selected agents' variables occurrence.
+        """Calculates probabilities based on pre-selected agents' variables occurrence (eq. 47).
 
         Args:
             agents (list): List of pre-selected agents.
@@ -167,7 +167,7 @@ class UMDA(Optimizer):
         return probs
 
     def _sample_position(self, probs):
-        """Samples new positions according to their probability of ocurrence.
+        """Samples new positions according to their probability of ocurrence (eq. 53).
 
         Args:
             probs (np.array): Array of probabilities.

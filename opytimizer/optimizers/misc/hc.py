@@ -23,7 +23,7 @@ class HC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HC', hyperparams={}):
+    def __init__(self, algorithm='HC', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -112,7 +112,7 @@ class HC(Optimizer):
                      self.algorithm, self.r_mean, self.r_var, self.built)
 
     def _update(self, agents):
-        """Method that wraps Hill Climbing over all agents and variables.
+        """Method that wraps Hill Climbing over all agents and variables (p. 252).
 
         Args:
             agents (list): List of agents.

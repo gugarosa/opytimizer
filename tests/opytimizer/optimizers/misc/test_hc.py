@@ -5,6 +5,8 @@ from opytimizer.optimizers.misc import hc
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_hc_hyperparams():
     hyperparams = {
