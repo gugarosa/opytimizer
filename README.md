@@ -34,7 +34,7 @@ Opytimizer is compatible with: **Python 3.6+**.
 
 If you use Opytimizer to fulfill any of your needs, please cite us:
 
-```
+```BibTex
 @misc{rosa2019opytimizer,
     title={Opytimizer: A Nature-Inspired Python Optimizer},
     author={Gustavo H. de Rosa and João P. Papa},
