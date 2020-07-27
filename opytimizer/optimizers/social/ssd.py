@@ -29,7 +29,7 @@ class SSD(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SSD', hyperparams={}):
+    def __init__(self, algorithm='SSD', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -119,7 +119,7 @@ class SSD(Optimizer):
                      self.algorithm, self.c, self.decay, self.built)
 
     def _mean_global_solution(self, alpha, beta, gamma):
-        """Calculates the mean global solution.
+        """Calculates the mean global solution (eq. 9).
 
         Args:
             alpha (np.array): 1st agent's current position.
@@ -127,7 +127,7 @@ class SSD(Optimizer):
             gamma (np.array): 3rd agent's current position.
 
         Returns:
-            Mean global solution based on SSD's paper mean global solution equation.
+            Mean global solution.
 
         """
 
@@ -137,14 +137,14 @@ class SSD(Optimizer):
         return mean
 
     def _update_position(self, position, velocity):
-        """Updates a particle position.
+        """Updates a particle position (eq. 10).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on SSD's paper position update equation.
+            A new position.
 
         """
 
@@ -154,7 +154,7 @@ class SSD(Optimizer):
         return new_position
 
     def _update_velocity(self, position, mean, local_position):
-        """Updates a particle velocity.
+        """Updates a particle velocity (eq. 11).
 
         Args:
             position (np.array): Agent's current position.
@@ -162,7 +162,7 @@ class SSD(Optimizer):
             local_position (np.array): Agent's local best position.
 
         Returns:
-            A new velocity based on SSD's paper velocity update equation.
+            A new velocity.
 
         """
 

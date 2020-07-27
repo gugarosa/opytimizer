@@ -27,7 +27,7 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', hyperparams={}):
+    def __init__(self, algorithm='HS', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -267,11 +267,11 @@ class IHS(HS):
     References:
         M. Mahdavi, M. Fesanghary, and E. Damangir.
         An improved harmony search algorithm for solving optimization problems.
-        Applied Mathematics and Computation (2007). 
+        Applied Mathematics and Computation (2007).
 
     """
 
-    def __init__(self, algorithm='IHS', hyperparams={}):
+    def __init__(self, algorithm='IHS', hyperparams=None):
         """Initialization method.
 
         Args:

@@ -27,7 +27,7 @@ class ES(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ES', hyperparams={}):
+    def __init__(self, algorithm='ES', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -94,10 +94,10 @@ class ES(Optimizer):
                      self.algorithm, self.child_ratio, self.built)
 
     def _mutate_parent(self, agent, function, strategy):
-        """Mutates a parent into a new child.
+        """Mutates a parent into a new child (eq. 2).
 
         Args:
-            agent (Agent): An agent instance to be rESroduced.
+            agent (Agent): An agent instance to be reproduced.
             function (Function): A Function object that will be used as the objective function.
             strategy (np.array): An array holding the strategies that conduct the searching process.
 
@@ -124,7 +124,7 @@ class ES(Optimizer):
         return a
 
     def _update_strategy(self, strategy):
-        """Updates the strategy.
+        """Updates the strategy (eq. 5-10).
 
         Args:
             strategy (np.array): An strategy array to be updated.

@@ -5,6 +5,8 @@ from opytimizer.optimizers.evolutionary import iwo
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_iwo_hyperparams():
     hyperparams = {

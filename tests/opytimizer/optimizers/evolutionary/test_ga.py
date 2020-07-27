@@ -5,6 +5,8 @@ from opytimizer.optimizers.evolutionary import ga
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_ga_hyperparams():
     hyperparams = {

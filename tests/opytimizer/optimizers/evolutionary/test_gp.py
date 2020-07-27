@@ -7,6 +7,8 @@ from opytimizer.optimizers.evolutionary import gp
 from opytimizer.spaces import tree
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_gp_hyperparams():
     hyperparams = {

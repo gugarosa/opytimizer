@@ -27,7 +27,7 @@ class IWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='IWO', hyperparams={}):
+    def __init__(self, algorithm='IWO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -186,7 +186,7 @@ class IWO(Optimizer):
                      self.init_sigma, self.final_sigma, self.built)
 
     def _spatial_dispersal(self, iteration, n_iterations):
-        """Calculates the Spatial Dispersal coefficient.
+        """Calculates the Spatial Dispersal coefficient (eq. 1).
 
         Args:
             iteration (int): Current iteration number.
