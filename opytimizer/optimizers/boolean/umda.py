@@ -13,18 +13,18 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class UDMA(Optimizer):
-    """An UDMA class, inherited from Optimizer.
+class UMDA(Optimizer):
+    """An UMDA class, inherited from Optimizer.
 
-    This is the designed class to define UDMA-related variables and methods.
+    This is the designed class to define UMDA-related variables and methods.
 
     References:
-        M. Pelikan and M. Heinz. Marginal distributions in evolutionary algorithms.
-        Proceedings of the International Conference on Genetic Algorithms Mendel (1998).
+        H. Mühlenbein. The equation for response to selection and its use for prediction.
+        Evolutionary Computation (1997).
 
     """
 
-    def __init__(self, algorithm='UDMA', hyperparams={}):
+    def __init__(self, algorithm='UMDA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -34,7 +34,7 @@ class UDMA(Optimizer):
         """
 
         # Override its parent class with the receiving hyperparams
-        super(UDMA, self).__init__(algorithm)
+        super(UMDA, self).__init__(algorithm)
 
         # Probability of selection
         self.p_selection = 0.75

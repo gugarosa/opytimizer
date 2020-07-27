@@ -1,10 +1,13 @@
 import numpy as np
+from opytimark.markers.boolean import Knapsack
 
 import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import bmrfo
 from opytimizer.spaces import boolean
 from opytimizer.utils import constants
+
+np.random.seed(0)
 
 
 def test_bmrfo_hyperparams():
@@ -71,18 +74,16 @@ def test_bmrfo_somersault_foraging():
 
 
 def test_bmrfo_run():
-    def square(x):
-        return np.sum(x**2)
-
     def hook(optimizer, space, function):
         return
 
-    new_function = function.Function(pointer=square)
+    new_function = function.Function(pointer=Knapsack(
+        values=[55, 10, 47, 5, 4], weights=[95, 4, 60, 32, 23], max_capacity=100))
 
     new_bmrfo = bmrfo.BMRFO()
 
     boolean_space = boolean.BooleanSpace(
-        n_agents=5, n_iterations=20, n_variables=2)
+        n_agents=2, n_iterations=10, n_variables=5)
 
     history = new_bmrfo.run(boolean_space, new_function, pre_evaluation=hook)
 

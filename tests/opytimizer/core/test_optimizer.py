@@ -24,7 +24,7 @@ def test_optimizer_algorithm():
 def test_optimizer_hyperparams():
     new_optimizer = optimizer.Optimizer()
 
-    assert new_optimizer.hyperparams == {}
+    assert new_optimizer.hyperparams == None
 
 
 def test_optimizer_hyperparams_setter():

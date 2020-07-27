@@ -26,8 +26,8 @@ class Optimizer:
         # We define the algorithm's name
         self.algorithm = algorithm
 
-        # Also, we need a dict of desired hyperparameters
-        self.hyperparams = {}
+        # Also, we initialize hyperparameters as None
+        self.hyperparams = None
 
         # Indicates whether the optimizer is built or not
         self.built = False
@@ -54,7 +54,7 @@ class Optimizer:
 
     @hyperparams.setter
     def hyperparams(self, hyperparams):
-        if not isinstance(hyperparams, dict):
+        if not (isinstance(hyperparams, dict) or hyperparams is None):
             raise e.TypeError('`hyperparams` should be a dictionary')
 
         self._hyperparams = hyperparams
