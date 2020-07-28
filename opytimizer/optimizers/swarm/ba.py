@@ -27,7 +27,7 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams={}):
+    def __init__(self, algorithm='BA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -166,14 +166,14 @@ class BA(Optimizer):
                      self.built)
 
     def _update_frequency(self, min_frequency, max_frequency):
-        """Updates an agent frequency.
+        """Updates an agent frequency (eq. 2).
 
         Args:
             min_frequency (float): Minimum frequency range.
             max_frequency (float): Maximum frequency range.
 
         Returns:
-            A new frequency based on BA's paper equation 2.
+            A new frequency.
 
         """
 
@@ -187,7 +187,7 @@ class BA(Optimizer):
         return new_frequency
 
     def _update_velocity(self, position, best_position, frequency, velocity):
-        """Updates an agent velocity.
+        """Updates an agent velocity (eq. 3).
 
         Args:
             position (np.array): Agent's current position.
@@ -196,7 +196,7 @@ class BA(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new velocity based on on BA's paper equation 3.
+            A new velocity.
 
         """
 
@@ -206,14 +206,14 @@ class BA(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates an agent position.
+        """Updates an agent position (eq. 4).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on BA's paper equation 4.
+            A new position.
 
         """
 
@@ -259,7 +259,7 @@ class BA(Optimizer):
 
             # Check if probability is bigger than current pulse rate
             if p > pulse_rate[i]:
-                # Performing a local random walk (Equation 5)
+                # Performing a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size
                 agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
 
@@ -274,10 +274,10 @@ class BA(Optimizer):
                 # Copying the new solution to space's best agent
                 best_agent = copy.deepcopy(agent)
 
-                # Increasing pulse rate (Equation 6)
+                # Increasing pulse rate (eq. 6)
                 pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
 
-                # Decreasing loudness (Equation 6)
+                # Decreasing loudness (eq. 6)
                 loudness[i] = self.A * alpha
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):

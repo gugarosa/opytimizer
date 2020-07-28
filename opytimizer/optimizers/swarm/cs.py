@@ -28,7 +28,7 @@ class CS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CS', hyperparams={}):
+    def __init__(self, algorithm='CS', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -142,14 +142,14 @@ class CS(Optimizer):
                      self.built)
 
     def _generate_new_nests(self, agents, best_agent):
-        """Generate new nests according to Yang's implementation.
+        """Generate new nests (eq. 1).
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
 
         Returns:
-            A new list of agents which can be seen as new nests (Equation 1).
+            A new list of agents which can be seen as new nests.
 
         """
 
@@ -180,7 +180,7 @@ class CS(Optimizer):
         return new_agents
 
     def _generate_abandoned_nests(self, agents, prob):
-        """Generate a fraction of nests to be replaced according to Yang's implementation.
+        """Generate a fraction of nests to be replaced.
 
         Args:
             agents (list): List of agents.

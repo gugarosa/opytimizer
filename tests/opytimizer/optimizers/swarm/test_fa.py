@@ -5,6 +5,8 @@ from opytimizer.optimizers.swarm import fa
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_fa_hyperparams():
     hyperparams = {

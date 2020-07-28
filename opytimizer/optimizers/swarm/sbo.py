@@ -27,7 +27,7 @@ class SBO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SBO', hyperparams={}):
+    def __init__(self, algorithm='SBO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -140,7 +140,7 @@ class SBO(Optimizer):
                      self.built)
 
     def _update(self, agents, best_agent, function, sigma):
-        """Method that wraps updates over all agents and variables.
+        """Method that wraps updates over all agents and variables (eq. 1-7).
 
         Args:
             agents (list): List of agents.

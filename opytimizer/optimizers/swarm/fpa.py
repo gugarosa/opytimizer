@@ -27,7 +27,7 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FPA', hyperparams={}):
+    def __init__(self, algorithm='FPA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -140,14 +140,14 @@ class FPA(Optimizer):
                      self.built)
 
     def _global_pollination(self, agent_position, best_position):
-        """Updates the agent's position based on a global pollination (Lévy's flight).
+        """Updates the agent's position based on a global pollination (eq. 1).
 
         Args:
             agent_position (np.array): Agent's current position.
             best_position (np.array): Best agent's current position.
 
         Returns:
-            A new position based on FPA's paper equation 1.
+            A new position.
 
         """
 
@@ -163,7 +163,7 @@ class FPA(Optimizer):
         return new_position
 
     def _local_pollination(self, agent_position, k_position, l_position, epsilon):
-        """Updates the agent's position based on a local pollination.
+        """Updates the agent's position based on a local pollination (eq. 3).
 
         Args:
             agent_position (np.array): Agent's current position.
@@ -172,7 +172,7 @@ class FPA(Optimizer):
             epsilon (float): An uniform random generated number.
 
         Returns:
-            A new position based on FPA's paper equation 3.
+            A new position.
 
         """
 

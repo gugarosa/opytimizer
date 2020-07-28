@@ -29,7 +29,7 @@ class ABC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABC', hyperparams={}):
+    def __init__(self, algorithm='ABC', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -97,7 +97,7 @@ class ABC(Optimizer):
         logger.debug('Algorithm: %s | Hyperparameters: n_trials = %d.', self.algorithm, self.n_trials)
 
     def _evaluate_location(self, agent, neighbour, function, trial):
-        """Evaluates a food source location and update its value if possible.
+        """Evaluates a food source location and update its value if possible (eq. 2.2).
 
         Args:
             agent (Agent): An agent.
@@ -162,7 +162,7 @@ class ABC(Optimizer):
             trials[i] = self._evaluate_location(agent, agents[source], function, trials[i])
 
     def _send_onlooker(self, agents, function, trials):
-        """Sends onlooker bees to select new food sources.
+        """Sends onlooker bees to select new food sources (eq. 2.1).
 
         Args:
             agents (list): List of agents.

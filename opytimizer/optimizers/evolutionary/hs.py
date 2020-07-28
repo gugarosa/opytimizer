@@ -23,7 +23,7 @@ class HS(Optimizer):
 
     References:
         Z. W. Geem, J. H. Kim, and G. V. Loganathan.
-        A new heuristic optimization algorithm: Harmony search. Simulation (2001). 
+        A new heuristic optimization algorithm: Harmony search. Simulation (2001).
 
     """
 

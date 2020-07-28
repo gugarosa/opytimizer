@@ -5,6 +5,8 @@ from opytimizer.optimizers.swarm import sca
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_sca_hyperparams():
     hyperparams = {

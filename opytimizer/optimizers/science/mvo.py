@@ -21,7 +21,7 @@ class MVO(Optimizer):
     variables and methods.
 
     References:
-        S. Mirjalili, S. M. Mirjalili and A. Hatamlou. 
+        S. Mirjalili, S. M. Mirjalili and A. Hatamlou.
         Multi-verse optimizer: a nature-inspired algorithm for global optimization.
         Neural Computing and Applications (2016).
 

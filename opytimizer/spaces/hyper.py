@@ -1,8 +1,6 @@
 """Hypercomplex-based search space.
 """
 
-import numpy as np
-
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.space import Space

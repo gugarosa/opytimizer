@@ -29,7 +29,7 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams={}):
+    def __init__(self, algorithm='PSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -144,7 +144,7 @@ class PSO(Optimizer):
                      self.built)
 
     def _update_velocity(self, position, best_position, local_position, velocity):
-        """Updates a particle velocity.
+        """Updates a particle velocity (p. 295).
 
         Args:
             position (np.array): Agent's current position.
@@ -153,7 +153,7 @@ class PSO(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new velocity based on PSO's paper velocity update equation.
+            A new velocity.
 
         """
 
@@ -170,14 +170,14 @@ class PSO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a particle position.
+        """Updates a particle position (p. 294).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on PSO's paper position update equation.
+            A new position.
 
         """
 
@@ -306,7 +306,7 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', hyperparams={}):
+    def __init__(self, algorithm='AIWPSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -389,7 +389,7 @@ class AIWPSO(PSO):
         logger.debug('Additional hyperparameters: w_min = %s, w_max = %s.', self.w_min, self.w_max)
 
     def _compute_success(self, agents, fitness):
-        """Computes the particles' success for updating inertia weight.
+        """Computes the particles' success for updating inertia weight (eq. 16).
 
         Args:
             agents (list): List of agents.
@@ -494,7 +494,7 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='RPSO', hyperparams={}):
+    def __init__(self, algorithm='RPSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -511,7 +511,7 @@ class RPSO(PSO):
         logger.info('Class overrided.')
 
     def _update_velocity(self, position, best_position, local_position, max_velocity, velocity, mass):
-        """Updates a single particle velocity (over a single variable).
+        """Updates a single particle velocity over a single variable (eq. 11).
 
         Args:
             position (np.array): Agent's current position.
@@ -637,7 +637,7 @@ class SAVPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='SAVPSO', hyperparams={}):
+    def __init__(self, algorithm='SAVPSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -654,7 +654,7 @@ class SAVPSO(PSO):
         logger.info('Class overrided.')
 
     def _update_velocity(self, position, best_position, local_position, selected_position, velocity):
-        """Updates a single particle velocity.
+        """Updates a single particle velocity (eq. 8).
 
         Args:
             position (np.array): Agent's current position.
@@ -718,12 +718,12 @@ class SAVPSO(PSO):
 
                 # If position is greater than upper bound
                 if agent.position[j] > agent.ub[j]:
-                    # Replace its value
-                    agent.position[j] = positions[j] + 1 * r4 * (agent.ub[0] - positions[j])
+                    # Replaces its value
+                    agent.position[j] = positions[j] + 1 * r4 * (agent.ub[j] - positions[j])
 
                 # If position is smaller than lower bound
                 if agent.position[j] < agent.lb[j]:
-                    # Replace its value
+                    # Replaces its value
                     agent.position[j] = positions[j] + 1 * r4 * (agent.lb[j] - positions[j])
 
 
@@ -739,7 +739,7 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='VPSO', hyperparams={}):
+    def __init__(self, algorithm='VPSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -756,7 +756,7 @@ class VPSO(PSO):
         logger.info('Class overrided.')
 
     def _update_velocity(self, position, best_position, local_position, velocity, v_velocity):
-        """Updates a single particle velocity.
+        """Updates a single particle velocity (eq. 3-4).
 
         Args:
             position (np.array): Agent's current position.
@@ -785,7 +785,7 @@ class VPSO(PSO):
         return new_velocity, new_v_velocity
 
     def _update_position(self, position, velocity, v_velocity):
-        """Updates a particle position.
+        """Updates a particle position (eq. 5).
 
         Args:
             position (np.array): Agent's current position.
