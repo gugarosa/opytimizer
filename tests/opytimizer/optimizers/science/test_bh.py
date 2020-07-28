@@ -5,6 +5,8 @@ from opytimizer.optimizers.science import bh
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_bh_build():
     new_bh = bh.BH()

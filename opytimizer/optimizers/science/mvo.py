@@ -27,7 +27,7 @@ class MVO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='MVO', hyperparams={}):
+    def __init__(self, algorithm='MVO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -142,7 +142,7 @@ class MVO(Optimizer):
                      self.built)
 
     def _update(self, agents, best_agent, function, WEP, TDR):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps updates over all agents and variables (eq. 3.1-3.4).
 
         Args:
             agents (list): List of agents.

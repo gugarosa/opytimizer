@@ -28,7 +28,7 @@ class EFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='EFO', hyperparams={}):
+    def __init__(self, algorithm='EFO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -189,7 +189,7 @@ class EFO(Optimizer):
         return positive_index, negative_index, neutral_index
 
     def _update(self, agents, function, phi, RI):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps updates over all agents and variables (eq. 1-4).
 
         Args:
             agents (list): List of agents.

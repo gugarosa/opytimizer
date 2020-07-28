@@ -25,7 +25,7 @@ class WDO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WDO', hyperparams={}):
+    def __init__(self, algorithm='WDO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -184,7 +184,7 @@ class WDO(Optimizer):
                      self.c, self.RT, self.built)
 
     def _update_velocity(self, position, best_position, velocity, alt_velocity, index):
-        """Updates an agent velocity.
+        """Updates an agent velocity (eq. 15).
 
         Args:
             position (np.array): Agent's current position.
@@ -194,7 +194,7 @@ class WDO(Optimizer):
             index (int): Index of current agent.
 
         Returns:
-            A new velocity based on on WDO's paper equation 15.
+            A new velocity based.
 
         """
 
@@ -205,14 +205,14 @@ class WDO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates an agent position.
+        """Updates an agent position (eq. 16).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on WDO's paper equation 16.
+            A new position.
 
         """
 

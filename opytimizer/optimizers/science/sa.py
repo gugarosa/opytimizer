@@ -28,7 +28,7 @@ class SA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SA', hyperparams={}):
+    def __init__(self, algorithm='SA', hyperparams=None):
         """Initialization method.
 
         Args:
