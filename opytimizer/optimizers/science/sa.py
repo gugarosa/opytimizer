@@ -28,7 +28,7 @@ class SA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SA', hyperparams={}):
+    def __init__(self, algorithm='SA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -115,7 +115,7 @@ class SA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: T = %f, beta = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: T = %s, beta = %s | Built: %s.',
                      self.algorithm, self.T, self.beta, self.built)
 
     def _update(self, agents, function):

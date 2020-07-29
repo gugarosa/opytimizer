@@ -27,7 +27,7 @@ class GSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GSA', hyperparams={}):
+    def __init__(self, algorithm='GSA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -92,17 +92,17 @@ class GSA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: G = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: G = %s | Built: %s.',
                      self.algorithm, self.G, self.built)
 
     def _calculate_mass(self, agents):
-        """Calculates agents' mass.
+        """Calculates agents' mass (eq. 16).
 
         Args:
             agents (list): List of agents.
 
         Returns:
-            The agents' mass based on equation 16.
+            The agents' mass.
 
         """
 
@@ -118,7 +118,7 @@ class GSA(Optimizer):
         return norm_mass
 
     def _calculate_force(self, agents, mass, gravity):
-        """Calculates agents' force.
+        """Calculates agents' force (eq. 7-9).
 
         Args:
             agents (list): List of agents.
@@ -126,7 +126,7 @@ class GSA(Optimizer):
             gravity (float): Current gravity value.
 
         Returns:
-            The attraction force between all agents based on GSA's paper equation 7 and 9.
+            The attraction force between all agents.
 
         """
 
@@ -143,7 +143,7 @@ class GSA(Optimizer):
         return force
 
     def _update_velocity(self, force, mass, velocity):
-        """Updates an agent velocity.
+        """Updates an agent velocity (eq. 11).
 
         Args:
             force (np.array): Matrix of attraction forces.
@@ -151,7 +151,7 @@ class GSA(Optimizer):
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new velocity based on on GSA's paper equation 11.
+            A new velocity.
 
         """
 
@@ -164,14 +164,14 @@ class GSA(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates an agent position.
+        """Updates an agent position (eq. 12).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on GSA's paper equation 12.
+            A new position.
 
         """
 

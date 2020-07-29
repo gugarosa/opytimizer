@@ -32,8 +32,8 @@ functions = ['SUM', 'MUL', 'DIV']
 
 # Finally, we define the lower and upper bounds
 # Note that they have to be the same size as n_variables
-lower_bound = [-10, -10]
-upper_bound = [10, 10]
+lower_bound = (-10, -10)
+upper_bound = (10, 10)
 
 # Creating the TreeSpace object
 s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,

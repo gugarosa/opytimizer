@@ -5,6 +5,8 @@ from opytimizer.optimizers.misc import gs
 from opytimizer.spaces import grid
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_gs_build():
     new_gs = gs.GS()

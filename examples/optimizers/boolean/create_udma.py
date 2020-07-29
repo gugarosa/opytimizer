@@ -1,4 +1,4 @@
-from opytimizer.optimizers.boolean.udma import UDMA
+from opytimizer.optimizers.boolean.umda import UMDA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
@@ -8,5 +8,5 @@ hyperparams = {
     'upper_bound': 0.95
 }
 
-# Creating a UDMA optimizer
-o = UDMA(hyperparams=hyperparams)
+# Creating a UMDA optimizer
+o = UMDA(hyperparams=hyperparams)

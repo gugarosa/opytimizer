@@ -51,29 +51,17 @@ class BooleanSpace(Space):
 
         logger.debug('Running private method: initialize_agents().')
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in self.agents:
-            # Iterate through all decision variables
+            # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-                # For each decision variable, we generate uniform random numbers
+                # For each decision variable, we generate binary random numbers
                 agent.position[j] = r.generate_binary_random_number(size=agent.n_dimensions)
 
-                # Applies the lower bound the agent's lower bound
+                # Applies the lower bound to the agent's lower bound
                 agent.lb[j] = lb
 
                 # And also the upper bound
                 agent.ub[j] = ub
 
         logger.debug('Agents initialized.')
-
-    def clip_limits(self):
-        """Clips all agents' decision variables to the bounds limits.
-
-        """
-
-        # Iterates through all agents
-        for agent in self.agents:
-            # Iterates through all decision variables
-            for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-                # Clips the array based on variables' lower and upper bounds
-                agent.position[j] = np.clip(agent.position[j], lb, ub)

@@ -28,7 +28,7 @@ class DE(Optimizer):
 
     """
 
-    def __init__(self, algorithm='DE', hyperparams={}):
+    def __init__(self, algorithm='DE', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -113,11 +113,11 @@ class DE(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: CR = %f, F = %f| Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: CR = %s, F = %s| Built: %s.',
                      self.algorithm, self.CR, self.F, self.built)
 
     def _mutate_agent(self, agent, alpha, beta, gamma):
-        """Mutates a new agent based on pre-picked distinct agents.
+        """Mutates a new agent based on pre-picked distinct agents (eq. 4).
 
         Args:
             agent (Agent): Current agent.
@@ -149,7 +149,8 @@ class DE(Optimizer):
         return a
 
     def _update(self, agents, function):
-        """Method that wraps selection and mutation updates over all agents and variables.
+        """Method that wraps selection and mutation updates over all
+        agents and variables (eq. 1-4).
 
         Args:
             agents (list): List of agents.

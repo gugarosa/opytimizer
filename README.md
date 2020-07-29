@@ -55,7 +55,7 @@ Alternatively, if you wish to learn even more, please take a minute:
 
 Opytimizer is based on the following structure, and you should pay attention to its tree:
 
-```
+```yaml
 - opytimizer
     - core
         - agent
@@ -74,7 +74,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - boolean
             - bmrfo
             - bpso
-            - udma
+            - umda
         - evolutionary
             - de
             - ep
@@ -163,13 +163,13 @@ Everyone needs images and plots to help visualize what is happening, correct? Th
 
 We believe that everything has to be easy. Not tricky or daunting, Opytimizer will be the one-to-go package that you will need, from the very first installation to the daily-tasks implementing needs. If you may just run the following under your most preferred Python environment (raw, conda, virtualenv, whatever):
 
-```Python
+```bash
 pip install opytimizer
 ```
 
 Alternatively, if you prefer to install the bleeding-edge version, please clone this repository and use:
 
-```Python
+```bash
 pip install .
 ```
 

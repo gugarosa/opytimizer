@@ -28,7 +28,7 @@ class FA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FA', hyperparams={}):
+    def __init__(self, algorithm='FA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -137,13 +137,13 @@ class FA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: alpha = %f, beta = %f, gamma = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: alpha = %s, beta = %s, gamma = %s | '
                      'Built: %s.',
                      self.algorithm, self.alpha, self.beta, self.gamma,
                      self.built)
 
     def _update(self, agents, n_iterations):
-        """Method that wraps Firefly Algorithm over all agents and variables.
+        """Method that wraps Firefly Algorithm over all agents and variables (eq. 3-9).
 
         Args:
             agents (list): List of agents.

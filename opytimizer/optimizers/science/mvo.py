@@ -21,13 +21,13 @@ class MVO(Optimizer):
     variables and methods.
 
     References:
-        S. Mirjalili, S. M. Mirjalili and A. Hatamlou. 
+        S. Mirjalili, S. M. Mirjalili and A. Hatamlou.
         Multi-verse optimizer: a nature-inspired algorithm for global optimization.
         Neural Computing and Applications (2016).
 
     """
 
-    def __init__(self, algorithm='MVO', hyperparams={}):
+    def __init__(self, algorithm='MVO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -136,13 +136,13 @@ class MVO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %f, WEP_max = %f, p = %f| '
+        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %s, WEP_max = %s, p = %s| '
                      'Built: %s.',
                      self.algorithm, self.WEP_min, self.WEP_max, self.p,
                      self.built)
 
     def _update(self, agents, best_agent, function, WEP, TDR):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps updates over all agents and variables (eq. 3.1-3.4).
 
         Args:
             agents (list): List of agents.

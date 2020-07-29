@@ -26,7 +26,7 @@ class BMRFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BMRFO', hyperparams={}):
+    def __init__(self, algorithm='BMRFO', hyperparams=None):
         """Initialization method.
 
         Args:

@@ -26,7 +26,7 @@ class WCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WCA', hyperparams={}):
+    def __init__(self, algorithm='WCA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -117,7 +117,7 @@ class WCA(Optimizer):
                      self.algorithm, self.nsr, self.d_max, self.built)
 
     def _flow_intensity(self, agents):
-        """Calculates the intensity of each possible flow.
+        """Calculates the intensity of each possible flow (eq. 6).
 
         Args:
             agents (list): List of agents.
@@ -146,7 +146,7 @@ class WCA(Optimizer):
         return flows
 
     def _raining_process(self, agents, best_agent):
-        """Performs the raining process.
+        """Performs the raining process (eq. 12).
 
         Args:
             agents (list): List of agents.
@@ -168,7 +168,7 @@ class WCA(Optimizer):
                 agents[k].position = best_agent.position + np.sqrt(0.1) * r1
 
     def _update_stream(self, agents, flows):
-        """Updates every stream position.
+        """Updates every stream position (eq. 8).
 
         Args:
             agents (list): List of agents.
@@ -193,7 +193,7 @@ class WCA(Optimizer):
                 agents[i].position += r1 * 2 * (agents[i].position - agents[k].position)
 
     def _update_river(self, agents, best_agent):
-        """Updates every river position.
+        """Updates every river position (eq. 9).
 
         Args:
             agents (list): List of agents.
@@ -219,10 +219,10 @@ class WCA(Optimizer):
 
         """
 
-        # Updates every stream position (Equation 8)
+        # Updates every stream position
         self._update_stream(agents, flows)
 
-        # Updates every river position (Equation 9)
+        # Updates every river position
         self._update_river(agents, best_agent)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):

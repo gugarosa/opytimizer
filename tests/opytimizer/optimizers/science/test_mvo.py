@@ -5,6 +5,8 @@ from opytimizer.optimizers.science import mvo
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_mvo_hyperparams():
     hyperparams = {

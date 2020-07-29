@@ -5,6 +5,8 @@ from opytimizer.optimizers.population import aeo
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_aeo_build():
     new_aeo = aeo.AEO()

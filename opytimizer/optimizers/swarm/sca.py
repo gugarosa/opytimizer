@@ -25,7 +25,7 @@ class SCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SCA', hyperparams={}):
+    def __init__(self, algorithm='SCA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -136,13 +136,13 @@ class SCA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: r_min = %f, r_max = %f, a = %f | '
+        logger.debug('Algorithm: %s| Hyperparameters: r_min = %s, r_max = %s, a = %s | '
                      'Built: %s.',
                      self.algorithm, self.r_min, self.r_max, self.a,
                      self.built)
 
     def _update_position(self, agent_position, best_position, r1, r2, r3, r4):
-        """Updates a single particle position (over a single variable).
+        """Updates a single particle position over a single variable (eq. 3.3).
 
         Args:
             agent_position (np.array): Agent's current position.
@@ -153,7 +153,7 @@ class SCA(Optimizer):
             r4 (float): Random number to decide whether sine or cosine should be used.
 
         Returns:
-            A new position based on SCA's paper equation 3.3.
+            A new position.
 
         """
 
@@ -170,7 +170,7 @@ class SCA(Optimizer):
         return new_position
 
     def _update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps Bat Algorithm over all agents and variables.
+        """Method that wraps Sine Cosine Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

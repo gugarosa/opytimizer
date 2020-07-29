@@ -57,7 +57,7 @@ class GS(Optimizer):
         logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
-        """Runs the optimization pipeline.
+        """Runs the optimization pipeline (p. 282-283).
 
         Args:
             space (Space): A Space object that will be evaluated.

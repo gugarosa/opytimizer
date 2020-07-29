@@ -60,7 +60,7 @@ class BH(Optimizer):
         logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def _update_position(self, agents, best_agent, function):
-        """It updates every star position and calculates their event's horizon cost.
+        """It updates every star position and calculates their event's horizon cost (eq. 3).
 
         Args:
             agents (list): List of agents.
@@ -103,7 +103,7 @@ class BH(Optimizer):
         return cost
 
     def _event_horizon(self, agents, best_agent, cost):
-        """It calculates the stars' crossing an event horizon.
+        """It calculates the stars' crossing an event horizon (eq. 4).
 
         Args:
             agents (list): List of agents.

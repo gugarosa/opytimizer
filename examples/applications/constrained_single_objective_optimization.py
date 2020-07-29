@@ -23,11 +23,11 @@ n_agents = 20
 n_variables = 2
 
 # Number of running iterations
-n_iterations = 10000
+n_iterations = 1000
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [-10, -10]
-upper_bound = [10, 10]
+lower_bound = (-10, -10)
+upper_bound = (10, 10)
 
 # Creating the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
@@ -45,7 +45,7 @@ hyperparams = {
 p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
-f = Function(pointer=Sphere(), constraints=[c_1])
+f = Function(pointer=Sphere(), constraints=[c_1], penalty=100.0)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

@@ -28,7 +28,7 @@ class GP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GP', hyperparams={}):
+    def __init__(self, algorithm='GP', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -159,8 +159,8 @@ class GP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %f, p_mutation = %f, '
-                     'p_crossover = %f, prunning_ratio = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %s, p_mutation = %s, '
+                     'p_crossover = %s, prunning_ratio = %s | Built: %s.',
                      self.algorithm, self.p_reproduction, self.p_mutation,
                      self.p_crossover, self.prunning_ratio, self.built)
 
@@ -185,7 +185,7 @@ class GP(Optimizer):
         return prunned_nodes
 
     def _reproduction(self, space):
-        """Reproducts a number of individuals pre-selected through a tournament procedure.
+        """Reproducts a number of individuals pre-selected through a tournament procedure (p. 99).
 
         Args:
             space (TreeSpace): A TreeSpace object.
@@ -251,7 +251,7 @@ class GP(Optimizer):
                 space.trees[s] = space.grow(space.min_depth, space.max_depth)
 
     def _mutate(self, space, tree, max_nodes):
-        """Actually performs the mutation on a single tree (Node).
+        """Actually performs the mutation on a single tree (Node) (p. 105).
 
         Args:
             space (TreeSpace): A TreeSpace object.
@@ -305,7 +305,7 @@ class GP(Optimizer):
         return mutated_tree
 
     def _crossover(self, space):
-        """Crossover a number of individuals pre-selected through a tournament procedure.
+        """Crossover a number of individuals pre-selected through a tournament procedure (p. 101).
 
         Args:
             space (TreeSpace): A TreeSpace object.

@@ -29,7 +29,7 @@ class GA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GA', hyperparams={}):
+    def __init__(self, algorithm='GA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -136,13 +136,13 @@ class GA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %f, p_mutation = %f, '
-                     'p_crossover = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %s, p_mutation = %s, '
+                     'p_crossover = %s | Built: %s.',
                      self.algorithm, self.p_selection, self.p_mutation,
                      self.p_crossover, self.built)
 
     def _roulette_selection(self, n_agents, fitness):
-        """Performs a roulette selection on the population.
+        """Performs a roulette selection on the population (p. 8).
 
         Args:
             n_agents (int): Number of agents allowed in the space.
@@ -173,7 +173,7 @@ class GA(Optimizer):
         return selected
 
     def _crossover(self, father, mother):
-        """Performs the crossover between a pair of parents.
+        """Performs the crossover between a pair of parents (p. 8).
 
         Args:
             father (Agent): Father to produce the offsprings.
@@ -204,7 +204,7 @@ class GA(Optimizer):
         return alpha, beta
 
     def _mutation(self, alpha, beta):
-        """Performs the mutation over offsprings.
+        """Performs the mutation over offsprings (p. 8).
 
         Args:
             alpha (Agent): First offspring.

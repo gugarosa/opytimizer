@@ -1,8 +1,6 @@
 """Hypercomplex-based search space.
 """
 
-import numpy as np
-
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
 from opytimizer.core.space import Space
@@ -53,20 +51,14 @@ class HyperSpace(Space):
         # Iterates through all agents
         for agent in self.agents:
             # Iterates through all decision variables
-            for j, _ in enumerate(agent.position):
+            for j in range(agent.n_variables):
                 # For each decision variable, we generate uniform random numbers
                 agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
 
+                # Applies the lower bound to the agent's lower bound
+                agent.lb[j] = 0
+
+                # And also the upper bound
+                agent.ub[j] = 1
+
         logger.debug('Agents initialized.')
-
-    def clip_limits(self):
-        """Clips all agents' decision variables to [0, 1].
-
-        """
-
-        # Iterates through all agents
-        for agent in self.agents:
-            # Iterates through all decision variables
-            for j in range(self.n_variables):
-                # Clips the array between 0 and 1
-                agent.position[j] = np.clip(agent.position[j], 0, 1)

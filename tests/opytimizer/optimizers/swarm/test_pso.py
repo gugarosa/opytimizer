@@ -7,6 +7,8 @@ from opytimizer.optimizers.swarm import pso
 from opytimizer.spaces import search
 from opytimizer.utils import constants
 
+np.random.seed(0)
+
 
 def test_pso_hyperparams():
     hyperparams = {
@@ -425,9 +427,9 @@ def test_savpso_run():
 
     new_savpso = pso.SAVPSO()
 
-    search_space = search.SearchSpace(n_agents=5, n_iterations=50,
+    search_space = search.SearchSpace(n_agents=5, n_iterations=10,
                                       n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[1, 1])
+                                      upper_bound=[10, 10])
 
     history = new_savpso.run(search_space, new_function, pre_evaluation=hook)
 

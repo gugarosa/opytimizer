@@ -22,12 +22,12 @@ class EP(Optimizer):
     variables and methods.
 
     References:
-        D. B. Fogel. Evolutionary computation: toward a new philosophy of machine intelligence.
-        Vol. 1. John Wiley & Sons (2006).
+        A. E. Eiben, J. E. Smith. Introduction to Evolutionary Computing.
+        Natural Computing Series (2013).
 
     """
 
-    def __init__(self, algorithm='EP', hyperparams={}):
+    def __init__(self, algorithm='EP', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -112,13 +112,13 @@ class EP(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %f, clip_ratio = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %s, clip_ratio = %s | '
                      'Built: %s.',
                      self.algorithm, self.bout_size, self.clip_ratio,
                      self.built)
 
     def _mutate_parent(self, agent, function, strategy):
-        """Mutates a parent into a new child.
+        """Mutates a parent into a new child (eq. 5.1).
 
         Args:
             agent (Agent): An agent instance to be reproduced.
@@ -148,7 +148,7 @@ class EP(Optimizer):
         return a
 
     def _update_strategy(self, strategy, lower_bound, upper_bound):
-        """Updates the strategy and performs a clipping process to help its convergence.
+        """Updates the strategy and performs a clipping process to help its convergence (eq. 5.2).
 
         Args:
             strategy (np.array): An strategy array to be updated.

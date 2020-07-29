@@ -1,5 +1,3 @@
-import numpy as np
-
 import opfython.math.general as g
 import opfython.stream.splitter as s
 import opytimizer.math.random as r

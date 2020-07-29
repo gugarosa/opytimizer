@@ -29,7 +29,7 @@ class KH(Optimizer):
 
     """
 
-    def __init__(self, algorithm='KH', hyperparams={}):
+    def __init__(self, algorithm='KH', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -264,9 +264,9 @@ class KH(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: N_max = %f, w_n = %f, NN = %d, '
-                     'V_f = %f, w_f = %f, D_max = %f, C_t = %f, '
-                     'Cr = %f, Mu = %f | Built: %s.',
+        logger.debug('Algorithm: %s| Hyperparameters: N_max = %s, w_n = %s, NN = %d, '
+                     'V_f = %s, w_f = %s, D_max = %s, C_t = %s, '
+                     'Cr = %s, Mu = %s | Built: %s.',
                      self.algorithm, self.N_max, self.w_n, self.NN,
                      self.V_f, self.w_f, self.D_max, self.C_t,
                      self.Cr, self.Mu, self.built)
@@ -304,7 +304,7 @@ class KH(Optimizer):
         return food
 
     def _sensing_distance(self, agents, idx):
-        """Calculates the sensing distance for an individual krill.
+        """Calculates the sensing distance for an individual krill (eq. 7).
 
         Args:
             agents (list): List of agents.
@@ -351,7 +351,7 @@ class KH(Optimizer):
         return neighbours
 
     def _local_alpha(self, agent, worst, best, neighbours):
-        """Calculates the local alpha.
+        """Calculates the local alpha (eq. 4).
 
         Args:
             agent (Agent): Selected agent.
@@ -377,7 +377,7 @@ class KH(Optimizer):
         return alpha
 
     def _target_alpha(self, agent, worst, best, C_best):
-        """Calculates the target alpha.
+        """Calculates the target alpha (eq. 8).
 
         Args:
             agent (Agent): Selected agent.
@@ -402,7 +402,7 @@ class KH(Optimizer):
         return alpha
 
     def _neighbour_motion(self, agents, idx, iteration, n_iterations, motion):
-        """Performs the motion induced by other krill individuals.
+        """Performs the motion induced by other krill individuals (eq. 2).
 
         Args:
             agents (list): List of agents.
@@ -437,7 +437,7 @@ class KH(Optimizer):
         return neighbour_motion
 
     def _food_beta(self, agent, worst, best, food, C_food):
-        """Calculates the food attraction.
+        """Calculates the food attraction (eq. 13).
 
         Args:
             agent (Agent): Selected agent.
@@ -463,7 +463,7 @@ class KH(Optimizer):
         return beta
 
     def _best_beta(self, agent, worst, best):
-        """Calculates the best attraction.
+        """Calculates the best attraction (eq. 15).
 
         Args:
             agent (Agent): Selected agent.
@@ -487,7 +487,7 @@ class KH(Optimizer):
         return beta
 
     def _foraging_motion(self, agents, idx, iteration, n_iterations, food, foraging):
-        """Performs the foraging induced by the food location.
+        """Performs the foraging induced by the food location (eq. 10).
 
         Args:
             agents (list): List of agents.
@@ -517,7 +517,7 @@ class KH(Optimizer):
         return foraging_motion
 
     def _physical_diffusion(self, n_variables, n_dimensions, iteration, n_iterations):
-        """Performs the physical diffusion of individual krills.
+        """Performs the physical diffusion of individual krills (eq. 16-17).
 
         Args:
             n_variables (int): Number of decision variables.
@@ -539,7 +539,7 @@ class KH(Optimizer):
         return physical_diffusion
 
     def _update_position(self, agents, idx, iteration, n_iterations, food, motion, foraging):
-        """Updates a single krill position.
+        """Updates a single krill position (eq. 18-19).
 
         Args:
             agents (list): List of agents.
@@ -574,7 +574,7 @@ class KH(Optimizer):
         return new_position
 
     def _crossover(self, agents, idx):
-        """Performs the crossover between selected agent and a randomly agent.
+        """Performs the crossover between selected agent and a randomly agent (eq. 21).
 
         Args:
             agents (list): List of agents.
@@ -607,7 +607,7 @@ class KH(Optimizer):
         return a
 
     def _mutation(self, agents, idx):
-        """Performs the mutation between selected agent and randomly agents.
+        """Performs the mutation between selected agent and randomly agents (eq. 22).
 
         Args:
             agents (list): List of agents.

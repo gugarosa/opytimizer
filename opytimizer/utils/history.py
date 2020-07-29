@@ -94,12 +94,15 @@ class History:
 
         # For every key-value pair
         for (key, value) in kwargs.items():
-            # Checks if current key has a specific rule
-            if key in c.HISTORY_KEYS:
-                # Checks if it is supposed to only store the best agent
-                if key != 'best_agent' and self.store_best_only:
+            # Checks if it is supposed to only store the best agent
+            if self.store_best_only:
+                # Checks if key is different from `best_agent`
+                if key != 'best_agent':
+                    # Breaks the current loop
                     continue
 
+            # Checks if current key has a specific rule
+            if key in c.HISTORY_KEYS:
                 # Parses information using specific rules, if defined
                 out = self._parse(key, value)
             else:

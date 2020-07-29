@@ -27,7 +27,7 @@ class BWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BWO', hyperparams={}):
+    def __init__(self, algorithm='BWO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -136,13 +136,13 @@ class BWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: pp = %f, cr = %f, pm = %f | '
+        logger.debug('Algorithm: %s | Hyperparameters: pp = %s, cr = %s, pm = %s | '
                      'Built: %s.',
                      self.algorithm, self.pp, self.cr, self.pm,
                      self.built)
 
     def _procreating(self, x1, x2):
-        """Procreates a pair of parents into offsprings.
+        """Procreates a pair of parents into offsprings (eq. 1).
 
         Args:
             x1 (Agent): Father to produce the offsprings.
@@ -168,7 +168,7 @@ class BWO(Optimizer):
         return y1, y2
 
     def _mutation(self, alpha):
-        """Performs the mutation over an offspring
+        """Performs the mutation over an offspring (s. 3.4).
 
         Args:
             alpha (Agent): Offspring to be mutated.
@@ -250,7 +250,7 @@ class BWO(Optimizer):
             # Sorting new population
             new_agents.sort(key=lambda x: x.fit)
 
-            # Extending auxiliary population with the number of cannibals
+            # Extending auxiliary population with the number of cannibals (s. 3.3)
             agents2.extend(new_agents[:n_cannibals])
 
         # For every possible mutating agent

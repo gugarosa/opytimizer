@@ -27,7 +27,7 @@ class IWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='IWO', hyperparams={}):
+    def __init__(self, algorithm='IWO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -180,13 +180,13 @@ class IWO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %f, '
-                     'init_sigma = %f, final_sigma = %f | Built: %s.',
+        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %s, '
+                     'init_sigma = %s, final_sigma = %s | Built: %s.',
                      self.algorithm, self.min_seeds, self.max_seeds, self.e,
                      self.init_sigma, self.final_sigma, self.built)
 
     def _spatial_dispersal(self, iteration, n_iterations):
-        """Calculates the Spatial Dispersal coefficient.
+        """Calculates the Spatial Dispersal coefficient (eq. 1).
 
         Args:
             iteration (int): Current iteration number.

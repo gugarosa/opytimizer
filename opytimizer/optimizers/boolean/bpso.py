@@ -29,7 +29,7 @@ class BPSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BPSO', hyperparams={}):
+    def __init__(self, algorithm='BPSO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -116,7 +116,7 @@ class BPSO(Optimizer):
                      self.algorithm, self.c1, self.c2, self.built)
 
     def _update_velocity(self, position, best_position, local_position):
-        """Updates a particle velocity.
+        """Updates a particle velocity (eq. 1).
 
         Args:
             position (np.array): Agent's current position.
@@ -124,7 +124,7 @@ class BPSO(Optimizer):
             local_position (np.array): Agent's local best position.
 
         Returns:
-            A new velocity based on boolean bPSO's paper velocity update equation.
+            The particle's new velocity.
 
         """
 
@@ -146,14 +146,14 @@ class BPSO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates a particle position.
+        """Updates a particle position (eq. 2).
 
         Args:
             position (np.array): Agent's current position.
             velocity (np.array): Agent's current velocity.
 
         Returns:
-            A new position based on boolean bPSO's paper position update equation.
+            The particle's new position.
 
         """
 

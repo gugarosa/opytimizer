@@ -28,7 +28,7 @@ class MRFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='MRFO', hyperparams={}):
+    def __init__(self, algorithm='MRFO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -93,10 +93,10 @@ class MRFO(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: S = %f | Built: %s.', self.algorithm, self.S, self.built)
+        logger.debug('Algorithm: %s | Hyperparameters: S = %s | Built: %s.', self.algorithm, self.S, self.built)
 
     def _cyclone_foraging(self, agents, best_position, i, iteration, n_iterations):
-        """Performs the cyclone foraging procedure.
+        """Performs the cyclone foraging procedure (eq. 3-7).
 
         Args:
             agents (list): List of agents.
@@ -157,7 +157,7 @@ class MRFO(Optimizer):
         return cyclone_foraging
 
     def _chain_foraging(self, agents, best_position, i):
-        """Performs the chain foraging procedure.
+        """Performs the chain foraging procedure (eq. 1-2).
 
         Args:
             agents (list): List of agents.
@@ -193,7 +193,7 @@ class MRFO(Optimizer):
         return chain_foraging
 
     def _somersault_foraging(self, position, best_position):
-        """Performs the somersault foraging procedure.
+        """Performs the somersault foraging procedure (eq. 8).
 
         Args:
             position (np.array): Agent's current position.

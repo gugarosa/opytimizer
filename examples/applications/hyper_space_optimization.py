@@ -24,8 +24,8 @@ n_dimensions = 4
 n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = [-10, -10]
-upper_bound = [10, 10]
+lower_bound = (-10, -10)
+upper_bound = (10, 10)
 
 # Creating the HyperSpace class
 s = HyperSpace(n_agents=n_agents, n_iterations=n_iterations,
