@@ -288,7 +288,7 @@ class TreeSpace(Space):
         """It creates a random tree based on the GROW algorithm.
 
         References:
-            S. Lukw. Two Fast Tree-Creation Algorithms for Genetic Programming.
+            S. Luke. Two Fast Tree-Creation Algorithms for Genetic Programming.
             IEEE Transactions on Evolutionary Computation (2000).
 
         Args:
