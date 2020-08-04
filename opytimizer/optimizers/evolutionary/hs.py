@@ -139,42 +139,48 @@ class HS(Optimizer):
         logger.debug('Algorithm: %s | Hyperparameters: HMCR = %s, PAR = %s, bw = %s | Built: %s.',
                      self.algorithm, self.HMCR, self.PAR, self.bw, self.built)
 
-    def _generate_new_harmony(self, agent):
+    def _generate_new_harmony(self, agents):
         """It generates a new harmony.
 
         Args:
-            agent (Agent): An agent class instance.
+            agents (list): List of agents.
 
         Returns:
             A new agent (harmony) based on music generation process.
 
         """
 
-        # Mimics its position
-        a = copy.deepcopy(agent)
+        # Mimics an agent position
+        a = copy.deepcopy(agents[0])
 
-        # Generates an uniform random number
-        r1 = r.generate_uniform_random_number()
+        # For every decision variable
+        for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
+            # Generates an uniform random number
+            r1 = r.generate_uniform_random_number()
 
-        # Using harmony memory
-        if r1 < self.HMCR:
-            # Generates a new uniform random number
-            r2 = r.generate_uniform_random_number()
+            # Using the harmony memory
+            if r1 <= self.HMCR:
+                # Generates a random index
+                k = r.generate_integer_random_number(0, len(agents))
 
-            # Checks if it needs a pitch adjusting
-            if r2 < self.PAR:
-                # Generates a final random number
-                r3 = r.generate_uniform_random_number(-1, 1)
+                # Replaces the position with agent `k`
+                a.position[j] = agents[k].position[j]
 
-                # Updates harmony position
-                a.position += (r3 * self.bw)
+                # Generates a new uniform random number
+                r2 = r.generate_uniform_random_number()
 
-        # If harmony memory is not used
-        else:
-            # Generates a new random harmony
-            for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-                # For each decision variable, we generate uniform random numbers
-                a.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
+                # Checks if it needs a pitch adjusting
+                if r2 <= self.PAR:
+                    # Generates a final random number
+                    r3 = r.generate_uniform_random_number(-1, 1)
+
+                    # Updates harmony position
+                    a.position[j] += (r3 * self.bw)
+
+            # If harmony memory is not used
+            else:
+                # Generate a uniform random number
+                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
 
         return a
 
@@ -187,11 +193,8 @@ class HS(Optimizer):
 
         """
 
-        # Calculates a random index
-        i = r.generate_integer_random_number(0, len(agents))
-
         # Generates a new harmony
-        agent = self._generate_new_harmony(agents[i])
+        agent = self._generate_new_harmony(agents)
 
         # Checking agent limits
         agent.clip_limits()
@@ -429,10 +432,13 @@ class IHS(HS):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating pitch adjusting rate
-                self.PAR = self.PAR_min + (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
+                self.PAR = self.PAR_min + \
+                    (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
 
                 # Updating bandwidth parameter
-                self.bw = self.bw_max * np.exp((np.log(self.bw_min / self.bw_max) / space.n_iterations) * t)
+                self.bw = self.bw_max * \
+                    np.exp((np.log(self.bw_min / self.bw_max) /
+                            space.n_iterations) * t)
 
                 # Updating agents
                 self._update(space.agents, function)
