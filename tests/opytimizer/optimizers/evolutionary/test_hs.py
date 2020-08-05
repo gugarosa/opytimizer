@@ -223,3 +223,174 @@ def test_ihs_run():
 
     best_fitness = history.best_agent[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ihs failed to converge.'
+
+
+def test_ghs_generate_new_harmony():
+    new_ghs = hs.GHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    agent = new_ghs._generate_new_harmony(search_space.agents)
+
+    assert agent.fit > 0
+
+    new_ghs.HMCR = 0
+
+    agent = new_ghs._generate_new_harmony(search_space.agents)
+
+    assert agent.fit > 0
+
+
+def test_sghs_hyperparams():
+    hyperparams = {
+        'LP': 100,
+        'HMCRm': 0.98,
+        'PARm': 0.9,
+        'bw_min': 1,
+        'bw_max': 10
+    }
+
+    new_sghs = hs.SGHS(hyperparams=hyperparams)
+
+    assert new_sghs.LP == 100
+
+    assert new_sghs.HMCRm == 0.98
+
+    assert new_sghs.PARm == 0.9
+
+    assert new_sghs.bw_min == 1
+
+    assert new_sghs.bw_max == 10
+
+
+def test_sghs_hyperparams_setter():
+    new_sghs = hs.SGHS()
+
+    try:
+        new_sghs.HMCR = 'a'
+    except:
+        new_sghs.HMCR = 0.5
+
+    assert new_sghs.HMCR == 0.5
+
+    try:
+        new_sghs.PAR = 'b'
+    except:
+        new_sghs.PAR = 0.5
+
+    assert new_sghs.PAR == 0.5
+
+    try:
+        new_sghs.LP = 0.0
+    except:
+        new_sghs.LP = 100
+
+    try:
+        new_sghs.LP = 0
+    except:
+        new_sghs.LP = 100
+
+    assert new_sghs.LP == 100
+
+    try:
+        new_sghs.HMCRm = 'a'
+    except:
+        new_sghs.HMCRm = 0.98
+
+    try:
+        new_sghs.HMCRm = -1
+    except:
+        new_sghs.HMCRm = 0.98
+
+    assert new_sghs.HMCRm == 0.98
+
+    try:
+        new_sghs.PARm = 'b'
+    except:
+        new_sghs.PARm = 0.9
+
+    try:
+        new_sghs.PARm = -1
+    except:
+        new_sghs.PARm = 0.9
+
+    assert new_sghs.PARm == 0.9
+
+    try:
+        new_sghs.bw_min = 'c'
+    except:
+        new_sghs.bw_min = 1.0
+
+    try:
+        new_sghs.bw_min = -1
+    except:
+        new_sghs.bw_min = 1.0
+
+    assert new_sghs.bw_min == 1.0
+
+    try:
+        new_sghs.bw_max = 'd'
+    except:
+        new_sghs.bw_max = 10.0
+
+    try:
+        new_sghs.bw_max = -1
+    except:
+        new_sghs.bw_max = 10.0
+
+    try:
+        new_sghs.bw_max = 0
+    except:
+        new_sghs.bw_max = 10.0
+
+    assert new_sghs.bw_max == 10.0
+
+
+def test_sghs_rebuild():
+    new_sghs = hs.SGHS()
+
+    assert new_sghs.built == True
+
+
+def test_sghs_generate_new_harmony():
+    new_sghs = hs.SGHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    agent = new_sghs._generate_new_harmony(search_space.agents)
+
+    assert agent.fit > 0
+
+    new_sghs.HMCR = 0
+
+    agent = new_sghs._generate_new_harmony(search_space.agents)
+
+    assert agent.fit > 0
+
+
+def test_sghs_run():
+    def square(x):
+        return np.sum(x**2)
+
+    def hook(optimizer, space, function):
+        return
+
+    new_function = function.Function(pointer=square)
+
+    new_sghs = hs.SGHS(hyperparams={'LP': 10})
+
+    search_space = search.SearchSpace(n_agents=20, n_iterations=50,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[5, 5])
+
+    history = new_sghs.run(search_space, new_function, pre_evaluation=hook)
+
+    assert len(history.agents) > 0
+    assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ihs failed to converge.'
