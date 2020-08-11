@@ -394,3 +394,67 @@ def test_sghs_run():
 
     best_fitness = history.best_agent[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ihs failed to converge.'
+
+
+def test_nghs_hyperparams():
+    hyperparams = {
+        'pm': 0.1
+    }
+
+    new_nghs = hs.NGHS(hyperparams=hyperparams)
+
+    assert new_nghs.pm == 0.1
+
+
+def test_nghs_hyperparams_setter():
+    new_nghs = hs.NGHS()
+
+    try:
+        new_nghs.pm = 'a'
+    except:
+        new_nghs.pm = 0.1
+
+    assert new_nghs.pm == 0.1
+
+    try:
+        new_nghs.pm = -1
+    except:
+        new_nghs.pm = 0.1
+
+    assert new_nghs.pm == 0.1
+
+
+def test_nghs_rebuild():
+    new_nghs = hs.NGHS()
+
+    assert new_nghs.built == True
+
+
+def test_nghs_generate_new_harmony():
+    new_nghs = hs.NGHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    agent = new_nghs._generate_new_harmony(
+        search_space.agents[0], search_space.agents[-1])
+
+    assert agent.fit > 0
+
+
+def test_nghs_update():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    new_nghs = hs.NGHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    new_nghs._update(search_space.agents, new_function)
+
+    assert search_space.agents[0].fit > 0

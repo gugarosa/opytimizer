@@ -860,3 +860,141 @@ class SGHS(HS):
                 logger.file(f'Position: {space.best_agent.position}')
 
         return history
+
+
+class NGHS(HS):
+    """A NGHS class, inherited from HS.
+
+    This is the designed class to define NGHS-related
+    variables and methods.
+
+    References:
+        D. Zou, L. Gao, J. Wu and S. Li.
+        Novel global harmony search algorithm for unconstrained problems.
+        Neurocomputing (2010).
+
+    """
+
+    def __init__(self, algorithm='NGHS', hyperparams=None):
+        """Initialization method.
+
+        Args:
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
+        """
+
+        logger.info('Overriding class: HS -> NGHS.')
+
+        # Override its parent class with the receiving hyperparams
+        super(NGHS, self).__init__(algorithm, hyperparams)
+
+        # Mutation probability
+        self.pm = 0.1
+
+        # Now, we need to re-build this class up
+        self._rebuild()
+
+        logger.info('Class overrided.')
+
+    @property
+    def pm(self):
+        """float: Mutation probability.
+
+        """
+
+        return self._pm
+
+    @pm.setter
+    def pm(self, pm):
+        if not isinstance(pm, (float, int)):
+            raise e.TypeError('`pm` should be a float or integer')
+        if pm < 0 or pm > 1:
+            raise e.ValueError('`pm` should be between 0 and 1')
+
+        self._pm = pm
+
+    def _rebuild(self):
+        """This method serves as the object re-building process.
+
+        One is supposed to use this class only when defining extra hyperparameters
+        that can not be inherited by its parent.
+
+        """
+
+        logger.debug('Running private method: rebuild().')
+
+        # If one can find any hyperparam inside its object,
+        # set them as the ones that will be used
+        if self.hyperparams:
+            if 'pm' in self.hyperparams:
+                self.pm = self.hyperparams['pm']
+
+        # Logging attributes
+        logger.debug('Additional hyperparameters: pm = %s', self.pm)
+
+    def _generate_new_harmony(self, best, worst):
+        """It generates a new harmony.
+
+        Args:
+            best (Agent): Best agent.
+            worst (Agent): Worst agent.
+
+        Returns:
+            A new agent (harmony) based on music generation process.
+
+        """
+
+        # Mimics an agent position
+        a = copy.deepcopy(best)
+
+        # For every decision variable
+        for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
+            # Updates the harmony position
+            new_position = 2 * (best.position[j] - worst.position[j])
+
+            # Clips the harmony position between lower and upper bounds
+            new_position = np.clip(new_position, lb, ub)
+
+            # Generates a uniform random number
+            r1 = r.generate_uniform_random_number()
+
+            # Updates current agent's position
+            a.position[j] = worst.position[j] + r1 * (new_position - worst.position[j])
+
+            # Generates another uniform random number
+            r2 = r.generate_uniform_random_number()
+
+            # Checks if is supposed to be mutated
+            if r2 <= self.pm:
+                # Mutates the position
+                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
+
+        return a
+
+    def _update(self, agents, function):
+        """Method that wraps the update pipeline over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A function object.
+
+        """
+
+        # Generates a new harmony
+        agent = self._generate_new_harmony(agents[0], agents[-1])
+
+        # Checking agent limits
+        agent.clip_limits()
+
+        # Calculates the new harmony fitness
+        agent.fit = function(agent.position)
+
+        # Sorting agents
+        agents.sort(key=lambda x: x.fit)
+
+        # Updates the worst agent's position
+        agents[-1].position = copy.deepcopy(agent.position)
+
+        # And its fitness as well
+        agents[-1].fit = copy.deepcopy(agent.fit)
