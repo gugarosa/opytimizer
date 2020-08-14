@@ -458,3 +458,32 @@ def test_nghs_update():
     new_nghs._update(search_space.agents, new_function)
 
     assert search_space.agents[0].fit > 0
+
+
+def test_goghs_generate_opposition_harmony():
+    new_goghs = hs.GOGHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    agent = new_goghs._generate_opposition_harmony(search_space.agents[0], search_space.agents)
+
+    assert agent.fit > 0
+
+
+def test_goghs_update():
+    def square(x):
+        return np.sum(x**2)
+
+    new_function = function.Function(pointer=square)
+
+    new_goghs = hs.GOGHS()
+
+    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    new_goghs._update(search_space.agents, new_function)
+
+    assert search_space.agents[0].fit > 0

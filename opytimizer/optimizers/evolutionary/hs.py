@@ -7,6 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -998,3 +999,114 @@ class NGHS(HS):
 
         # And its fitness as well
         agents[-1].fit = copy.deepcopy(agent.fit)
+
+
+class GOGHS(NGHS):
+    """A GOGHS class, inherited from NGHS.
+
+    This is the designed class to define GOGHS-related
+    variables and methods.
+
+    References:
+        Z. Guo, S. Wang, X. Yue and H. Yang.
+        Global harmony search with generalized opposition-based learning.
+        Soft Computing (2017).
+
+    """
+
+    def __init__(self, algorithm='GOGHS', hyperparams=None):
+        """Initialization method.
+
+        Args:
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
+        """
+
+        logger.info('Overriding class: NGHS -> GOGHS.')
+
+        # Override its parent class with the receiving hyperparams
+        super(GOGHS, self).__init__(algorithm, hyperparams)
+
+        logger.info('Class overrided.')
+
+    def _generate_opposition_harmony(self, new_agent, agents):
+        """It generates a new opposition-based harmony.
+
+        Args:
+            new_agent (Agent): Newly created agent.
+            agents (list): List of agents.
+
+        Returns:
+            A new agent (harmony) based on opposition generation process.
+
+        """
+
+        # Mimics an agent position
+        a = copy.deepcopy(agents[0])
+
+        # Creating pseudo-harmonies
+        A = np.zeros((a.n_variables))
+        B = np.zeros((a.n_variables))
+
+        # Generates a new uniform random number
+        k = r.generate_uniform_random_number()
+
+        # Iterates over every variable
+        for j in range(a.n_variables):
+            # Defines to `A` and `B` maximum and minimum values, respectively
+            A[j], B[j] = c.FLOAT_MAX, -c.FLOAT_MAX
+
+            # Iterates over every agent
+            for agent in agents:
+                # If `A` is bigger than agent's position
+                if A[j] > agent.position[j]:
+                    # Replaces its value
+                    A[j] = agent.position[j]
+
+                # If `B` is smaller than agent's position
+                elif B[j] < agent.position[j]:
+                    # Replaces its value
+                    B[j] = agent.position[j]
+
+            # Calculates new agent's position
+            a.position[j] = k * (A[j] + B[j]) - new_agent.position[j]
+
+        return a
+
+    def _update(self, agents, function):
+        """Method that wraps the update pipeline over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A function object.
+
+        """
+
+        # Generates new harmonies
+        agent = self._generate_new_harmony(agents[0], agents[-1])
+        opp_agent = self._generate_opposition_harmony(agent, agents)
+
+        # Checking agents limits
+        agent.clip_limits()
+        opp_agent.clip_limits()
+
+        # Calculates harmonies fitness
+        agent.fit = function(agent.position)
+        opp_agent.fit = function(opp_agent.position)
+
+        # Checking if oppisition-based is better than agent
+        if opp_agent.fit < agent.fit:
+            # Copies the agent
+            agent = copy.deepcopy(opp_agent)
+
+        # Sorting agents
+        agents.sort(key=lambda x: x.fit)
+
+        # If generated agent fitness is better
+        if agent.fit < agents[-1].fit:
+            # Updates the corresponding agent's position
+            agents[-1].position = copy.deepcopy(agent.position)
+
+            # And its fitness as well
+            agents[-1].fit = copy.deepcopy(agent.fit)
