@@ -96,8 +96,8 @@ class History:
         for (key, value) in kwargs.items():
             # Checks if it is supposed to only store the best agent
             if self.store_best_only:
-                # Checks if key is different from `best_agent`
-                if key != 'best_agent':
+                # Checks if key is different from `best_agent` or `time`
+                if key not in ['best_agent', 'time']:
                     # Breaks the current loop
                     continue
 
