@@ -22,7 +22,7 @@ class WOA(Optimizer):
     variables and methods.
 
     References:
-        S. Mirjalli, A. Lewis. The Whale Optimization Algorithm.
+        S. Mirjalli and A. Lewis. The Whale Optimization Algorithm.
         Advances in Engineering Software (2016).
 
     """
