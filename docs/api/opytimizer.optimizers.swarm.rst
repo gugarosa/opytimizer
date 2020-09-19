@@ -13,6 +13,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.pso
     opytimizer.optimizers.swarm.sbo
     opytimizer.optimizers.swarm.sca
+    opytimizer.optimizers.swarm.woa
 
 .. automodule:: opytimizer.optimizers.swarm
    :members:

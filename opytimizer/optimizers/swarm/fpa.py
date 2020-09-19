@@ -194,7 +194,7 @@ class FPA(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Creates a temporary agent
             a = copy.deepcopy(agent)

@@ -145,7 +145,9 @@ disable=print-statement,
         attribute-defined-outside-init,
         self-cls-assignment,
         unexpected-keyword-arg,
-        logging-too-many-args
+        logging-too-many-args,
+        no-self-use,
+        duplicate-code
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -334,7 +336,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=115
+max-line-length=150
 
 # Maximum number of lines in a module.
 max-module-lines=1250
