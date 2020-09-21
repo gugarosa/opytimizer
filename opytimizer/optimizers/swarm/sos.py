@@ -1,4 +1,4 @@
-"""Coyote Optimization Algorithm.
+"""Symbiotic Organisms Search.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class COA(Optimizer):
-    """A COA class, inherited from Optimizer.
+class SOS(Optimizer):
+    """An SOS class, inherited from Optimizer.
 
-    This is the designed class to define COA-related
+    This is the designed class to define SOS-related
     variables and methods.
 
     References:
-        J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
-        IEEE Congress on Evolutionary Computation (2018).
+        M.-Y. Cheng and D. Prayogo. Symbiotic Organisms Search: A new metaheuristic optimization algorithm.
+        Computers & Structures (2014).
 
     """
 
-    def __init__(self, algorithm='COA', hyperparams=None):
+    def __init__(self, algorithm='SOS', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class COA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> COA.')
+        logger.info('Overriding class: Optimizer -> SOS.')
 
         # Override its parent class with the receiving hyperparams
-        super(COA, self).__init__(algorithm)
+        super(SOS, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

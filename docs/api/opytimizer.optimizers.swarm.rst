@@ -12,7 +12,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.csa
     opytimizer.optimizers.swarm.eho
     opytimizer.optimizers.swarm.fa
-    opytimizer.optimizers.swarm.foa
+    opytimizer.optimizers.swarm.ffoa
     opytimizer.optimizers.swarm.fpa
     opytimizer.optimizers.swarm.goa
     opytimizer.optimizers.swarm.kh

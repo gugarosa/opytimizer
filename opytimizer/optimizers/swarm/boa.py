@@ -1,4 +1,4 @@
-"""Coyote Optimization Algorithm.
+"""Butterfly Optimization Algorithm.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class COA(Optimizer):
-    """A COA class, inherited from Optimizer.
+class BOA(Optimizer):
+    """A BOA class, inherited from Optimizer.
 
-    This is the designed class to define COA-related
+    This is the designed class to define BOA-related
     variables and methods.
 
     References:
-        J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
-        IEEE Congress on Evolutionary Computation (2018).
+        S. Arora and S. Singh. Butterfly optimization algorithm: a novel approach for global optimization.
+        Soft Computing (2019).
 
     """
 
-    def __init__(self, algorithm='COA', hyperparams=None):
+    def __init__(self, algorithm='BOA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class COA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> COA.')
+        logger.info('Overriding class: Optimizer -> BOA.')
 
         # Override its parent class with the receiving hyperparams
-        super(COA, self).__init__(algorithm)
+        super(BOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

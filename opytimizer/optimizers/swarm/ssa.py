@@ -1,4 +1,4 @@
-"""Coyote Optimization Algorithm.
+"""Salp Swarm Algorithm.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class COA(Optimizer):
-    """A COA class, inherited from Optimizer.
+class SSA(Optimizer):
+    """A SSA class, inherited from Optimizer.
 
-    This is the designed class to define COA-related
+    This is the designed class to define SSA-related
     variables and methods.
 
     References:
-        J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
-        IEEE Congress on Evolutionary Computation (2018).
+        S. Mirjalili et al. Salp Swarm Algorithm: A bio-inspired optimizer for engineering design problems.
+        Advances in Engineering Software (2017).
 
     """
 
-    def __init__(self, algorithm='COA', hyperparams=None):
+    def __init__(self, algorithm='SSA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class COA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> COA.')
+        logger.info('Overriding class: Optimizer -> SSA.')
 
         # Override its parent class with the receiving hyperparams
-        super(COA, self).__init__(algorithm)
+        super(SSA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

@@ -131,7 +131,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
             - csa
             - eho
             - fa
-            - foa
+            - ffoa
             - fpa
             - goa
             - kh

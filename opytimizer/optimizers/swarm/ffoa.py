@@ -1,4 +1,4 @@
-"""Coyote Optimization Algorithm.
+"""Fruit-Fly Optimization Algorithm.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class COA(Optimizer):
-    """A COA class, inherited from Optimizer.
+class FFOA(Optimizer):
+    """A FFOA class, inherited from Optimizer.
 
-    This is the designed class to define COA-related
+    This is the designed class to define FFOA-related
     variables and methods.
 
     References:
-        J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
-        IEEE Congress on Evolutionary Computation (2018).
+        W.-T. Pan. A new Fruit Fly Optimization Algorithm: Taking the financial distress model as an example.
+        Knowledge-Based Systems (2012).
 
     """
 
-    def __init__(self, algorithm='COA', hyperparams=None):
+    def __init__(self, algorithm='FFOA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class COA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> COA.')
+        logger.info('Overriding class: Optimizer -> FFOA.')
 
         # Override its parent class with the receiving hyperparams
-        super(COA, self).__init__(algorithm)
+        super(FFOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)
