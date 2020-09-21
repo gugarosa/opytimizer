@@ -22,7 +22,7 @@ class EFO(Optimizer):
     variables and methods.
 
     References:
-        H. Abedinpourshotorban, et al.
+        H. Abedinpourshotorban et al.
         Electromagnetic field optimization: A physics-inspired metaheuristic optimization algorithm.
         Swarm and Evolutionary Computation (2016).
 

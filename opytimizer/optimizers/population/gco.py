@@ -24,7 +24,7 @@ class GCO(Optimizer):
     variables and methods.
 
     References:
-        C. Villaseñor, et al. Germinal center optimization algorithm.
+        C. Villaseñor et al. Germinal center optimization algorithm.
         International Journal of Computational Intelligence Systems (2018).
 
     """

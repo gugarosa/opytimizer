@@ -1,4 +1,4 @@
-"""Brain Storm Optimization.
+"""Queuing Search Algorithm.
 """
 
 import copy
@@ -16,19 +16,20 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class BSO(Optimizer):
-    """A BSO class, inherited from Optimizer.
+class QSA(Optimizer):
+    """A QSA class, inherited from Optimizer.
 
-    This is the designed class to define BSO-related
+    This is the designed class to define QSA-related
     variables and methods.
 
     References:
-        Y. Shi. Brain Storm Optimization Algorithm.
-        International Conference in Swarm Intelligence (2011).
+        J. Zhang et al. Queuing search algorithm: A novel metaheuristic algorithm
+        for solving engineering optimization problems.
+        Applied Mathematical Modelling (2018).
 
     """
 
-    def __init__(self, algorithm='BSO', hyperparams=None):
+    def __init__(self, algorithm='QSA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +37,10 @@ class BSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BSO.')
+        logger.info('Overriding class: Optimizer -> QSA.')
 
         # Override its parent class with the receiving hyperparams
-        super(BSO, self).__init__(algorithm)
+        super(QSA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

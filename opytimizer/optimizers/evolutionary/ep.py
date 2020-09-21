@@ -22,7 +22,7 @@ class EP(Optimizer):
     variables and methods.
 
     References:
-        A. E. Eiben, J. E. Smith. Introduction to Evolutionary Computing.
+        A. E. Eiben and J. E. Smith. Introduction to Evolutionary Computing.
         Natural Computing Series (2013).
 
     """

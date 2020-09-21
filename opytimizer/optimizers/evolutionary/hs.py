@@ -544,7 +544,7 @@ class SGHS(HS):
     variables and methods.
 
     References:
-        Q.-K. Pan, P. Suganthan, M. Tasgetiren, J. Liang.
+        Q.-K. Pan, P. Suganthan, M. Tasgetiren and J. Liang.
         A self-adaptive global best harmony search algorithm for continuous optimization problems.
         Applied Mathematics and Computation (2010).
 

@@ -21,7 +21,7 @@ class AEO(Optimizer):
     variables and methods.
 
     References:
-        W. Zhao, L. Wang, and Z. Zhang.
+        W. Zhao, L. Wang and Z. Zhang.
         Artificial ecosystem-based optimization: a novel nature-inspired meta-heuristic algorithm.
         Neural Computing and Applications (2019).
 

@@ -23,7 +23,7 @@ class GWO(Optimizer):
     variables and methods.
 
     References:
-        S. Mirjalili, S. Mirjalili, A. Lewis. Grey Wolf Optimizer.
+        S. Mirjalili, S. Mirjalili and A. Lewis. Grey Wolf Optimizer.
         Advances in Engineering Software (2014).
 
     """

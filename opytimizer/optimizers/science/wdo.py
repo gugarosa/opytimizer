@@ -20,7 +20,7 @@ class WDO(Optimizer):
     variables and methods.
 
     References:
-        Z. Bayraktar, et al. The wind driven optimization technique and its application in electromagnetics.
+        Z. Bayraktar et al. The wind driven optimization technique and its application in electromagnetics.
         IEEE transactions on antennas and propagation (2013).
 
     """
