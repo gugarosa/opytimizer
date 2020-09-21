@@ -3,7 +3,13 @@ opytimizer.optimizers.population
 
 .. toctree::
     opytimizer.optimizers.population.aeo
+    opytimizer.optimizers.population.coa
+    opytimizer.optimizers.population.epo
     opytimizer.optimizers.population.gco
+    opytimizer.optimizers.population.gwo
+    opytimizer.optimizers.population.hho
+    opytimizer.optimizers.population.loa
+    opytimizer.optimizers.population.ppa
 
 .. automodule:: opytimizer.optimizers.population
    :members:
