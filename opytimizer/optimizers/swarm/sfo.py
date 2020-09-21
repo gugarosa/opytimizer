@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
+import opytimizer.utils.exception as ex
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -67,9 +67,9 @@ class SFO(Optimizer):
     @PP.setter
     def PP(self, PP):
         if not isinstance(PP, (float, int)):
-            raise e.TypeError('`PP` should be a float or integer')
+            raise ex.TypeError('`PP` should be a float or integer')
         if PP < 0 or PP > 1:
-            raise e.ValueError('`PP` should be between 0 and 1')
+            raise ex.ValueError('`PP` should be between 0 and 1')
 
         self._PP = PP
 
@@ -84,9 +84,9 @@ class SFO(Optimizer):
     @A.setter
     def A(self, A):
         if not isinstance(A, int):
-            raise e.TypeError('`A` should be an integer')
+            raise ex.TypeError('`A` should be an integer')
         if A <= 0:
-            raise e.ValueError('`A` should be > 0')
+            raise ex.ValueError('`A` should be > 0')
 
         self._A = A
 
@@ -101,9 +101,9 @@ class SFO(Optimizer):
     @e.setter
     def e(self, e):
         if not isinstance(e, (float, int)):
-            raise e.TypeError('`e` should be a float or integer')
+            raise ex.TypeError('`e` should be a float or integer')
         if e < 0:
-            raise e.ValueError('`e` should be >= 0')
+            raise ex.ValueError('`e` should be >= 0')
 
         self._e = e
 
