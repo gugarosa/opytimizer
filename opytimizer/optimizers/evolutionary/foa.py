@@ -1,4 +1,4 @@
-"""Coral Reefs Optimization.
+"""Forest Optimization Algorithm.
 """
 
 import copy
@@ -16,20 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class CRO(Optimizer):
-    """A CRO class, inherited from Optimizer.
+class FOA(Optimizer):
+    """A FOA class, inherited from Optimizer.
 
-    This is the designed class to define CRO-related
+    This is the designed class to define FOA-related
     variables and methods.
 
     References:
-        S. Salcedo-Sanz et al.
-        The Coral Reefs Optimization Algorithm: A Novel Metaheuristic for Efficiently Solving Optimization Problems.
-        The Scientific World Journal (2014).
+        M. Ghaemi and M. Feizi-Derakhshi. Forest Optimization Algorithm.
+        Expert Systems with Applications (2014).
 
     """
 
-    def __init__(self, algorithm='CRO', hyperparams=None):
+    def __init__(self, algorithm='FOA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -37,10 +36,10 @@ class CRO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CRO.')
+        logger.info('Overriding class: Optimizer -> FOA.')
 
         # Override its parent class with the receiving hyperparams
-        super(CRO, self).__init__(algorithm)
+        super(FOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

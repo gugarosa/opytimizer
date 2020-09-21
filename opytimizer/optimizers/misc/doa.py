@@ -1,4 +1,4 @@
-"""Coral Reefs Optimization.
+"""Darcy Optimization Algorithm.
 """
 
 import copy
@@ -16,20 +16,20 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class CRO(Optimizer):
-    """A CRO class, inherited from Optimizer.
+class DOA(Optimizer):
+    """A DOA class, inherited from Optimizer.
 
-    This is the designed class to define CRO-related
+    This is the designed class to define DOA-related
     variables and methods.
 
     References:
-        S. Salcedo-Sanz et al.
-        The Coral Reefs Optimization Algorithm: A Novel Metaheuristic for Efficiently Solving Optimization Problems.
-        The Scientific World Journal (2014).
+        F. Demir et al. A survival classification method for hepatocellular carcinoma patients
+        with chaotic Darcy optimization method based feature selection.
+        Medical Hypotheses (2020).
 
     """
 
-    def __init__(self, algorithm='CRO', hyperparams=None):
+    def __init__(self, algorithm='DOA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -37,10 +37,10 @@ class CRO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CRO.')
+        logger.info('Overriding class: Optimizer -> DOA.')
 
         # Override its parent class with the receiving hyperparams
-        super(CRO, self).__init__(algorithm)
+        super(DOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

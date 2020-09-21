@@ -76,21 +76,31 @@ Opytimizer is based on the following structure, and you should pay attention to 
             - bpso
             - umda
         - evolutionary
+            - bsoa
             - cro
             - de
             - ep
             - es
+            - foa
             - ga
             - gp
             - hs
             - iwo
+            - rra
         - misc
             - cem
+            - doa
             - gs
             - hc
         - population
             - aeo
+            - coa
+            - epo
             - gco
+            - gwo
+            - hho
+            - loa
+            - ppa
         - science
             - aso
             - bh
@@ -98,28 +108,43 @@ Opytimizer is based on the following structure, and you should pay attention to 
             - eo
             - gsa
             - hgso
+            - moa
             - mvo
             - sa
             - two
             - wca
             - wdo
+            - wwo
         - social
             - bso
+            - ci
+            - qsa
             - ssd
         - swarm
             - abc
+            - abo
             - ba
             - bfo
+            - boa
             - bwo
             - cs
+            - csa
+            - eho
             - fa
+            - foa
             - fpa
+            - goa
             - kh
+            - mfo
             - mrfo
             - pio
             - pso
             - sbo
             - sca
+            - sfo
+            - sos
+            - ssa
+            - sso
             - woa
     - spaces
         - boolean

@@ -1,4 +1,4 @@
-"""Coral Reefs Optimization.
+"""Runner-Root Algorithm.
 """
 
 import copy
@@ -16,20 +16,21 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class CRO(Optimizer):
-    """A CRO class, inherited from Optimizer.
+class RRA(Optimizer):
+    """An RRA class, inherited from Optimizer.
 
-    This is the designed class to define CRO-related
+    This is the designed class to define RRA-related
     variables and methods.
 
     References:
-        S. Salcedo-Sanz et al.
-        The Coral Reefs Optimization Algorithm: A Novel Metaheuristic for Efficiently Solving Optimization Problems.
-        The Scientific World Journal (2014).
+        F. Merrikh-Bayat.
+        The runner-root algorithm: A metaheuristic for solving unimodal and
+        multimodal optimization problems inspired by runners and roots of plants in nature.
+        Applied Soft Computing (2015).
 
     """
 
-    def __init__(self, algorithm='CRO', hyperparams=None):
+    def __init__(self, algorithm='RRA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -37,10 +38,10 @@ class CRO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CRO.')
+        logger.info('Overriding class: Optimizer -> RRA.')
 
         # Override its parent class with the receiving hyperparams
-        super(CRO, self).__init__(algorithm)
+        super(RRA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)
