@@ -6,5 +6,5 @@ hyperparams = {
     'S': 2.0
 }
 
-# Creating a MRFO optimizer
+# Creating an MRFO optimizer
 o = MRFO(hyperparams=hyperparams)

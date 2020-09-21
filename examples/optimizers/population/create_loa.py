@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.loa import LOA
 hyperparams = {
 }
 
-# Creating a LOA optimizer
+# Creating an LOA optimizer
 o = LOA(hyperparams=hyperparams)

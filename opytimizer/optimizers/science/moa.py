@@ -1,4 +1,4 @@
-"""Tug Of War Optimization.
+"""Magnetic Optimization Algorithm.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class TWO(Optimizer):
-    """A TWO class, inherited from Optimizer.
+class MOA(Optimizer):
+    """An MOA class, inherited from Optimizer.
 
-    This is the designed class to define TWO-related
+    This is the designed class to define MOA-related
     variables and methods.
 
     References:
-        A. Kaveh. Tug of War Optimization.
-        Advances in Metaheuristic Algorithms for Optimal Design of Structures (2016).
+        M.-H. Tayarani and M.-R. Akbarzadeh. Magnetic-inspired optimization algorithms: Operators and structures.
+        Swarm and Evolutionary Computation (2014).
 
     """
 
-    def __init__(self, algorithm='TWO', hyperparams=None):
+    def __init__(self, algorithm='MOA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class TWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> TWO.')
+        logger.info('Overriding class: Optimizer -> MOA.')
 
         # Override its parent class with the receiving hyperparams
-        super(TWO, self).__init__(algorithm)
+        super(MOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

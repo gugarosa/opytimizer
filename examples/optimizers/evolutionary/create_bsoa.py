@@ -6,5 +6,5 @@ hyperparams = {
 
 }
 
-# Creating an BSOA optimizer
+# Creating a BSOA optimizer
 o = BSOA(hyperparams=hyperparams)

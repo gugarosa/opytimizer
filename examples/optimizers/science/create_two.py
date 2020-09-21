@@ -6,5 +6,5 @@ hyperparams = {
 
 }
 
-# Creating an TWO optimizer
+# Creating a TWO optimizer
 o = TWO(hyperparams=hyperparams)

@@ -1,9 +1,10 @@
-from opytimizer.optimizers.population.epo import EPO
+from opytimizer.optimizers.science.moa import MOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
 hyperparams = {
+
 }
 
-# Creating an EPO optimizer
-o = EPO(hyperparams=hyperparams)
+# Creating a MOA optimizer
+o = MOA(hyperparams=hyperparams)

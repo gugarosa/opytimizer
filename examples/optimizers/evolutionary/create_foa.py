@@ -6,5 +6,5 @@ hyperparams = {
 
 }
 
-# Creating an FOA optimizer
+# Creating a FOA optimizer
 o = FOA(hyperparams=hyperparams)

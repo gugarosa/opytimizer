@@ -1,4 +1,4 @@
-"""Tug Of War Optimization.
+"""Water Wave Optimization.
 """
 
 import copy
@@ -16,19 +16,19 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class TWO(Optimizer):
-    """A TWO class, inherited from Optimizer.
+class WWO(Optimizer):
+    """A WWO class, inherited from Optimizer.
 
-    This is the designed class to define TWO-related
+    This is the designed class to define WWO-related
     variables and methods.
 
     References:
-        A. Kaveh. Tug of War Optimization.
-        Advances in Metaheuristic Algorithms for Optimal Design of Structures (2016).
+        Y.-J. Zheng. Water wave optimization: A new nature-inspired metaheuristic.
+        Computers & Operations Research (2015).
 
     """
 
-    def __init__(self, algorithm='TWO', hyperparams=None):
+    def __init__(self, algorithm='WWO', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -36,10 +36,10 @@ class TWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> TWO.')
+        logger.info('Overriding class: Optimizer -> WWO.')
 
         # Override its parent class with the receiving hyperparams
-        super(TWO, self).__init__(algorithm)
+        super(WWO, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)

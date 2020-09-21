@@ -16,7 +16,7 @@ logger = l.get_logger(__name__)
 
 
 class MRFO(Optimizer):
-    """A MRFO class, inherited from Optimizer.
+    """An MRFO class, inherited from Optimizer.
 
     This is the designed class to define MRFO-related
     variables and methods.

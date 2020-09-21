@@ -1,9 +1,10 @@
-from opytimizer.optimizers.population.epo import EPO
+from opytimizer.optimizers.science.wwo import WWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
 hyperparams = {
+
 }
 
-# Creating an EPO optimizer
-o = EPO(hyperparams=hyperparams)
+# Creating a WWO optimizer
+o = WWO(hyperparams=hyperparams)

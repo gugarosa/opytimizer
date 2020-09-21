@@ -6,5 +6,5 @@ hyperparams = {
 
 }
 
-# Creating an CRO optimizer
+# Creating a CRO optimizer
 o = CRO(hyperparams=hyperparams)

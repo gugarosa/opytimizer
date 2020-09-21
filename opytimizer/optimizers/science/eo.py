@@ -23,7 +23,8 @@ class EO(Optimizer):
     variables and methods.
 
     References:
-
+        A. Faramarzi et al. Equilibrium optimizer: A novel optimization algorithm.
+        Knowledge-Based Systems (2020).
 
     """
 

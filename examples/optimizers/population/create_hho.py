@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.hho import HHO
 hyperparams = {
 }
 
-# Creating a HHO optimizer
+# Creating an HHO optimizer
 o = HHO(hyperparams=hyperparams)

@@ -23,7 +23,8 @@ class HGSO(Optimizer):
     variables and methods.
 
     References:
-
+        F. Hashim et al. Henry gas solubility optimization: A novel physics-based algorithm.
+        Future Generation Computer Systems (2019).
 
     """
 

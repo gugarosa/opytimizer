@@ -23,7 +23,9 @@ class ASO(Optimizer):
     variables and methods.
 
     References:
-
+        W. Zhao, L. Wang and Z. Zhang.
+        A novel atom search optimization for dispersion coefficient estimation in groundwater.
+        Future Generation Computer Systems (2019).
 
     """
 
