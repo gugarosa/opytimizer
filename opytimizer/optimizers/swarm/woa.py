@@ -108,12 +108,13 @@ class WOA(Optimizer):
         # Iterates through all decision variables
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             # For each decision variable, we generate uniform random numbers
-            a.position[j] = r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+            a.position[j] = r.generate_uniform_random_number(
+                lb, ub, a.n_dimensions)
 
         return a
 
     def _update(self, agents, best_agent, coefficient):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Method that wraps Whale Optimization Algorithm updates.
 
         Args:
             agents (list): List of agents.
@@ -166,7 +167,9 @@ class WOA(Optimizer):
                 D = np.fabs(best_agent.position - agent.position)
 
                 # Updates the agent's position
-                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + best_agent.position
+                agent.position = D * \
+                    np.exp(self.b * l) * np.cos(2 * np.pi * l) + \
+                    best_agent.position
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
