@@ -23,7 +23,8 @@ class BFO(Optimizer):
     variables and methods.
 
     References:
-
+        S. Das et al. Bacterial Foraging Optimization Algorithm: Theoretical Foundations, Analysis, and Applications.
+        Foundations of Computational Intelligence (2009).
 
     """
 
