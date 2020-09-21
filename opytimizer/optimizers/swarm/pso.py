@@ -199,10 +199,10 @@ class PSO(Optimizer):
 
         # Iterate through all agents
         for i, agent in enumerate(agents):
-            # Updates current agent velocities
+            # Updates current agent velocity
             velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i], velocity[i])
 
-            # Updates current agent positions
+            # Updates current agent position
             agent.position = self._update_position(agent.position, velocity[i])
 
     @d.pre_evaluation

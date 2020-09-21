@@ -2,8 +2,8 @@
 """
 
 import copy
-import numpy as np
 
+import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
