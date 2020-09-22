@@ -227,13 +227,16 @@ class KH(Optimizer):
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
+
         One can define several commands here that does not necessarily
         needs to be on its initialization.
+
         Args:
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
         """
 
-        logger.debug('RuNNing private method: build().')
+        logger.debug('Running private method: build().')
 
         # We need to save the hyperparams object for faster looking up
         self.hyperparams = hyperparams

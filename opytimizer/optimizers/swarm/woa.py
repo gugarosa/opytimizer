@@ -167,9 +167,7 @@ class WOA(Optimizer):
                 D = np.fabs(best_agent.position - agent.position)
 
                 # Updates the agent's position
-                agent.position = D * \
-                    np.exp(self.b * l) * np.cos(2 * np.pi * l) + \
-                    best_agent.position
+                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + best_agent.position
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.

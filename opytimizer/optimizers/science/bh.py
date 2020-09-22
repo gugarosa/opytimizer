@@ -80,7 +80,7 @@ class BH(Optimizer):
             # Generate an uniform random number
             r1 = r.generate_uniform_random_number()
 
-            # Updates agent's position according to Equation 3
+            # Updates agent's position
             agent.position += r1 * (best_agent.position - agent.position)
 
             # Checking agents limits

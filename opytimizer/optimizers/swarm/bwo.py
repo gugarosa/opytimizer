@@ -22,7 +22,8 @@ class BWO(Optimizer):
 
     References:
         V. Hayyolalam and A. Kazem.
-        Black Widow Optimization Algorithm: A novel meta-heuristic approach for solving engineering optimization problems.
+        Black Widow Optimization Algorithm: A novel meta-heuristic approach
+        for solving engineering optimization problems.
         Engineering Applications of Artificial Intelligence (2020).
 
     """

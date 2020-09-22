@@ -157,8 +157,7 @@ class PIO(Optimizer):
         r1 = r.generate_uniform_random_number()
 
         # Calculates new velocity
-        new_velocity = velocity * \
-            np.exp(-self.R * (iteration + 1)) + r1 * (best_position - position)
+        new_velocity = velocity * np.exp(-self.R * (iteration + 1)) + r1 * (best_position - position)
 
         return new_velocity
 
@@ -245,12 +244,10 @@ class PIO(Optimizer):
             # Iterates through all agents
             for i, agent in enumerate(agents):
                 # Updates current agent velocity
-                velocity[i] = self._update_velocity(
-                    agent.position, best_agent.position, velocity[i], iteration)
+                velocity[i] = self._update_velocity(agent.position, best_agent.position, velocity[i], iteration)
 
                 # Updates current agent position
-                agent.position = self._update_position(
-                    agent.position, velocity[i])
+                agent.position = self._update_position(agent.position, velocity[i])
 
         # Checks if current iteration is smaller than landmark operator
         elif iteration < self.n_c2:
@@ -266,8 +263,7 @@ class PIO(Optimizer):
             # Iterates through all agents
             for agent in agents:
                 # Updates current agent position
-                agent.position = self._update_center_position(
-                    agent.position, center)
+                agent.position = self._update_center_position( agent.position, center)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -287,8 +283,7 @@ class PIO(Optimizer):
         self.n_p = space.n_agents
 
         # Instanciating array velocities
-        velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions))
+        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)

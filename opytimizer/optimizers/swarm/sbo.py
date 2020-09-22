@@ -22,7 +22,8 @@ class SBO(Optimizer):
 
     References:
         S. H. S. Moosavi and V. K. Bardsiri.
-        Satin bowerbird optimizer: a new optimization algorithm to optimize ANFIS for software development effort estimation.
+        Satin bowerbird optimizer: a new optimization algorithm to optimize ANFIS
+        for software development effort estimation.
         Engineering Applications of Artificial Intelligence (2017).
 
     """
@@ -111,7 +112,7 @@ class SBO(Optimizer):
         needs to be on its initialization.
 
         Args:
-            hyperparams (dict): Contains key-value parameters to the mp_mutation-heuristics.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 

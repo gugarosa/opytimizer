@@ -159,8 +159,7 @@ class SFO(Optimizer):
         # Iterates through all decision variables
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             # For each decision variable, we generate uniform random numbers
-            a.position[j] = r.generate_uniform_random_number(
-                lb, ub, a.n_dimensions)
+            a.position[j] = r.generate_uniform_random_number(lb, ub, a.n_dimensions)
 
         return a
 
@@ -240,8 +239,7 @@ class SFO(Optimizer):
             lambda_i = self._calculate_lambda_i(n_sailfishes, n_sardines)
 
             # Updates agent's position
-            agent.position = self._update_sailfish(
-                agent, best_agent, best_sardine, lambda_i)
+            agent.position = self._update_sailfish(agent, best_agent, best_sardine, lambda_i)
 
             # Clips agent's limits
             agent.clip_limits()
@@ -261,14 +259,12 @@ class SFO(Optimizer):
             beta = int(n_variables * AP)
 
             # Generates a list of selected sardines
-            selected_sardines = r.generate_integer_random_number(
-                0, n_sardines, size=alpha)
+            selected_sardines = r.generate_integer_random_number(0, n_sardines, size=alpha)
 
             # Iterates through every selected sardine
             for i in selected_sardines:
                 # Generates a list of selected variables
-                selected_vars = r.generate_integer_random_number(
-                    0, n_variables, size=beta)
+                selected_vars = r.generate_integer_random_number(0, n_variables, size=beta)
 
                 # Iterates through every selected variable
                 for j in selected_vars:
@@ -276,8 +272,7 @@ class SFO(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates the sardine's position (eq. 9)
-                    sardines[i].position[j] = r1 * \
-                        (best_agent.position[j] - sardines[i].position[j] + AP)
+                    sardines[i].position[j] = r1 * (best_agent.position[j] - sardines[i].position[j] + AP)
 
                 # Clips sardine's limits
                 sardines[i].clip_limits()
@@ -293,8 +288,7 @@ class SFO(Optimizer):
                 r1 = r.generate_uniform_random_number()
 
                 # Updates the sardine's position (eq. 9)
-                sardine.position = r1 * \
-                    (best_agent.position - sardine.position + AP)
+                sardine.position = r1 * (best_agent.position - sardine.position + AP)
 
                 # Clips sardine's limits
                 sardine.clip_limits()
@@ -356,8 +350,7 @@ class SFO(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                             function, sardines, t)
+                self._update(space.agents, space.best_agent, function, sardines, t)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()

@@ -134,7 +134,7 @@ class UMDA(Optimizer):
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: {self.algorithm} | Hyperparameters: p_selection = %s, bounds = ({%s, %s) | '
+        logger.debug('Algorithm: %s | Hyperparameters: p_selection = %s, bounds = ({%s, %s) | '
                      'Built: %s.',
                      self.algorithm, self.p_selection, self.lower_bound, self.upper_bound,
                      self.built)

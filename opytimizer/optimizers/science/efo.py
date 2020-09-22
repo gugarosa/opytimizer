@@ -239,8 +239,7 @@ class EFO(Optimizer):
         # If random number is smaller than probability of changing a random eletromagnet
         if r2 < self.r_ratio:
             # Update agent's position based on RI
-            agent.position[RI] = r.generate_uniform_random_number(
-                agent.lb[RI], agent.ub[RI])
+            agent.position[RI] = r.generate_uniform_random_number(agent.lb[RI], agent.ub[RI])
 
             # Increases RI by one
             RI += 1

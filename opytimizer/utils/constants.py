@@ -16,7 +16,7 @@ FLOAT_MAX = sys.float_info.max
 HISTORY_KEYS = ['agents', 'best_agent', 'local']
 
 # When working with relativity theories, it is necessary
-# to defined a constant for the speed of light
+# to define a constant for the speed of light
 LIGHT_SPEED = 3e5
 
 # When using Genetic Programming, each function node needs an unique number of arguments,
