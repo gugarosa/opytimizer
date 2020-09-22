@@ -197,7 +197,7 @@ class PSO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocity
             velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i], velocity[i])
@@ -216,9 +216,9 @@ class PSO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculate the fitness value of current agent
+            # Calculates the fitness value of current agent
             fit = function(agent.position)
 
             # If fitness is better than agent's best fit
@@ -404,10 +404,10 @@ class AIWPSO(PSO):
         for i, agent in enumerate(agents):
             # If current agent fitness is smaller than its best
             if agent.fit < fitness[i]:
-                # Increment the counter
+                # Increments the counter
                 p += 1
 
-            # Replace fitness with current agent's fitness
+            # Replaces fitness with current agent's fitness
             fitness[i] = agent.fit
 
         # Update inertia weight value
