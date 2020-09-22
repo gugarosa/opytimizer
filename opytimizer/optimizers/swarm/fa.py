@@ -164,18 +164,18 @@ class FA(Optimizer):
         for agent in agents:
             # Iterating through 'j' agents
             for temp in temp_agents:
-                # Distance is calculated by an euclidean distance between 'i' and 'j' (Equation 8)
+                # Distance is calculated by an euclidean distance between 'i' and 'j' (eq. 8)
                 distance = g.euclidean_distance(agent.position, temp.position)
 
                 # If 'i' fit is bigger than 'j' fit
                 if agent.fit > temp.fit:
-                    # Recalculate the attractiveness (Equation 6)
+                    # Recalculate the attractiveness (eq. 6)
                     beta = self.beta * np.exp(-self.gamma * distance)
 
                     # Generates a random uniform distribution
                     r1 = r.generate_uniform_random_number()
 
-                    # Updates agent's position (Equation 9)
+                    # Updates agent's position (eq. 9)
                     agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):

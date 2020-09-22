@@ -243,7 +243,7 @@ class WCA(Optimizer):
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
 
-        # Calculating the flow's intensity (Equation 6)
+        # Calculating the flow's intensity (eq. 6)
         flows = self._flow_intensity(space.agents)
 
         # We will define a History object for further dumping
@@ -267,7 +267,7 @@ class WCA(Optimizer):
                 # Sorting agents
                 space.agents.sort(key=lambda x: x.fit)
 
-                # Performs the raining process (Equation 12)
+                # Performs the raining process (eq. 12)
                 self._raining_process(space.agents, space.best_agent)
 
                 # Updates the evaporation condition

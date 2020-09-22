@@ -76,7 +76,7 @@ class AEO(Optimizer):
         # Makes a deep copy of agent
         a = copy.deepcopy(agent)
 
-        # Calculates the alpha factor (equation 2)
+        # Calculates the alpha factor (eq. 2)
         alpha = (1 - iteration / n_iterations) * r.generate_uniform_random_number()
 
         # For every possible decision variable
@@ -189,7 +189,7 @@ class AEO(Optimizer):
                 # Generates another gaussian random number
                 v2 = r.generate_gaussian_random_number()
 
-                # Calculates the consumption factor (equation 4)
+                # Calculates the consumption factor (eq. 4)
                 C = 0.5 * v1 / np.abs(v2)
 
                 # If random number lies in the first third
@@ -243,16 +243,16 @@ class AEO(Optimizer):
             # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Calculates the decomposition factor (equation 10)
+            # Calculates the decomposition factor (eq. 10)
             D = 3 * r.generate_gaussian_random_number()
 
             # Generates the third random number
             r3 = r.generate_uniform_random_number()
 
-            # First weight coefficient (equation 11)
+            # First weight coefficient (eq. 11)
             e = r3 * int(r.generate_uniform_random_number(1, 2)) - 1
 
-            # Second weight coefficient (equation 12)
+            # Second weight coefficient (eq. 12)
             _h = 2 * r3 - 1
 
             # Updates the new agent position

@@ -137,10 +137,10 @@ class BH(Optimizer):
 
         """
 
-        # Updates stars position and calculate their cost (Equation 3)
+        # Updates stars position and calculate their cost (eq. 3)
         cost = self._update_position(agents, best_agent, function)
 
-        # Performs the Event Horizon (Equation 4)
+        # Performs the Event Horizon (eq. 4)
         self._event_horizon(agents, best_agent, cost)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):

@@ -416,22 +416,22 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the sensing distance (equation 7)
+        # Calculates the sensing distance (eq. 7)
         sensing_distance, eucl_distance = self._sensing_distance(agents, idx)
 
         # Gathers the neighbours
         neighbours = self._get_neighbours(agents, idx, sensing_distance, eucl_distance)
 
-        # Calculates the local alpha (equation 4)
+        # Calculates the local alpha (eq. 4)
         alpha_l = self._local_alpha(agents[idx], agents[-1], agents[0], neighbours)
 
-        # Calculates the effective coefficient (equation 9)
+        # Calculates the effective coefficient (eq. 9)
         C_best = 2 * (r.generate_uniform_random_number() + iteration / n_iterations)
 
-        # Calculates the target alpha (equation 8)
+        # Calculates the target alpha (eq. 8)
         alpha_t = self._target_alpha(agents[idx], agents[-1], agents[0], C_best)
 
-        # Calculates the neighbour motion (equation 2)
+        # Calculates the neighbour motion (eq. 2)
         neighbour_motion = self.N_max * (alpha_l + alpha_t) + self.w_n * motion
 
         return neighbour_motion
@@ -502,16 +502,16 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the food coefficient (equation 14)
+        # Calculates the food coefficient (eq. 14)
         C_food = 2 * (1 - iteration / n_iterations)
 
-        # Calculates the food attraction (equation 13)
+        # Calculates the food attraction (eq. 13)
         beta_f = self._food_beta(agents[idx], agents[-1], agents[0], food, C_food)
 
-        # Calculates the best attraction (equation 15)
+        # Calculates the best attraction (eq. 15)
         beta_b = self._best_beta(agents[idx], agents[-1], agents[0])
 
-        # Calculates the foraging motion (equation 10)
+        # Calculates the foraging motion (eq. 10)
         foraging_motion = self.V_f * (beta_f + beta_b) + self.w_f * foraging
 
         return foraging_motion
@@ -533,7 +533,7 @@ class KH(Optimizer):
         # Generates uniform random numbers
         r1 = r.generate_uniform_random_number(-1, 1, size=(n_variables, n_dimensions))
 
-        # Calculates the physical diffusion (equation 17)
+        # Calculates the physical diffusion (eq. 17)
         physical_diffusion = self.D_max * (1 - iteration / n_iterations) * r1
 
         return physical_diffusion
@@ -565,10 +565,10 @@ class KH(Optimizer):
         physical_diffusion = self._physical_diffusion(
             agents[idx].n_variables, agents[idx].n_dimensions, iteration, n_iterations)
 
-        # Calculates the delta (equation 19)
+        # Calculates the delta (eq. 19)
         delta_t = self.C_t * np.sum(agents[idx].ub - agents[idx].lb)
 
-        # Updates the current agent's position (equation 18)
+        # Updates the current agent's position (eq. 18)
         new_position = agents[idx].position + delta_t * (neighbour_motion + foraging_motion + physical_diffusion)
 
         return new_position
@@ -661,7 +661,7 @@ class KH(Optimizer):
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        # Calculates the food location (equation 12)
+        # Calculates the food location (eq. 12)
         food = self._food_location(agents, function)
 
         # Iterate through all agents
