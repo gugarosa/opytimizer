@@ -72,80 +72,12 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - random
     - optimizers
         - boolean
-            - bmrfo
-            - bpso
-            - umda
         - evolutionary
-            - bsoa
-            - cro
-            - de
-            - ep
-            - es
-            - foa
-            - ga
-            - gp
-            - hs
-            - iwo
-            - rra
         - misc
-            - cem
-            - doa
-            - gs
-            - hc
         - population
-            - aeo
-            - coa
-            - epo
-            - gco
-            - gwo
-            - hho
-            - loa
-            - ppa
         - science
-            - aso
-            - bh
-            - efo
-            - eo
-            - gsa
-            - hgso
-            - moa
-            - mvo
-            - sa
-            - two
-            - wca
-            - wdo
-            - wwo
         - social
-            - bso
-            - ci
-            - qsa
-            - ssd
         - swarm
-            - abc
-            - abo
-            - ba
-            - bfo
-            - boa
-            - bwo
-            - cs
-            - csa
-            - eho
-            - fa
-            - ffoa
-            - fpa
-            - goa
-            - kh
-            - mfo
-            - mrfo
-            - pio
-            - pso
-            - sbo
-            - sca
-            - sfo
-            - sos
-            - ssa
-            - sso
-            - woa
     - spaces
         - boolean
         - grid
@@ -177,7 +109,7 @@ Just because we are computing stuff, it does not means that we do not need math.
 
 ### Optimizers
 
-This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a large number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Investigate any module for more information.
+This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a large number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Please take a look on the [available optimizers](https://github.com/gugarosa/opytimizer/wiki/Types-of-Optimizers).
 
 ### Spaces
 
