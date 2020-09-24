@@ -136,7 +136,7 @@ pip install opytimizer
 Alternatively, if you prefer to install the bleeding-edge version, please clone this repository and use:
 
 ```bash
-pip install .
+pip install -e .
 ```
 
 ---
