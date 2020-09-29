@@ -7,7 +7,6 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -44,10 +43,47 @@ class ABO(Optimizer):
         # Ratio of sunspot butterflies
         self.sunspot_ratio = 0.9
 
+        # Free flight constant
+        self.a = 2.0
+
         # Now, we need to build this class up
         self._build(hyperparams)
 
         logger.info('Class overrided.')
+
+    @property
+    def sunspot_ratio(self):
+        """float: Ratio of sunspot butterflies.
+
+        """
+
+        return self._sunspot_ratio
+
+    @sunspot_ratio.setter
+    def sunspot_ratio(self, sunspot_ratio):
+        if not isinstance(sunspot_ratio, (float, int)):
+            raise e.TypeError('`sunspot_ratio` should be a float or integer')
+        if sunspot_ratio < 0 or sunspot_ratio > 1:
+            raise e.ValueError('`sunspot_ratio` should be between 0 and 1')
+
+        self._sunspot_ratio = sunspot_ratio
+
+    @property
+    def a(self):
+        """float: Free flight constant.
+
+        """
+
+        return self._a
+
+    @a.setter
+    def a(self, a):
+        if not isinstance(a, (float, int)):
+            raise ex.TypeError('`a` should be a float or integer')
+        if a < 0:
+            raise ex.ValueError('`a` should be >= 0')
+
+        self._a = a
 
     def _build(self, hyperparams):
         """This method serves as the object building process.
@@ -70,14 +106,16 @@ class ABO(Optimizer):
         if hyperparams:
             if 'sunspot_ratio' in hyperparams:
                 self.sunspot_ratio = hyperparams['sunspot_ratio']
+            if 'a' in hyperparams:
+                self.a = hyperparams['a']
 
         # Set built variable to 'True'
         self.built = True
 
         # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: sunspot_ratio = %s | '
+        logger.debug('Algorithm: %s | Hyperparameters: sunspot_ratio = %s, a = %s | '
                      'Built: %s.',
-                     self.algorithm, self.sunspot_ratio,
+                     self.algorithm, self.sunspot_ratio, self.a,
                      self.built)
 
     def _flight_mode(self, agent, neighbour, function):
@@ -168,7 +206,7 @@ class ABO(Optimizer):
                 r2 = r.generate_uniform_random_number()
 
                 # Linearly decreases `a`
-                a = (2 - 2 * (iteration / n_iterations))
+                a = (self.a - self.a * (iteration / n_iterations))
 
                 # Updates the agent's position (eq. 3)
                 agent.position = agents[k].position - 2 * a * r2 - a * D
