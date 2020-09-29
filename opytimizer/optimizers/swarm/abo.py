@@ -79,9 +79,9 @@ class ABO(Optimizer):
     @a.setter
     def a(self, a):
         if not isinstance(a, (float, int)):
-            raise ex.TypeError('`a` should be a float or integer')
+            raise e.TypeError('`a` should be a float or integer')
         if a < 0:
-            raise ex.ValueError('`a` should be >= 0')
+            raise e.ValueError('`a` should be >= 0')
 
         self._a = a
 
@@ -155,10 +155,8 @@ class ABO(Optimizer):
             # Return temporary agent as well as a true variable
             return temp, True
 
-        # If its fitness is worse than current agent
-        else:
-            # Return current agent as well as a false variable
-            return agent, False
+        # Return current agent as well as a false variable
+        return agent, False
 
     def _update(self, agents, function, iteration, n_iterations):
         """Method that wraps Artificial Butterfly Optimization over all agents and variables.
