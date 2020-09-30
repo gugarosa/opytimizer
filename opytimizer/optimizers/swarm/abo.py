@@ -153,10 +153,10 @@ class ABO(Optimizer):
         # If its fitness is better than current agent
         if temp.fit < agent.fit:
             # Return temporary agent as well as a true variable
-            return temp, True
+            return temp.position, temp.fit, True
 
         # Return current agent as well as a false variable
-        return agent, False
+        return agent.position, agent.fit, False
 
     def _update(self, agents, function, iteration, n_iterations):
         """Method that wraps Artificial Butterfly Optimization over all agents and variables.
@@ -179,7 +179,7 @@ class ABO(Optimizer):
             k = r.generate_integer_random_number(0, len(agents))
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
-            agent, _ = self._flight_mode(agent, agents[k], function)
+            agent.position, agent.fit, _ = self._flight_mode(agent, agents[k], function)
 
         # Iterates through all canopy butterflies
         for agent in agents[n_sunspots:]:
@@ -187,7 +187,7 @@ class ABO(Optimizer):
             k = r.generate_integer_random_number(0, len(agents) - n_sunspots)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
-            agent, is_better = self._flight_mode(agent, agents[k], function)
+            agent.position, agent.fit, is_better = self._flight_mode(agent, agents[k], function)
 
             # If there was not fitness replacement
             if not is_better:
