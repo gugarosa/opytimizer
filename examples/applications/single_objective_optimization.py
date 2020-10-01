@@ -3,7 +3,7 @@ from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.science.hgso import HGSO
+from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -34,8 +34,8 @@ hyperparams = {
     'c2': 1.7
 }
 
-# Creating HGSO's optimizer
-p = HGSO(hyperparams=hyperparams)
+# Creating PSO's optimizer
+p = PSO(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=Sphere())
