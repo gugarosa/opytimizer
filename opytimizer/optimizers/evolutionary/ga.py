@@ -257,7 +257,7 @@ class GA(Optimizer):
         selected = self._roulette_selection(n_agents, fitness)
 
         # For every pair of selected parents
-        for s in g.pairwise(selected):
+        for s in g.n_wise(selected):
             # Performs the crossover
             alpha, beta = self._crossover(agents[s[0]], agents[s[1]])
 

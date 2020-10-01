@@ -4,7 +4,7 @@ import opytimizer.math.general as g
 individuals = [1, 2, 3, 4]
 
 # Creating pairwise from list
-for pair in g.pairwise(individuals):
+for pair in g.n_wise(individuals, 2):
     # Outputting pairs
     print(f'Pair: {pair}')
 

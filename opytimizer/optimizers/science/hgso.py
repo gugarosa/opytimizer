@@ -65,6 +65,125 @@ class HGSO(Optimizer):
 
         logger.info('Class overrided.')
 
+    @property
+    def n_clusters(self):
+        """int: Number of clusters.
+
+        """
+
+        return self._n_clusters
+
+    @n_clusters.setter
+    def n_clusters(self, n_clusters):
+        if not isinstance(n_clusters, int):
+            raise e.TypeError('`n_clusters` should be an integer')
+        if n_clusters <= 0:
+            raise e.ValueError('`n_clusters` should be > 0')
+
+        self._n_clusters = n_clusters
+
+    @property
+    def l1(self):
+        """float: Henry's coefficient constant.
+
+        """
+
+        return self._l1
+
+    @l1.setter
+    def l1(self, l1):
+        if not isinstance(l1, (float, int)):
+            raise e.TypeError('`l1` should be a float or integer')
+        if l1 < 0:
+            raise e.ValueError('`l1` should be >= 0')
+
+        self._l1 = l1
+
+    @property
+    def l2(self):
+        """int: Partial pressure constant.
+
+        """
+
+        return self._l2
+
+    @l2.setter
+    def l2(self, l2):
+        if not isinstance(l2, int):
+            raise e.TypeError('`l2` should be an integer')
+        if l2 <= 0:
+            raise e.ValueError('`l2` should be > 0')
+
+        self._l2 = l2
+
+    @property
+    def l3(self):
+        """float: Constant.
+
+        """
+
+        return self._l3
+
+    @l3.setter
+    def l3(self, l3):
+        if not isinstance(l3, (float, int)):
+            raise e.TypeError('`l3` should be a float or integer')
+        if l3 < 0:
+            raise e.ValueError('`l3` should be >= 0')
+
+        self._l3 = l3
+
+    @property
+    def alpha(self):
+        """float: Influence of gases.
+
+        """
+
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        if not isinstance(alpha, (float, int)):
+            raise e.TypeError('`alpha` should be a float or integer')
+        if alpha < 0:
+            raise e.ValueError('`alpha` should be >= 0')
+
+        self._alpha = alpha
+
+    @property
+    def beta(self):
+        """float: Gas constant.
+
+        """
+
+        return self._beta
+
+    @beta.setter
+    def beta(self, beta):
+        if not isinstance(beta, (float, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0:
+            raise e.ValueError('`beta` should be >= 0')
+
+        self._beta = beta
+
+    @property
+    def K(self):
+        """float: Solubility constant.
+
+        """
+
+        return self._K
+
+    @K.setter
+    def K(self, K):
+        if not isinstance(K, (float, int)):
+            raise e.TypeError('`K` should be a float or integer')
+        if K < 0:
+            raise e.ValueError('`K` should be >= 0')
+
+        self._K = K
+
     def _build(self, hyperparams):
         """This method serves as the object building process.
 
@@ -123,8 +242,7 @@ class HGSO(Optimizer):
         """
 
         # Calculates `gamma`
-        gamma = self.beta * \
-            np.exp(-(best_agent.fit + 0.05) / (agent.fit + 0.05))
+        gamma = self.beta * np.exp(-(best_agent.fit + 0.05) / (agent.fit + 0.05))
 
         # Generates a flag that provides diversity
         flag = np.sign(r.generate_uniform_random_number(-1, 1))
@@ -139,56 +257,65 @@ class HGSO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, coefficient, pressure, constant, iteration, n_iterations):
+    def _update(self, agents, best_agent, function, coefficient, pressure, constant, iteration, n_iterations):
         """Method that wraps Henry Gas Solubility Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
+            coefficient (np.array): Henry's coefficient array.
+            pressure (np.array): Partial pressure array.
+            constant (np.array): Constants array.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
-        #
-        n_agents_type = int(len(agents) / self.n_clusters)
+        # Creates n-wise clusters
+        clusters = g.n_wise(agents, pressure.shape[1])
 
-        #
-        for i, agents_type in enumerate(g.pairwise(agents, n_agents_type)):
-            #
+        # Iterates through all clusters
+        for i, cluster in enumerate(clusters):
+            # Calculates the system's current temperature (eq. 8)
             T = np.exp(-iteration / n_iterations)
 
-            #
+            # Updates Henry's coefficient (eq. 8)
             coefficient[i] *= np.exp(-constant[i] * (1 / T - 1 / 298.15))
 
-            #
-            agents_type = list(agents_type)
+            # Transforms the cluster into a list and sorts it
+            cluster = list(cluster)
+            cluster.sort(key=lambda x: x.fit)
 
-            #
-            agents_type.sort(key=lambda x: x.fit)
-
-            #
-            for j, agent in enumerate(agents_type):
-                #
+            # Iterates through all agents in cluster
+            for j, agent in enumerate(cluster):
+                # Calculates agent's solubility (eq. 9)
                 solubility = self.K * coefficient[i] * pressure[i][j]
 
-                #
-                agent.position = self._update_position(
-                    agent, agents_type[0], best_agent, solubility)
+                # Updates agent's position (eq. 10)
+                agent.position = self._update_position(agent, cluster[0], best_agent, solubility)
 
-        #
-        r1 = r.generate_uniform_random_number()
+                # Clips agent's limits
+                agent.clip_limits()
 
-        #
-        N = int(len(agents) * (r1 * (0.2 - 0.1) + 0.1))
+                # Re-calculates its fitness
+                agent.fit = function(agent.position)
 
-        #
+        # Re-sorts the whole space
         agents.sort(key=lambda x: x.fit)
 
+        # Generates a uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Calculates the number of worst agents
+        N = int(len(agents) * (r1 * (0.2 - 0.1) + 0.1))
+
+        # Iterates through every bad agent
         for agent in agents[-N:]:
-            #
+            # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
 
-            #
+            # Updates bad agent's position
             agent.position = agent.lb + r2 * (agent.ub - agent.lb)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
@@ -205,20 +332,17 @@ class HGSO(Optimizer):
 
         """
 
-        #
-        n_agents = int(len(space.agents) / self.n_clusters)
+        # Calculates the number of agents per cluster
+        n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
 
-        #
-        coefficient = self.l1 * \
-            r.generate_uniform_random_number(size=self.n_clusters)
+        # Instantiates a coefficients' array
+        coefficient = self.l1 * r.generate_uniform_random_number(size=self.n_clusters)
 
-        #
-        pressure = self.l2 * \
-            r.generate_uniform_random_number(size=(self.n_clusters, n_agents))
+        # Creates a pressures' array
+        pressure = self.l2 * r.generate_uniform_random_number(size=(self.n_clusters, n_agents_per_cluster))
 
-        #
-        constant = self.l3 * \
-            r.generate_uniform_random_number(size=self.n_clusters)
+        # And finally, creates a constants' array
+        constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
 
         # Initial search space evaluation
         self._evaluate(space, function, hook=pre_evaluation)
@@ -233,7 +357,7 @@ class HGSO(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
+                self._update(space.agents, space.best_agent, function,
                              coefficient, pressure, constant, t, space.n_iterations)
 
                 # Checking if agents meets the bounds limits

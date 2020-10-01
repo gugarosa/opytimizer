@@ -329,7 +329,7 @@ class GP(Optimizer):
         selected = g.tournament_selection(fitness, n_individuals)
 
         # For every pair in selected individuals
-        for s in g.pairwise(selected):
+        for s in g.n_wise(selected):
             # Calculates the amount of father nodes
             father_nodes = space.trees[s[0]].n_nodes
 

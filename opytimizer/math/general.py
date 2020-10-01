@@ -27,14 +27,15 @@ def euclidean_distance(x, y):
     return distance
 
 
-def pairwise(x, size=2):
-    """Iterates over an iterator and returns pairwise samples from it.
+def n_wise(x, size=2):
+    """Iterates over an iterator and returns n-wise samples from it.
 
     Args:
         x (list): Values to be iterated over.
+        size (int): Amount of samples per iteration.
 
     Returns:
-        Pairwise samples from the iterator.
+        N-wise samples from the iterator.
 
     """
 

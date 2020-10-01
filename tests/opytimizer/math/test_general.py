@@ -11,10 +11,10 @@ def test_euclidean_distance():
     assert general.euclidean_distance(x, y) == 0
 
 
-def test_pairwise():
+def test_n_wise():
     list = [1, 2, 3, 4]
 
-    pairs = general.pairwise(list)
+    pairs = general.n_wise(list)
 
     for p in pairs:
         pass
