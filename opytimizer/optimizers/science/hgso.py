@@ -307,7 +307,7 @@ class HGSO(Optimizer):
         # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Calculates the number of worst agents
+        # Calculates the number of worst agents (eq. 11)
         N = int(len(agents) * (r1 * (0.2 - 0.1) + 0.1))
 
         # Iterates through every bad agent
@@ -315,7 +315,7 @@ class HGSO(Optimizer):
             # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
 
-            # Updates bad agent's position
+            # Updates bad agent's position (eq. 12)
             agent.position = agent.lb + r2 * (agent.ub - agent.lb)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
