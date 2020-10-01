@@ -27,7 +27,7 @@ def euclidean_distance(x, y):
     return distance
 
 
-def pairwise(x):
+def pairwise(x, size=2):
     """Iterates over an iterator and returns pairwise samples from it.
 
     Args:
@@ -42,7 +42,7 @@ def pairwise(x):
     iterator = iter(x)
 
     # Splits into pairs and returns a new iterator
-    return iter(lambda: tuple(islice(iterator, 2)), ())
+    return iter(lambda: tuple(islice(iterator, size)), ())
 
 
 def tournament_selection(fitness, n):
