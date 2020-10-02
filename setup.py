@@ -12,13 +12,13 @@ setup(name='opytimizer',
       author_email='gth.rosa@uol.com.br',
       url='https://github.com/gugarosa/opytimizer',
       license='GPL-3.0',
-      install_requires=['coverage>=5.1',
+      install_requires=['coverage>=5.3',
                         'matplotlib>=3.3.2',
                         'numpy>=1.19.2',
                         'opytimark>=1.0.5',
-                        'pylint>=2.5.2',
-                        'pytest>=5.4.2',
-                        'tqdm>=4.46.0'
+                        'pylint>=2.6.0',
+                        'pytest>=6.1.0',
+                        'tqdm>=4.50.0'
                         ],
       extras_require={
           'tests': ['coverage',
