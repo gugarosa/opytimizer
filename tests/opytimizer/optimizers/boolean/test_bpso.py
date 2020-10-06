@@ -89,7 +89,7 @@ def test_bpso_run():
         return
 
     new_function = function.Function(pointer=Knapsack(
-        values=[55, 10, 47, 5, 4], weights=[95, 4, 60, 32, 23], max_capacity=100))
+        values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100))
 
     new_bpso = bpso.BPSO()
 
