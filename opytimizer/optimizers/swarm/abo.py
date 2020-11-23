@@ -164,6 +164,8 @@ class ABO(Optimizer):
         Args:
             agents (list): List of agents.
             function (Function): A Function object that will be used as the objective function.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
