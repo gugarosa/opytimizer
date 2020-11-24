@@ -248,7 +248,7 @@ class BPSO(Optimizer):
                 # Updating agents
                 self._update(space.agents, space.best_agent, local_position, velocity)
 
-                # Checking if agents meets the bounds limits
+                # Checking if agents meet the bounds limits
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space

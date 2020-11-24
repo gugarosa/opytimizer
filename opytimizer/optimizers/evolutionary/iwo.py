@@ -303,7 +303,7 @@ class IWO(Optimizer):
                 # Updating agents
                 space.agents = self._update(space.agents, space.n_agents, function)
 
-                # Checking if agents meets the bounds limits
+                # Checking if agents meet the bounds limits
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space

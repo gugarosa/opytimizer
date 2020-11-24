@@ -100,7 +100,7 @@ class SSA(Optimizer):
 
             # If it is not the first agent
             else:
-                # Update the follower salp position (Eq. 3.4)
+                # Updates the follower salp position (Eq. 3.4)
                 agents[i].position = 0.5 * (agents[i].position + agents[i-1].position)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
@@ -132,7 +132,7 @@ class SSA(Optimizer):
                 # Updating agents
                 self._update(space.agents, space.best_agent, t, space.n_iterations)
 
-                # Checking if agents meets the bounds limits
+                # Checking if agents meet the bounds limits
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
