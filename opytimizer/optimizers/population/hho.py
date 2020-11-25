@@ -169,7 +169,7 @@ class HHO(Optimizer):
             return location_vector
 
         # Hard besiege
-        elif w >= 0.5 and energy < 0.5:
+        if w >= 0.5 and energy < 0.5:
             # Calculates the delta's position
             delta = best_agent.position - current_agent.position
 
@@ -179,7 +179,7 @@ class HHO(Optimizer):
             return location_vector
 
         # Soft besiege with rapid dives
-        elif w < 0.5 and energy >= 0.5:
+        if w < 0.5 and energy >= 0.5:
             # Calculates the `Y` position (Eq. 7)
             Y = best_agent.position - energy * \
                 np.fabs(jump * best_agent.position - current_agent.position)
