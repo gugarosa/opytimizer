@@ -1,6 +1,7 @@
 # Opytimizer: A Nature-Inspired Python Optimizer
 
 [![Latest release](https://img.shields.io/github/release/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/releases)
+[![DOI](https://zenodo.org/badge/109152650.svg)](https://zenodo.org/badge/latestdoi/109152650)
 [![Build status](https://img.shields.io/travis/com/gugarosa/opytimizer/master.svg)](https://github.com/gugarosa/opytimizer/releases)
 [![Open issues](https://img.shields.io/github/issues/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/issues)
 [![License](https://img.shields.io/github/license/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/blob/master/LICENSE)
