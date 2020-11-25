@@ -191,7 +191,7 @@ class HHO(Optimizer):
             # Calculates the `Z` position (Eq. 8)
             Z = Y + S * LF
 
-            # Evaluates newer positions
+            # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
@@ -219,7 +219,7 @@ class HHO(Optimizer):
             # Calculates the `Z` position (Eq. 13)
             Z = Y + S * LF
 
-            # Evaluates newer positions
+            # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
@@ -234,7 +234,7 @@ class HHO(Optimizer):
         return current_agent.position
 
     def _update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Method that wraps the Harris Hawks Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.
