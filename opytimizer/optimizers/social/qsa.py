@@ -47,11 +47,14 @@ class QSA(Optimizer):
 
         logger.info('Class overrided.')
 
-    def _calculate_queue(self, n_agents, t1, t2, t3):
+    def _calculate_queue(self, n_agents, t_1, t_2, t_3):
         """Calculates the number of agents that belongs to each queue.
 
         Args:
-
+            n_agents (int): Number of agents.
+            t_1 (float): Fitness value of first agent in the population.
+            t_2 (float): Fitness value of second agent in the population.
+            t_3 (float): Fitness value of third agent in the population.
 
         Returns:
             The number of agents in first, second and third queues.
@@ -59,25 +62,25 @@ class QSA(Optimizer):
         """
 
         # Checks if potential service time is bigger than `1e-6`
-        if t1 > 1e-6:
+        if t_1 > 1e-6:
             # Calculates the proportion of agents in first, second and third queues
-            n1 = (1 / t1) / ((1 / t1) + (1 / t2) + (1 / t3))
-            n2 = (1 / t2) / ((1 / t1) + (1 / t2) + (1 / t3))
-            n3 = (1 / t3) / ((1 / t1) + (1 / t2) + (1 / t3))
+            n_1 = (1 / t_1) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
+            n_2 = (1 / t_2) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
+            n_3 = (1 / t_3) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
 
         # If the potential service time is smaller than `1e-6`
         else:
             # Each queue will have 1/3 ratio
-            n1 = 1.0 / 3
-            n2 = 1.0 / 3
-            n3 = 1.0 / 3
+            n_1 = 1 / 3
+            n_2 = 1 / 3
+            n_3 = 1 / 3
 
         # Calculates the number of agents that belongs to each queue
-        q1 = int(n1 * n_agents)
-        q2 = int(n2 * n_agents)
-        q3 = int(n3 * n_agents)
+        q_1 = int(n_1 * n_agents)
+        q_2 = int(n_2 * n_agents)
+        q_3 = int(n_3 * n_agents)
 
-        return q1, q2, q3
+        return q_1, q_2, q_3
 
     def _business_one(self, agents, function, beta):
         """Performs the first business phase.
@@ -96,7 +99,7 @@ class QSA(Optimizer):
         A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
 
         # Calculates the number of agents in each queue
-        q1, q2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
+        q_1, q_2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
 
         # Represents the update patterns by Eq. 4 and Eq. 5
         case = None
@@ -107,7 +110,7 @@ class QSA(Optimizer):
             a = copy.deepcopy(agent)
 
             # If index is smaller than the number of agents in first queue
-            if i < q1:
+            if i < q_1:
                 # If it is the first agent in first queue
                 if i == 0:
                     # Defines the case as one
@@ -117,9 +120,9 @@ class QSA(Optimizer):
                 A = copy.deepcopy(A_1)
 
             # If index is between first and second queues
-            elif i < q1 and i <= q1 + q2:
+            elif i < q_1 and i <= q_1 + q_2:
                 # If index is the first agent in second queue
-                if i == q1:
+                if i == q_1:
                     # Defines the case as one
                     case = 1
 
@@ -129,7 +132,7 @@ class QSA(Optimizer):
             # If index is between second and third queues
             else:
                 # If index is the first agent in third queue
-                if i == q1 + q2:
+                if i == q_1 + q_2:
                     # Defines the case as one
                     case = 1
 
@@ -215,7 +218,7 @@ class QSA(Optimizer):
         A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
 
         # Calculates the number of agents in each queue
-        q1, q2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
+        q_1, q_2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
 
         # Calculates the probability of handling the business
         pr = [i / len(agents) for i in range(1, len(agents) + 1)]
@@ -229,12 +232,12 @@ class QSA(Optimizer):
             a = copy.deepcopy(agent)
 
             # If index is smaller than the number of agents in first queue
-            if i < q1:
+            if i < q_1:
                 # `A` will receive a copy from `A_1`
                 A = copy.deepcopy(A_1)
 
             # If index is between first and second queues
-            elif i < q1 and i <= q1 + q2:
+            elif i < q_1 and i <= q_1 + q_2:
                 # `A` will receive a copy from `A_2`
                 A = copy.deepcopy(A_2)
 
