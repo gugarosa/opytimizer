@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constants as c
-import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
@@ -49,7 +48,14 @@ class QSA(Optimizer):
         logger.info('Class overrided.')
 
     def _calculate_queue(self, n_agents, t1, t2, t3):
-        """
+        """Calculates the number of agents that belongs to each queue.
+
+        Args:
+
+
+        Returns:
+            The number of agents in first, second and third queues.
+
         """
 
         # Checks if potential service time is bigger than `1e-6`
@@ -70,23 +76,274 @@ class QSA(Optimizer):
         q1 = int(n1 * n_agents)
         q2 = int(n2 * n_agents)
         q3 = int(n3 * n_agents)
-        
+
         return q1, q2, q3
 
-    def _update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps the update pipeline over all agents and variables.
+    def _business_one(self, agents, function, beta):
+        """Performs the first business phase.
 
         Args:
             agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
+            function (Function): A Function object that will be used as the objective function.
+            beta (float): Range of fluctuation.
+
+        """
+
+        # Sorts the agents
+        agents.sort(key=lambda x: x.fit)
+
+        # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
+        A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
+
+        # Calculates the number of agents in each queue
+        q1, q2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
+
+        # Represents the update patterns by Eq. 4 and Eq. 5
+        case = None
+
+        # Iterates through all agents
+        for i, agent in enumerate(agents):
+            # Creates another temporary agent
+            a = copy.deepcopy(agent)
+
+            # If index is smaller than the number of agents in first queue
+            if i < q1:
+                # If it is the first agent in first queue
+                if i == 0:
+                    # Defines the case as one
+                    case = 1
+
+                # `A` will receive a copy from `A_1`
+                A = copy.deepcopy(A_1)
+
+            # If index is between first and second queues
+            elif i < q1 and i <= q1 + q2:
+                # If index is the first agent in second queue
+                if i == q1:
+                    # Defines the case as one
+                    case = 1
+
+                # `A` will receive a copy from `A_2`
+                A = copy.deepcopy(A_2)
+
+            # If index is between second and third queues
+            else:
+                # If index is the first agent in third queue
+                if i == q1 + q2:
+                    # Defines the case as one
+                    case = 1
+
+                # `A` will receive a copy from `A_3`
+                A = copy.deepcopy(A_3)
+
+            # Generates a uniform random number
+            alpha = r.generate_uniform_random_number(-1, 1)
+
+            # Generates an Erlang distribution
+            E = np.random.gamma(1, 0.5, (agent.n_variables, agent.n_dimensions))
+
+            # If case is defined as one
+            if case == 1:
+                # Generates an Erlang number
+                e = np.random.gamma(1, 0.5, 1)[0]
+
+                # Calculates the fluctuation (Eq. 6)
+                F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (A.position - a.position)
+
+                # Updates the temporary agent's position (Eq. 4)
+                a.position = A.position + F_1
+
+                # Evaluates the agent
+                a.fit = function(a.position)
+
+                # If new fitness is better than current agent's fitness
+                if a.fit < agent.fit:
+                    # Replaces the current agent's position
+                    agent.position = copy.deepcopy(a.position)
+
+                    # Also replace sits fitness
+                    agent.fit = copy.deepcopy(a.fit)
+
+                    # Defines the case as one
+                    case = 1
+
+                # If new fitness is worse than current agent's fitness
+                else:
+                    # Defines the case as two
+                    case = 2
+
+            # If case is defined as two
+            else:
+                # Calculates the fluctuation (Eq. 7)
+                F_2 = beta * alpha * (E * np.fabs(A.position - a.position))
+
+                # Updates the temporary agent's position (Eq. 5)
+                a.position += F_2
+
+                # Evaluates the agent
+                a.fit = function(a.position)
+
+                # If new fitness is better than current agent's fitness
+                if a.fit < agent.fit:
+                    # Replaces the current agent's position
+                    agent.position = copy.deepcopy(a.position)
+
+                    # Also replaces its fitness
+                    agent.fit = copy.deepcopy(a.fit)
+
+                    # Defines the case as two
+                    case = 2
+
+                # If new fitness is worse than current agent's fitness
+                else:
+                    # Defines the case as one
+                    case = 1
+
+    def _business_two(self, agents, function):
+        """Performs the second business phase.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Sorts the agents
+        agents.sort(key=lambda x: x.fit)
+
+        # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
+        A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
+
+        # Calculates the number of agents in each queue
+        q1, q2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
+
+        # Calculates the probability of handling the business
+        pr = [i / len(agents) for i in range(1, len(agents) + 1)]
+
+        # Calculates the confusion degree
+        cv = A_1.fit / (A_2.fit + A_3.fit + c.EPSILON)
+
+        # Iterates through all agents
+        for i, agent in enumerate(agents):
+            # Creates another temporary agent
+            a = copy.deepcopy(agent)
+
+            # If index is smaller than the number of agents in first queue
+            if i < q1:
+                # `A` will receive a copy from `A_1`
+                A = copy.deepcopy(A_1)
+
+            # If index is between first and second queues
+            elif i < q1 and i <= q1 + q2:
+                # `A` will receive a copy from `A_2`
+                A = copy.deepcopy(A_2)
+
+            # If index is between second and third queues
+            else:
+                # `A` will receive a copy from `A_3`
+                A = copy.deepcopy(A_3)
+
+            # Generates a uniform random number
+            r1 = r.generate_uniform_random_number()
+
+            # If random number is smaller than probability of handling the business
+            if r1 < pr[i]:
+                # Randomly selects two individuals
+                A_1, A_2 = np.random.choice(agents, 2, replace=False)
+
+                # Generates another uniform random number
+                r2 = r.generate_uniform_random_number()
+
+                # Generates an Erlang number
+                e = np.random.gamma(1, 0.5, 1)[0]
+
+                # If random number is smaller than confusion degree
+                if r2 < cv:
+                    # Calculates the fluctuation (Eq. 14)
+                    F_1 = e * (A_1.position - A_2.position)
+
+                    # Update agent's position (Eq. 12)
+                    a.position += F_1
+
+                # If random number is bigger than confusion degree
+                else:
+                    # Calculates the fluctuation (Eq. 15)
+                    F_2 = e * (A.position - A_1.position)
+
+                    # Update agent's position (Eq. 13)
+                    a.position += F_2
+
+                # Evaluates the agent
+                a.fit = function(a.position)
+
+                # If the new fitness is better than the current agent's fitness
+                if a.fit < agent.fit:
+                    # Replaces the current agent's position
+                    agent.position = copy.deepcopy(a.position)
+
+                    # Also replaces its fitness
+                    agent.fit = copy.deepcopy(a.fit)
+
+    def _business_three(self, agents, function):
+        """Performs the third business phase.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Sorts the agents
+        agents.sort(key=lambda x: x.fit)
+
+        # Calculates the probability of handling the business
+        pr = [i / len(agents) for i in range(1, len(agents) + 1)]
+
+        # Iterates through all agents
+        for i, agent in enumerate(agents):
+            # Creates another temporary agent
+            a = copy.deepcopy(agent)
+
+            # Iterates through all decision variables
+            for j in range(agent.n_variables):
+                # Generates a uniform random number
+                r1 = r.generate_uniform_random_number()
+
+                # If random number is smaller than probability of handling the business
+                if r1 < pr[i]:
+                    # Randomly selects two individuals
+                    A_1, A_2 = np.random.choice(agents, 2, replace=False)
+
+                    # Generates an Erlang number
+                    e = np.random.gamma(1, 0.5, 1)[0]
+
+                    # Updates temporary agent's position (Eq. 17)
+                    a.position[j] = A_1.position[j] + e * (A_2.position[j] - a.position[j])
+
+                # Evaluates the agent
+                a.fit = function(a.position)
+
+                # If the new fitness is better than the current agent's fitness
+                if a.fit < agent.fit:
+                    # Replaces the current agent's position
+                    agent.position = copy.deepcopy(a.position)
+
+                    # Also replaces its fitness
+                    agent.fit = copy.deepcopy(a.fit)
+
+    def _update(self, agents, function, iteration, n_iterations):
+        """Method that wraps the Queue Search Algorithm over all agents and variables.
+
+        Args:
+            agents (list): List of agents.
+            function (Function): A Function object that will be used as the objective function.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Calculates the `beta` coefficient
-        beta = np.exp(np.log(1 / iteration) * np.sqrt(iteration / n_iterations))
+        # Calculates the range of fluctuation.
+        beta = np.exp(np.log(1 / (iteration + c.EPSILON)) * np.sqrt(iteration / n_iterations))
 
         # Performs the first business phase
         self._business_one(agents, function, beta)
@@ -124,8 +381,7 @@ class QSA(Optimizer):
                 logger.file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
-                self._update(space.agents, space.best_agent,
-                             function, iteration, n_iterations)
+                self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meets the bounds limits
                 space.clip_limits()
