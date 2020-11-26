@@ -4,7 +4,11 @@ import opytimizer.math.random as r
 b = r.generate_binary_random_number(size=10)
 print(b)
 
-# Generating a integer random number array
+# Generating an Erlang/gamma random number array
+e = r.generate_gamma_random_number(shape=1.0, scale=1.0, size=10)
+print(e)
+
+# Generating an integer random number array
 i = r.generate_integer_random_number(low=0, high=1, size=1)
 print(i)
 

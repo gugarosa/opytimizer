@@ -143,12 +143,12 @@ class QSA(Optimizer):
             alpha = r.generate_uniform_random_number(-1, 1)
 
             # Generates an Erlang distribution
-            E = np.random.gamma(1, 0.5, (agent.n_variables, agent.n_dimensions))
+            E = r.generate_gamma_random_number(1, 0.5, (agent.n_variables, agent.n_dimensions))
 
             # If case is defined as one
             if case == 1:
                 # Generates an Erlang number
-                e = np.random.gamma(1, 0.5, 1)[0]
+                e = r.generate_gamma_random_number(1, 0.5, 1)
 
                 # Calculates the fluctuation (Eq. 6)
                 F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (A.position - a.position)
@@ -258,7 +258,7 @@ class QSA(Optimizer):
                 r2 = r.generate_uniform_random_number()
 
                 # Generates an Erlang number
-                e = np.random.gamma(1, 0.5, 1)[0]
+                e = r.generate_gamma_random_number(1, 0.5, 1)
 
                 # If random number is smaller than confusion degree
                 if r2 < cv:
@@ -318,7 +318,7 @@ class QSA(Optimizer):
                     A_1, A_2 = np.random.choice(agents, 2, replace=False)
 
                     # Generates an Erlang number
-                    e = np.random.gamma(1, 0.5, 1)[0]
+                    e = r.generate_gamma_random_number(1, 0.5, 1)
 
                     # Updates temporary agent's position (Eq. 17)
                     a.position[j] = A_1.position[j] + e * (A_2.position[j] - a.position[j])

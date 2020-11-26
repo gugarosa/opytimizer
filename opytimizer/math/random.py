@@ -21,6 +21,25 @@ def generate_binary_random_number(size=1):
     return binary_array
 
 
+def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
+    """Generates an Erlang distribution based on gamma values.
+
+    Args:
+        shape (float): Shape parameter.
+        scale (float): Scaling of the distribution.
+        size (int): Size of array.
+
+    Returns:
+        An Erlang distribution array.
+
+    """
+
+    # Generates a random Erlang number or array
+    gamma_array = np.random.gamma(shape, scale, size)
+
+    return gamma_array
+
+
 def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None):
     """Generates a random number or array based on an integer distribution.
 

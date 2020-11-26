@@ -7,6 +7,12 @@ def test_generate_binary_random_number():
     assert binary_array.shape == (5, )
 
 
+def test_generate_gamma_random_number():
+    gamma_array = random.generate_gamma_random_number(1, 1, 5)
+
+    assert gamma_array.shape == (5, )
+
+
 def test_generate_integer_random_number():
     integer_array = random.generate_integer_random_number(0, 1, None, 5)
 
