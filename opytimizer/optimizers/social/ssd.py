@@ -87,37 +87,6 @@ class SSD(Optimizer):
             raise e.ValueError('`decay` should be between 0 and 1')
         self._decay = decay
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'c' in hyperparams:
-                self.c = hyperparams['c']
-            if 'decay' in hyperparams:
-                self.decay = hyperparams['decay']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: c = %s, decay = %s | Built: %s.',
-                     self.algorithm, self.c, self.decay, self.built)
-
     def _mean_global_solution(self, alpha, beta, gamma):
         """Calculates the mean global solution (eq. 9).
 

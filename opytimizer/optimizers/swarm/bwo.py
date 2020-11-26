@@ -107,41 +107,6 @@ class BWO(Optimizer):
 
         self._pm = pm
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'pp' in hyperparams:
-                self.pp = hyperparams['pp']
-            if 'cr' in hyperparams:
-                self.cr = hyperparams['cr']
-            if 'pm' in hyperparams:
-                self.pm = hyperparams['pm']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: pp = %s, cr = %s, pm = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.pp, self.cr, self.pm,
-                     self.built)
-
     def _procreating(self, x1, x2):
         """Procreates a pair of parents into offsprings (eq. 1).
 

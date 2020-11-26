@@ -31,6 +31,7 @@ class TWO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -145,45 +146,6 @@ class TWO(Optimizer):
                 '`beta` should be greater than 0 and less than 1')
 
         self._beta = beta
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'mu_s' in hyperparams:
-                self.mu_s = hyperparams['mu_s']
-            if 'mu_k' in hyperparams:
-                self.mu_k = hyperparams['mu_k']
-            if 'delta_t' in hyperparams:
-                self.delta_t = hyperparams['delta_t']
-            if 'alpha' in hyperparams:
-                self.alpha = hyperparams['alpha']
-            if 'beta' in hyperparams:
-                self.beta = hyperparams['beta']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: mu_s = %s, mu_k = %s, delta_t = %s, '
-                     'alpha = %s, beta = %s | Built: %s.',
-                     self.algorithm, self.mu_s, self.mu_k, self.delta_t,
-                     self.alpha, self.beta, self.built)
 
     def _constraint_handle(self, agents, best_agent, function, iteration):
         """Performs the constraint handling procedure (eq. 11).

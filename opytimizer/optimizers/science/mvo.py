@@ -106,41 +106,6 @@ class MVO(Optimizer):
 
         self._p = p
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'WEP_min' in hyperparams:
-                self.WEP_min = hyperparams['WEP_min']
-            if 'WEP_max' in hyperparams:
-                self.WEP_max = hyperparams['WEP_max']
-            if 'p' in hyperparams:
-                self.p = hyperparams['p']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: WEP_min = %s, WEP_max = %s, p = %s| '
-                     'Built: %s.',
-                     self.algorithm, self.WEP_min, self.WEP_max, self.p,
-                     self.built)
-
     def _update(self, agents, best_agent, function, WEP, TDR):
         """Method that wraps updates over all agents and variables (eq. 3.1-3.4).
 

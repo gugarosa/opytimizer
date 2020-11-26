@@ -32,6 +32,7 @@ class BFO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """

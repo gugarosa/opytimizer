@@ -80,37 +80,6 @@ class HC(Optimizer):
 
         self._r_var = r_var
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'r_mean' in hyperparams:
-                self.r_mean = hyperparams['r_mean']
-            if 'r_var' in hyperparams:
-                self.r_var = hyperparams['r_var']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: r_mean = %s, r_var = %s | Built: %s.',
-                     self.algorithm, self.r_mean, self.r_var, self.built)
-
     def _update(self, agents):
         """Method that wraps Hill Climbing over all agents and variables (p. 252).
 

@@ -30,6 +30,7 @@ class GWO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -43,28 +44,6 @@ class GWO(Optimizer):
         self._build(hyperparams)
 
         logger.info('Class overrided.')
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We only save hyperparameters for experimentation compatibility
-        self.hyperparams = hyperparams
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def _calculate_coefficients(self, a):
         """Calculates the mathematical coefficients.

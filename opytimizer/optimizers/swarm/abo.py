@@ -31,6 +31,7 @@ class ABO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -84,39 +85,6 @@ class ABO(Optimizer):
             raise e.ValueError('`a` should be >= 0')
 
         self._a = a
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'sunspot_ratio' in hyperparams:
-                self.sunspot_ratio = hyperparams['sunspot_ratio']
-            if 'a' in hyperparams:
-                self.a = hyperparams['a']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: sunspot_ratio = %s, a = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.sunspot_ratio, self.a,
-                     self.built)
 
     def _flight_mode(self, agent, neighbour, function):
         """Flies to a new location according to the flight mode (eq. 1).

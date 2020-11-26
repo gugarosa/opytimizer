@@ -84,39 +84,6 @@ class EP(Optimizer):
 
         self._clip_ratio = clip_ratio
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'bout_size' in hyperparams:
-                self.bout_size = hyperparams['bout_size']
-            if 'clip_ratio' in hyperparams:
-                self.clip_ratio = hyperparams['clip_ratio']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: bout_size = %s, clip_ratio = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.bout_size, self.clip_ratio,
-                     self.built)
-
     def _mutate_parent(self, agent, function, strategy):
         """Mutates a parent into a new child (eq. 5.1).
 

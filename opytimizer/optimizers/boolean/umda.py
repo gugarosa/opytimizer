@@ -104,41 +104,6 @@ class UMDA(Optimizer):
 
         self._upper_bound = upper_bound
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'p_selection' in hyperparams:
-                self.p_selection = hyperparams['p_selection']
-            if 'lower_bound' in hyperparams:
-                self.lower_bound = hyperparams['lower_bound']
-            if 'upper_bound' in hyperparams:
-                self.upper_bound = hyperparams['upper_bound']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: p_selection = %s, bounds = ({%s, %s) | '
-                     'Built: %s.',
-                     self.algorithm, self.p_selection, self.lower_bound, self.upper_bound,
-                     self.built)
-
     def _calculate_probability(self, agents):
         """Calculates probabilities based on pre-selected agents' variables occurrence (eq. 47).
 

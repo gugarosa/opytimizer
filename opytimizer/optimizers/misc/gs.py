@@ -22,11 +22,12 @@ class GS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GS'):
+    def __init__(self, algorithm='GS', hyperparams=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -36,25 +37,9 @@ class GS(Optimizer):
         super(GS, self).__init__(algorithm)
 
         # Now, we need to build this class up
-        self._build()
+        self._build(hyperparams)
 
         logger.info('Class overrided.')
-
-    def _build(self):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline (p. 282-283).

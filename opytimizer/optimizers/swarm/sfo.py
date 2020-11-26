@@ -33,6 +33,7 @@ class SFO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -106,41 +107,6 @@ class SFO(Optimizer):
             raise ex.ValueError('`e` should be >= 0')
 
         self._e = e
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the mp_mutation-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'PP' in hyperparams:
-                self.PP = hyperparams['PP']
-            if 'A' in hyperparams:
-                self.A = hyperparams['A']
-            if 'e' in hyperparams:
-                self.e = hyperparams['e']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: PP = %s, A = %s, e = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.PP, self.A, self.e,
-                     self.built)
 
     def _generate_random_agent(self, agent):
         """Generates a new random-based agent.

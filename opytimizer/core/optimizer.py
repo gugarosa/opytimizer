@@ -71,6 +71,35 @@ class Optimizer:
     def built(self, built):
         self._built = built
 
+    def _build(self, hyperparams):
+        """This method serves as the object building process.
+
+        Args:
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
+        """
+
+        logger.debug('Running private method: build().')
+
+        # We need to save the hyperparams object for faster looking up
+        self.hyperparams = hyperparams
+
+        # Checks if hyperparams are really provided
+        if hyperparams:
+            # If one can find any hyperparam inside its object
+            for k, v in hyperparams.items():
+                # Set it as the one that will be used
+                setattr(self, k, v)
+
+        # Set built variable to 'True'
+        self.built = True
+
+        # Logging attributes
+        logger.debug('Algorithm: %s | Hyperparameters: %s | '
+                     'Built: %s.',
+                     self.algorithm, str(hyperparams),
+                     self.built)
+
     def _update(self):
         """Updates the agents' position array.
 

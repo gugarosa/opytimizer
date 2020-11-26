@@ -225,55 +225,6 @@ class KH(Optimizer):
 
         self._Mu = Mu
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'N_max' in hyperparams:
-                self.N_max = hyperparams['N_max']
-            if 'w_n' in hyperparams:
-                self.w_n = hyperparams['w_n']
-            if 'NN' in hyperparams:
-                self.NN = hyperparams['NN']
-            if 'V_f' in hyperparams:
-                self.V_f = hyperparams['V_f']
-            if 'w_f' in hyperparams:
-                self.w_f = hyperparams['w_f']
-            if 'D_max' in hyperparams:
-                self.D_max = hyperparams['D_max']
-            if 'C_t' in hyperparams:
-                self.C_t = hyperparams['C_t']
-            if 'Cr' in hyperparams:
-                self.Cr = hyperparams['Cr']
-            if 'Mu' in hyperparams:
-                self.Mu = hyperparams['Mu']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: N_max = %s, w_n = %s, NN = %d, '
-                     'V_f = %s, w_f = %s, D_max = %s, C_t = %s, '
-                     'Cr = %s, Mu = %s | Built: %s.',
-                     self.algorithm, self.N_max, self.w_n, self.NN,
-                     self.V_f, self.w_f, self.D_max, self.C_t,
-                     self.Cr, self.Mu, self.built)
-
     def _food_location(self, agents, function):
         """Calculates the food location.
 

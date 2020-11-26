@@ -82,37 +82,6 @@ class CEM(Optimizer):
 
         self._alpha = alpha
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'n_updates' in hyperparams:
-                self.n_updates = hyperparams['n_updates']
-            if 'alpha' in hyperparams:
-                self.alpha = hyperparams['alpha']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: n_updates = %d, alpha = %s | Built: %s.',
-                     self.algorithm, self.n_updates, self.alpha, self.built)
-
     def _create_new_samples(self, agents, function, mean, std):
         """Creates new agents based on current mean and standard deviation.
 

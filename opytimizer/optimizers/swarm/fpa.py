@@ -104,41 +104,6 @@ class FPA(Optimizer):
 
         self._p = p
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'beta' in hyperparams:
-                self.beta = hyperparams['beta']
-            if 'eta' in hyperparams:
-                self.eta = hyperparams['eta']
-            if 'p' in hyperparams:
-                self.p = hyperparams['p']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: beta = %s, eta = %s, p = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.beta, self.eta, self.p,
-                     self.built)
-
     def _global_pollination(self, agent_position, best_position):
         """Updates the agent's position based on a global pollination (eq. 1).
 

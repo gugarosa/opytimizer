@@ -32,6 +32,7 @@ class CS(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -105,41 +106,6 @@ class CS(Optimizer):
             raise e.ValueError('`p` should be between 0 and 1')
 
         self._p = p
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'alpha' in hyperparams:
-                self.alpha = hyperparams['alpha']
-            if 'beta' in hyperparams:
-                self.beta = hyperparams['beta']
-            if 'p' in hyperparams:
-                self.p = hyperparams['p']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: alpha = %s, beta = %s, p = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.alpha, self.beta, self.p,
-                     self.built)
 
     def _generate_new_nests(self, agents, best_agent):
         """Generate new nests (eq. 1).

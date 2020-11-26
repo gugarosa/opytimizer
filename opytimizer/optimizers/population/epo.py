@@ -29,6 +29,7 @@ class EPO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -78,37 +79,6 @@ class EPO(Optimizer):
             raise e.TypeError('`l` should be a float or integer')
 
         self._l = l
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'f' in hyperparams:
-                self.f = hyperparams['f']
-            if 'l' in hyperparams:
-                self.l = hyperparams['l']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: f = %s, l = %s | Built: %s.',
-                     self.algorithm, self.f, self.l, self.built)
 
     def _update(self, agents, best_agent, iteration, n_iterations):
         """Method that wraps the Emperor Penguin Optimization over all agents and variables.

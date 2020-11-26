@@ -86,37 +86,6 @@ class WCA(Optimizer):
 
         self._d_max = d_max
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'nsr' in hyperparams:
-                self.nsr = hyperparams['nsr']
-            if 'd_max' in hyperparams:
-                self.d_max = hyperparams['d_max']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: nsr = %d, d_max = %d| Built: %s.',
-                     self.algorithm, self.nsr, self.d_max, self.built)
-
     def _flow_intensity(self, agents):
         """Calculates the intensity of each possible flow (eq. 6).
 

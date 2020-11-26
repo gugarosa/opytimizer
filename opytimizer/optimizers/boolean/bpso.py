@@ -84,37 +84,6 @@ class BPSO(Optimizer):
 
         self._c2 = c2
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'c1' in hyperparams:
-                self.c1 = hyperparams['c1']
-            if 'c2' in hyperparams:
-                self.c2 = hyperparams['c2']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: c1 = %s, c2 = %s | Built: %s.',
-                     self.algorithm, self.c1, self.c2, self.built)
-
     def _update_velocity(self, position, best_position, local_position):
         """Updates a particle velocity (eq. 1).
 

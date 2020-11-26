@@ -127,43 +127,6 @@ class GP(Optimizer):
 
         self._prunning_ratio = prunning_ratio
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'p_reproduction' in hyperparams:
-                self.p_reproduction = hyperparams['p_reproduction']
-            if 'p_mutation' in hyperparams:
-                self.p_mutation = hyperparams['p_mutation']
-            if 'p_crossover' in hyperparams:
-                self.p_crossover = hyperparams['p_crossover']
-            if 'prunning_ratio' in hyperparams:
-                self.prunning_ratio = hyperparams['prunning_ratio']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_reproduction = %s, p_mutation = %s, '
-                     'p_crossover = %s, prunning_ratio = %s | Built: %s.',
-                     self.algorithm, self.p_reproduction, self.p_mutation,
-                     self.p_crossover, self.prunning_ratio, self.built)
-
     def _prune_nodes(self, n_nodes):
         """Prunes the amount of possible nodes used for mutation and crossover.
 

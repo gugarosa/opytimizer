@@ -44,28 +44,6 @@ class BH(Optimizer):
 
         logger.info('Class overrided.')
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We only save hyperparameters for experimentation compatibility
-        self.hyperparams = hyperparams
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Built: %s.', self.algorithm, self.built)
-
     def _update_position(self, agents, best_agent, function):
         """It updates every star position and calculates their event's horizon cost (eq. 3).
 

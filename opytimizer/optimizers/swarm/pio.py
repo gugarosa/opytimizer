@@ -30,6 +30,7 @@ class PIO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -103,41 +104,6 @@ class PIO(Optimizer):
             raise e.ValueError('`R` should be >= 0')
 
         self._R = R
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'n_c1' in hyperparams:
-                self.n_c1 = hyperparams['n_c1']
-            if 'n_c2' in hyperparams:
-                self.n_c2 = hyperparams['n_c2']
-            if 'R' in hyperparams:
-                self.R = hyperparams['R']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: n_c1 = %s, n_c2 = %s, R = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.n_c1, self.n_c2, self.R,
-                     self.built)
 
     def _update_velocity(self, position, best_position, velocity, iteration):
         """Updates a particle velocity (eq. 5).

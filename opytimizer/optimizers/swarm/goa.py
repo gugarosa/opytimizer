@@ -32,6 +32,7 @@ class GOA(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -127,43 +128,6 @@ class GOA(Optimizer):
             raise e.ValueError('`l` should be >= 0')
 
         self._l = l
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'c_min' in hyperparams:
-                self.c_min = hyperparams['c_min']
-            if 'c_max' in hyperparams:
-                self.c_max = hyperparams['c_max']
-            if 'f' in hyperparams:
-                self.f = hyperparams['f']
-            if 'l' in hyperparams:
-                self.l = hyperparams['l']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: c_min = %s, c_max = %s, f = %s, l = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.c_min, self.c_max, self.f, self.l,
-                     self.built)
 
     def _social_force(self, r):
         """Calculates the social force based on an input value.

@@ -108,41 +108,6 @@ class PSO(Optimizer):
 
         self._c2 = c2
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'w' in hyperparams:
-                self.w = hyperparams['w']
-            if 'c1' in hyperparams:
-                self.c1 = hyperparams['c1']
-            if 'c2' in hyperparams:
-                self.c2 = hyperparams['c2']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: w = %s, c1 = %s, c2 = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.w, self.c1, self.c2,
-                     self.built)
-
     def _update_velocity(self, position, best_position, local_position, velocity):
         """Updates a particle velocity (p. 295).
 
@@ -317,17 +282,14 @@ class AIWPSO(PSO):
 
         logger.info('Overriding class: PSO -> AIWPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(AIWPSO, self).__init__(algorithm, hyperparams)
-
         # Minimum inertia weight
         self.w_min = 0.1
 
         # Maximum inertia weight
         self.w_max = 0.9
 
-        # Now, we need to re-build this class up
-        self._rebuild()
+        # Override its parent class with the receiving hyperparams
+        super(AIWPSO, self).__init__(algorithm, hyperparams)
 
         logger.info('Class overrided.')
 
@@ -366,27 +328,6 @@ class AIWPSO(PSO):
             raise e.ValueError('`w_max` should be >= `w_min`')
 
         self._w_max = w_max
-
-    def _rebuild(self):
-        """This method serves as the object re-building process.
-
-        One is supposed to use this class only when defining extra hyperparameters
-        that can not be inherited by its parent.
-
-        """
-
-        logger.debug('Running private method: rebuild().')
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if self.hyperparams:
-            if 'w_min' in self.hyperparams:
-                self.w_min = self.hyperparams['w_min']
-            if 'w_max' in self.hyperparams:
-                self.w_max = self.hyperparams['w_max']
-
-        # Logging attributes
-        logger.debug('Additional hyperparameters: w_min = %s, w_max = %s.', self.w_min, self.w_max)
 
     def _compute_success(self, agents, fitness):
         """Computes the particles' success for updating inertia weight (eq. 16).

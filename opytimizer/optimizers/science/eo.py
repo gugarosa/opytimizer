@@ -31,6 +31,7 @@ class EO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -124,43 +125,6 @@ class EO(Optimizer):
             raise e.ValueError('`V` should be >= 0')
 
         self._V = V
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'a1' in hyperparams:
-                self.a1 = hyperparams['a1']
-            if 'a2' in hyperparams:
-                self.a2 = hyperparams['a2']
-            if 'GP' in hyperparams:
-                self.GP = hyperparams['GP']
-            if 'V' in hyperparams:
-                self.V = hyperparams['V']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: a1 = %s, a2 = %s, GP = %s, V = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.a1, self.a2, self.GP, self.V,
-                     self.built)
 
     def _calculate_equilibrium(self, agents, C):
         """Calculates the equilibrium concentrations.

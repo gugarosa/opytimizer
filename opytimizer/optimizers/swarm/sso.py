@@ -32,6 +32,7 @@ class SSO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -105,41 +106,6 @@ class SSO(Optimizer):
             raise e.ValueError('`C_g` should be equal or greater than `C_p`')
 
         self._C_g = C_g
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'C_w' in hyperparams:
-                self.C_w = hyperparams['C_w']
-            if 'C_p' in hyperparams:
-                self.C_p = hyperparams['C_p']
-            if 'C_g' in hyperparams:
-                self.C_g = hyperparams['C_g']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: C_w = %s, C_p = %s, C_g = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.C_w, self.C_p, self.C_g,
-                     self.built)
 
     def _update(self, agents, best_agent, local_position):
         """Method that wraps velocity and position updates over all agents and variables.

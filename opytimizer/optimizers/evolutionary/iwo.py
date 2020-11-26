@@ -146,45 +146,6 @@ class IWO(Optimizer):
 
         self._init_sigma = init_sigma
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'min_seeds' in hyperparams:
-                self.min_seeds = hyperparams['min_seeds']
-            if 'max_seeds' in hyperparams:
-                self.max_seeds = hyperparams['max_seeds']
-            if 'e' in hyperparams:
-                self.e = hyperparams['e']
-            if 'final_sigma' in hyperparams:
-                self.final_sigma = hyperparams['final_sigma']
-            if 'init_sigma' in hyperparams:
-                self.init_sigma = hyperparams['init_sigma']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: min_seeds = %d, max_seeds = %d, e = %s, '
-                     'init_sigma = %s, final_sigma = %s | Built: %s.',
-                     self.algorithm, self.min_seeds, self.max_seeds, self.e,
-                     self.init_sigma, self.final_sigma, self.built)
-
     def _spatial_dispersal(self, iteration, n_iterations):
         """Calculates the Spatial Dispersal coefficient (eq. 1).
 

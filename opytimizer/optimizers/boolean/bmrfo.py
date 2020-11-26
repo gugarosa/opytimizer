@@ -51,6 +51,7 @@ class BMRFO(Optimizer):
     @property
     def S(self):
         """float: Somersault foraging.
+
         """
 
         return self._S
@@ -61,35 +62,6 @@ class BMRFO(Optimizer):
             raise e.TypeError('`S` should be a numpy array')
 
         self._S = S
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'S' in hyperparams:
-                self.S = hyperparams['S']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: S = %s | Built: %s.',
-                     self.algorithm, self.S, self.built)
 
     def _cyclone_foraging(self, agents, best_position, i, iteration, n_iterations):
         """Performs the cyclone foraging procedure.

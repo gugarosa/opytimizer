@@ -31,6 +31,7 @@ class EHO(Optimizer):
         """Initialization method.
 
         Args:
+            algorithm (str): Indicates the algorithm name.
             hyperparams (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -104,41 +105,6 @@ class EHO(Optimizer):
             raise e.ValueError('`n_clans` should be >= 0')
 
         self._n_clans = n_clans
-
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'alpha' in hyperparams:
-                self.alpha = hyperparams['alpha']
-            if 'beta' in hyperparams:
-                self.beta = hyperparams['beta']
-            if 'n_clans'in hyperparams:
-                self.n_clans = hyperparams['n_clans']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: alpha = %s, beta = %s, n_clans = %s | '
-                     'Built: %s.',
-                     self.algorithm, self.alpha, self.beta, self.n_clans,
-                     self.built)
 
     def _get_agents_from_clan(self, agents, index, n_ci):
         """Gets a set of agents from a specified clan.

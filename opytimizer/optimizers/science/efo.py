@@ -128,43 +128,6 @@ class EFO(Optimizer):
 
         self._r_ratio = r_ratio
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'positive_field' in hyperparams:
-                self.positive_field = hyperparams['positive_field']
-            if 'negative_field' in hyperparams:
-                self.negative_field = hyperparams['negative_field']
-            if 'ps_ratio' in hyperparams:
-                self.ps_ratio = hyperparams['ps_ratio']
-            if 'r_ratio' in hyperparams:
-                self.r_ratio = hyperparams['r_ratio']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: positive_field = %s, negative_field = %s, '
-                     'ps_ratio = %s, r_ratio = %s | Built: %s.',
-                     self.algorithm, self.positive_field, self.negative_field,
-                     self.ps_ratio, self.r_ratio, self.built)
-
     def _calculate_indexes(self, n_agents):
         """Calculates the indexes of positive, negative and neutral particles.
 

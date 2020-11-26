@@ -107,39 +107,6 @@ class HS(Optimizer):
 
         self._bw = bw
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'HMCR' in hyperparams:
-                self.HMCR = hyperparams['HMCR']
-            if 'PAR' in hyperparams:
-                self.PAR = hyperparams['PAR']
-            if 'bw' in hyperparams:
-                self.bw = hyperparams['bw']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: HMCR = %s, PAR = %s, bw = %s | Built: %s.',
-                     self.algorithm, self.HMCR, self.PAR, self.bw, self.built)
-
     def _generate_new_harmony(self, agents):
         """It generates a new harmony.
 
@@ -286,9 +253,6 @@ class IHS(HS):
 
         logger.info('Overriding class: HS -> IHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(IHS, self).__init__(algorithm, hyperparams)
-
         # Minimum pitch adjusting rate
         self.PAR_min = 0
 
@@ -301,8 +265,8 @@ class IHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Now, we need to re-build this class up
-        self._rebuild()
+        # Override its parent class with the receiving hyperparams
+        super(IHS, self).__init__(algorithm, hyperparams)
 
         logger.info('Class overrided.')
 
@@ -377,34 +341,6 @@ class IHS(HS):
             raise e.ValueError('`bw_max` should be >= `bw_min`')
 
         self._bw_max = bw_max
-
-    def _rebuild(self):
-        """This method serves as the object re-building process.
-
-        One is supposed to use this class only when defining extra hyperparameters
-        that can not be inherited by its parent.
-
-        """
-
-        logger.debug('Running private method: rebuild().')
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if self.hyperparams:
-            if 'PAR_min' in self.hyperparams:
-                self.PAR_min = self.hyperparams['PAR_min']
-            if 'PAR_max' in self.hyperparams:
-                self.PAR_max = self.hyperparams['PAR_max']
-            if 'bw_min' in self.hyperparams:
-                self.bw_min = self.hyperparams['bw_min']
-            if 'bw_max' in self.hyperparams:
-                self.bw_max = self.hyperparams['bw_max']
-
-        # Logging attributes
-        logger.debug('Additional hyperparameters: PAR_min = %s, PAR_max = %s, '
-                     'bw_min = %s, bw_max = %s.',
-                     self.PAR_min, self.PAR_max,
-                     self.bw_min, self.bw_max)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
         """Runs the optimization pipeline.
@@ -561,9 +497,6 @@ class SGHS(HS):
 
         logger.info('Overriding class: HS -> SGHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(SGHS, self).__init__(algorithm, hyperparams)
-
         # Learning period
         self.LP = 100
 
@@ -579,8 +512,8 @@ class SGHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Now, we need to re-build this class up
-        self._rebuild()
+        # Override its parent class with the receiving hyperparams
+        super(SGHS, self).__init__(algorithm, hyperparams)
 
         logger.info('Class overrided.')
 
@@ -700,36 +633,6 @@ class SGHS(HS):
             raise e.ValueError('`bw_max` should be >= `bw_min`')
 
         self._bw_max = bw_max
-
-    def _rebuild(self):
-        """This method serves as the object re-building process.
-
-        One is supposed to use this class only when defining extra hyperparameters
-        that can not be inherited by its parent.
-
-        """
-
-        logger.debug('Running private method: rebuild().')
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if self.hyperparams:
-            if 'LP' in self.hyperparams:
-                self.LP = self.hyperparams['LP']
-            if 'HMCRm' in self.hyperparams:
-                self.HMCRm = self.hyperparams['HMCRm']
-            if 'PARm' in self.hyperparams:
-                self.PARm = self.hyperparams['PARm']
-            if 'bw_min' in self.hyperparams:
-                self.bw_min = self.hyperparams['bw_min']
-            if 'bw_max' in self.hyperparams:
-                self.bw_max = self.hyperparams['bw_max']
-
-        # Logging attributes
-        logger.debug('Additional hyperparameters: HMCRm = %s, PARm = %s, '
-                     'bw_min = %s, bw_max = %s.',
-                     self.HMCRm, self.PARm,
-                     self.bw_min, self.bw_max)
 
     def _generate_new_harmony(self, agents):
         """It generates a new harmony.
@@ -887,14 +790,11 @@ class NGHS(HS):
 
         logger.info('Overriding class: HS -> NGHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(NGHS, self).__init__(algorithm, hyperparams)
-
         # Mutation probability
         self.pm = 0.1
 
-        # Now, we need to re-build this class up
-        self._rebuild()
+        # Override its parent class with the receiving hyperparams
+        super(NGHS, self).__init__(algorithm, hyperparams)
 
         logger.info('Class overrided.')
 
@@ -914,25 +814,6 @@ class NGHS(HS):
             raise e.ValueError('`pm` should be between 0 and 1')
 
         self._pm = pm
-
-    def _rebuild(self):
-        """This method serves as the object re-building process.
-
-        One is supposed to use this class only when defining extra hyperparameters
-        that can not be inherited by its parent.
-
-        """
-
-        logger.debug('Running private method: rebuild().')
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if self.hyperparams:
-            if 'pm' in self.hyperparams:
-                self.pm = self.hyperparams['pm']
-
-        # Logging attributes
-        logger.debug('Additional hyperparameters: pm = %s', self.pm)
 
     def _generate_new_harmony(self, best, worst):
         """It generates a new harmony.

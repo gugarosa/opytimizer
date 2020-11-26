@@ -106,41 +106,6 @@ class GA(Optimizer):
 
         self._p_crossover = p_crossover
 
-    def _build(self, hyperparams):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
-
-        # If one can find any hyperparam inside its object,
-        # set them as the ones that will be used
-        if hyperparams:
-            if 'p_selection' in hyperparams:
-                self.p_selection = hyperparams['p_selection']
-            if 'p_mutation' in hyperparams:
-                self.p_mutation = hyperparams['p_mutation']
-            if 'p_crossover' in hyperparams:
-                self.p_crossover = hyperparams['p_crossover']
-
-        # Set built variable to 'True'
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Algorithm: %s| Hyperparameters: p_selection = %s, p_mutation = %s, '
-                     'p_crossover = %s | Built: %s.',
-                     self.algorithm, self.p_selection, self.p_mutation,
-                     self.p_crossover, self.built)
-
     def _roulette_selection(self, n_agents, fitness):
         """Performs a roulette selection on the population (p. 8).
 
