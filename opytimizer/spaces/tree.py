@@ -55,10 +55,14 @@ class TreeSpace(Space):
         # Maximum depth of the trees
         self.max_depth = max_depth
 
-        # List of functions nodes
+        # Checks if functions do not exist
         if functions is None:
+            # Creates a list for compatibility
             self.functions = []
+        
+        # If functions really exist
         else:
+            # Attach them to a property
             self.functions = functions
 
         # Now, we need to build this class up

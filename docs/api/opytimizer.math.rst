@@ -6,7 +6,7 @@ Just because we are computing stuff, it does not means that we do not need math.
 .. toctree::
     opytimizer.math.distribution
     opytimizer.math.general
-    opytimizer.math.hypercomplex
+    opytimizer.math.hyper
     opytimizer.math.random
 
 .. automodule:: opytimizer.math

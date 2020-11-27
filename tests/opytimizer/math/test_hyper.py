@@ -1,12 +1,12 @@
 import numpy as np
 
-from opytimizer.math import hypercomplex
+from opytimizer.math import hyper
 
 
 def test_norm():
     array = np.array([[1, 1]])
 
-    norm_array = hypercomplex.norm(array)
+    norm_array = hyper.norm(array)
 
     assert norm_array > 0
 
@@ -18,6 +18,6 @@ def test_span():
 
     ub = [10]
 
-    span_array = hypercomplex.span(array, lb, ub)
+    span_array = hyper.span(array, lb, ub)
 
     assert span_array > 0

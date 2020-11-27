@@ -20,7 +20,7 @@ class Opytimizer:
 
         Args:
             space (Space): A Space's object,
-                where it has to be a child (e.g., SearchSpace, HyperSpace, etc).
+                where it has to be a child (e.g., SearchSpace, HyperComplexSpace, etc).
             optimizer (Optimizer): An Optimizer's object,
                 where it has to be a child (e.g., PSO, BA, etc).
             function (Function): A Function's object,
@@ -47,7 +47,7 @@ class Opytimizer:
 
     @property
     def space(self):
-        """Space: A Space's object, where it has to be a child (SearchSpace, HyperSpace, etc).
+        """Space: A Space's object, where it has to be a child (SearchSpace, HyperComplexSpace, etc).
 
         """
 

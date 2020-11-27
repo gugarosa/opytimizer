@@ -8,8 +8,8 @@ from opytimizer.core.space import Space
 logger = l.get_logger(__name__)
 
 
-class HyperSpace(Space):
-    """An HyperSpace class that will hold agents, variables and methods
+class HyperComplexSpace(Space):
+    """An HyperComplexSpace class that will hold agents, variables and methods
     related to the hypercomplex search space.
 
     """
@@ -28,10 +28,10 @@ class HyperSpace(Space):
 
         """
 
-        logger.info('Overriding class: Space -> HyperSpace.')
+        logger.info('Overriding class: Space -> HyperComplexSpace.')
 
         # Override its parent class with the receiving arguments
-        super(HyperSpace, self).__init__(n_agents, n_variables, n_dimensions, n_iterations)
+        super(HyperComplexSpace, self).__init__(n_agents, n_variables, n_dimensions, n_iterations)
 
         # Now, we need to build this class up
         self._build(lower_bound, upper_bound)
