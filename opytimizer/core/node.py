@@ -528,9 +528,7 @@ def _evaluate(node):
         if node.name == 'COS':
             return np.cos(x)
 
-    # If the node does not exists
-    else:
-        return None
+    return None
 
 
 def _properties(node):

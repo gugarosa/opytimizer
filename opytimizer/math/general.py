@@ -95,3 +95,5 @@ def weighted_wheel_selection(weights):
         if c_sum > prob:
             # Returns the individual
             return i
+
+    return None
