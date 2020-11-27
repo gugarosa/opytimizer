@@ -200,21 +200,6 @@ class Space:
     def built(self, built):
         self._built = built
 
-    def _create_agents(self):
-        """Creates a list of agents and the best agent.
-
-        Also defines a random best agent, only for initialization purposes.
-
-        """
-
-        logger.debug('Running private method: create_agents().')
-
-        # Creating a list of agents
-        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
-
-        # Apply the first agent as the best one
-        self.best_agent = copy.deepcopy(self.agents[0])
-
     def _build(self, lower_bound, upper_bound):
         """This method serves as the object building process.
 
@@ -246,6 +231,21 @@ class Space:
                      'Lower Bound: %s | Upper Bound: %s | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
                      self.lb, self.ub, self.built)
+
+    def _create_agents(self):
+        """Creates a list of agents and the best agent.
+
+        Also defines a random best agent, only for initialization purposes.
+
+        """
+
+        logger.debug('Running private method: create_agents().')
+
+        # Creating a list of agents
+        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
+
+        # Apply the first agent as the best one
+        self.best_agent = copy.deepcopy(self.agents[0])
 
     def _initialize_agents(self):
         """Initialize agents' position array.

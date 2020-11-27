@@ -3,7 +3,7 @@
 
 from functools import wraps
 
-import opytimizer.math.hypercomplex as h
+import opytimizer.math.hyper as h
 
 
 def hyper_spanning(lb, ub):

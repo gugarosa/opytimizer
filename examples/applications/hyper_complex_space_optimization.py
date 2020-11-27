@@ -1,12 +1,12 @@
 import numpy as np
 from opytimark.markers.n_dimensional import Sphere
 
-import opytimizer.math.hypercomplex as h
+import opytimizer.math.hyper as h
 import opytimizer.utils.decorator as d
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.hyper import HyperSpace
+from opytimizer.spaces.hyper_complex import HyperComplexSpace
 
 # Random seed for experimental consistency
 np.random.seed(0)
@@ -27,17 +27,17 @@ n_iterations = 10000
 lower_bound = (-10, -10)
 upper_bound = (10, 10)
 
-# Creating the HyperSpace class
-s = HyperSpace(n_agents=n_agents, n_iterations=n_iterations,
-               n_variables=n_variables, n_dimensions=n_dimensions,
-               lower_bound=lower_bound, upper_bound=upper_bound)
+# Creating the HyperComplexSpace class
+s = HyperComplexSpace(n_agents=n_agents, n_iterations=n_iterations,
+                      n_variables=n_variables, n_dimensions=n_dimensions,
+                      lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Wrapping the objective function with a spanning decorator
 # This decorator allows values to be spanned between lower and upper bounds
 @d.hyper_spanning(lower_bound, upper_bound)
 def wrapper(x):
-    s = Sphere()
-    return s(x)
+    z = Sphere()
+    return z(x)
 
 # Creating Function's object
 f = Function(pointer=wrapper)

@@ -26,23 +26,44 @@ class WeightedFunction:
         """
 
         logger.info('Creating class: WeightedFunction.')
-
-        # Creating the functions property
+        
+        # Checks if functions do not exist
         if functions is None:
+            # Creates a list for compatibility
             self.functions = []
+        
+        # If functions really exist
         else:
+            # Creating the functions property
             self.functions = functions
 
-        # Creating the weights property
+        # Checks if weights do not exist
         if weights is None:
+            # Creates a list for compatibility
             self.weights = []
+
+        # If weights really exist
         else:
+            # Creating the weights property
             self.weights = weights
 
         # Now, we need to build this class up
         self._build(constraints, penalty)
 
         logger.info('Class created.')
+
+    def __call__(self, x):
+        """Defines a callable to this class in order to avoid using directly the property.
+
+        Args:
+            x (np.array): Array of positions to be calculated.
+
+        Returns:
+            The output of the objective function.
+
+        """
+
+        return self.pointer(x)
 
     @property
     def functions(self):
@@ -73,19 +94,6 @@ class WeightedFunction:
             raise e.TypeError('`weights` should be a list')
 
         self._weights = weights
-
-    def __call__(self, x):
-        """Defines a callable to this class in order to avoid using directly the property.
-
-        Args:
-            x (np.array): Array of positions to be calculated.
-
-        Returns:
-            The output of the objective function.
-
-        """
-
-        return self.pointer(x)
 
     def _create_multi_objective(self):
         """Creates a multi-objective strategy as the real pointer.

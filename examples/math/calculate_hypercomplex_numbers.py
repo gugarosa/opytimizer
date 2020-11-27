@@ -1,6 +1,6 @@
 import numpy as np
 
-import opytimizer.math.hypercomplex as h
+import opytimizer.math.hyper as h
 
 # Creating an array with ones
 a = np.ones((2, 4))

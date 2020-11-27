@@ -1,4 +1,4 @@
-from opytimizer.spaces.hyper import HyperSpace
+from opytimizer.spaces.hyper_complex import HyperComplexSpace
 
 # Firstly, we need to define the number of agents
 n_agents = 2
@@ -17,7 +17,7 @@ n_iterations = 10
 lower_bound = (0.1, 0.3, 0.5, 0.7, 0.9)
 upper_bound = (0.2, 0.4, 0.6, 0.8, 1.0)
 
-# Creating the HyperSpace object
-s = HyperSpace(n_agents=n_agents, n_variables=n_variables,
-               n_dimensions=n_dimensions, n_iterations=n_iterations,
-               lower_bound=lower_bound, upper_bound=upper_bound)
+# Creating the HyperComplexSpace object
+s = HyperComplexSpace(n_agents=n_agents, n_variables=n_variables,
+                      n_dimensions=n_dimensions, n_iterations=n_iterations,
+                      lower_bound=lower_bound, upper_bound=upper_bound)

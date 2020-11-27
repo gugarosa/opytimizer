@@ -40,10 +40,14 @@ class Function:
             # Applies its name as the class' name
             self.name = pointer.__class__.__name__
 
-        # Save the constraints for further inspection
+        # Checks if constraints do not exist
         if constraints is None:
+            # Creates an empty list for compatibility
             self.constraints = []
+
+        # If constraints exist
         else:
+            # Save the constraints for further inspection
             self.constraints = constraints
 
         # Creates a property for holding the penalization factor

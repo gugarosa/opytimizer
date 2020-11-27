@@ -9,11 +9,13 @@ from opytimizer.core.space import Space
 
 logger = l.get_logger(__name__)
 
+
 class BooleanSpace(Space):
     """A BooleanSpace class for agents, variables and methods
     related to the boolean search space.
 
     """
+
     def __init__(self, n_agents=1, n_variables=1, n_iterations=10):
         """Initialization method.
 
