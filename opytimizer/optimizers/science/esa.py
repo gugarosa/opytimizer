@@ -1,4 +1,4 @@
-"""Electro-Search.
+"""Electro-Search Algorithm.
 """
 
 import copy
@@ -16,8 +16,8 @@ from opytimizer.core.optimizer import Optimizer
 logger = l.get_logger(__name__)
 
 
-class ES(Optimizer):
-    """An ES class, inherited from Optimizer.
+class ESA(Optimizer):
+    """An ESA class, inherited from Optimizer.
 
     This is the designed class to define ES-related
     variables and methods.
@@ -28,7 +28,7 @@ class ES(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ES', hyperparams=None):
+    def __init__(self, algorithm='ESA', hyperparams=None):
         """Initialization method.
 
         Args:
@@ -37,10 +37,10 @@ class ES(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ES.')
+        logger.info('Overriding class: Optimizer -> ESA.')
 
         # Override its parent class with the receiving hyperparams
-        super(ES, self).__init__(algorithm)
+        super(ESA, self).__init__(algorithm)
 
         # Now, we need to build this class up
         self._build(hyperparams)
