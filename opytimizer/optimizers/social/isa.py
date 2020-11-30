@@ -23,7 +23,7 @@ class ISA(Optimizer):
     variables and methods.
 
     References:
-        A. Mortazavi, V. Toğan, A. Nuhoğlu.
+        A. Mortazavi, V. Toğan and A. Nuhoğlu.
         Interactive search algorithm: A new hybrid metaheuristic optimization algorithm.
         Engineering Applications of Artificial Intelligence (2018).
 

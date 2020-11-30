@@ -23,7 +23,7 @@ class LPOA(Optimizer):
     variables and methods.
 
     References:
-        A. Kaveh, S. Mahjoubi.
+        A. Kaveh and S. Mahjoubi.
         Lion Pride Optimization Algorithm: A meta-heuristic method for global optimization problems.
         Scientia Iranica (2018).
 

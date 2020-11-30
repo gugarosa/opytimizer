@@ -23,7 +23,7 @@ class ESA(Optimizer):
     variables and methods.
 
     References:
-        A. Tabari, A. Ahmad. A new optimization method: Electro-Search algorithm.
+        A. Tabari and A. Ahmad. A new optimization method: Electro-Search algorithm.
         Computers & Chemical Engineering (2017).
 
     """

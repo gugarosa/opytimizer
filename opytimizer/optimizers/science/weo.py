@@ -23,7 +23,7 @@ class WEO(Optimizer):
     variables and methods.
 
     References:
-        A. Kaveh, T. Bakhshpoori.
+        A. Kaveh and T. Bakhshpoori.
         Water Evaporation Optimization: A novel physically inspired optimization algorithm.
         Computers & Structures (2016).
 

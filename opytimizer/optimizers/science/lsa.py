@@ -23,7 +23,7 @@ class LSA(Optimizer):
     variables and methods.
 
     References:
-        H. Shareef, A. Ibrahim, A. Mutlag. Lightning search algorithm.
+        H. Shareef, A. Ibrahim and A. Mutlag. Lightning search algorithm.
         Applied Soft Computing (2015).
 
     """

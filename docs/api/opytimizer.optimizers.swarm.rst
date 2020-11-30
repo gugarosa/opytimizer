@@ -4,6 +4,7 @@ opytimizer.optimizers.swarm
 .. toctree::
     opytimizer.optimizers.swarm.abc
     opytimizer.optimizers.swarm.abo
+    opytimizer.optimizers.swarm.af
     opytimizer.optimizers.swarm.ba
     opytimizer.optimizers.swarm.bfo
     opytimizer.optimizers.swarm.boa
@@ -14,6 +15,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.fa
     opytimizer.optimizers.swarm.ffoa
     opytimizer.optimizers.swarm.fpa
+    opytimizer.optimizers.swarm.fso
     opytimizer.optimizers.swarm.goa
     opytimizer.optimizers.swarm.kh
     opytimizer.optimizers.swarm.mfo
@@ -26,6 +28,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.sos
     opytimizer.optimizers.swarm.ssa
     opytimizer.optimizers.swarm.sso
+    opytimizer.optimizers.swarm.stoa
     opytimizer.optimizers.swarm.woa
 
 .. automodule:: opytimizer.optimizers.swarm

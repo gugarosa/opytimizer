@@ -23,7 +23,7 @@ class STOA(Optimizer):
     variables and methods.
 
     References:
-        G. Dhiman, A. Kaur. STOA: A bio-inspired based optimization algorithm for industrial engineering problems.
+        G. Dhiman and A. Kaur. STOA: A bio-inspired based optimization algorithm for industrial engineering problems.
         Engineering Applications of Artificial Intelligence (2019).
 
     """

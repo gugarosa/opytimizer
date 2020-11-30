@@ -23,7 +23,7 @@ class PVS(Optimizer):
     variables and methods.
 
     References:
-        P. Savsani, V. Savsani. Passing vehicle search (PVS): A novel metaheuristic algorithm
+        P. Savsani and V. Savsani. Passing vehicle search (PVS): A novel metaheuristic algorithm.
         Applied Mathematical Modelling (2016).
 
     """

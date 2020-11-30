@@ -23,7 +23,7 @@ class AF(Optimizer):
     variables and methods.
 
     References:
-        L. Cheng, W. Xue-han, Y. Wang. Artificial flora (AF) optimization algorithm.
+        L. Cheng, W. Xue-han and Y. Wang. Artificial flora (AF) optimization algorithm.
         Applied Sciences (2018).
 
     """
