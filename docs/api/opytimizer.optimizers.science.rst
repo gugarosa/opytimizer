@@ -2,6 +2,7 @@ opytimizer.optimizers.science
 ==============================
 
 .. toctree::
+    opytimizer.optimizers.science.aig
     opytimizer.optimizers.science.aso
     opytimizer.optimizers.science.bh
     opytimizer.optimizers.science.efo

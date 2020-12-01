@@ -2,7 +2,6 @@ opytimizer.optimizers.social
 =============================
 
 .. toctree::
-    opytimizer.optimizers.social.aig
     opytimizer.optimizers.social.bso
     opytimizer.optimizers.social.ci
     opytimizer.optimizers.social.isa
