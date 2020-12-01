@@ -1,7 +1,7 @@
-opytimizer.optimizers.evolutionary.bsoa
+opytimizer.optimizers.evolutionary.bsa
 ========================================
 
-.. automodule:: opytimizer.optimizers.evolutionary.bsoa
+.. automodule:: opytimizer.optimizers.evolutionary.bsa
     :members:
     :private-members:
     :special-members:

@@ -2,7 +2,7 @@ opytimizer.optimizers.evolutionary
 ===================================
 
 .. toctree::
-    opytimizer.optimizers.evolutionary.bsoa
+    opytimizer.optimizers.evolutionary.bsa
     opytimizer.optimizers.evolutionary.cro
     opytimizer.optimizers.evolutionary.de
     opytimizer.optimizers.evolutionary.ep
