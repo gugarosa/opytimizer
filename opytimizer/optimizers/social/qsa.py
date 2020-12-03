@@ -61,14 +61,14 @@ class QSA(Optimizer):
 
         """
 
-        # Checks if potential service time is bigger than `1e-6`
-        if t_1 > 1e-6:
+        # Checks if potential service time is bigger than `epsilon`
+        if t_1 > c.EPSILON:
             # Calculates the proportion of agents in first, second and third queues
             n_1 = (1 / t_1) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
             n_2 = (1 / t_2) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
             n_3 = (1 / t_3) / ((1 / t_1) + (1 / t_2) + (1 / t_3))
 
-        # If the potential service time is smaller than `1e-6`
+        # If the potential service time is smaller than `epsilon`
         else:
             # Each queue will have 1/3 ratio
             n_1 = 1 / 3
@@ -109,6 +109,8 @@ class QSA(Optimizer):
             # Creates another temporary agent
             a = copy.deepcopy(agent)
 
+            print(i, q_1, q_2, q_1 <= i < q_1 + q_2)
+
             # If index is smaller than the number of agents in first queue
             if i < q_1:
                 # If it is the first agent in first queue
@@ -120,7 +122,7 @@ class QSA(Optimizer):
                 A = copy.deepcopy(A_1)
 
             # If index is between first and second queues
-            elif i < q_1 and i <= q_1 + q_2:
+            elif q_1 <= i < q_1 + q_2:
                 # If index is the first agent in second queue
                 if i == q_1:
                     # Defines the case as one
@@ -237,7 +239,7 @@ class QSA(Optimizer):
                 A = copy.deepcopy(A_1)
 
             # If index is between first and second queues
-            elif i < q_1 and i <= q_1 + q_2:
+            elif q_1 <= i < q_1 + q_2:
                 # `A` will receive a copy from `A_2`
                 A = copy.deepcopy(A_2)
 

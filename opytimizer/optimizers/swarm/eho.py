@@ -101,8 +101,8 @@ class EHO(Optimizer):
     def n_clans(self, n_clans):
         if not isinstance(n_clans, int):
             raise e.TypeError('`n_clans` should be integer')
-        if n_clans < 0:
-            raise e.ValueError('`n_clans` should be >= 0')
+        if n_clans < 1:
+            raise e.ValueError('`n_clans` should be > 0')
 
         self._n_clans = n_clans
 

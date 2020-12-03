@@ -137,7 +137,7 @@ class History:
             raise e.TypeError('`index` should be a tuple')
 
         # Gathers the numpy array from the attribute
-        attr = np.asarray(getattr(self, key))
+        attr = np.asarray(getattr(self, key), dtype=list)
 
         # Checks if attribute's dimensions are equal to the length of input index
         # We use `- 1` as the method retrieves values from all iterations

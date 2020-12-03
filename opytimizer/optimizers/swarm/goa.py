@@ -88,8 +88,6 @@ class GOA(Optimizer):
     def c_max(self, c_max):
         if not isinstance(c_max, (float, int)):
             raise e.TypeError('`c_max` should be a float or integer')
-        if c_max < 0:
-            raise e.ValueError('`c_max` should be >= 0')
         if c_max < self.c_min:
             raise e.ValueError('`c_max` should be >= `c_min`')
 

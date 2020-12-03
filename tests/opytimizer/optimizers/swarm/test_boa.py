@@ -18,7 +18,9 @@ def test_boa_hyperparams():
     new_boa = boa.BOA(hyperparams=hyperparams)
 
     assert new_boa.c == 0.01
+
     assert new_boa.a == 0.1
+    
     assert new_boa.p == 0.8
 
 

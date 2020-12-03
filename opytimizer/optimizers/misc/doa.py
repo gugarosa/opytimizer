@@ -41,7 +41,7 @@ class DOA(Optimizer):
         super(DOA, self).__init__(algorithm)
 
         # Chaos multiplier
-        self.r = 1
+        self.r = 1.0
 
         # Now, we need to build this class up
         self._build(hyperparams)

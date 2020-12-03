@@ -5,6 +5,7 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -170,7 +171,7 @@ class PIO(Optimizer):
             total_fit += agent.fit
 
         # Calculates the center position
-        center = total_pos / (self.n_p * total_fit)
+        center = total_pos / (self.n_p * total_fit + c.EPSILON)
 
         return center
 

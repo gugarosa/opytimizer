@@ -17,6 +17,7 @@ def test_abo_hyperparams():
     new_abo = abo.ABO(hyperparams=hyperparams)
 
     assert new_abo.sunspot_ratio == 0.9
+    
     assert new_abo.a == 2.0
 
 
