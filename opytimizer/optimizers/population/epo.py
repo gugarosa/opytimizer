@@ -95,8 +95,8 @@ class EPO(Optimizer):
             # Generates a radius constant
             R = r.generate_uniform_random_number()
 
-            # Checks if radius is bigger or equal to 1
-            if R >= 1:
+            # Checks if radius is bigger or equal to 0.5
+            if R >= 0.5:
                 # Defines temperature as zero
                 T = 0
 

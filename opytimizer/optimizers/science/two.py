@@ -7,6 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
+import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -142,8 +143,7 @@ class TWO(Optimizer):
         if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta <= 0 or beta > 1:
-            raise e.ValueError(
-                '`beta` should be greater than 0 and less than 1')
+            raise e.ValueError('`beta` should be greater than 0 and less than 1')
 
         self._beta = beta
 
@@ -198,7 +198,7 @@ class TWO(Optimizer):
 
         # Calculates the agents' weights
         weights = [(agent.fit - worst_fit) /
-                   (best_fit - worst_fit) + 1 for agent in agents]
+                   (best_fit - worst_fit + c.EPSILON) + 1 for agent in agents]
 
         # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(agents)

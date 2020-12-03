@@ -133,21 +133,21 @@ class ASO(Optimizer):
         rsmax = 1.24
 
         # If ratio between radius and distance is smaller than `rsmin`
-        if radius / distance < rsmin:
+        if radius / (distance + c.EPSILON) < rsmin:
             # Defines `rs` as `rsmin`
             rs = rsmin
 
         # If ratio between radius and distance is bigger than `rsmin`
         else:
             # If ratio is bigger than `rsmax`
-            if radius / distance > rsmax:
+            if radius / (distance + c.EPSILON) > rsmax:
                 # Defines `rs` as `rsmax`
                 rs = rsmax
 
             # If ratio is smaller than `rsmax`
             else:
                 # Defines `rs` as the ratio
-                rs = radius / distance
+                rs = radius / (distance + c.EPSILON)
 
         # Generates an uniform random number
         r1 = r.generate_uniform_random_number()

@@ -79,6 +79,8 @@ class BSA(Optimizer):
     def mix_rate(self, mix_rate):
         if not isinstance(mix_rate, int):
             raise e.TypeError('`mix_rate` should be an integer')
+        if mix_rate < 0:
+            raise e.ValueError('`mix_rate` should be > 0')
 
         self._mix_rate = mix_rate
 

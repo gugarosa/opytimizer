@@ -183,7 +183,7 @@ class WWO(Optimizer):
             # Calculates the standard deviation
             std = np.fabs(best_agent.position[j] - agent.position[j]) / 2
 
-            # Generates a new position (eq. 8)
+            # Generates a new position (Eq. 8)
             agent.position[j] = r.generate_gaussian_random_number(mean, std)
 
         # Clips its limits
@@ -195,8 +195,8 @@ class WWO(Optimizer):
         # Updates the new height to maximum height value
         new_height = self.h_max
 
-        # Re-calculates the new length (eq. 9)
-        new_length = length * (current_fit / agent.fit)
+        # Re-calculates the new length (Eq. 9)
+        new_length = length * (current_fit / (agent.fit + c.EPSILON))
 
         return new_height, new_length
 
@@ -262,7 +262,7 @@ class WWO(Optimizer):
 
         # Iterates through all agents
         for i, agent in enumerate(agents):
-            # Propagates a wave into a new temporary one (eq. 6)
+            # Propagates a wave into a new temporary one (Eq. 6)
             wave = self._propagate_wave(agent, function, length[i])
 
             # Checks if propagated wave is better than current one
@@ -278,7 +278,7 @@ class WWO(Optimizer):
 
                     # Iterates through every possible break
                     for j in range(k):
-                        # Breaks the propagated wave (eq. 10)
+                        # Breaks the propagated wave (Eq. 10)
                         broken_wave = self._break_wave(wave, function, j)
 
                         # Checks if broken wave is better than global one
@@ -301,10 +301,10 @@ class WWO(Optimizer):
 
                 # If its height reaches zero
                 if height[i] == 0:
-                    # Refracts the wave and generates a new height and wave length (eq. 8-9)
+                    # Refracts the wave and generates a new height and wave length (Eq. 8-9)
                     height[i], length[i] = self._refract_wave(agent, best_agent, function, length[i])
 
-        # Updates the wave length for all agents (eq. 7)
+        # Updates the wave length for all agents (Eq. 7)
         self._update_wave_length(agents, length)
 
     def run(self, space, function, store_best_only=False, pre_evaluation=None):
