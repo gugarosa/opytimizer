@@ -83,7 +83,7 @@ def test_mrfo_run():
 
     new_mrfo = mrfo.MRFO()
 
-    search_space = search.SearchSpace(n_agents=5, n_iterations=20,
+    search_space = search.SearchSpace(n_agents=10, n_iterations=20,
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 

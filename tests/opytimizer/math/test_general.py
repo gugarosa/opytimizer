@@ -34,3 +34,7 @@ def test_weighted_wheel_selection():
     weights = [1, 2, 3, 4, 5, 6, 7, 8]
 
     assert general.weighted_wheel_selection(weights) >= 0
+
+    weights = [0, 0, 0, 0, 0, 0, 0, 0]
+
+    assert general.weighted_wheel_selection(weights) is None
