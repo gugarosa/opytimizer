@@ -1,4 +1,5 @@
 import numpy as np
+
 from opytimizer.optimizers.boolean.bpso import BPSO
 
 # One should declare a hyperparameters object based
