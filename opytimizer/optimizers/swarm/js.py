@@ -65,8 +65,8 @@ class JS(Optimizer):
     def eta(self, eta):
         if not isinstance(eta, (float, int)):
             raise e.TypeError('`eta` should be a float or integer')
-        if eta < 0:
-            raise e.ValueError('`eta` should be >= 0')
+        if eta <= 0:
+            raise e.ValueError('`eta` should be > 0')
 
         self._eta = eta
 
@@ -82,8 +82,8 @@ class JS(Optimizer):
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
-        if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+        if beta <= 0:
+            raise e.ValueError('`beta` should be > 0')
 
         self._beta = beta
 
@@ -99,8 +99,8 @@ class JS(Optimizer):
     def gamma(self, gamma):
         if not isinstance(gamma, (float, int)):
             raise e.TypeError('`gamma` should be a float or integer')
-        if gamma < 0:
-            raise e.ValueError('`gamma` should be >= 0')
+        if gamma <= 0:
+            raise e.ValueError('`gamma` should be > 0')
 
         self._gamma = gamma
 
@@ -126,7 +126,7 @@ class JS(Optimizer):
                 # Iterates through all decision variables
                 for j in range(agent.n_variables):
                     # Calculates its position using logistic chaotic map (Eq. 18)
-                    agent.position[j] = self.eta * agents[i - 1].position[j] * (1 - agents[i - 1].position[j])
+                    agent.position[j] = self.eta * agents[i-1].position[j] * (1 - agents[i-1].position[j])
 
     def _update(self, agents, best_agent, iteration, n_iterations):
         """Method that wraps the Jellyfish Search over all agents and variables.
