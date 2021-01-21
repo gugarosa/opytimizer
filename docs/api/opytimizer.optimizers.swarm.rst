@@ -17,6 +17,7 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.fpa
     opytimizer.optimizers.swarm.fso
     opytimizer.optimizers.swarm.goa
+    opytimizer.optimizers.swarm.js
     opytimizer.optimizers.swarm.kh
     opytimizer.optimizers.swarm.mfo
     opytimizer.optimizers.swarm.mrfo
