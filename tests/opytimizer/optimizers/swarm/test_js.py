@@ -92,3 +92,27 @@ def test_js_run():
 
     best_fitness = history.best_agent[-1][1]
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm js failed to converge.'
+
+
+def test_nbjs_run():
+    def square(x):
+        return np.sum(x**2)
+
+    def hook(optimizer, space, function):
+        return
+
+    new_function = function.Function(pointer=square)
+
+    new_nbjs = js.NBJS()
+
+    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
+                                      n_variables=2, lower_bound=[0, 0],
+                                      upper_bound=[10, 10])
+
+    history = new_nbjs.run(search_space, new_function, pre_evaluation=hook)
+
+    assert len(history.agents) > 0
+    assert len(history.best_agent) > 0
+
+    best_fitness = history.best_agent[-1][1]
+    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm nbjs failed to converge.'

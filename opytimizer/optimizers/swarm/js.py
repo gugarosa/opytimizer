@@ -134,7 +134,7 @@ class JS(Optimizer):
         Args:
             agents (Agent): List of agents.
             best_agent (Agent): Best agent.
-        
+
         Returns:
             A trend value for the ocean current.
 
@@ -301,3 +301,51 @@ class JS(Optimizer):
                 logger.file(f'Position: {space.best_agent.position}')
 
         return history
+
+
+class NBJS(JS):
+    """An NBJS class, inherited from JS.
+
+    This is the designed class to define NBJS-related
+    variables and methods.
+
+    References:
+        Publication pending.
+
+    """
+
+    def __init__(self, algorithm='NBJS', hyperparams=None):
+        """Initialization method.
+
+        Args:
+            algorithm (str): Indicates the algorithm name.
+            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+
+        """
+
+        logger.info('Overriding class: JS -> NBJS.')
+
+        # Override its parent class with the receiving hyperparams
+        super(NBJS, self).__init__(algorithm, hyperparams)
+
+        logger.info('Class overrided.')
+
+    def _motion_a(self, lb, ub):
+        """Calculates type A motion.
+
+        Args:
+            lb (np.array): Array of lower bounds.
+            ub (np.array): Array of upper bounds.
+
+        Returns:
+            A type A motion array.
+
+        """
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Calculates type A motion
+        motion = self.gamma * r1
+
+        return motion
