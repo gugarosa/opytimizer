@@ -128,6 +128,79 @@ class JS(Optimizer):
                     # Calculates its position using logistic chaotic map (Eq. 18)
                     agent.position[j] = self.eta * agents[i-1].position[j] * (1 - agents[i-1].position[j])
 
+    def _ocean_current(self, agents, best_agent):
+        """Calculates the ocean current (Eq. 9).
+
+        Args:
+            agents (Agent): List of agents.
+            best_agent (Agent): Best agent.
+        
+        Returns:
+            A trend value for the ocean current.
+
+        """
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Calculates the mean location of all jellyfishes
+        u = np.mean([agent.position for agent in agents])
+
+        # Calculates the ocean current (Eq. 9)
+        trend = best_agent.position - self.beta * r1 * u
+
+        return trend
+
+    def _motion_a(self, lb, ub):
+        """Calculates type A motion (Eq. 12).
+
+        Args:
+            lb (np.array): Array of lower bounds.
+            ub (np.array): Array of upper bounds.
+
+        Returns:
+            A type A motion array.
+
+        """
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Calculates type A motion
+        motion = self.gamma * r1 * (np.expand_dims(ub, -1) - np.expand_dims(lb, -1))
+
+        return motion
+
+    def _motion_b(self, agent_i, agent_j):
+        """Calculates type B motion (Eq. 15).
+
+        Args:
+            agent_i (Agent): Current agent to be updated.
+            agent_j (Agent): Selected agent.
+
+        Returns:
+            A type B motion array.
+
+        """
+
+        # Generates an uniform random number
+        r1 = r.generate_uniform_random_number()
+
+        # Checks if current fitness is bigger or equal to selected one
+        if agent_i.fit >= agent_j.fit:
+            # Determines its direction (Eq. 15 - top)
+            d = agent_j.position - agent_i.position
+
+        # If current fitness is smaller
+        else:
+            # Determines its direction (Eq. 15 - bottom)
+            d = agent_i.position - agent_j.position
+
+        # Calculates type B motion
+        motion = r1 * d
+
+        return motion
+
     def _update(self, agents, best_agent, iteration, n_iterations):
         """Method that wraps the Jellyfish Search over all agents and variables.
 
@@ -149,18 +222,14 @@ class JS(Optimizer):
 
             # If time control mechanism is bigger or equal to 0.5
             if c >= 0.5:
-                # Generates uniform random numbers
-                r2 = r.generate_uniform_random_number()
-                r3 = r.generate_uniform_random_number()
-
-                # Calculates the mean location of all jellyfishes
-                u = np.mean([agent.position for agent in agents])
-
                 # Calculates the ocean current (Eq. 9)
-                trend = best_agent.position - self.beta * r2 * u
+                trend = self._ocean_current(agents, best_agent)
+
+                # Generate a uniform random number
+                r2 = r.generate_uniform_random_number()
 
                 # Updates the location of current jellyfish (Eq. 11)
-                agent.position += r3 * trend
+                agent.position += r2 * trend
 
             # If time control mechanism is smaller than 0.5
             else:
@@ -169,32 +238,16 @@ class JS(Optimizer):
 
                 # If random number is bigger than 1 - time control mechanism
                 if r2 > (1 - c):
-                    # Generates uniform random number
-                    r3 = r.generate_uniform_random_number()
-
                     # Update jellyfish's location with type A motion (Eq. 12)
-                    agent.position += self.gamma * r3 * \
-                        (np.expand_dims(agent.ub, -1) -
-                         np.expand_dims(agent.lb, -1))
+                    agent.position += self._motion_a(agent.lb, agent.ub)
 
                 # If random number is smaller
                 else:
-                    # Generates random numbers
+                    # Generates a random integer
                     j = r.generate_integer_random_number(0, len(agents))
-                    r3 = r.generate_uniform_random_number()
 
-                    # Checks if current fitness is bigger or equal to selected one
-                    if agent.fit >= agents[j].fit:
-                        # Determines its direction (Eq. 15 - top)
-                        d = agents[j].position - agent.position
-
-                    # If current fitness is smaller
-                    else:
-                        # Determines its direction (Eq. 15 - bottom)
-                        d = agent.position - agents[j].position
-
-                    # Update jellyfish's location with type B motion (Eq. 16)
-                    agent.position += r3 * d
+                    # Updates jellyfish's location with type B motion (Eq. 16)
+                    agent.position += self._motion_b(agent, agents[j])
 
             # Clips the agent's limits
             agent.clip_limits()
