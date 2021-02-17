@@ -114,7 +114,7 @@ class GA(Optimizer):
             fitness (list): A fitness list of every agent.
 
         Returns:
-            The selected indexes of the population
+            The selected indexes of the population.
 
         """
 
@@ -126,11 +126,19 @@ class GA(Optimizer):
             # If it is, increase it by one
             n_individuals += 1
 
-        # Calculates the total fitness
-        total_fitness = np.sum(fitness)
+        # Defines the maximum fitness of current generation
+        max_fitness = np.max(fitness)
 
-        # Calculates the probability of each fitness
-        probs = [fit / total_fitness for fit in fitness]
+        # Re-arrange the list of fitness by inverting it
+        # Note that we apply a trick due to it being designed for minimization
+        # f'(x) = f_max - f(x)
+        inv_fitness = [max_fitness - fit + c.EPSILON for fit in fitness]
+
+        # Calculates the total inverted fitness
+        total_fitness = np.sum(inv_fitness)
+
+        # Calculates the probability of each inverted fitness
+        probs = [fit / total_fitness for fit in inv_fitness]
 
         # Performs the selection process
         selected = d.generate_choice_distribution(n_agents, probs, n_individuals)
