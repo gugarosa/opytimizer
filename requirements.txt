@@ -1,7 +1,7 @@
-coverage>=5.3
-matplotlib>=3.3.2
-numpy>=1.19.2
-opytimark>=1.0.6
-pylint>=2.6.0
-pytest>=6.1.0
-tqdm>=4.50.0
+coverage>=5.5
+matplotlib>=3.3.4
+numpy>=1.19.5
+opytimark>=1.0.7
+pylint>=2.7.2
+pytest>=6.2.2
+tqdm>=4.59.0
