@@ -160,6 +160,37 @@ No specific additional commands needed.
 
 ---
 
+## Example
+
+Take a look at a quick working example of Opytimizer. Note that we are not passing many extra arguments nor additional information to the procedure. For more complex examples, please check our `examples/` folder.
+
+```Python
+import numpy as np
+
+from opytimizer import Opytimizer
+from opytimizer.core.function import Function
+from opytimizer.optimizers.swarm.pso import PSO
+from opytimizer.spaces.search import SearchSpace
+
+def sphere(x):
+  return np.sum(x ** 2)
+
+n_agents = 20
+n_variables = 2
+n_iterations = 1000
+lower_bound = (-10, -10)
+upper_bound = (10, 10)
+
+s = SearchSpace(n_agents, n_iterations, n_variables, lower_bound, upper_bound)
+p = PSO()
+f = Function(sphere)
+
+o = Opytimizer(s, p, f)
+o.start()
+```
+
+---
+
 ## Support
 
 We know that we do our best, but it is inevitable to acknowledge that we make mistakes. If you ever need to report a bug, report a problem, talk to us, please do so! We will be available at our bests at this repository or gustavo.rosa@unesp.br.
