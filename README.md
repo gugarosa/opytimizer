@@ -160,7 +160,7 @@ No specific additional commands needed.
 
 ---
 
-## Example
+## How-To-Use: Minimal Example
 
 Take a look at a quick working example of Opytimizer. Note that we are not passing many extra arguments nor additional information to the procedure. For more complex examples, please check our `examples/` folder.
 
