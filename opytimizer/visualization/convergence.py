@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 import opytimizer.utils.exception as e
 
 
-def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
+def plot(*args, labels=None, title='', subtitle='', x_label='iteration', y_label='value',
+         grid=True, legend=True):
     """Plots the convergence graph of desired variables.
 
     Essentially, each variable is a list or numpy array
@@ -16,6 +17,8 @@ def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
         labels (list): Labels to be applied for each plot in legend.
         title (str): The title of the plot.
         subtitle (str): The subtitle of the plot.
+        x_label (str): Axis `x` label.
+        y_label (str): Axis `y` label.
         grid (bool): If grid should be used or not.
         legend (bool): If legend should be displayed or not.
 
@@ -25,7 +28,7 @@ def plot(*args, labels=None, title='', subtitle='', grid=True, legend=True):
     _, ax = plt.subplots(figsize=(7, 5))
 
     # Defining some properties, such as axis labels
-    ax.set(xlabel='iteration', ylabel='value')
+    ax.set(xlabel=x_label, ylabel=y_label)
 
     # Setting both title and subtitles
     ax.set_title(title, loc='left', fontsize=14)

@@ -1,12 +1,12 @@
 import numpy as np
+from sklearn import svm
+from sklearn.datasets import load_digits
+from sklearn.model_selection import KFold, cross_val_score
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
-from sklearn import svm
-from sklearn.datasets import load_digits
-from sklearn.model_selection import KFold, cross_val_score
 
 # Loading digits dataset
 digits = load_digits()

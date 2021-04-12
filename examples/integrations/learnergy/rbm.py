@@ -1,5 +1,6 @@
 import torchvision
 from learnergy.models.binary import RBM
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO

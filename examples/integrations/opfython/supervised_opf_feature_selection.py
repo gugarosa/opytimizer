@@ -1,12 +1,13 @@
 import opfython.math.general as g
 import opfython.stream.splitter as s
-import opytimizer.math.random as r
 from opfython.models.supervised import SupervisedOPF
+from sklearn.datasets import load_digits
+
+import opytimizer.math.random as r
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.optimizers.boolean.bpso import BPSO
 from opytimizer.spaces.boolean import BooleanSpace
-from sklearn.datasets import load_digits
 
 # Loading digits dataset
 digits = load_digits()
