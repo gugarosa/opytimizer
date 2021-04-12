@@ -232,7 +232,7 @@ class PSO(Optimizer):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, space.best_agent, local_position, velocity)
@@ -252,8 +252,8 @@ class PSO(Optimizer):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
@@ -393,7 +393,7 @@ class AIWPSO(PSO):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, space.best_agent, local_position, velocity)
@@ -416,8 +416,8 @@ class AIWPSO(PSO):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
@@ -539,7 +539,7 @@ class RPSO(PSO):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, space.best_agent, local_position, velocity, mass)
@@ -559,8 +559,8 @@ class RPSO(PSO):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
@@ -800,7 +800,7 @@ class VPSO(PSO):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, space.best_agent, local_position, velocity, v_velocity)
@@ -820,7 +820,7 @@ class VPSO(PSO):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history

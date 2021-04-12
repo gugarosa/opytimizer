@@ -16,7 +16,7 @@ class Logger(logging.Logger):
 
     """
 
-    def file(self, msg, *args, **kwargs):
+    def to_file(self, msg, *args, **kwargs):
         """Logs the message only to the logging file.
 
         Args:

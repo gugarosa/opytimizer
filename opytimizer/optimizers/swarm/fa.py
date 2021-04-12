@@ -167,7 +167,7 @@ class FA(Optimizer):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, space.n_iterations)
@@ -185,7 +185,7 @@ class FA(Optimizer):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history

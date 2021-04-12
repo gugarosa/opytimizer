@@ -205,7 +205,7 @@ class HS(Optimizer):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating agents
                 self._update(space.agents, function)
@@ -223,8 +223,8 @@ class HS(Optimizer):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
@@ -366,7 +366,7 @@ class IHS(HS):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating pitch adjusting rate
                 self.PAR = self.PAR_min + \
@@ -393,8 +393,8 @@ class IHS(HS):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
@@ -706,7 +706,7 @@ class SGHS(HS):
         with tqdm(total=space.n_iterations) as b:
             # These are the number of iterations to converge
             for t in range(space.n_iterations):
-                logger.file(f'Iteration {t+1}/{space.n_iterations}')
+                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
                 # Updating harmony memory considering rate
                 self.HMCR = r.generate_gaussian_random_number(self.HMCRm, 0.01)[0]
@@ -760,8 +760,8 @@ class SGHS(HS):
                 b.set_postfix(fitness=space.best_agent.fit)
                 b.update()
 
-                logger.file(f'Fitness: {space.best_agent.fit}')
-                logger.file(f'Position: {space.best_agent.position}')
+                logger.to_file(f'Fitness: {space.best_agent.fit}')
+                logger.to_file(f'Position: {space.best_agent.position}')
 
         return history
 
