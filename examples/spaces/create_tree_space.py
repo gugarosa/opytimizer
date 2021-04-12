@@ -1,21 +1,13 @@
 from opytimizer.spaces.tree import TreeSpace
 
-# Firstly, we need to define the number of trees
-n_trees = 1
-
-# Also, each terminal will be rendered as an agent
+# We need to define the number of trees, number of terminals, decision variables and iterations
+n_trees = 2
 n_terminals = 2
-
-# Also, we need to define the number of decision variables
 n_variables = 5
-
-# We can also decide the number of iterations
 n_iterations = 10
 
-# Minimum depth of the trees
+# Minimum and maximum depths of the trees
 min_depth = 2
-
-# Maximum depth of the trees
 max_depth = 5
 
 # List of functions nodes

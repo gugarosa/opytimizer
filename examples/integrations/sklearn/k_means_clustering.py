@@ -34,13 +34,9 @@ def k_means_clustering(opytimizer):
 # Creating Function's object
 f = Function(pointer=k_means_clustering)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 10
-
-# Number of decision variables
 n_variables = 1
-
-# Number of running iterations
 n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)

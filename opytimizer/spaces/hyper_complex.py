@@ -55,10 +55,8 @@ class HyperComplexSpace(Space):
                 # For each decision variable, we generate uniform random numbers
                 agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
 
-                # Applies the lower bound to the agent's lower bound
+                # Applies the lower and upper bounds
                 agent.lb[j] = 0
-
-                # And also the upper bound
                 agent.ub[j] = 1
 
         logger.debug('Agents initialized.')

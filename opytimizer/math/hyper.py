@@ -37,10 +37,8 @@ def span(array, lb, ub):
 
     """
 
-    # We need to force lower bound to be an array
+    # We need to force lower and upper bounds to be arrays
     lb = np.array(lb)
-
-    # Also the same thing goes for upper bound
     ub = np.array(ub)
 
     # Calculating span function

@@ -13,7 +13,7 @@ logger = l.get_logger(__name__)
 
 class GridSpace(Space):
     """A GridSpace class for agents, variables and methods
-    related to the grid space.
+    related to the grid search space.
 
     """
 
@@ -114,10 +114,8 @@ class GridSpace(Space):
                 # For each decision variable, we use the grid values
                 agent.position[j] = r.generate_uniform_random_number(g, g, agent.n_dimensions)
 
-                # Applies the lower bound to the agent's lower bound
+                # Applies the lower and upper bounds
                 agent.lb[j] = lb
-
-                # And also the upper bound
                 agent.ub[j] = ub
 
         logger.debug('Agents initialized.')

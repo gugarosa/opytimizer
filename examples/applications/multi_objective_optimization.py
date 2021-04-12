@@ -9,13 +9,9 @@ from opytimizer.spaces.search import SearchSpace
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 20
-
-# Number of decision variables
 n_variables = 2
-
-# Number of running iterations
 n_iterations = 1000
 
 # Lower and upper bounds (has to be the same size as n_variables)

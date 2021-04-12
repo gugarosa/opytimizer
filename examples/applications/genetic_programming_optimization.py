@@ -9,22 +9,14 @@ from opytimizer.spaces.tree import TreeSpace
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Firstly, we need to define the number of agents
+# Number of trees, number of terminals, decision variables and iterations
 n_trees = 10
-
-# Also, each terminal will be rendered as an agent
 n_terminals = 2
-
-# Also, we need to define the number of decision variables
 n_variables = 2
-
-# We can also decide the number of iterations
 n_iterations = 1000
 
-# Minimum depth of the trees
+# Minimum and maximum depths of the trees
 min_depth = 2
-
-# Maximum depth of the trees
 max_depth = 5
 
 # List of functions nodes

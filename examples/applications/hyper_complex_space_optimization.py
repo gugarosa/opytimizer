@@ -11,16 +11,10 @@ from opytimizer.spaces.hyper_complex import HyperComplexSpace
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Number of agents
+# Number of agents, decision variables, dimensions and iterations
 n_agents = 20
-
-# Number of decision variables
 n_variables = 2
-
-# Number of space dimensions
 n_dimensions = 4
-
-# Number of running iterations
 n_iterations = 10000
 
 # Lower and upper bounds (has to be the same size as n_variables)

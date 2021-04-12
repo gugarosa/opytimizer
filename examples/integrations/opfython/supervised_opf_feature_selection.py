@@ -51,13 +51,9 @@ def supervised_opf_feature_selection(opytimizer):
 # Creating Function's object
 f = Function(pointer=supervised_opf_feature_selection)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 5
-
-# Number of decision variables
 n_variables = 64
-
-# Number of running iterations
 n_iterations = 3
 
 # Creating the SearchSpace class

@@ -67,19 +67,15 @@ def generate_levy_distribution(beta=0.1, size=1):
 
     """
 
-    # Calculates the equation's numerator
+    # Calculates the equation's numerator and denominator
     num = gamma(1 + beta) * sin(pi * beta / 2)
-
-    # Calculates the equation's denominator
     den = gamma((1 + beta) / 2) * beta * (2 ** ((beta - 1) / 2))
 
     # Calculates the sigma for further distribution generation
     sigma = (num / den) ** (1 / beta)
 
-    # Calculates the 'u' distribution
+    # Calculates the 'u' and `v` distributions
     u = r.generate_gaussian_random_number(size=size) * sigma
-
-    # Calculates the 'v' distribution
     v = r.generate_gaussian_random_number(size=size)
 
     # Finally, we can calculate the Lévy distribution

@@ -117,13 +117,9 @@ def logistic_regression(opytimizer):
 # Creating Function's object
 f = Function(pointer=logistic_regression)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 10
-
-# Number of decision variables
 n_variables = 2
-
-# Number of running iterations
 n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)

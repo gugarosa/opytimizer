@@ -214,10 +214,8 @@ class Space:
 
         logger.debug('Running private method: build().')
 
-        # Creating lower bound array from tuple
+        # Creating lower and upper bound arrays
         self.lb = np.asarray(lower_bound)
-
-        # Creating upper bound array from tuple
         self.ub = np.asarray(upper_bound)
 
         # Creating agents

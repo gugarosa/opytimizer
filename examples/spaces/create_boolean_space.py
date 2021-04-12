@@ -1,12 +1,8 @@
 from opytimizer.spaces.boolean import BooleanSpace
 
-# Firstly, we need to define the number of agents
+# We need to define the number of agents, decision variables and iterations
 n_agents = 2
-
-# Also, we need to define the number of decision variables
 n_variables = 5
-
-# We can also decide the number of iterations
 n_iterations = 10
 
 # Creating the BooleanSpace object

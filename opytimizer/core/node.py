@@ -220,11 +220,8 @@ class Node:
 
         """
 
-        # Creates a list for outputting the nodes
-        post_order = []
-
-        # Creates a list to hold the stacked nodes
-        stacked = []
+        # Creates lists for post-order and stacked nodes
+        post_order, stacked = [], []
 
         # Creates a perpetual while
         while True:
@@ -276,11 +273,8 @@ class Node:
 
         """
 
-        # Creates a list for outputting the nodes
-        pre_order = []
-
-        # Creates a list to hold the stacked nodes
-        stacked = [self]
+        # Creates lists for pre-order and stacked nodes
+        pre_order, stacked = [], [self]
 
         # While there is more than one node
         while len(stacked) > 0:
@@ -355,11 +349,8 @@ def _build_string(node):
         # Return an empty list along with `0` arguments
         return [], 0, 0, 0
 
-    # Creates a list to hold the first line
-    first_line = []
-
-    # And also a list to hold the second line
-    second_line = []
+    # Creates lists to hold the first and second lines
+    first_line, second_line = [], []
 
     # Gets the node name as a string
     name = str(node.name)
@@ -367,10 +358,8 @@ def _build_string(node):
     # The gap size and width of the new node will be the length of the name's string
     gap = width = len(name)
 
-    # Iterate recursively through the left branch
+    # Iterate recursively through the left and right branches
     left_branch, left_width, left_start, left_end = _build_string(node.left)
-
-    # Iterate recursively through the right branch
     right_branch, right_width, right_start, right_end = _build_string(node.right)
 
     # If left branch width is greater than 0
@@ -378,16 +367,12 @@ def _build_string(node):
         # Calculates the left node
         left = (left_start + left_end) // 2 + 1
 
-        # Appends to first line space chars
+        # Appends to first line space and underscore chars
         first_line.append(' ' * (left + 1))
-
-        # Appends to first line underscore chars
         first_line.append('_' * (left_width - left))
 
-        # Appends to second line space chars and a connecting slash
+        # Appends to second line space chars and connecting slash
         second_line.append(' ' * left + '/')
-
-        # Appends to second line space chars
         second_line.append(' ' * (left_width - left))
 
         # The start point will be the left width plus one
@@ -412,16 +397,12 @@ def _build_string(node):
         # Calculates the right node
         right = (right_start + right_end) // 2
 
-        # Appends to first line underscore chars
+        # Appends to first line underscore and space chars
         first_line.append('_' * right)
-
-        # Appends to first line space chars
         first_line.append(' ' * (right_width - right + 1))
 
         # Appends to second line space chars and a connecting backslash
         second_line.append(' ' * right + '\\')
-
-        # Appends to second line space chars
         second_line.append(' ' * (right_width - right))
 
         # Increases the gap size
@@ -478,10 +459,8 @@ def _evaluate(node):
 
     # Checks if the node exists
     if node:
-        # Performs a recursive pass on the left branch
+        # Performs a recursive pass on the left and right branches
         x = _evaluate(node.left)
-
-        # Performs a recursive pass on the right branch
         y = _evaluate(node.right)
 
         # If the node is an agent or constant
@@ -543,11 +522,8 @@ def _properties(node):
 
     """
 
-    # Initializing minimum depth as 0
-    min_depth = 0
-
-    # Initializing maximum depth as -1
-    max_depth = -1
+    # Initializing minimum and maximum depths
+    min_depth, max_depth = 0, -1
 
     # Initializing number of leaves and nodes as 0
     n_leaves = n_nodes = 0

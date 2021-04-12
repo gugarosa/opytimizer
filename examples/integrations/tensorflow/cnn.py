@@ -59,13 +59,9 @@ def cnn(opytimizer):
 # Creating Function's object
 f = Function(pointer=cnn)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 5
-
-# Number of decision variables
 n_variables = 2
-
-# Number of running iterations
 n_iterations = 3
 
 # Lower and upper bounds (has to be the same size as n_variables)

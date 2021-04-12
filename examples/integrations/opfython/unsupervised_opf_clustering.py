@@ -50,13 +50,9 @@ def unsupervised_opf_clustering(opytimizer):
 # Creating Function's object
 f = Function(pointer=unsupervised_opf_clustering)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 5
-
-# Number of decision variables
 n_variables = 1
-
-# Number of running iterations
 n_iterations = 3
 
 # Lower and upper bounds (has to be the same size as n_variables)

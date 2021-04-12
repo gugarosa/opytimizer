@@ -140,13 +140,9 @@ def enhanced_neural_network(opytimizer):
 # Creating Function's object
 f = Function(pointer=enhanced_neural_network)
 
-# Number of agents
+# Number of agents, decision variables and iterations
 n_agents = 10
-
-# Number of decision variables
 n_variables = 3
-
-# Number of running iterations
 n_iterations = 100
 
 # Lower and upper bounds (has to be the same size as n_variables)

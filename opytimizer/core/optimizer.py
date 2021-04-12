@@ -132,10 +132,8 @@ class Optimizer:
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's position to the best agent
+                # Makes a deep copy of agent's position and fitness
                 space.best_agent.position = copy.deepcopy(agent.position)
-
-                # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

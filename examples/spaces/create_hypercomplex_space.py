@@ -1,15 +1,9 @@
 from opytimizer.spaces.hyper_complex import HyperComplexSpace
 
-# Firstly, we need to define the number of agents
+# We need to define the number of agents, decision variables, dimensions and iterations
 n_agents = 2
-
-# Also, we need to define the number of decision variables
 n_variables = 5
-
-# And space's dimension
 n_dimensions = 4
-
-# We can also decide the number of iterations
 n_iterations = 10
 
 # Finally, we define the lower and upper bounds

@@ -31,10 +31,8 @@ class BooleanSpace(Space):
         # Override its parent class with the receiving arguments
         super(BooleanSpace, self).__init__(n_agents, n_variables, n_iterations=n_iterations)
 
-        # Defining the lower bound as an array of zeros
+        # Defining the lower and upper bounds
         lower_bound = np.zeros(n_variables)
-
-        # Defining the upper bound as an array of ones
         upper_bound = np.ones(n_variables)
 
         # Now, we need to build this class up
@@ -60,10 +58,8 @@ class BooleanSpace(Space):
                 # For each decision variable, we generate binary random numbers
                 agent.position[j] = r.generate_binary_random_number(size=agent.n_dimensions)
 
-                # Applies the lower bound to the agent's lower bound
+                # Applies the lower bound and upper bounds
                 agent.lb[j] = lb
-
-                # And also the upper bound
                 agent.ub[j] = ub
 
         logger.debug('Agents initialized.')
