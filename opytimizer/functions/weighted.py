@@ -26,12 +26,12 @@ class WeightedFunction:
         """
 
         logger.info('Creating class: WeightedFunction.')
-        
+
         # Checks if functions do not exist
         if functions is None:
             # Creates a list for compatibility
             self.functions = []
-        
+
         # If functions really exist
         else:
             # Creating the functions property
@@ -100,7 +100,7 @@ class WeightedFunction:
 
         """
 
-        def f_weighted(x):
+        def _weighted_pointer(x):
             """Weights and sums the functions according to their weights.
 
             Args:
@@ -121,7 +121,7 @@ class WeightedFunction:
             return z
 
         # Applying to the pointer property the return of weighted method
-        self.pointer = f_weighted
+        self.pointer = _weighted_pointer
 
     def _build(self, constraints, penalty):
         """This method serves as the object building process.
@@ -138,7 +138,8 @@ class WeightedFunction:
         logger.debug('Running private method: build().')
 
         # Populating pointers with real functions
-        self.functions = [Function(f, constraints, penalty) for f in self.functions]
+        self.functions = [Function(f, constraints, penalty)
+                          for f in self.functions]
 
         # Creating a multi-objective method strategy as the real pointer
         self._create_multi_objective()

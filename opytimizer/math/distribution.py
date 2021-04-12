@@ -26,15 +26,8 @@ def generate_bernoulli_distribution(prob=0.0, size=1):
     # Generating random number
     r1 = r.generate_uniform_random_number(0, 1, size)
 
-    # For each dimension
-    for i in range(size):
-        # If random generated number if smaller than probability
-        if r1[i] < prob:
-            # Mark as one
-            bernoulli_array[i] = 1
-        else:
-            # If not, mark as zero
-            bernoulli_array[i] = 0
+    # Masking the array
+    bernoulli_array[r1 < prob] = 1
 
     return bernoulli_array
 
