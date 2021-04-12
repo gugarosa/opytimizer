@@ -105,7 +105,7 @@ def test_hs_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    history = new_hs.run(search_space, new_function, pre_evaluation=hook)
+    history = new_hs.run(search_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
@@ -216,7 +216,7 @@ def test_ihs_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[5, 5])
 
-    history = new_ihs.run(search_space, new_function, pre_evaluation=hook)
+    history = new_ihs.run(search_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0
@@ -387,7 +387,7 @@ def test_sghs_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[5, 5])
 
-    history = new_sghs.run(search_space, new_function, pre_evaluation=hook)
+    history = new_sghs.run(search_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

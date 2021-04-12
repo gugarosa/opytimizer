@@ -85,7 +85,7 @@ def test_bmrfo_run():
     boolean_space = boolean.BooleanSpace(
         n_agents=10, n_iterations=20, n_variables=5)
 
-    history = new_bmrfo.run(boolean_space, new_function, pre_evaluation=hook)
+    history = new_bmrfo.run(boolean_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

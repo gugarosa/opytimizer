@@ -85,7 +85,7 @@ def test_boa_run():
                                       n_variables=2, lower_bound=[0, 0],
                                       upper_bound=[10, 10])
 
-    history = new_boa.run(search_space, new_function, pre_evaluation=hook)
+    history = new_boa.run(search_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

@@ -429,7 +429,7 @@ class GP(Optimizer):
         # Performs the mutation
         self._mutation(space)
 
-    @d.pre_evaluation
+    @d.pre_evaluate
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
@@ -461,14 +461,14 @@ class GP(Optimizer):
                 # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (TreeSpace): A TreeSpace object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -476,7 +476,7 @@ class GP(Optimizer):
         """
 
         # Initial tree space evaluation
-        self._evaluate(space, function, hook=pre_evaluation)
+        self._evaluate(space, function, hook=pre_evaluate)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -491,7 +491,7 @@ class GP(Optimizer):
                 self._update(space)
 
                 # After the update, we need to re-evaluate the tree space
-                self._evaluate(space, function, hook=pre_evaluation)
+                self._evaluate(space, function, hook=pre_evaluate)
 
                 # Every iteration, we need to dump agents and best agent
                 history.dump(agents=space.agents,

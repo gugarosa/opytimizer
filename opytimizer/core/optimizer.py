@@ -113,7 +113,7 @@ class Optimizer:
 
         raise NotImplementedError
 
-    @d.pre_evaluation
+    @d.pre_evaluate
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
@@ -138,7 +138,7 @@ class Optimizer:
                 # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         As each optimizer child can have a different optimization pipeline,
@@ -148,7 +148,7 @@ class Optimizer:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): Method to be executed before evaluating the `function` being optimized.
+            pre_evaluate (callable): Method to be executed before evaluating the `function` being optimized.
 
         Raises:
             NotImplementedError.

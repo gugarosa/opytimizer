@@ -51,7 +51,7 @@ def hyper_spanning(lb, ub):
     return _hyper_spanning
 
 
-def pre_evaluation(f):
+def pre_evaluate(f):
     """Pre-evaluates an objective function.
 
     Args:
@@ -63,7 +63,7 @@ def pre_evaluation(f):
     """
 
     @wraps(f)
-    def _pre_evaluation(*args, **kwargs):
+    def _pre_evaluate(*args, **kwargs):
         """Wraps the objective function for calculating its pre-evaluation.
 
         Returns:
@@ -84,4 +84,4 @@ def pre_evaluation(f):
 
         return f(*args)
 
-    return _pre_evaluation
+    return _pre_evaluate

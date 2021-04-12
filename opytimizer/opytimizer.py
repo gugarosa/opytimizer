@@ -90,13 +90,13 @@ class Opytimizer:
 
         self._function = function
 
-    def start(self, store_best_only=False, pre_evaluation=None):
+    def start(self, store_best_only=False, pre_evaluate=None):
         """Starts the optimization task.
 
         Args
             store_best_only (bool): If True, only the best agent
                 of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed
+            pre_evaluate (callable): This function is executed
                 before evaluating the function being optimized.
 
         Returns:
@@ -111,7 +111,7 @@ class Opytimizer:
         start = time.time()
 
         # Starting optimizer
-        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluation)
+        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluate)
 
         # Ending timer
         end = time.time()

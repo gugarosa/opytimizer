@@ -99,7 +99,7 @@ def test_ssd_run():
                                       n_variables=2, lower_bound=[-100, -100],
                                       upper_bound=[100, 100])
 
-    history = new_ssd.run(search_space, new_function, pre_evaluation=hook)
+    history = new_ssd.run(search_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

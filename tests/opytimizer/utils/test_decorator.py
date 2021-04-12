@@ -16,8 +16,8 @@ def test_hyper_spanning():
     assert y == 30
 
 
-def test_pre_evaluation():
-    @decorator.pre_evaluation
+def test_pre_evaluate():
+    @decorator.pre_evaluate
     def call(obj, x):
         return x
 

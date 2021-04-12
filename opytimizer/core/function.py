@@ -163,7 +163,7 @@ class Function:
             # If not, raises an ArgumentError
             raise e.ArgumentError('`pointer` should only have 1 argument')
 
-        def constrain_pointer(x):
+        def _constrain_pointer(x):
             """Applies the constraints and penalizes the fitness function if one of them are not valid.
 
             Args:
@@ -193,4 +193,4 @@ class Function:
             return fitness
 
         # Applying to the pointer property the return of constrained function
-        self.pointer = constrain_pointer
+        self.pointer = _constrain_pointer

@@ -96,7 +96,7 @@ def test_bpso_run():
     boolean_space = boolean.BooleanSpace(
         n_agents=2, n_iterations=10, n_variables=5)
 
-    history = new_bpso.run(boolean_space, new_function, pre_evaluation=hook)
+    history = new_bpso.run(boolean_space, new_function, pre_evaluate=hook)
 
     assert len(history.agents) > 0
     assert len(history.best_agent) > 0

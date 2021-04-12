@@ -170,7 +170,7 @@ class PSO(Optimizer):
             # Updates current agent position
             agent.position = self._update_position(agent.position, velocity[i])
 
-    @d.pre_evaluation
+    @d.pre_evaluate
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
@@ -202,14 +202,14 @@ class PSO(Optimizer):
                 # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -223,7 +223,7 @@ class PSO(Optimizer):
         velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluation)
+        self._evaluate(space, function, local_position, hook=pre_evaluate)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -241,7 +241,7 @@ class PSO(Optimizer):
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluation)
+                self._evaluate(space, function, local_position, hook=pre_evaluate)
 
                 # Every iteration, we need to dump agents, local positions and best agent
                 history.dump(agents=space.agents,
@@ -354,14 +354,14 @@ class AIWPSO(PSO):
         # Update inertia weight value
         self.w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -378,7 +378,7 @@ class AIWPSO(PSO):
         fitness = np.zeros(space.n_agents)
 
         # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluation)
+        self._evaluate(space, function, local_position, hook=pre_evaluate)
 
         # Before starting the optimization process
         # We need to copy fitness values to temporary array
@@ -402,7 +402,7 @@ class AIWPSO(PSO):
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluation)
+                self._evaluate(space, function, local_position, hook=pre_evaluate)
 
                 # Computing particle's success and updating inertia weight
                 self._compute_success(space.agents, fitness)
@@ -506,14 +506,14 @@ class RPSO(PSO):
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -530,7 +530,7 @@ class RPSO(PSO):
         mass = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluation)
+        self._evaluate(space, function, local_position, hook=pre_evaluate)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -548,7 +548,7 @@ class RPSO(PSO):
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluation)
+                self._evaluate(space, function, local_position, hook=pre_evaluate)
 
                 # Every iteration, we need to dump agents, local positions and best agent
                 history.dump(agents=space.agents,
@@ -767,14 +767,14 @@ class VPSO(PSO):
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i], v_velocity[i])
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -791,7 +791,7 @@ class VPSO(PSO):
         v_velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluation)
+        self._evaluate(space, function, local_position, hook=pre_evaluate)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -809,7 +809,7 @@ class VPSO(PSO):
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluation)
+                self._evaluate(space, function, local_position, hook=pre_evaluate)
 
                 # Every iteration, we need to dump agents, local positions and best agent
                 history.dump(agents=space.agents,

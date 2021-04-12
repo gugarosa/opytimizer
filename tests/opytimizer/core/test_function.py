@@ -66,7 +66,7 @@ def test_function_penalty_setter():
 def test_function_pointer():
     new_function = function.Function()
 
-    assert new_function.pointer.__name__ == 'constrain_pointer'
+    assert new_function.pointer.__name__ == '_constrain_pointer'
 
 
 def test_function_pointer_setter():

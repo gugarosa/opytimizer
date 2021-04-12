@@ -276,14 +276,14 @@ class HGSO(Optimizer):
             # Updates bad agent's position (eq. 12)
             agent.position = agent.lb + r2 * (agent.ub - agent.lb)
 
-    def run(self, space, function, store_best_only=False, pre_evaluation=None):
+    def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
             store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluation (callable): This function is executed before evaluating the function being optimized.
+            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
 
         Returns:
             A History object holding all agents' positions and fitness achieved during the task.
@@ -303,7 +303,7 @@ class HGSO(Optimizer):
         constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
 
         # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluation)
+        self._evaluate(space, function, hook=pre_evaluate)
 
         # We will define a History object for further dumping
         history = h.History(store_best_only)
@@ -322,7 +322,7 @@ class HGSO(Optimizer):
                 space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluation)
+                self._evaluate(space, function, hook=pre_evaluate)
 
                 # Every iteration, we need to dump agents and best agent
                 history.dump(agents=space.agents, best_agent=space.best_agent)
