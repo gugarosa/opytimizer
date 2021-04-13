@@ -175,10 +175,8 @@ class HS(Optimizer):
 
         # If newly generated agent fitness is better
         if agent.fit < agents[-1].fit:
-            # Updates the corresponding agent's position
+            # Updates the corresponding agent's position and fitness
             agents[-1].position = copy.deepcopy(agent.position)
-
-            # And its fitness as well
             agents[-1].fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
@@ -875,10 +873,8 @@ class NGHS(HS):
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        # Updates the worst agent's position
+        # Updates the worst agent's position and fitness
         agents[-1].position = copy.deepcopy(agent.position)
-
-        # And its fitness as well
         agents[-1].fit = copy.deepcopy(agent.fit)
 
 
@@ -986,8 +982,6 @@ class GOGHS(NGHS):
 
         # If generated agent fitness is better
         if agent.fit < agents[-1].fit:
-            # Updates the corresponding agent's position
+            # Updates the corresponding agent's position and fitness
             agents[-1].position = copy.deepcopy(agent.position)
-
-            # And its fitness as well
             agents[-1].fit = copy.deepcopy(agent.fit)

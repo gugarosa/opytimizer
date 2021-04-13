@@ -168,10 +168,8 @@ class AEO(Optimizer):
                 # Generates the first random number
                 r1 = r.generate_uniform_random_number()
 
-                # Generates a gaussian random number
+                # Generates gaussian random numbers
                 v1 = r.generate_gaussian_random_number()
-
-                # Generates another gaussian random number
                 v2 = r.generate_gaussian_random_number()
 
                 # Calculates the consumption factor (eq. 4)
@@ -206,10 +204,8 @@ class AEO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position to the agent
+                # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
     def _update_decomposition(self, agents, best_agent, function):
@@ -251,10 +247,8 @@ class AEO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position to the agent
+                # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
     def _update(self, agents, best_agent, function, iteration, n_iterations):

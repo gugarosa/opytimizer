@@ -108,16 +108,12 @@ class ES(Optimizer):
         # Calculates the number of variables and dimensions
         n_variables, n_dimensions = strategy.shape[0], strategy.shape[1]
 
-        # Calculates the mutation strength
+        # Calculates the mutation strength and its complementary
         tau = 1 / np.sqrt(2 * n_variables)
-
-        # Calculates the mutation strength complementary
         tau_p = 1 / np.sqrt(2 * np.sqrt(n_variables))
 
-        # Generates a uniform random number
+        # Generates uniform random numbers
         r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
-
-        # Generates another uniform random number
         r2 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
         # Calculates the new strategy

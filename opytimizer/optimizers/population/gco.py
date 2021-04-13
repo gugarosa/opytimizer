@@ -155,10 +155,8 @@ class GCO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position to the agent
+                # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
                 # Increases the life of cell by ten

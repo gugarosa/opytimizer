@@ -97,16 +97,12 @@ class BPSO(Optimizer):
 
         """
 
-        # Defining a random binary number
+        # Defining random binary numbers
         r1 = r.generate_binary_random_number(position.shape)
-
-        # Defining another random binary number
         r2 = r.generate_binary_random_number(position.shape)
 
-        # Calculating the local partial
+        # Calculating the local and global partials
         local_partial = np.logical_and(self.c1, np.logical_xor(r1, np.logical_xor(local_position, position)))
-
-        # Calculating the global partial
         global_partial = np.logical_and(self.c2, np.logical_xor(r2, np.logical_xor(best_position, position)))
 
         # Updating new velocity
@@ -176,10 +172,8 @@ class BPSO(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position to the best agent
+                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(local_position[i])
-
-                # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
@@ -196,10 +190,8 @@ class BPSO(Optimizer):
 
         """
 
-        # Instanciating array of local positions
+        # Instanciating array of local positions and velocity
         local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
-
-        # And also an array of velocities
         velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
 
         # Initial search space evaluation

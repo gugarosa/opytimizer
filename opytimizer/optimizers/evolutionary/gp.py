@@ -293,18 +293,14 @@ class GP(Optimizer):
 
         # For every pair in selected individuals
         for s in g.n_wise(selected):
-            # Calculates the amount of father nodes
+            # Calculates the amount of father and mother nodes
             father_nodes = space.trees[s[0]].n_nodes
-
-            # Calculate the amount of mother nodes
             mother_nodes = space.trees[s[1]].n_nodes
 
             # Checks if both trees have more than one node
             if (father_nodes > 1) and (mother_nodes > 1):
-                # Prunning father nodes
+                # Prunning father and mother nodes
                 max_f_nodes = self._prune_nodes(father_nodes)
-
-                # Prunning mother nodes
                 max_m_nodes = self._prune_nodes(mother_nodes)
 
                 # Apply the crossover operation
@@ -452,13 +448,9 @@ class GP(Optimizer):
 
             # If tree's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of current tree
+                # Makes a deep copy of current tree, position and fitness
                 space.best_tree = copy.deepcopy(tree)
-
-                # Makes a deep copy of agent's position to the best agent
                 space.best_agent.position = copy.deepcopy(agent.position)
-
-                # Also, copies its fitness from agent's fitness
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

@@ -220,10 +220,8 @@ class BSA(Optimizer):
 
             # If its fitness is better than agent's fitness
             if trial_agent.fit < agent.fit:
-                # Copies the trial agent's position to the agent's
+                # Copies the trial agent's position and fitness to the agent's
                 agent.position = copy.deepcopy(trial_agent.position)
-
-                # Also copies its fitness
                 agent.fit = copy.deepcopy(trial_agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

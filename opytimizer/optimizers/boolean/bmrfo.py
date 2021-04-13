@@ -212,10 +212,8 @@ class BMRFO(Optimizer):
 
             # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:
-                # Replace the best agent's position with its copy
+                # Replace the best agent's position and fitness with its copy
                 best_agent.position = copy.deepcopy(agent.position)
-
-                # Also replace its fitness
                 best_agent.fit = copy.deepcopy(agent.fit)
 
         # Iterate through all agents

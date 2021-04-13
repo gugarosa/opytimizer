@@ -114,10 +114,8 @@ class GWO(Optimizer):
 
             # Checks if new fitness is better than current agent's fitness
             if X.fit < agent.fit:
-                # Updates the corresponding agent's position
+                # Updates the corresponding agent's position and fitness
                 agent.position = copy.deepcopy(X.position)
-
-                # And its fitness as well
                 agent.fit = copy.deepcopy(X.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

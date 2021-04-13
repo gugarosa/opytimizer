@@ -143,10 +143,8 @@ class DE(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position to the agent
+                # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

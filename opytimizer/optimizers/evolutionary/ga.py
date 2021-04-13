@@ -231,22 +231,16 @@ class GA(Optimizer):
 
         # For every pair of selected parents
         for s in g.n_wise(selected):
-            # Performs the crossover
+            # Performs the crossover and mutation
             alpha, beta = self._crossover(agents[s[0]], agents[s[1]])
-
-            # Performs the mutation
             alpha, beta = self._mutation(alpha, beta)
 
-            # Checking `alpha` limits
+            # Checking `alpha` and `beta` limits
             alpha.clip_limits()
-
-            # Checking `beta` limits
             beta.clip_limits()
 
-            # Calculates new fitness for `alpha`
+            # Calculates new fitness for `alpha` and `beta`
             alpha.fit = function(alpha.position)
-
-            # Calculates new fitness for `beta`
             beta.fit = function(beta.position)
 
             # Appends the mutated agents to the children

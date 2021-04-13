@@ -167,10 +167,8 @@ class COA(Optimizer):
 
                 # If the new potision is better than current agent's position (Eq. 14)
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replaces its fitness
                     agent.fit = copy.deepcopy(a.fit)
 
             # Performs transition between packs (Eq. 4)

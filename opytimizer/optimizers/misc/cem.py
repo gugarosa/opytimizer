@@ -163,10 +163,8 @@ class CEM(Optimizer):
 
         # For every decision variable
         for j in range(mean.shape[0]):
-            # Update its mean
+            # Update its mean and standard deviation
             mean[j] = self._update_mean(update_position[:, j, :], mean[j])
-
-            # Update its standard deviation
             std[j] = self._update_std(update_position[:, j, :], mean[j], std[j])
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
@@ -183,18 +181,14 @@ class CEM(Optimizer):
 
         """
 
-        # Instantiating an array of means
+        # Instantiating an array of means and standard deviations
         mean = np.zeros(space.n_variables)
-
-        # Instantiating an array of standard deviations
         std = np.zeros(space.n_variables)
 
         # Iterates through all decision variables
         for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-            # Calculates the initial mean
+            # Calculates the initial mean and standard deviation
             mean[j] = r.generate_uniform_random_number(lb, ub)
-
-            # Calculates the initial standard deviation
             std[j] = ub - lb
 
         # Initial search space evaluation
