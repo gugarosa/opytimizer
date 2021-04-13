@@ -112,10 +112,8 @@ class CSA(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position to the best agent
+                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(memory[i])
-
-                # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def _update(self, agents, memory):

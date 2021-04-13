@@ -200,10 +200,8 @@ class EO(Optimizer):
 
         """
 
-        # Calculates the equilibrium concentrations
+        # Calculates the equilibrium and average concentrations
         C = self._calculate_equilibrium(agents, C)
-
-        # Calculates the average concentration
         C_avg = self._average_concentration(function, C)
 
         # Makes a pool of both concentrations and their average (eq. 7)

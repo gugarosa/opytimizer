@@ -102,10 +102,8 @@ class ABC(Optimizer):
             # If yes, reset the number of trials for this particular food source
             trial = 0
 
-            # Copies the new position
+            # Copies the new position and fitness
             agent.position = copy.deepcopy(a.position)
-
-            # And also the new fitness
             agent.fit = copy.deepcopy(a.fit)
 
         # If not

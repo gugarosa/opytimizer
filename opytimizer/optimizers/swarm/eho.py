@@ -165,10 +165,8 @@ class EHO(Optimizer):
 
                 # If the new potision is better than current agent's position
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replaces its fitness
                     agent.fit = copy.deepcopy(a.fit)
 
     def _separating_operator(self, agents, n_ci):

@@ -82,17 +82,13 @@ class MRFO(Optimizer):
 
         """
 
-        # Generates an uniform random number
+        # Generates uniform random numbers
         r1 = r.generate_uniform_random_number()
+        r2 = r.generate_uniform_random_number()
+        r3 = r.generate_uniform_random_number()
 
         # Calculates the beta constant
         beta = 2 * np.exp(r1 * (n_iterations - iteration + 1) / n_iterations) * np.sin(2 * np.pi * r1)
-
-        # Generates another uniform random number
-        r2 = r.generate_uniform_random_number()
-
-        # Generates a third uniform random number
-        r3 = r.generate_uniform_random_number()
 
         # Check if current iteration proportion is smaller than random generated number
         if iteration / n_iterations < r2:
@@ -141,14 +137,12 @@ class MRFO(Optimizer):
 
         """
 
-        # Generates an uniform random number
+        # Generates uniform random numbers
         r1 = r.generate_uniform_random_number()
+        r2 = r.generate_uniform_random_number()
 
         # Calculates the alpha constant
         alpha = 2 * r1 * np.sqrt(np.abs(np.log(r1)))
-
-        # Generates another uniform random number
-        r2 = r.generate_uniform_random_number()
 
         # Checks if the index is equal to zero
         if i == 0:
@@ -176,14 +170,12 @@ class MRFO(Optimizer):
 
         """
 
-        # Generates an uniform random number
+        # Generates uniform random numbers
+        r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 
-        # Generates another uniform random number
-        r3 = r.generate_uniform_random_number()
-
         # Calculates the somersault foraging
-        somersault_foraging = position + self.S * (r2 * best_position - r3 * position)
+        somersault_foraging = position + self.S * (r1 * best_position - r2 * position)
 
         return somersault_foraging
 
@@ -222,10 +214,8 @@ class MRFO(Optimizer):
 
             # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:
-                # Replace the best agent's position with its copy
+                # Replace the best agent's position and fitness with its copy
                 best_agent.position = copy.deepcopy(agent.position)
-
-                # Also replace its fitness
                 best_agent.fit = copy.deepcopy(agent.fit)
 
         # Iterate through all agents

@@ -575,10 +575,8 @@ class KH(Optimizer):
         # Makes a deepcopy of agent
         a = copy.deepcopy(agents[idx])
 
-        # Samples a random integer
+        # Samples random integers
         p = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
-
-        # Samples another random integer
         q = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
         # Calculates the current mutation probability
@@ -623,10 +621,8 @@ class KH(Optimizer):
             # Updates current agent's position
             agents[i].position = self._update_position(agents, i, iteration, n_iterations, food, motion[i], foraging[i])
 
-            # Performs the crossover
+            # Performs the crossover and mutation
             agents[i] = self._crossover(agents, i)
-
-            # Performs the mutation
             agents[i] = self._mutation(agents, i)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
@@ -643,10 +639,8 @@ class KH(Optimizer):
 
         """
 
-        # Instanciating array of motions
+        # Instanciating array of motions and foraging motions
         motion = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # And also an array of foraging motions
         foraging = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         # Initial search space evaluation

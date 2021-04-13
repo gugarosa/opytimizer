@@ -241,10 +241,8 @@ class TWO(Optimizer):
         for agent, temp in zip(agents, temp_agents):
             # If temporary agent is better than real one
             if temp.fit < agent.fit:
-                # Updates its position
+                # Updates its position and fitness
                 agent.position = copy.deepcopy(temp.position)
-
-                # And updates its fitness
                 agent.fit = copy.deepcopy(temp.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

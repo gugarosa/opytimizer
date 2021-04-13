@@ -202,10 +202,8 @@ class CS(Optimizer):
 
             # If new agent's fitness is better than agent's
             if new_agent.fit < agent.fit:
-                # Replace its position
+                # Replace its position and fitness
                 agent.position = copy.deepcopy(new_agent.position)
-
-                # And also, its fitness
                 agent.fit = copy.deepcopy(new_agent.fit)
 
     def _update(self, agents, best_agent, function):

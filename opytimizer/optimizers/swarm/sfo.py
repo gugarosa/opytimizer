@@ -190,10 +190,8 @@ class SFO(Optimizer):
         # Gathers the best sardine
         best_sardine = sardines[0]
 
-        # Calculates the number of sailfishes
+        # Calculates the number of sailfishes and sardines
         n_sailfishes = len(agents)
-
-        # Calculates the number of sardines
         n_sardines = len(sardines)
 
         # Calculates the number of decision variables

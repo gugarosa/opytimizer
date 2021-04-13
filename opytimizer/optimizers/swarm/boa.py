@@ -171,10 +171,8 @@ class BOA(Optimizer):
 
             # If random number is bigger than switch probability
             else:
-                # Generates a `j` index
+                # Generates `j` and `k` indexes
                 j = r.generate_integer_random_number(0, len(agents))
-
-                #  Generates a `k` index
                 k = r.generate_integer_random_number(0, len(agents), exclude_value=j)
 
                 # Moves current agent using a local movement (eq. 3)

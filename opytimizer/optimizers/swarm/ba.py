@@ -257,16 +257,10 @@ class BA(Optimizer):
 
         """
 
-        # Instanciating array of frequencies
+        # Instanciating array of frequencies, velocities, loudness and pulse rates
         frequency = rnd.generate_uniform_random_number(self.f_min, self.f_max, space.n_agents)
-
-        # Instanciating array of velocities
         velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # And also an array of loudnesses
         loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
-
-        # Finally, an array of pulse rates
         pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
 
         # Initial search space evaluation

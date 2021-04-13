@@ -125,10 +125,8 @@ class BWO(Optimizer):
         # Generates a uniform random number
         alpha = r.generate_uniform_random_number()
 
-        # Calculates the first crossover
+        # Calculates first and second crossovers
         y1.position = alpha * x1.position + (1 - alpha) * x2.position
-
-        # Calculates the second crossover
         y2.position = alpha * x2.position + (1 - alpha) * x1.position
 
         return y1, y2
@@ -146,10 +144,8 @@ class BWO(Optimizer):
 
         # Checks if the number of variables is bigger than one
         if alpha.n_variables > 1:
-            # Samples a random integer
+            # Samples random integers
             r1 = r.generate_integer_random_number(0, alpha.n_variables)
-
-            # Samples the second integer
             r2 = r.generate_integer_random_number(0, alpha.n_variables, exclude_value=r1)
 
             # Swaps the randomly selected variables
@@ -198,16 +194,12 @@ class BWO(Optimizer):
                 # Procreates parents into two new offsprings
                 y1, y2 = self._procreating(father, mother)
 
-                # Checking `y1` limits
+                # Checking `y1` and `y2` limits
                 y1.clip_limits()
-
-                # Checking `y2` limits
                 y2.clip_limits()
 
-                # Calculates new fitness for `y1`
+                # Calculates new fitness for `y1` and `y2`
                 y1.fit = function(y1.position)
-
-                # Calculates new fitness for `y2`
                 y2.fit = function(y2.position)
 
                 # Appends the mother and mutated agents to the new population

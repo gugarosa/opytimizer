@@ -135,10 +135,8 @@ class SSD(Optimizer):
 
         """
 
-        # Generating first random number
+        # Generating random numbers
         r1 = r.generate_uniform_random_number()
-
-        # Generating second random number
         r2 = r.generate_uniform_random_number()
 
         # If random number is smaller than or equal to 0.5
@@ -218,10 +216,8 @@ class SSD(Optimizer):
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position to the best agent
+                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(local_position[i])
-
-                # Makes a deep copy of current agent fitness to the best agent
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

@@ -83,18 +83,14 @@ class SOS(Optimizer):
 
         # If new position is better than agent's `i` position
         if a.fit < agent_i.fit:
-            # Replaces the agent's `i` position
+            # Replaces the agent's `i` position and fitness
             agent_i.position = copy.deepcopy(a.position)
-
-            # Also replaces its fitness
             agent_i.fit = copy.deepcopy(a.fit)
 
         # If new position is better than agent's `j` position
         if b.fit < agent_j.fit:
-            # Replaces the agent's `j` position
+            # Replaces the agent's `j` position and fitness
             agent_j.position = copy.deepcopy(b.position)
-
-            # Also replaces its fitness
             agent_j.fit = copy.deepcopy(b.fit)
 
     def _commensalism(self, agent_i, agent_j, best_agent, function):
@@ -125,10 +121,8 @@ class SOS(Optimizer):
 
         # If the new position is better than the current agent's position
         if a.fit < agent_i.fit:
-            # Replaces the current agent's position
+            # Replaces the current agent's position and fitness
             agent_i.position = copy.deepcopy(a.position)
-
-            # Also replaces its fitness
             agent_i.fit = copy.deepcopy(a.fit)
 
     def _parasitism(self, agent_i, agent_j, function):
@@ -158,10 +152,8 @@ class SOS(Optimizer):
 
         # If the new potision is better than agent's `j` position
         if p.fit < agent_j.fit:
-            # Replaces the agent's `j` position
+            # Replaces the agent's `j` position and fitness
             agent_j.position = copy.deepcopy(p.position)
-
-            # Also replaces its fitness
             agent_j.fit = copy.deepcopy(p.fit)
 
     def _update(self, agents, best_agent, function):

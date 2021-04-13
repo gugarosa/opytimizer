@@ -176,10 +176,8 @@ class FPA(Optimizer):
                 # Generates an uniform random number
                 epsilon = r.generate_uniform_random_number()
 
-                # Generates an index for flower k
+                # Generates an index for flower `k` and flower `l`
                 k = r.generate_integer_random_number(0, len(agents))
-
-                # Generates an index for flower l
                 l = r.generate_integer_random_number(0, len(agents), exclude_value=k)
 
                 # Update a temporary position according to local pollination
@@ -193,10 +191,8 @@ class FPA(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position to the agent
+                # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
-
-                # And also copy its fitness
                 agent.fit = copy.deepcopy(a.fit)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

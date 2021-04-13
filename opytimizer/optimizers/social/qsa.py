@@ -109,8 +109,6 @@ class QSA(Optimizer):
             # Creates another temporary agent
             a = copy.deepcopy(agent)
 
-            print(i, q_1, q_2, q_1 <= i < q_1 + q_2)
-
             # If index is smaller than the number of agents in first queue
             if i < q_1:
                 # If it is the first agent in first queue
@@ -163,10 +161,8 @@ class QSA(Optimizer):
 
                 # If new fitness is better than current agent's fitness
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replace sits fitness
                     agent.fit = copy.deepcopy(a.fit)
 
                     # Defines the case as one
@@ -190,10 +186,8 @@ class QSA(Optimizer):
 
                 # If new fitness is better than current agent's fitness
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replaces its fitness
                     agent.fit = copy.deepcopy(a.fit)
 
                     # Defines the case as two
@@ -283,10 +277,8 @@ class QSA(Optimizer):
 
                 # If the new fitness is better than the current agent's fitness
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replaces its fitness
                     agent.fit = copy.deepcopy(a.fit)
 
     def _business_three(self, agents, function):
@@ -330,10 +322,8 @@ class QSA(Optimizer):
 
                 # If the new fitness is better than the current agent's fitness
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position
+                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
-
-                    # Also replaces its fitness
                     agent.fit = copy.deepcopy(a.fit)
 
     def _update(self, agents, function, iteration, n_iterations):

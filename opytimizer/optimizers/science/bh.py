@@ -76,10 +76,8 @@ class BH(Optimizer):
 
             # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:
-                # Swap their positions
+                # Swap their positions and their fitness
                 agent.position, best_agent.position = best_agent.position, agent.position
-
-                # Also swap their fitness
                 agent.fit, best_agent.fit = best_agent.fit, agent.fit
 
             # Increment the cost with current agent's fitness
