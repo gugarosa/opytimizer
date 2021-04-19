@@ -3,6 +3,7 @@ opytimizer.optimizers.population
 
 .. toctree::
     opytimizer.optimizers.population.aeo
+    opytimizer.optimizers.population.ao
     opytimizer.optimizers.population.coa
     opytimizer.optimizers.population.epo
     opytimizer.optimizers.population.gco
