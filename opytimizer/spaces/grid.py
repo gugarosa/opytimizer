@@ -17,12 +17,12 @@ class GridSpace(Space):
 
     """
 
-    def __init__(self, n_variables=1, step=0.1, lower_bound=(0,), upper_bound=(1,)):
+    def __init__(self, n_variables=1, step=(0.1,), lower_bound=(0,), upper_bound=(1,)):
         """Initialization method.
 
         Args:
             n_variables (int): Number of decision variables.
-            step (float): Size of each step in the grid.
+            step (tuple): Size of each variable step in the grid.
             lower_bound (tuple): Lower bound tuple with the minimum possible values.
             upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
@@ -49,7 +49,7 @@ class GridSpace(Space):
 
     @property
     def step(self):
-        """float: Size of each possible step.
+        """tuple: Size of each variable step.
 
         """
 
@@ -57,10 +57,8 @@ class GridSpace(Space):
 
     @step.setter
     def step(self, step):
-        if not isinstance(step, (float, int)):
-            raise e.TypeError('`step` should be a float or integer')
-        if step <= 0:
-            raise e.ValueError('`step` should be > 0')
+        if not isinstance(step, tuple):
+            raise e.TypeError('`step` should be a tuple')
 
         self._step = step
 
@@ -83,7 +81,7 @@ class GridSpace(Space):
         """Creates a grid of possible searches.
 
         Args:
-            step (float): Size of each step in the grid.
+            step (tuple): Size of each variable step in the grid.
             lower_bound (tuple): Lower bound tuple with the minimum possible values.
             upper_bound (tuple): Upper bound tuple with the maximum possible values.
 
@@ -91,9 +89,14 @@ class GridSpace(Space):
 
         logger.debug('Running private method: create_grid().')
 
+        # Checks if number of steps equals the number of lower and upper bounds
+        if len(step) != len(lower_bound) or len(step) != len(upper_bound):
+            # If not, raises an error
+            raise e.SizeError('`step` should have the same size of `lower_bound` and `upper_bound`')
+
         # Creating a meshgrid with all possible searches
-        mesh = np.meshgrid(*[step * np.arange(lb / step, ub / step)
-                             for lb, ub in zip(lower_bound, upper_bound)])
+        mesh = np.meshgrid(*[s * np.arange(lb / s, ub / s + s)
+                             for s, lb, ub in zip(step, lower_bound, upper_bound)])
 
         # Transforming the meshgrid into a list of possible searches
         self.grid = np.array(([m.ravel() for m in mesh])).T

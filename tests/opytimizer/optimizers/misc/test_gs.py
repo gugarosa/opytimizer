@@ -25,8 +25,8 @@ def test_gs_run():
 
     new_gs = gs.GS()
 
-    grid_space = grid.GridSpace(n_variables=2, step=0.1, lower_bound=[
-                                0, 0], upper_bound=[5, 5])
+    grid_space = grid.GridSpace(n_variables=2, step=(0.1, 0.1), lower_bound=(
+                                0, 0), upper_bound=(5, 5))
 
     history = new_gs.run(grid_space, new_function, pre_evaluate=hook)
 

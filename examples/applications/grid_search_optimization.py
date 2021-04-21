@@ -9,7 +9,7 @@ from opytimizer.spaces.grid import GridSpace
 n_variables = 2
 
 # And also the size of the step in the grid
-step = 0.1
+step = (0.1, 1)
 
 # Lower and upper bounds (has to be the same size as n_variables)
 lower_bound = (-10, -10)
