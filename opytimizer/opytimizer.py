@@ -93,13 +93,13 @@ class Opytimizer:
 
         self._function = function
 
-    def _retrieve_args(self, args_dict):
+    def _get_optimizer_args(self):
         """
         """
 
         args = {}
 
-        for k, v in args_dict.items():
+        for k, v in self.optimizer.args.items():
             if type(v) == list:
                 args[k] = []
                 for item in v:
@@ -127,20 +127,24 @@ class Opytimizer:
         logger.info('Starting optimization task.')
 
         #
+        self.iteration = -1
         self.n_iterations = n_iterations
-
-        args = self._retrieve_args(self.optimizer.args)
 
         #
         history = h.History(store_best_only)
         
         #
-        self.optimizer._evaluate(*args['evaluate'], hook=pre_evaluate)
+        args = self._get_optimizer_args()
+        self.optimizer.evaluate(*args['evaluate'], hook=pre_evaluate)
 
         #
         with tqdm(total=n_iterations) as b:
             #
             for t in range(n_iterations):
+                #
+                self.iteration = t
+                args = self._get_optimizer_args()
+
                 logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
                 #
@@ -150,7 +154,10 @@ class Opytimizer:
                 self.space.clip_limits()
 
                 # After the update, we need to re-evaluate the search space
-                self.optimizer._evaluate(*args['evaluate'], hook=pre_evaluate)
+                self.optimizer.evaluate(*args['evaluate'], hook=pre_evaluate)
+
+                #
+                # history.dump(*args['dump'])
 
                 #
                 b.set_postfix(fitness=self.space.best_agent.fit)

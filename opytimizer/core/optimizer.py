@@ -100,7 +100,7 @@ class Optimizer:
                      self.algorithm, str(hyperparams),
                      self.built)
 
-    def _update(self):
+    def update(self):
         """Updates the agents' position array.
 
         As each optimizer child can have a different procedure of update,
@@ -114,7 +114,7 @@ class Optimizer:
         raise NotImplementedError
 
     @d.pre_evaluate
-    def _evaluate(self, space, function):
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         If you need a specific evaluate method, please re-implement it on child's class.
@@ -135,22 +135,3 @@ class Optimizer:
                 # Makes a deep copy of agent's position and fitness
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        As each optimizer child can have a different optimization pipeline,
-        you will need to implement it directly on child's class.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): Method to be executed before evaluating the `function` being optimized.
-
-        Raises:
-            NotImplementedError.
-
-        """
-
-        raise NotImplementedError

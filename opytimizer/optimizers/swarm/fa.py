@@ -54,7 +54,8 @@ class FA(Optimizer):
         #
         self.args = {
             'evaluate': ['space', 'function'],
-            'update': ['space.agents', 'n_iterations']
+            'update': ['space.agents', 'iteration', 'n_iterations'],
+            'dump': ['space.agents', 'space.best_agent']
         }
 
         # Now, we need to build this class up
@@ -113,7 +114,7 @@ class FA(Optimizer):
 
         self._gamma = gamma
 
-    def _update(self, agents, n_iterations):
+    def _update(self, agents, iteration, n_iterations):
         """Method that wraps Firefly Algorithm over all agents and variables (eq. 3-9).
 
         Args:
@@ -121,6 +122,8 @@ class FA(Optimizer):
             n_iterations (int): Maximum number of iterations.
 
         """
+
+        print(iteration)
 
         # Calculating current iteration delta
         delta = 1 - ((10e-4) / 0.9) ** (1 / n_iterations)
