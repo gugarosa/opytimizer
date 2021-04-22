@@ -2,7 +2,10 @@
 """
 
 import time
+from tqdm import tqdm
 
+import opytimizer.utils.attribute as a
+import opytimizer.utils.history as h
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -90,7 +93,23 @@ class Opytimizer:
 
         self._function = function
 
-    def start(self, store_best_only=False, pre_evaluate=None):
+    def _retrieve_args(self, args_dict):
+        """
+        """
+
+        args = {}
+
+        for k, v in args_dict.items():
+            if type(v) == list:
+                args[k] = []
+                for item in v:
+                    args[k].append(a.rgetattr(self, item))
+
+        return args
+
+            
+
+    def start(self, n_iterations, store_best_only=False, pre_evaluate=None):
         """Starts the optimization task.
 
         Args
@@ -107,22 +126,37 @@ class Opytimizer:
 
         logger.info('Starting optimization task.')
 
-        # Starting timer to count optimization task
-        start = time.time()
+        #
+        self.n_iterations = n_iterations
 
-        # Starting optimizer
-        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluate)
+        args = self._retrieve_args(self.optimizer.args)
 
-        # Ending timer
-        end = time.time()
+        #
+        history = h.History(store_best_only)
+        
+        #
+        self.optimizer._evaluate(*args['evaluate'], hook=pre_evaluate)
 
-        # Calculating optimization task time
-        opt_time = end - start
+        #
+        with tqdm(total=n_iterations) as b:
+            #
+            for t in range(n_iterations):
+                logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
-        # Dumping the elapsed time to optimization history
-        history.dump(time=opt_time)
+                #
+                self.optimizer._update(*args['update'])
 
-        logger.info('Optimization task ended.')
-        logger.info('It took %s seconds.', opt_time)
+                # Checking if agents meet the bounds limits
+                self.space.clip_limits()
+
+                # After the update, we need to re-evaluate the search space
+                self.optimizer._evaluate(*args['evaluate'], hook=pre_evaluate)
+
+                #
+                b.set_postfix(fitness=self.space.best_agent.fit)
+                b.update()
+
+                logger.to_file(f'Fitness: {self.space.best_agent.fit}')
+                logger.to_file(f'Position: {self.space.best_agent.position}')
 
         return history

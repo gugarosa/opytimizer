@@ -51,6 +51,12 @@ class FA(Optimizer):
         # Light absorption coefficient
         self.gamma = 1.0
 
+        #
+        self.args = {
+            'evaluate': ['space', 'function'],
+            'update': ['space.agents', 'n_iterations']
+        }
+
         # Now, we need to build this class up
         self._build(hyperparams)
 

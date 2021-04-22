@@ -3,7 +3,7 @@ from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
+from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces.search import SearchSpace
 
 # Random seed for experimental consistency
@@ -31,7 +31,7 @@ hyperparams = {
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = FA(hyperparams=hyperparams)
 
 # Creating Function's object
 f = Function(pointer=Sphere())
@@ -40,4 +40,4 @@ f = Function(pointer=Sphere())
 o = Opytimizer(space=s, optimizer=p, function=f)
 
 # Running the optimization task
-history = o.start()
+history = o.start(n_iterations=100)
