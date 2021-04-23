@@ -6,7 +6,6 @@ from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces.search import SearchSpace
 
-
 # Random seed for experimental consistency
 np.random.seed(0)
 

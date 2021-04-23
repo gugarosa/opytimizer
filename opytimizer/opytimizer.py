@@ -2,11 +2,12 @@
 """
 
 import time
+
 from tqdm import tqdm
 
 import opytimizer.utils.attribute as a
-import opytimizer.utils.history as h
 import opytimizer.utils.exception as e
+import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 
 logger = l.get_logger(__name__)

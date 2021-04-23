@@ -6,7 +6,7 @@ import copy
 import numpy as np
 
 import opytimizer.utils.logging as l
-from opytimizer.core.space import Space
+from opytimizer.core import Space
 
 logger = l.get_logger(__name__)
 

@@ -9,7 +9,7 @@ step = [0.1, 1]
 lower_bound = [0.5, 1]
 upper_bound = [2.0, 2]
 
-# Creating the GridSpace object
+# Creates the GridSpace
 s = GridSpace(n_variables, step, lower_bound, upper_bound)
 
 # Prints out some properties

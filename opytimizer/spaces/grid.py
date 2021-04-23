@@ -7,7 +7,7 @@ import numpy as np
 
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
-from opytimizer.core.space import Space
+from opytimizer.core import Space
 
 logger = l.get_logger(__name__)
 
@@ -37,7 +37,6 @@ class GridSpace(Space):
         n_dimensions = 1
 
         # Overrides its parent class with the receiving arguments
-        # `n_agents=1` is used as a placeholder for now
         super(GridSpace, self).__init__(n_agents, n_variables, n_dimensions,
                                         lower_bound, upper_bound)
 
@@ -101,7 +100,7 @@ class GridSpace(Space):
         self.n_agents = len(self.grid)
 
     def _initialize_agents(self):
-        """nitializes agents with their positions and defines a best agent.
+        """Initializes agents with their positions and defines a best agent.
 
         """
 
