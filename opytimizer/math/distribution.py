@@ -16,17 +16,17 @@ def generate_bernoulli_distribution(prob=0.0, size=1):
         size (int): Size of array.
 
     Returns:
-        A Bernoulli distribution n-dimensional array.
+        Bernoulli distribution n-dimensional array.
 
     """
 
-    # Creating bernoulli array
+    # Creates the bernoulli array
     bernoulli_array = np.zeros(size)
 
-    # Generating random number
+    # Generates a random number
     r1 = r.generate_uniform_random_number(0, 1, size)
 
-    # Masking the array
+    # Masks the array based on input probability
     bernoulli_array[r1 < prob] = 1
 
     return bernoulli_array
@@ -41,7 +41,7 @@ def generate_choice_distribution(n=1, probs=None, size=1):
         size (int): Size of array.
 
     Returns:
-        A choice distribution array.
+        Choice distribution array.
 
     """
 
@@ -63,7 +63,7 @@ def generate_levy_distribution(beta=0.1, size=1):
         size (int): Size of array.
 
     Returns:
-        A Lévy distribution n-dimensional array.
+        Lévy distribution n-dimensional array.
 
     """
 
@@ -71,14 +71,14 @@ def generate_levy_distribution(beta=0.1, size=1):
     num = gamma(1 + beta) * sin(pi * beta / 2)
     den = gamma((1 + beta) / 2) * beta * (2 ** ((beta - 1) / 2))
 
-    # Calculates the sigma for further distribution generation
+    # Calculates `sigma`
     sigma = (num / den) ** (1 / beta)
 
-    # Calculates the 'u' and `v` distributions
+    # Calculates 'u' and `v` distributions
     u = r.generate_gaussian_random_number(size=size) * sigma
     v = r.generate_gaussian_random_number(size=size)
 
-    # Finally, we can calculate the Lévy distribution
+    # Calculates the Lévy distribution
     levy_array = u / np.fabs(v) ** (1 / beta)
 
     return levy_array

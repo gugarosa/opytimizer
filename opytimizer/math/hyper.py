@@ -12,36 +12,35 @@ def norm(array):
         array (np.array): A 2-dimensional input array.
 
     Returns:
-        The norm calculated over the second axis, such as (2, 4) array shape
+        Norm calculated over the second axis, such as (2, 4) array shape
         will result in a norm (2, ) shape.
 
     """
 
-    # Calculating the norm over the hypercomplex numbers
+    # Calculates the norm over a hypercomplex number
     array_norm = np.linalg.norm(array, axis=1)
 
     return array_norm
 
 
-def span(array, lb, ub):
+def span(array, lower_bound, upper_bound):
     """Spans a hypercomplex number between lower and upper bounds.
 
     Args:
         array (np.array): A 2-dimensional input array.
-        lb (tuple, np.array): Lower bounds to be spanned.
-        ub (tuple, np.array): Upper bounds to be spanned.
+        lb (list, tuple, np.array): Lower bounds to be spanned.
+        ub (list, tuple, np.array): Upper bounds to be spanned.
 
     Returns:
-        A spanned value that can be used as decision variable in order to
-        feed a fitness function.
+        Spanned values that can be used as decision variables.
 
     """
 
-    # We need to force lower and upper bounds to be arrays
-    lb = np.array(lb)
-    ub = np.array(ub)
+    # Forces lower and upper bounds to be arrays
+    lb = np.asarray(lower_bound)
+    ub = np.asarray(upper_bound)
 
-    # Calculating span function
+    # Calculates the spanning function
     array_span = (ub - lb) * (norm(array) / np.sqrt(array.shape[1])) + lb
 
     return array_span

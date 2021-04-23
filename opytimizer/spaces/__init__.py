@@ -1,4 +1,4 @@
-"""A customized space module to provide different search spaces
+"""Customizable space module that provides different search spaces
 implementations.
 """
 

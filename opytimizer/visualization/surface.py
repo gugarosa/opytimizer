@@ -9,40 +9,33 @@ def plot(points, title='', subtitle='', style='winter', colorbar=True):
 
     Args:
         points (np.array): Points to be plotted with shape equal to (3, n, n).
-        title (str): The title of the plot.
-        subtitle (str): The subtitle of the plot.
+        title (str): Title of the plot.
+        subtitle (str): Subtitle of the plot.
         style (str): Surface's style.
         colorbar (bool): If colorbar should be used or not.
 
     """
 
-    # Creating figure
+    # Creates the figure and axis
     fig = plt.figure(figsize=(9, 5))
-
-    # Creating the axis
     ax = plt.axes(projection='3d')
 
-    # Defining some properties, such as axis labels
+    # Defines some properties, such as labels, title, subtitle and ticks
     ax.set(xlabel='$x$', ylabel='$y$', zlabel='$f(x, y)$')
-
-    # Reducing the size of the ticks
-    ax.tick_params(labelsize=8)
-
-    # Setting both title and subtitles
     ax.set_title(title, loc='left', fontsize=14)
     ax.set_title(subtitle, loc='right', fontsize=8, color='grey')
+    ax.tick_params(labelsize=8)
 
-    # PLotting the wireframe
+    # Plots the wireframe and the surface
     ax.plot_wireframe(points[0], points[1], points[2], color='grey')
-
-    # Plotting the surface
     surface = ax.plot_surface(points[0], points[1], points[2],
-                              rstride=1, cstride=1, cmap=style, edgecolor='none')
+                              rstride=1, cstride=1, cmap=style,
+                              edgecolor='none')
 
-    # If colorbar usage is true
+    # If colorbar usage is `True`
     if colorbar:
         # Adds the colorbar property to the figure
         fig.colorbar(surface, shrink=0.5, aspect=10)
 
-    # Displaying the plot
+    # Displays the plot
     plt.show()

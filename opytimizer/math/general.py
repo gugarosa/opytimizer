@@ -10,18 +10,18 @@ import opytimizer.utils.constants as c
 
 
 def euclidean_distance(x, y):
-    """Calculates the euclidean distance between two n-dimensional points.
+    """Calculates the Euclidean distance between two n-dimensional points.
 
     Args:
-        x (np.array): First n-dimensional point.
-        y (np.array): Second n-dimensional point.
+        x (np.array): N-dimensional point.
+        y (np.array): N-dimensional point.
 
     Returns:
-        The euclidean distance between x and y.
+        Euclidean distance between `x` and `y`.
 
     """
 
-    # Calculates the euclidean distance
+    # Calculates the Euclidean distance
     distance = np.linalg.norm(x - y) ** 2
 
     return distance
@@ -39,29 +39,28 @@ def n_wise(x, size=2):
 
     """
 
-    # Creats an iterator from `x`
+    # Creates an iterator from `x`
     iterator = iter(x)
 
-    # Splits into pairs and returns a new iterator
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
 def tournament_selection(fitness, n):
-    """Selects `n` individuals based on a tournament selection algorithm.
+    """Selects n-individuals based on a tournament selection.
 
     Args:
         fitness (list): List of individuals fitness.
         n (int): Number of individuals to be selected.
 
     Returns:
-        A list with the indexes of the selected individuals.
+        Indexes of selected individuals.
 
     """
 
-    # Creating a list to append selected individuals
+    # Creates a list to append selected individuals
     selected = []
 
-    # For every `n` individual to be selected
+    # For every n-individual to be selected
     for _ in range(n):
         # For every tournament round, we select `TOURNAMENT_SIZE` individuals
         step = [np.random.choice(fitness) for _ in range(c.TOURNAMENT_SIZE)]
@@ -79,7 +78,7 @@ def weighted_wheel_selection(weights):
         weights (list): List of individuals weights.
 
     Returns:
-        A roulette selected individual.
+        Weight-based roulette individual.
 
     """
 
@@ -93,7 +92,6 @@ def weighted_wheel_selection(weights):
     for i, c_sum in enumerate(cumulative_sum):
         # If individual's cumulative sum is bigger than selection probability
         if c_sum > prob:
-            # Returns the individual
             return i
 
     return None
