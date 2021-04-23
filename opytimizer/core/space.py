@@ -98,36 +98,6 @@ class Space:
         self._n_dimensions = n_dimensions
 
     @property
-    def agents(self):
-        """list: Agents that belongs to the space.
-
-        """
-
-        return self._agents
-
-    @agents.setter
-    def agents(self, agents):
-        if not isinstance(agents, list):
-            raise e.TypeError('`agents` should be a list')
-
-        self._agents = agents
-
-    @property
-    def best_agent(self):
-        """Agent: Best agent.
-
-        """
-
-        return self._best_agent
-
-    @best_agent.setter
-    def best_agent(self, best_agent):
-        if not isinstance(best_agent, Agent):
-            raise e.TypeError('`best_agent` should be an Agent')
-
-        self._best_agent = best_agent
-
-    @property
     def lb(self):
         """np.array: Minimum possible values.
 
@@ -180,6 +150,36 @@ class Space:
 
         self._built = built
 
+    @property
+    def agents(self):
+        """list: Agents that belongs to the space.
+
+        """
+
+        return self._agents
+
+    @agents.setter
+    def agents(self, agents):
+        if not isinstance(agents, list):
+            raise e.TypeError('`agents` should be a list')
+
+        self._agents = agents
+
+    @property
+    def best_agent(self):
+        """Agent: Best agent.
+
+        """
+
+        return self._best_agent
+
+    @best_agent.setter
+    def best_agent(self, best_agent):
+        if not isinstance(best_agent, Agent):
+            raise e.TypeError('`best_agent` should be an Agent')
+
+        self._best_agent = best_agent
+
     def _create_agents(self):
         """Creates a list of agents.
 
@@ -207,13 +207,13 @@ class Space:
         # Creates the agents
         self._create_agents()
 
-        # Initialize the agents
+        # Initializes the agents
         self._initialize_agents()
 
         # If no errors were shown, we can declare the space as built
         self.built = True
 
-        # Logging attributes
+        # Logs the properties
         logger.debug('Agents: %d | Size: (%d, %d) '
                      'Lower Bound: %s | Upper Bound: %s | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions,

@@ -11,7 +11,8 @@ logger = l.get_logger(__name__)
 
 
 class Optimizer:
-    """An Optimizer class that serves as meta-heuristics' parent.
+    """An Optimizer class that holds meta-heuristics-related properties
+    and methods.
 
     """
 
@@ -25,9 +26,6 @@ class Optimizer:
 
         # Algorithm's name
         self.algorithm = algorithm
-
-        # Key-value hyperparameters
-        self.params = None
 
         # Indicates whether the optimizer is built or not
         self.built = False
@@ -45,8 +43,23 @@ class Optimizer:
         self._algorithm = algorithm
 
     @property
+    def built(self):
+        """bool: Indicates whether the optimizer is built.
+
+        """
+
+        return self._built
+
+    @built.setter
+    def built(self, built):
+        if not isinstance(built, bool):
+            raise e.TypeError('`built` should be a boolean')
+
+        self._built = built
+
+    @property
     def params(self):
-        """dict: Key-value hyperparameters.
+        """dict: Key-value parameters.
 
         """
 
@@ -59,59 +72,30 @@ class Optimizer:
 
         self._params = params
 
-    @property
-    def built(self):
-        """bool: Indicates whether the optimizer is built.
-
-        """
-
-        return self._built
-
-    @built.setter
-    def built(self, built):
-        self._built = built
-
-    def _build(self, params):
-        """This method serves as the object building process.
+    def build(self, params):
+        """Builds the object by creating its parameters.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Key-value parameters to the meta-heuristics.
 
         """
 
-        logger.debug('Running private method: build().')
-
-        # We need to save the params object for faster looking up
+        # Saves the `params` for faster looking up
         self.params = params
 
-        # Checks if params are really provided
+        # Checks if `params` are really provided
         if params:
-            # If one can find any hyperparam inside its object
+            # Iterates through all parameters
             for k, v in params.items():
-                # Set it as the one that will be used
+                # Sets its key-value pair
                 setattr(self, k, v)
 
-        # Set built variable to 'True'
+        # Sets the `built` variable to true
         self.built = True
 
-        # Logging attributes
-        logger.debug('Algorithm: %s | Hyperparameters: %s | '
-                     'Built: %s.',
-                     self.algorithm, str(params),
-                     self.built)
-
-    def update(self):
-        """Updates the agents' position array.
-
-        As each optimizer child can have a different procedure of update,
-        you will need to implement it directly on child's class.
-
-        Raises:
-            NotImplementedError.
-
-        """
-
-        raise NotImplementedError
+        # Logs the properties
+        logger.debug('Algorithm: %s | Parameters: %s | Built: %s.',
+                     self.algorithm, str(params), self.built)
 
     @d.pre_evaluate
     def evaluate(self, space, function):
@@ -135,3 +119,16 @@ class Optimizer:
                 # Makes a deep copy of agent's position and fitness
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
+
+    def update(self):
+        """Updates the agents' position array.
+
+        As each child has a different procedure of update,
+        you will need to implement it directly on its class.
+
+        Raises:
+            NotImplementedError.
+
+        """
+
+        pass
