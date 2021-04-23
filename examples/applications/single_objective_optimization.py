@@ -6,6 +6,8 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces import SearchSpace
 
+from opytimizer.utils.callback import Callback
+
 # Random seed for experimental consistency
 np.random.seed(0)
 
@@ -25,5 +27,6 @@ function = Function(Sphere())
 # Bundle every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, function)
 
+
 # Runs the optimization task
-history = opt.start(n_iterations=1)
+history = opt.start(n_iterations=10)

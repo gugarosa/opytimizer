@@ -9,6 +9,7 @@ import opytimizer.utils.attribute as a
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
+from opytimizer.utils.callback import Callback
 
 logger = l.get_logger(__name__)
 
@@ -40,6 +41,10 @@ class Opytimizer:
         # Function
         self.function = function
 
+        # Additional properties
+        self.iteration = 0
+        self.n_iterations = 0
+
         # Logs the properties
         logger.debug('Space: %s | Optimizer: %s| Function: %s.',
                      self.space, self.optimizer, self.function)
@@ -56,7 +61,8 @@ class Opytimizer:
     @space.setter
     def space(self, space):
         if not space.built:
-            raise e.BuildError('`space` should be built before using Opytimizer')
+            raise e.BuildError(
+                '`space` should be built before using Opytimizer')
 
         self._space = space
 
@@ -71,7 +77,8 @@ class Opytimizer:
     @optimizer.setter
     def optimizer(self, optimizer):
         if not optimizer.built:
-            raise e.BuildError('`optimizer` should be built before using Opytimizer')
+            raise e.BuildError(
+                '`optimizer` should be built before using Opytimizer')
 
         self._optimizer = optimizer
 
@@ -86,27 +93,68 @@ class Opytimizer:
     @function.setter
     def function(self, function):
         if not function.built:
-            raise e.BuildError('`function` should be built before using Opytimizer')
+            raise e.BuildError(
+                '`function` should be built before using Opytimizer')
 
         self._function = function
 
-    def _get_optimizer_args(self):
+    @property
+    def evaluate_args(self):
+        """Converts the optimizer `evaluate` arguments into real variables.
+
         """
+
+        return [a.rgetattr(self, v) for v in self.optimizer.args['evaluate']]
+
+    @property
+    def update_args(self):
+        """Converts the optimizer `update` arguments into real variables.
+
         """
 
-        args = {}
+        return [a.rgetattr(self, v) for v in self.optimizer.args['update']]
 
-        for k, v in self.optimizer.args.items():
-            if type(v) == list:
-                args[k] = []
-                for item in v:
-                    args[k].append(a.rgetattr(self, item))
+    @property
+    def history_kwargs(self):
+        """Converts the optimizer `history` key-word arguments into real variables.
 
-        return args
+        """
 
-            
+        return {k:a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
 
-    def start(self, n_iterations, store_best_only=False, pre_evaluate=None):
+    def evaluate(self):
+        """Wraps the `evaluate` pipeline with its corresponding callbacks.
+
+        """
+
+        # Invokes the `on_evaluate_before` callback
+        self.callback.on_evaluate_before(*self.evaluate_args)
+
+        # Performs an evaluation over the search space
+        self.optimizer.evaluate(*self.evaluate_args)
+
+        # Invokes the `on_evaluate_after` callback
+        self.callback.on_evaluate_after()
+
+    def update(self):
+        """Wraps the `update` pipeline with its corresponding callbacks.
+
+        """
+
+        # Invokes the `on_update_before` callback
+        self.callback.on_update_before()
+
+        # Performs an update over the search space
+        self.optimizer.update(*self.update_args)
+
+        # Invokes the `on_update_after` callback
+        self.callback.on_update_after()
+
+        # Regardless of callbacks or not, every update on the search space
+        # must meet the bounds limits
+        self.space.clip_by_bound()
+
+    def start(self, n_iterations, callback=None, store_best_only=False, pre_evaluate=None):
         """Starts the optimization task.
 
         Args
@@ -124,43 +172,46 @@ class Opytimizer:
         logger.info('Starting optimization task.')
 
         #
-        self.iteration = -1
+        opt_history = h.History(store_best_only)
+
+        # Number of maximum iterations
         self.n_iterations = n_iterations
 
-        #
-        history = h.History(store_best_only)
-        
-        #
-        args = self._get_optimizer_args()
-        self.optimizer.evaluate(*args['evaluate'], hook=pre_evaluate)
+        # Callback
+        self.callback = callback or Callback()
 
-        #
+        # Evaluates the search space
+        self.evaluate()
+
+        # Initializes a progress bar
         with tqdm(total=n_iterations) as b:
-            #
+            # Loops through all iterations
             for t in range(n_iterations):
-                #
-                self.iteration = t
-                args = self._get_optimizer_args()
-
                 logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
-                #
-                self.optimizer._update(*args['update'])
+                # Invokes the `on_iteration_begin` callback
+                self.callback.on_iteration_begin(t, opt_history)
 
-                # Checking if agents meet the bounds limits
-                self.space.clip_by_bound()
+                # Current iteration
+                self.iteration = t
 
-                # After the update, we need to re-evaluate the search space
-                self.optimizer.evaluate(*args['evaluate'], hook=pre_evaluate)
+                # Updates the search space
+                self.update()
 
-                #
-                # history.dump(*args['dump'])
+                # Re-evaluates the search space
+                self.evaluate()
 
-                #
+                # Updates the progress bar status
                 b.set_postfix(fitness=self.space.best_agent.fit)
                 b.update()
+
+                #
+                opt_history.dump(**self.history_kwargs)
+
+                # Invokes the `on_iteration_end` callback
+                self.callback.on_iteration_end(t, opt_history)
 
                 logger.to_file(f'Fitness: {self.space.best_agent.fit}')
                 logger.to_file(f'Position: {self.space.best_agent.position}')
 
-        return history
+        return

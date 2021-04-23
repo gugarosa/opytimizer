@@ -27,6 +27,9 @@ class Optimizer:
         # Key-value parameters
         self.params = None
 
+        # Key-value arguments
+        self.args = None
+
         # Indicates whether the optimizer is built or not
         self.built = False
 
@@ -75,11 +78,27 @@ class Optimizer:
 
         self._params = params
 
-    def build(self, params):
+    @property
+    def args(self):
+        """dict: Key-value arguments.
+
+        """
+
+        return self._args
+
+    @args.setter
+    def args(self, args):
+        if not (isinstance(args, dict) or args is None):
+            raise e.TypeError('`args` should be a dictionary')
+
+        self._args = args
+
+    def build(self, params, args):
         """Builds the object by creating its parameters.
 
         Args:
-            params (dict): Key-value parameters to the meta-heuristics.
+            params (dict): Key-value parameters to the meta-heuristic.
+            args (dict): Key-value arguments to the meta-heuristic.
 
         """
 
@@ -92,6 +111,9 @@ class Optimizer:
             for k, v in params.items():
                 # Sets its key-value pair
                 setattr(self, k, v)
+
+        # Registers the arguments
+        self.args = args
 
         # Sets the `built` variable to true
         self.built = True
