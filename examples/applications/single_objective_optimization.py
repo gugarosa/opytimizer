@@ -27,6 +27,7 @@ function = Function(Sphere())
 # Bundle every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, function)
 
-
 # Runs the optimization task
-history = opt.start(n_iterations=100)
+opt.start(n_iterations=100)
+
+print(len(opt.history.best_agent))

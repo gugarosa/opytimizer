@@ -7,9 +7,9 @@ from tqdm import tqdm
 
 import opytimizer.utils.attribute as a
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.utils.callback import Callback
+from opytimizer.utils.history import History
 
 logger = l.get_logger(__name__)
 
@@ -20,13 +20,17 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space, optimizer, function):
+    def __init__(self, space, optimizer, function, callback=None,
+                 store_best_only=True, iterations_per_snapshot=-1):
         """Initialization method.
 
         Args:
             space (Space): Space-child instance.
             optimizer (Optimizer): Optimizer-child instance.
             function (Function): Function or Function-child instance.
+            callback (Callback): Pre-defined or customized callback object.
+            store_best_only (bool): Stores only the history of best agent.
+            iterations_per_snapshot (int): Saves a snapshot every `n` iterations.
 
         """
 
@@ -41,9 +45,14 @@ class Opytimizer:
         # Function
         self.function = function
 
-        # Additional properties
-        self.iteration = 0
-        self.n_iterations = 0
+        # Callback
+        self.callback = callback or Callback()
+
+        # History
+        self.history = History(store_best_only, iterations_per_snapshot)
+
+        # Total number of iterations
+        self.total_iterations = 0
 
         # Logs the properties
         logger.debug('Space: %s | Optimizer: %s| Function: %s.',
@@ -120,7 +129,7 @@ class Opytimizer:
 
         """
 
-        return {k:a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
+        return {k: a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
 
     def evaluate(self):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
@@ -154,31 +163,23 @@ class Opytimizer:
         # must meet the bounds limits
         self.space.clip_by_bound()
 
-    def start(self, n_iterations, callback=None, store_best_only=False, pre_evaluate=None):
+    def start(self, n_iterations):
         """Starts the optimization task.
 
         Args
-            store_best_only (bool): If True, only the best agent
-                of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed
-                before evaluating the function being optimized.
-
-        Returns:
-            A History object describing the agents position and best fitness values
-                at each iteration throughout the optimization process.
+            n_iterations (int): Number of iterations.
 
         """
 
         logger.info('Starting optimization task.')
 
-        #
-        opt_history = h.History(store_best_only)
-
-        # Number of maximum iterations
+        # Additional properties
         self.n_iterations = n_iterations
 
-        # Callback
-        self.callback = callback or Callback()
+        # Defines starting and ending points of iterations,
+        # so when can handle multiple executions
+        start_iteration = self.total_iterations
+        end_iteration = self.total_iterations + n_iterations
 
         # Evaluates the search space
         self.evaluate()
@@ -186,11 +187,11 @@ class Opytimizer:
         # Initializes a progress bar
         with tqdm(total=n_iterations) as b:
             # Loops through all iterations
-            for t in range(n_iterations):
-                logger.to_file(f'Iteration {t+1}/{n_iterations}')
+            for t in range(start_iteration, end_iteration):
+                logger.to_file(f'Iteration {t+1}/{end_iteration}')
 
                 # Invokes the `on_iteration_begin` callback
-                self.callback.on_iteration_begin(t+1, opt_history)
+                self.callback.on_iteration_begin(t+1, self.history)
 
                 # Current iteration
                 self.iteration = t
@@ -205,13 +206,14 @@ class Opytimizer:
                 b.set_postfix(fitness=self.space.best_agent.fit)
                 b.update()
 
-                #
-                opt_history.dump(**self.history_kwargs)
+                # Dumps key-word arguments in optimization history
+                self.history.dump(**self.history_kwargs)
 
                 # Invokes the `on_iteration_end` callback
-                self.callback.on_iteration_end(t+1, opt_history)
+                self.callback.on_iteration_end(t+1, self.history)
 
                 logger.to_file(f'Fitness: {self.space.best_agent.fit}')
                 logger.to_file(f'Position: {self.space.best_agent.position}')
 
-        return opt_history
+        # Saves the number of total iterations that have be runned on object
+        self.total_iterations += n_iterations
