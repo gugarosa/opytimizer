@@ -1,4 +1,4 @@
-"""Opytimizer entry point.
+"""Optimization entry point.
 """
 
 import time
@@ -19,39 +19,35 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space=None, optimizer=None, function=None):
+    def __init__(self, space, optimizer, function):
         """Initialization method.
 
         Args:
-            space (Space): A Space's object,
-                where it has to be a child (e.g., SearchSpace, HyperComplexSpace, etc).
-            optimizer (Optimizer): An Optimizer's object,
-                where it has to be a child (e.g., PSO, BA, etc).
-            function (Function): A Function's object,
-                where it can be a child (e.g., WeightedFunction).
+            space (Space): Space-child instance.
+            optimizer (Optimizer): Optimizer-child instance.
+            function (Function): Function or Function-child instance.
 
         """
 
         logger.info('Creating class: Opytimizer.')
 
-        # Attaches the space to Opytimizer
+        # Space
         self.space = space
 
-        # Attaches the optimizer
+        # Optimizer
         self.optimizer = optimizer
 
-        # Lastly, attaches the function
+        # Function
         self.function = function
 
-        # We will log some important information
+        # Logs the properties
         logger.debug('Space: %s | Optimizer: %s| Function: %s.',
                      self.space, self.optimizer, self.function)
-
         logger.info('Class created.')
 
     @property
     def space(self):
-        """Space: A Space's object, where it has to be a child (SearchSpace, HyperComplexSpace, etc).
+        """Space: Space-child instance (SearchSpace, HyperComplexSpace, etc).
 
         """
 
@@ -66,7 +62,7 @@ class Opytimizer:
 
     @property
     def optimizer(self):
-        """Optimizer: An Optimizer's object, where it has to be a child (PSO, BA, etc).
+        """Optimizer: Optimizer-child instance (PSO, BA, etc).
 
         """
 
@@ -81,7 +77,7 @@ class Opytimizer:
 
     @property
     def function(self):
-        """Function: A Function's object, where it can be a child (WeightedFunction).
+        """Function: Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc).
 
         """
 

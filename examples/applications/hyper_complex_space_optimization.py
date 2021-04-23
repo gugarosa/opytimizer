@@ -36,7 +36,7 @@ def wrapper(x):
 # Creating Function's object
 f = Function(pointer=wrapper)
 
-# Hyperparameters for the optimizer
+# Parameters for the optimizer
 params = {
     'w': 0.7,
     'c1': 1.7,

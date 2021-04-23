@@ -60,7 +60,7 @@ n_iterations = 3
 b = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations,
                  n_variables=n_variables)
 
-# Hyperparameters for the optimizer
+# Parameters for the optimizer
 params = {
     'c1': r.generate_binary_random_number(size=(n_variables, 1)),
     'c2': r.generate_binary_random_number(size=(n_variables, 1))

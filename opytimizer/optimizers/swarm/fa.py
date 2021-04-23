@@ -28,11 +28,10 @@ class FA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FA', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -40,7 +39,7 @@ class FA(Optimizer):
         logger.info('Overriding class: Optimizer -> FA.')
 
         # Override its parent class with the receiving params
-        super(FA, self).__init__(algorithm)
+        super(FA, self).__init__()
 
         # Randomization parameter
         self.alpha = 0.5
@@ -58,8 +57,8 @@ class FA(Optimizer):
             'dump': ['space.agents', 'space.best_agent']
         }
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

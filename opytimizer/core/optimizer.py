@@ -16,16 +16,13 @@ class Optimizer:
 
     """
 
-    def __init__(self, algorithm=''):
+    def __init__(self):
         """Initialization method.
-
-        Args:
-            algorithm (str): Indicates the algorithm's name.
 
         """
 
         # Algorithm's name
-        self.algorithm = algorithm
+        self.algorithm = self.__class__.__name__
 
         # Key-value parameters
         self.params = None
@@ -43,6 +40,9 @@ class Optimizer:
 
     @algorithm.setter
     def algorithm(self, algorithm):
+        if not isinstance(algorithm, str):
+            raise e.TypeError('`algorithm` should be a string')
+
         self._algorithm = algorithm
 
     @property
@@ -97,7 +97,7 @@ class Optimizer:
         self.built = True
 
         # Logs the properties
-        logger.debug('Algorithm: %s | Parameters: %s | Built: %s.',
+        logger.debug('Algorithm: %s | Custom Parameters: %s | Built: %s.',
                      self.algorithm, str(params), self.built)
 
     @d.pre_evaluate

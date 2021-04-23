@@ -32,7 +32,7 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
               n_iterations=n_iterations, min_depth=min_depth, max_depth=max_depth,
               functions=functions, lower_bound=lower_bound, upper_bound=upper_bound)
 
-# Hyperparameters for the optimizer
+# Parameters for the optimizer
 params = {
     'p_reproduction': 0.25,
     'p_mutation': 0.1,

@@ -1,4 +1,4 @@
-"""This is opytimizer main library. Note that this library consists
+"""Opytimizer main library. Note that it consists
 of several modules and sub-modules.
 """
 

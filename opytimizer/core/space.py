@@ -220,7 +220,7 @@ class Space:
         self.built = True
 
         # Logs the properties
-        logger.debug('Agents: %d | Size: (%d, %d) '
+        logger.debug('Agents: %d | Size: (%d, %d) | '
                      'Lower Bound: %s | Upper Bound: %s | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions,
                      self.lb, self.ub, self.built)

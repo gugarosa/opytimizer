@@ -9,13 +9,18 @@ from opytimizer.spaces import search
 def test_optimizer_algorithm():
     new_optimizer = optimizer.Optimizer()
 
-    assert new_optimizer.algorithm == ''
+    assert new_optimizer.algorithm == 'Optimizer'
 
 
 def test_optimizer_algorithm_setter():
-    new_optimizer = optimizer.Optimizer('PSO')
+    new_optimizer = optimizer.Optimizer()
 
-    assert new_optimizer.algorithm == 'PSO'
+    try:
+        new_optimizer.algorithm = 0
+    except:
+        new_optimizer.algorithm = 'Optimizer'
+
+    assert new_optimizer.algorithm == 'Optimizer'
 
 
 def test_optimizer_params():

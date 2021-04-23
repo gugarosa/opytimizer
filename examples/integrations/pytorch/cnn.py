@@ -170,7 +170,7 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
 
-# Hyperparameters for the optimizer
+# Parameters for the optimizer
 params = {
     'w': 0.7,
     'c1': 1.7,
