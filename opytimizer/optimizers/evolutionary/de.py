@@ -136,7 +136,7 @@ class DE(Optimizer):
             a = self._mutate_agent(agent, agents[C[0]], agents[C[1]], agents[C[2]])
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
@@ -177,7 +177,7 @@ class DE(Optimizer):
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

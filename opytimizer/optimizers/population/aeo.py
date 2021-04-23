@@ -197,7 +197,7 @@ class AEO(Optimizer):
                     a = self._carnivore_consumption(agent, agents[j], C)
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
@@ -240,7 +240,7 @@ class AEO(Optimizer):
             a.position = best_agent.position + D * (e * best_agent.position - _h * agent.position)
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
@@ -299,7 +299,7 @@ class AEO(Optimizer):
                 self._update(space.agents, space.best_agent, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

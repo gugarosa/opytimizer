@@ -101,7 +101,7 @@ class CEM(Optimizer):
                 agent.position[j] = r.generate_gaussian_random_number(m, s, agent.n_dimensions)
 
             # Clips the agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Calculates its new fitness
             agent.fit = function(agent.position)
@@ -207,7 +207,7 @@ class CEM(Optimizer):
                 self._update(space.agents, function, mean, std)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

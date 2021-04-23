@@ -92,7 +92,7 @@ class ABC(Optimizer):
         a.position = agent.position + (agent.position - neighbour.position) * r1
 
         # Check agent limits
-        a.clip_limits()
+        a.clip_by_bound()
 
         # Evaluating its fitness
         a.fit = function(a.position)
@@ -193,7 +193,7 @@ class ABC(Optimizer):
             a.position += r.generate_uniform_random_number(-1, 1)
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Recalculates its fitness
             a.fit = function(a.position)
@@ -255,7 +255,7 @@ class ABC(Optimizer):
                 self._update(space.agents, function, trials)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

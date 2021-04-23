@@ -206,7 +206,7 @@ class SFO(Optimizer):
             agent.position = self._update_sailfish(agent, best_agent, best_sardine, lambda_i)
 
             # Clips agent's limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Re-evaluates agent's fitness
             agent.fit = function(agent.position)
@@ -239,7 +239,7 @@ class SFO(Optimizer):
                     sardines[i].position[j] = r1 * (best_agent.position[j] - sardines[i].position[j] + AP)
 
                 # Clips sardine's limits
-                sardines[i].clip_limits()
+                sardines[i].clip_by_bound()
 
                 # Re-calculates its fitness
                 sardines[i].fit = function(sardines[i].position)
@@ -255,7 +255,7 @@ class SFO(Optimizer):
                 sardine.position = r1 * (best_agent.position - sardine.position + AP)
 
                 # Clips sardine's limits
-                sardine.clip_limits()
+                sardine.clip_by_bound()
 
                 # Re-calculates its fitness
                 sardine.fit = function(sardine.position)
@@ -317,7 +317,7 @@ class SFO(Optimizer):
                 self._update(space.agents, space.best_agent, function, sardines, t)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

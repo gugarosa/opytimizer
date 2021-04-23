@@ -185,7 +185,7 @@ class SSD(Optimizer):
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Checking agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Updates current agent velocities
             velocity[i] = self._update_velocity(agent.position, mean, local_position[i])
@@ -256,7 +256,7 @@ class SSD(Optimizer):
                 self._update(space.agents, function, local_position, velocity)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)

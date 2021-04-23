@@ -182,7 +182,7 @@ class IWO(Optimizer):
             a.position[j] += self.sigma * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
 
         # Clips its limits
-        a.clip_limits()
+        a.clip_by_bound()
 
         # Calculates its fitness
         a.fit = function(a.position)
@@ -265,7 +265,7 @@ class IWO(Optimizer):
                 space.agents = self._update(space.agents, space.n_agents, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

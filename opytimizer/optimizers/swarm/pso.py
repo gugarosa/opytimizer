@@ -232,7 +232,7 @@ class PSO(Optimizer):
                 self._update(space.agents, space.best_agent, local_position, velocity)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)
@@ -391,7 +391,7 @@ class AIWPSO(PSO):
                 self._update(space.agents, space.best_agent, local_position, velocity)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)
@@ -531,7 +531,7 @@ class RPSO(PSO):
                 self._update(space.agents, space.best_agent, local_position, velocity, mass)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)
@@ -788,7 +788,7 @@ class VPSO(PSO):
                 self._update(space.agents, space.best_agent, local_position, velocity, v_velocity)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)

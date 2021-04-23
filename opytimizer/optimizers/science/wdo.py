@@ -208,7 +208,7 @@ class WDO(Optimizer):
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Checks agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Evaluates agent
             agent.fit = function(agent.position)
@@ -246,7 +246,7 @@ class WDO(Optimizer):
                 self._update(space.agents, space.best_agent, function, velocity)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

@@ -214,7 +214,7 @@ class GSA(Optimizer):
                 self._update(space.agents, velocity, t)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

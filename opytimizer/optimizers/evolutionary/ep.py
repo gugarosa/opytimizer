@@ -107,7 +107,7 @@ class EP(Optimizer):
         a.position += strategy * r1
 
         # Clips its limits
-        a.clip_limits()
+        a.clip_by_bound()
 
         # Calculates its fitness
         a.fit = function(a.position)
@@ -239,7 +239,7 @@ class EP(Optimizer):
                 space.agents = self._update(space.agents, space.n_agents, function, strategy)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

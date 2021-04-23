@@ -195,8 +195,8 @@ class BWO(Optimizer):
                 y1, y2 = self._procreating(father, mother)
 
                 # Checking `y1` and `y2` limits
-                y1.clip_limits()
-                y2.clip_limits()
+                y1.clip_by_bound()
+                y2.clip_by_bound()
 
                 # Calculates new fitness for `y1` and `y2`
                 y1.fit = function(y1.position)
@@ -220,7 +220,7 @@ class BWO(Optimizer):
             alpha = self._mutation(agents1[idx])
 
             # Checking `alpha` limits
-            alpha.clip_limits()
+            alpha.clip_by_bound()
 
             # Calculates new fitness for `alpha`
             alpha.fit = function(alpha.position)
@@ -266,7 +266,7 @@ class BWO(Optimizer):
                 space.agents = self._update(space.agents, space.n_variables, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

@@ -113,13 +113,13 @@ def test_agent_ub_setter():
     assert new_agent.ub[0] == 1
 
 
-def test_agent_clip_limits():
+def test_agent_clip_by_bound():
     new_agent = agent.Agent(n_variables=1, n_dimensions=1)
 
     new_agent.lb = np.array([10])
 
     new_agent.ub = np.array([10])
 
-    new_agent.clip_limits()
+    new_agent.clip_by_bound()
 
     assert new_agent.position[0] == 10

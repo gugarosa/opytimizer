@@ -250,7 +250,7 @@ class KH(Optimizer):
         food.position = sum_fitness_pos / sum_fitness
 
         # Clips the food's position
-        food.clip_limits()
+        food.clip_by_bound()
 
         # Evaluates the food
         food.fit = function(food.position)
@@ -659,7 +659,7 @@ class KH(Optimizer):
                 self._update(space.agents, function, t, space.n_iterations, motion, foraging)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

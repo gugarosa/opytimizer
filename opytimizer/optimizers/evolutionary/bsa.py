@@ -133,7 +133,7 @@ class BSA(Optimizer):
             trial_agent.position = agent.position + self.F * r1 * (old_agent.position - agent.position)
 
             # Clips its limits
-            trial_agent.clip_limits()
+            trial_agent.clip_by_bound()
 
         return trial_agents
 
@@ -257,7 +257,7 @@ class BSA(Optimizer):
                 self._update(space.agents, function, old_agents)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

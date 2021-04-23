@@ -194,7 +194,7 @@ class EFO(Optimizer):
                     agents[pos].position[j] - agents[neu].position[j]) - force * (agents[neg].position[j] - agents[neu].position[j])
 
         # Clips the agent's position to its limits
-        agent.clip_limits()
+        agent.clip_by_bound()
 
         # Generates a third uniform random number
         r2 = r.generate_uniform_random_number()
@@ -258,7 +258,7 @@ class EFO(Optimizer):
                 RI = self._update(space.agents, function, phi, RI)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

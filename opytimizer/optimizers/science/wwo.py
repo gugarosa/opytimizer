@@ -151,7 +151,7 @@ class WWO(Optimizer):
             wave.position[j] += r1 * length * (j + 1)
 
         # Clips its limits
-        wave.clip_limits()
+        wave.clip_by_bound()
 
         # Re-calculates its fitness
         wave.fit = function(wave.position)
@@ -187,7 +187,7 @@ class WWO(Optimizer):
             agent.position[j] = r.generate_gaussian_random_number(mean, std)
 
         # Clips its limits
-        agent.clip_limits()
+        agent.clip_by_bound()
 
         # Re-calculates its fitness
         agent.fit = function(agent.position)
@@ -223,7 +223,7 @@ class WWO(Optimizer):
         broken_wave.position[j] += r1 * self.beta * (j + 1)
 
         # Clips its limits
-        broken_wave.clip_limits()
+        broken_wave.clip_by_bound()
 
         # Re-calculates its fitness
         broken_wave.fit = function(broken_wave.position)
@@ -343,7 +343,7 @@ class WWO(Optimizer):
                 self._update(space.agents, space.best_agent, function, height, length)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

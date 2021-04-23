@@ -207,7 +207,7 @@ class MRFO(Optimizer):
                 agent.position = self._chain_foraging(agents, best_agent.position, i)
 
             # Clips the agent's limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Evaluates the agent
             agent.fit = function(agent.position)
@@ -253,7 +253,7 @@ class MRFO(Optimizer):
                 self._update(space.agents, space.best_agent, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

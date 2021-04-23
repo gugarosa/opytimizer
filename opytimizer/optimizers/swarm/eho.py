@@ -158,7 +158,7 @@ class EHO(Optimizer):
                     a.position += self.alpha * (clan_agents[0].position - a.position) * r1
 
                 # Checks the agent's limits
-                a.clip_limits()
+                a.clip_by_bound()
 
                 # Evaluates the agent
                 a.fit = function(a.position)
@@ -260,7 +260,7 @@ class EHO(Optimizer):
                 self._update(space.agents, function, n_ci)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

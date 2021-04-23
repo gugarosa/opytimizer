@@ -188,7 +188,7 @@ class GOA(Optimizer):
             agent.position = comfort * total_comfort + best_agent.position
 
             # Checks the agent's limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Evaluates the new agent's position
             agent.fit = function(agent.position)
@@ -224,7 +224,7 @@ class GOA(Optimizer):
                              function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

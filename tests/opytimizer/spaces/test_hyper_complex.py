@@ -7,11 +7,11 @@ def test_hyper_complex_initialize_agents():
     assert new_hyper_complex_space.agents[0].position[0][0] > 0
 
 
-def test_hyper_complex_clip_limits():
+def test_hyper_complex_clip_by_bound():
     new_hyper_complex_space = hyper_complex.HyperComplexSpace()
 
     new_hyper_complex_space.agents[0].position[0][0] = 20
 
-    new_hyper_complex_space.clip_limits()
+    new_hyper_complex_space.clip_by_bound()
 
     assert new_hyper_complex_space.agents[0].position[0][0] != 20

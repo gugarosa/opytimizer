@@ -184,7 +184,7 @@ class FPA(Optimizer):
                 a.position = self._local_pollination(agent.position, agents[k].position, agents[l].position, epsilon)
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
@@ -225,7 +225,7 @@ class FPA(Optimizer):
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

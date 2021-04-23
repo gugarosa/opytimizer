@@ -160,7 +160,7 @@ class COA(Optimizer):
                 a.position += r1 * lambda_1 + r2 * lambda_2
 
                 # Checks the agent's limits
-                a.clip_limits()
+                a.clip_by_bound()
 
                 # Evaluates the agent (Eq. 13)
                 a.fit = function(a.position)
@@ -213,7 +213,7 @@ class COA(Optimizer):
                 self._update(space.agents, function, n_c)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

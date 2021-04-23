@@ -237,7 +237,7 @@ class AO(Optimizer):
                         (G1 * a.position * r2) - G2 * levy + r2 * G1
 
             # Check agent limits
-            a.clip_limits()
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
@@ -279,7 +279,7 @@ class AO(Optimizer):
                              function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

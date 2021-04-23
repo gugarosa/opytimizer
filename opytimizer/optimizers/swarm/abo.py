@@ -113,7 +113,7 @@ class ABO(Optimizer):
         temp.position[j] = agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
 
         # Clips its limits
-        temp.clip_limits()
+        temp.clip_by_bound()
 
         # Re-calculates its fitness
         temp.fit = function(temp.position)
@@ -180,7 +180,7 @@ class ABO(Optimizer):
                 agent.position = agents[k].position - 2 * a * r2 - a * D
 
                 # Clips its limits
-                agent.clip_limits()
+                agent.clip_by_bound()
 
                 # Re-calculates its fitness
                 agent.fit = function(agent.position)
@@ -215,7 +215,7 @@ class ABO(Optimizer):
                 self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

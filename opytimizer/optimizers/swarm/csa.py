@@ -179,7 +179,7 @@ class CSA(Optimizer):
                 self._update(space.agents, memory)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, memory, hook=pre_evaluate)

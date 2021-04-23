@@ -254,7 +254,7 @@ class HGSO(Optimizer):
                 agent.position = self._update_position(agent, cluster[0], best_agent, solubility)
 
                 # Clips agent's limits
-                agent.clip_limits()
+                agent.clip_by_bound()
 
                 # Re-calculates its fitness
                 agent.fit = function(agent.position)
@@ -315,7 +315,7 @@ class HGSO(Optimizer):
                              coefficient, pressure, constant, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

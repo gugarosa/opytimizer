@@ -164,7 +164,7 @@ class MVO(Optimizer):
                         agent.position[j] = best_agent.position[j] - TDR * width
 
             # Clips the agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Calculates its fitness
             agent.fit = function(agent.position)
@@ -205,7 +205,7 @@ class MVO(Optimizer):
                 self._update(space.agents, space.best_agent, function, WEP, TDR)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

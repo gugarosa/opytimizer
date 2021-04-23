@@ -74,8 +74,8 @@ class SOS(Optimizer):
         b.position += r1 * (best_agent.position - mutual_vector * BF_2)
 
         # Checks their limits
-        a.clip_limits()
-        b.clip_limits()
+        a.clip_by_bound()
+        b.clip_by_bound()
 
         # Evaluates both agents
         a.fit = function(a.position)
@@ -114,7 +114,7 @@ class SOS(Optimizer):
         a.position += r1 * (best_agent.position - agent_j.position)
 
         # Checks its limits
-        a.clip_limits()
+        a.clip_by_bound()
 
         # Evaluates its new position
         a.fit = function(a.position)
@@ -145,7 +145,7 @@ class SOS(Optimizer):
         p.position[r1] = r.generate_uniform_random_number(p.lb[r1], p.ub[r1])
 
         # Checks its limits
-        p.clip_limits()
+        p.clip_by_bound()
 
         # Evaluates its position
         p.fit = function(p.position)
@@ -210,7 +210,7 @@ class SOS(Optimizer):
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meets the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

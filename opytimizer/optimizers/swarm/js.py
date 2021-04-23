@@ -250,7 +250,7 @@ class JS(Optimizer):
                     agent.position += self._motion_b(agent, agents[j])
 
             # Clips the agent's limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
@@ -285,7 +285,7 @@ class JS(Optimizer):
                 self._update(space.agents, space.best_agent, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

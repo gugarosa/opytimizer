@@ -107,7 +107,7 @@ class GWO(Optimizer):
             X.position = (X_1 + X_2 + X_3) / 3
 
             # Clips temporary agent's limits
-            X.clip_limits()
+            X.clip_by_bound()
 
             # Evaluates temporary agent's new position
             X.fit = function(X.position)
@@ -148,7 +148,7 @@ class GWO(Optimizer):
                 self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

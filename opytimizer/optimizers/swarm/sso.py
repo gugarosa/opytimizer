@@ -207,7 +207,7 @@ class SSO(Optimizer):
                 self._update(space.agents, space.best_agent, local_position)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, local_position, hook=pre_evaluate)

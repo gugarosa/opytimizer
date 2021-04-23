@@ -151,7 +151,7 @@ class Opytimizer:
                 self.optimizer._update(*args['update'])
 
                 # Checking if agents meet the bounds limits
-                self.space.clip_limits()
+                self.space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self.optimizer.evaluate(*args['evaluate'], hook=pre_evaluate)

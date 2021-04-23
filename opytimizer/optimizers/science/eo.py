@@ -181,7 +181,7 @@ class EO(Optimizer):
         C_avg.position = np.mean([c.position for c in C], axis=0)
 
         # Clips its limits
-        C_avg.clip_limits()
+        C_avg.clip_by_bound()
 
         # Re-calculate its fitness
         C_avg.fit = function(C_avg.position)
@@ -279,7 +279,7 @@ class EO(Optimizer):
                 self._update(space.agents, function, C, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

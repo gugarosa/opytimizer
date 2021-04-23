@@ -7,11 +7,11 @@ def test_boolean_initialize_agents():
     assert new_boolean_space.agents[0].position[0][0] == 0 or new_boolean_space.agents[0].position[0][0] == 1
 
 
-def test_boolean_clip_limits():
+def test_boolean_clip_by_bound():
     new_boolean_space = boolean.BooleanSpace()
 
     new_boolean_space.agents[0].position[0][0] = 20
 
-    new_boolean_space.clip_limits()
+    new_boolean_space.clip_by_bound()
 
     assert new_boolean_space.agents[0].position[0][0] == 1

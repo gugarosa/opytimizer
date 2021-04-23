@@ -165,7 +165,7 @@ class HS(Optimizer):
         agent = self._generate_new_harmony(agents)
 
         # Checking agent limits
-        agent.clip_limits()
+        agent.clip_by_bound()
 
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
@@ -209,7 +209,7 @@ class HS(Optimizer):
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)
@@ -379,7 +379,7 @@ class IHS(HS):
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)
@@ -730,7 +730,7 @@ class SGHS(HS):
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)
@@ -865,7 +865,7 @@ class NGHS(HS):
         agent = self._generate_new_harmony(agents[0], agents[-1])
 
         # Checking agent limits
-        agent.clip_limits()
+        agent.clip_by_bound()
 
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
@@ -965,8 +965,8 @@ class GOGHS(NGHS):
         opp_agent = self._generate_opposition_harmony(agent, agents)
 
         # Checking agents limits
-        agent.clip_limits()
-        opp_agent.clip_limits()
+        agent.clip_by_bound()
+        opp_agent.clip_by_bound()
 
         # Calculates harmonies fitness
         agent.fit = function(agent.position)

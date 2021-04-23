@@ -173,7 +173,7 @@ class TWO(Optimizer):
                     (r2 / iteration) * (best_agent.position - agent.position)
 
             # Clips its limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Re-calculates its fitness
             agent.fit = function(agent.position)
@@ -275,7 +275,7 @@ class TWO(Optimizer):
                 self._update(space.agents, space.best_agent, function, t+1, space.n_iterations)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

@@ -227,7 +227,7 @@ class BA(Optimizer):
                 agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
 
             # Checks agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Evaluates agent
             agent.fit = function(agent.position)
@@ -279,7 +279,7 @@ class BA(Optimizer):
                 self._update(space.agents, space.best_agent, function, t, frequency, velocity, loudness, pulse_rate)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)

@@ -45,7 +45,7 @@ class Space:
         self.agents = []
 
         # Best agent object
-        self.best_agent = Agent()
+        # self.best_agent = Agent()
 
         # Lower bounds
         self.lb = np.zeros(n_variables)
@@ -240,7 +240,7 @@ class Space:
         logger.debug('Running private method: create_agents().')
 
         # Creating a list of agents
-        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
+        self.agents = [Agent(self.n_variables, self.n_dimensions, self.lb, self.ub) for _ in range(self.n_agents)]
 
         # Apply the first agent as the best one
         self.best_agent = copy.deepcopy(self.agents[0])
@@ -258,7 +258,7 @@ class Space:
 
         raise NotImplementedError
 
-    def clip_limits(self):
+    def clip_by_bound(self):
         """Clips the space agents' position to the bounds limits.
 
         """
@@ -266,4 +266,4 @@ class Space:
         # Iterates through all agents
         for agent in self.agents:
             # Clips the agent's limits
-            agent.clip_limits()
+            agent.clip_by_bound()

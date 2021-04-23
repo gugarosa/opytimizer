@@ -176,7 +176,7 @@ class UMDA(Optimizer):
             agent.position = self._sample_position(probs)
 
             # Checking its limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
         """Runs the optimization pipeline.
@@ -208,7 +208,7 @@ class UMDA(Optimizer):
                 self._update(space.agents)
 
                 # Checking if agents meet the bounds limits
-                space.clip_limits()
+                space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
                 self._evaluate(space, function, hook=pre_evaluate)
