@@ -27,6 +27,9 @@ class Optimizer:
         # Algorithm's name
         self.algorithm = algorithm
 
+        # Key-value parameters
+        self.params = None
+
         # Indicates whether the optimizer is built or not
         self.built = False
 

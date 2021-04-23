@@ -165,15 +165,29 @@ def test_node_position():
 
 
 def test_node_pre_order():
-    new_node = node.Node(name='0', category='FUNCTION')
+    new_node = node.Node(name='SUM', category='FUNCTION')
+    new_node_1 = node.Node(name='1', category='TERMINAL', value=np.array(0))
+    new_node_2 = node.Node(name='2', category='TERMINAL', value=np.array(0))
 
-    assert len(new_node.pre_order) == 1
+    new_node.left = new_node_1
+    new_node.right = new_node_2
+    new_node_1.parent = new_node
+    new_node_2.parent = new_node
+
+    assert len(new_node.pre_order) == 3
 
 
 def test_node_post_order():
-    new_node = node.Node(name='0', category='FUNCTION')
+    new_node = node.Node(name='SUM', category='FUNCTION')
+    new_node_1 = node.Node(name='1', category='TERMINAL', value=np.array(0))
+    new_node_2 = node.Node(name='2', category='TERMINAL', value=np.array(0))
 
-    assert len(new_node.post_order) == 1
+    new_node.left = new_node_1
+    new_node.right = new_node_2
+    new_node_1.parent = new_node
+    new_node_2.parent = new_node
+
+    assert len(new_node.post_order) == 3
 
 
 def test_node_find_node():
@@ -182,8 +196,67 @@ def test_node_find_node():
     assert new_node.find_node(0) == (None, True)
     assert new_node.find_node(1) == (None, False)
 
+    new_node = node.Node(name='SUM', category='FUNCTION', value=np.array(0))
+
+    assert new_node.find_node(0) == (None, False)
+    assert new_node.find_node(1) == (None, False)
+
+
+def test_node_evaluate():
+    def _create_node(function_type):
+        new_node = node.Node(name=function_type, category='FUNCTION')
+        new_node_1 = node.Node(
+            name='1', category='TERMINAL', value=np.array(1))
+        new_node_2 = node.Node(
+            name='2', category='TERMINAL', value=np.array(1))
+
+        new_node.left = new_node_1
+        new_node.right = new_node_2
+        new_node_1.parent = new_node
+        new_node_2.parent = new_node
+
+        return new_node
+
+    new_node = _create_node('SUM')
+    assert node._evaluate(new_node) == 2
+
+    new_node = _create_node('SUB')
+    assert node._evaluate(new_node) == 0
+
+    new_node = _create_node('MUL')
+    assert node._evaluate(new_node) == 1
+
+    new_node = _create_node('DIV')
+    assert node._evaluate(new_node) == 1
+
+    new_node = _create_node('EXP')
+    assert np.round(node._evaluate(new_node)) == 3
+
+    new_node = _create_node('SQRT')
+    assert node._evaluate(new_node) == 1
+
+    new_node = _create_node('LOG')
+    assert node._evaluate(new_node) == 0
+
+    new_node = _create_node('ABS')
+    assert node._evaluate(new_node) == 1
+
+    new_node = _create_node('SIN')
+    assert np.round(node._evaluate(new_node)) == 1
+
+    new_node = _create_node('COS')
+    assert np.round(node._evaluate(new_node)) == 1
+
 
 def test_node_properties():
-    new_node = node.Node(name='0', category='FUNCTION')
+    new_node = node.Node(name='SUM', category='FUNCTION')
+    new_node_1 = node.Node(name='1', category='TERMINAL', value=np.array(0))
+    new_node_2 = node.Node(name='2', category='TERMINAL', value=np.array(0))
+
+    new_node.left = new_node_1
+    new_node.right = new_node_2
+    new_node_1.parent = new_node
+    new_node_2.parent = new_node
 
     assert isinstance(node._properties(new_node), dict)
+    assert print(new_node) is None

@@ -43,6 +43,12 @@ class Space:
         # Upper bounds
         self.ub = np.asarray(upper_bound)
 
+        # Agents
+        self.agents = []
+
+        # Best agent
+        self.best_agent = Agent(n_variables, n_dimensions, lower_bound, upper_bound)
+
         # Indicates whether the space is built or not
         self.built = False
 
@@ -136,21 +142,6 @@ class Space:
         self._ub = ub
 
     @property
-    def built(self):
-        """bool: Indicates whether the space is built.
-
-        """
-
-        return self._built
-
-    @built.setter
-    def built(self, built):
-        if not isinstance(built, bool):
-            raise e.TypeError('`built` should be a boolean')
-
-        self._built = built
-
-    @property
     def agents(self):
         """list: Agents that belongs to the space.
 
@@ -179,6 +170,21 @@ class Space:
             raise e.TypeError('`best_agent` should be an Agent')
 
         self._best_agent = best_agent
+
+    @property
+    def built(self):
+        """bool: Indicates whether the space is built.
+
+        """
+
+        return self._built
+
+    @built.setter
+    def built(self, built):
+        if not isinstance(built, bool):
+            raise e.TypeError('`built` should be a boolean')
+
+        self._built = built
 
     def _create_agents(self):
         """Creates a list of agents.

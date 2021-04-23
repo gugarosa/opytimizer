@@ -16,7 +16,7 @@ def test_n_wise():
 
     pairs = general.n_wise(list)
 
-    for p in pairs:
+    for _ in pairs:
         pass
 
     assert type(pairs).__name__ == 'callable_iterator' or 'generator'

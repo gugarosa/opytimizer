@@ -1,6 +1,12 @@
 from opytimizer.utils import logging
 
 
+def test_to_file():
+    logger = logging.get_logger(__name__)
+
+    assert logger.to_file('msg') == None
+
+
 def test_get_console_handler():
     c = logging.get_console_handler()
 

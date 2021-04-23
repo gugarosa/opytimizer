@@ -266,7 +266,7 @@ class TreeSpace(Space):
         function_node = Node(self.functions[node_id], 'FUNCTION')
 
         # For every possible function argument
-        for i in range(c.N_ARGS_FUNCTION[self.functions[node_id]]):
+        for i in range(c.FUNCTION_N_ARGS[self.functions[node_id]]):
             # Calls recursively the grow function and creates a temporary node
             node = self.grow(min_depth + 1, max_depth)
 

@@ -16,7 +16,7 @@ def rsetattr(obj, attr, val):
         value (any): Value to be set.
 
     Returns:
-        Recursive call.
+        Recursive call to set the attribute.
 
     """
 
@@ -33,11 +33,11 @@ def rgetattr(obj, attr, *args):
         https://stackoverflow.com/a/31174427/12080653
 
     Args:
-        obj (any): Object to be modified.
+        obj (any): Object to be searched.
         attr (str): Attribute to be gathered.
 
     Returns:
-        Recursive call.
+        Recursive call to gather the attribute.
 
     """
 
@@ -45,8 +45,8 @@ def rgetattr(obj, attr, *args):
         """Gets an attribute.
 
         Args:
-            obj (any): Object to be modified.
-            attr (str): Attribute to be created.
+            obj (any): Object to be searched.
+            attr (str): Attribute to be gathered.
 
         Returns:
             Attribute.

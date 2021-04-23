@@ -36,8 +36,7 @@ class Agent:
         # N-dimensional array of positions
         self.position = np.zeros((n_variables, n_dimensions))
 
-        # Fitness value
-        # Note it is initialized with largest float number
+        # Fitness value (largest float number)
         self.fit = c.FLOAT_MAX
 
         # Lower bounds

@@ -12,7 +12,7 @@ def test_constants():
 
     assert constants.LIGHT_SPEED == 3e5
 
-    assert constants.N_ARGS_FUNCTION == {
+    assert constants.FUNCTION_N_ARGS == {
         'SUM': 2,
         'SUB': 2,
         'MUL': 2,

@@ -315,7 +315,7 @@ class Node:
             # If the node is a function
             if node.category == 'FUNCTION':
                 # If it is a function node, we need to return the parent of its parent
-                if node.parent.parent:
+                if node.parent and node.parent.parent:
                     return node.parent.parent, node.parent.flag
 
                 return None, False

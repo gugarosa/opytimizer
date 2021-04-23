@@ -25,23 +25,23 @@ def test_space_n_agents_setter():
 
 
 def test_space_n_variables():
-    new_space = space.Space(n_variables=2)
+    new_space = space.Space(n_variables=1)
 
-    assert new_space.n_variables == 2
+    assert new_space.n_variables == 1
 
 
 def test_space_n_variables_setter():
     try:
         new_space = space.Space(n_variables=0.0)
     except:
-        new_space = space.Space(n_variables=2)
+        new_space = space.Space(n_variables=1)
 
     try:
         new_space = space.Space(n_variables=0)
     except:
-        new_space = space.Space(n_variables=2)
+        new_space = space.Space(n_variables=1)
 
-    assert new_space.n_variables == 2
+    assert new_space.n_variables == 1
 
 
 def test_space_n_dimensions():
@@ -62,26 +62,6 @@ def test_space_n_dimensions_setter():
         new_space = space.Space(n_dimensions=1)
 
     assert new_space.n_dimensions == 1
-
-
-def test_space_n_iterations():
-    new_space = space.Space(n_iterations=10)
-
-    assert new_space.n_iterations == 10
-
-
-def test_space_n_iterations_setter():
-    try:
-        new_space = space.Space(n_iterations=0.0)
-    except:
-        new_space = space.Space(n_iterations=10)
-
-    try:
-        new_space = space.Space(n_iterations=0)
-    except:
-        new_space = space.Space(n_iterations=10)
-
-    assert new_space.n_iterations == 10
 
 
 def test_space_agents():
@@ -113,57 +93,78 @@ def test_space_best_agent_setter():
     try:
         new_space.best_agent = None
     except:
-        new_space.best_agent = agent.Agent()
+        new_space.best_agent = agent.Agent(1, 1, 0, 1)
 
     assert isinstance(new_space.best_agent, agent.Agent)
 
 
 def test_space_lb():
-    new_space = space.Space(n_variables=10)
+    new_space = space.Space(n_variables=1)
 
-    assert new_space.lb.shape == (10, )
+    assert new_space.lb.shape == (1, )
 
 
 def test_space_lb_setter():
-    new_space = space.Space(n_variables=2)
+    new_space = space.Space(n_variables=1)
 
     try:
-        new_space.lb = [0, 1]
+        new_space.lb = [1]
     except:
-        new_space.lb = np.array([0, 1])
+        new_space.lb = np.array([1])
+
+    assert new_space.lb[0] == 1
 
     try:
-        new_space.lb = np.array([0])
+        new_space.lb = np.array([1, 2])
     except:
-        new_space.lb = np.array([0, 1])
+        new_space.lb = np.array([1])
 
-    assert new_space.lb.shape == (2, )
+    assert new_space.lb[0] == 1
 
 
 def test_space_ub():
-    new_space = space.Space(n_variables=10)
+    new_space = space.Space(n_variables=1)
 
-    assert new_space.ub.shape == (10, )
+    assert new_space.ub.shape == (1, )
 
 
 def test_space_ub_setter():
-    new_space = space.Space(n_variables=2)
+    new_space = space.Space(n_variables=1)
 
     try:
-        new_space.ub = [0, 1]
+        new_space.ub = [1]
     except:
-        new_space.ub = np.array([0, 1])
+        new_space.ub = np.array([1])
+
+    assert new_space.ub[0] == 1
 
     try:
-        new_space.ub = np.array([0])
+        new_space.ub = np.array([1, 2])
     except:
-        new_space.ub = np.array([0, 1])
+        new_space.ub = np.array([1])
 
-    assert new_space.ub.shape == (2, )
+    assert new_space.ub[0] == 1
+
+
+def test_space_built():
+    new_space = space.Space()
+
+    assert new_space.built == False
+
+
+def test_space_built_setter():
+    new_space = space.Space()
+
+    try:
+        new_space.built = 1
+    except:
+        new_space.built = True
+
+    assert new_space.built == True
 
 
 def test_space_create_agents():
-    new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
+    new_space = space.Space(n_agents=2, n_variables=1, n_dimensions=1)
 
     new_space._create_agents()
 
@@ -171,39 +172,23 @@ def test_space_create_agents():
 
 
 def test_space_initialize_agents():
-    new_space = space.Space(n_agents=2, n_variables=2, n_dimensions=1)
+    new_space = space.Space(n_agents=2, n_variables=1, n_dimensions=1)
 
-    with pytest.raises(NotImplementedError):
-        new_space._initialize_agents()
+    new_space._initialize_agents()
 
 
 def test_space_build():
     new_space = space.Space()
 
-    try:
-        lb = None
-
-        ub = [10]
-
-        new_space._build(lb, ub)
-    except:
-        lb = [0]
-
-        ub = [10]
-
-        new_space._build(lb, ub)
-
-    try:
-        lb = [0]
-
-        ub = None
-
-        new_space._build(lb, ub)
-    except:
-        lb = [0]
-
-        ub = [10]
-
-        new_space._build(lb, ub)
+    new_space.build()
 
     assert new_space.built == True
+
+
+def test_space_clip_by_bound():
+    new_space = space.Space()
+
+    new_space.build()
+    new_space.clip_by_bound()
+
+    assert new_space.agents[0].position[0] == 0

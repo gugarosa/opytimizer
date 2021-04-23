@@ -9,7 +9,7 @@ logger = l.get_logger(__name__)
 class Error(Exception):
     """A generic Error class derived from Exception.
 
-    Essentially, it gets the class and message and logs the error to the logger.
+    Essentially, it gets a class object and a message, and logs the error to the logger.
 
     """
 
@@ -22,7 +22,7 @@ class Error(Exception):
 
         """
 
-        # Override its parent class
+        # Overrides its parent class
         super(Error, self).__init__()
 
         # Logs the error in a formatted way
@@ -42,7 +42,7 @@ class ArgumentError(Error):
 
         """
 
-        # Override its parent class with class name and error message
+        # Overrides its parent class with class name and error message
         super(ArgumentError, self).__init__('ArgumentError', error)
 
 
@@ -59,7 +59,7 @@ class BuildError(Error):
 
         """
 
-        # Override its parent class with class name and error message
+        # Overrides its parent class with class name and error message
         super(BuildError, self).__init__('BuildError', error)
 
 
@@ -76,7 +76,7 @@ class SizeError(Error):
 
         """
 
-        # Override its parent class with class name and error message
+        # Overrides its parent class with class name and error message
         super(SizeError, self).__init__('SizeError', error)
 
 
@@ -93,7 +93,7 @@ class TypeError(Error):
 
         """
 
-        # Override its parent class with class name and error message
+        # Overrides its parent class with class name and error message
         super(TypeError, self).__init__('TypeError', error)
 
 
@@ -110,5 +110,5 @@ class ValueError(Error):
 
         """
 
-        # Override its parent class with class name and error message
+        # Overrides its parent class with class name and error message
         super(ValueError, self).__init__('ValueError', error)

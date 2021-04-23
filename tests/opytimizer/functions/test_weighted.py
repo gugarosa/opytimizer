@@ -32,22 +32,17 @@ def test_weighted_weights_setter():
     try:
         new_weighted.weights = None
     except:
-        new_weighted.weights = [0.5, 0.5]
+        new_weighted.weights = []
 
-    assert len(new_weighted.weights) == 2
+    try:
+        new_weighted.weights = [1.0]
+    except:
+        new_weighted.weights = []
 
-
-def test_weighted_build():
-    new_weighted = weighted.WeightedFunction()
-
-    assert type(new_weighted.functions) == list
-
-    assert type(new_weighted.pointer).__name__ == 'function'
-
-    assert new_weighted.built == True
+    assert len(new_weighted.weights) == 0
 
 
-def test_weighted_create_multi_objective():
+def test_weighted_call():
     def square(x):
         return x**2
 
@@ -60,7 +55,5 @@ def test_weighted_create_multi_objective():
 
     new_weighted = weighted.WeightedFunction(
         functions=[square, cube], weights=[0.5, 0.5])
-
-    new_weighted._create_multi_objective()
 
     assert new_weighted(2) == 6
