@@ -293,7 +293,7 @@ class HGSO(Optimizer):
         # Calculates the number of agents per cluster
         n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
 
-        # Instantiates a coefficients', pressures' and constants' array
+        # Instantiates a coefficients', pressures' and constant' array
         coefficient = self.l1 * r.generate_uniform_random_number(size=self.n_clusters)
         pressure = self.l2 * r.generate_uniform_random_number(size=(self.n_clusters, n_agents_per_cluster))
         constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)

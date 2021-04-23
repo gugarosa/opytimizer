@@ -8,7 +8,7 @@ import opytimizer.math.random as r
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
-from opytimizer.utils import constants
+from opytimizer.utils import constant
 
 logger = l.get_logger(__name__)
 
@@ -96,7 +96,7 @@ class BH(Optimizer):
         """
 
         # Calculates the radius of the event horizon
-        radius = best_agent.fit / max(cost, constants.EPSILON)
+        radius = best_agent.fit / max(cost, constant.EPSILON)
 
         # Iterate through every agent
         for agent in agents:

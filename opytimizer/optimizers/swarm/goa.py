@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.general as g
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as log

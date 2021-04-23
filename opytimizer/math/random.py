@@ -40,7 +40,7 @@ def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
     return gamma_array
 
 
-def generate_integer_random_number(low=0, high=1, exclude_value=None, size=1):
+def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None):
     """Generates a random number or array based on an integer distribution.
 
     Args:

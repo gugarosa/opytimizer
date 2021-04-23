@@ -4,7 +4,7 @@ from opytimark.markers.boolean import Knapsack
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import umda
 from opytimizer.spaces import boolean
-from opytimizer.utils import constants
+from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -123,4 +123,4 @@ def test_umda_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm umda failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm umda failed to converge.'

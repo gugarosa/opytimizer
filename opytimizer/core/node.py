@@ -3,7 +3,7 @@
 
 import numpy as np
 
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 
 

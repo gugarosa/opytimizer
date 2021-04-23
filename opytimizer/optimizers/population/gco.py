@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l

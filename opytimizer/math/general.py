@@ -6,7 +6,7 @@ from itertools import islice
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 
 
 def euclidean_distance(x, y):

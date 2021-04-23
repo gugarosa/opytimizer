@@ -3,7 +3,7 @@ import numpy as np
 from opytimizer.core import function
 from opytimizer.optimizers.misc import gs
 from opytimizer.spaces import grid
-from opytimizer.utils import constants
+from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -34,4 +34,4 @@ def test_gs_run():
     assert len(history.best_agent) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm gs failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm gs failed to converge.'

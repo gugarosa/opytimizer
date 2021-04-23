@@ -5,7 +5,7 @@ import numpy as np
 from opytimizer.core import function
 from opytimizer.optimizers.swarm import pso
 from opytimizer.spaces import search
-from opytimizer.utils import constants
+from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -129,7 +129,7 @@ def test_pso_run():
     assert len(history.local) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm pso failed to converge.'
 
 
 def test_aiwpso_params():
@@ -242,7 +242,7 @@ def test_aiwpso_run():
     assert len(history.local) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm aiwpso failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm aiwpso failed to converge.'
 
 
 def test_rpso_params():
@@ -349,7 +349,7 @@ def test_rpso_run():
     assert len(history.local) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm rpso failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm rpso failed to converge.'
 
 
 def test_savpso_params():
@@ -438,7 +438,7 @@ def test_savpso_run():
     assert len(history.local) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm pso failed to converge.'
 
 
 def test_vpso_params():
@@ -536,4 +536,4 @@ def test_vpso_run():
     assert len(history.local) > 0
 
     best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'
+    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm pso failed to converge.'
