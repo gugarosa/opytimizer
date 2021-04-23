@@ -25,16 +25,16 @@ class Node:
 
         """
 
-        # Name of the node (e.g., it should be the terminal identifier or function name)
+        # Name of the node (terminal identifier or function name)
         self.name = name
 
-        # Category of the node (e.g., TERMINAL or FUNCTION)
+        # Category of the node (`TERMINAL` or `FUNCTION`)
         self.category = category
 
-        # Value of the node (only if it is a terminal node)
+        # Value of the node (only for terminal nodes)
         self.value = value
 
-        # Pointer to node's childs and parent
+        # Pointers to the node's children and parent
         self.left = left
         self.right = right
         self.parent = parent
@@ -43,14 +43,14 @@ class Node:
         self.flag = True
 
     def __repr__(self):
-        """Representation as a formal string.
+        """Representation of a formal string.
 
         """
 
         return f'{self.category}:{self.name}:{self.flag}'
 
     def __str__(self):
-        """Representation as an informal string.
+        """Representation of an informal string.
 
         """
 
@@ -61,7 +61,7 @@ class Node:
 
     @property
     def name(self):
-        """str: Node's identifier.
+        """str: Name of the node.
 
         """
 
@@ -76,7 +76,7 @@ class Node:
 
     @property
     def category(self):
-        """str: Category of the node (e.g., TERMINAL or FUNCTION).
+        """str: Category of the node.
 
         """
 
@@ -91,7 +91,7 @@ class Node:
 
     @property
     def value(self):
-        """np.array: Value of the node (only if it is a terminal node).
+        """np.array: Value of the node.
 
         """
 
@@ -109,7 +109,7 @@ class Node:
 
     @property
     def left(self):
-        """Node: Pointer to node's left child.
+        """Node: Pointer to the node's left child.
 
         """
 
@@ -124,7 +124,7 @@ class Node:
 
     @property
     def right(self):
-        """Node: Pointer to node's right child.
+        """Node: Pointer to the node's right child.
 
         """
 
@@ -139,7 +139,7 @@ class Node:
 
     @property
     def parent(self):
-        """Node: Pointer to node's parent.
+        """Node: Pointer to the node's parent.
 
         """
 

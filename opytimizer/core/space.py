@@ -210,7 +210,7 @@ class Space:
         # Initializes the agents
         self._initialize_agents()
 
-        # If no errors were shown, we can declare the space as built
+        # If no errors were shown, we can declare the space as `built`
         self.built = True
 
         # Logs the properties

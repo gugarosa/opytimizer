@@ -1,4 +1,4 @@
-"""Objective function.
+"""Single-objective functions.
 """
 
 from inspect import signature
@@ -10,11 +10,11 @@ logger = l.get_logger(__name__)
 
 
 class Function:
-    """A Function class that holds a single objective function.
+    """A Function class used to hold single-objective functions.
 
     """
 
-    def __init__(self, pointer=callable):
+    def __init__(self, pointer):
         """Initialization method.
 
         Args:
@@ -24,16 +24,16 @@ class Function:
 
         logger.info('Creating class: Function.')
 
-        # Pointer
+        # Pointer's callable
         self.pointer = pointer
 
-        # Pointer's name
+        # Name of the pointer (derived from its method or class)
         if hasattr(pointer, '__name__'):
             self.name = pointer.__name__
         else:
             self.name = pointer.__class__.__name__
 
-        # If no errors were shown, we can declare the function as built
+        # If no errors were shown, we can declare the function as `built`
         self.built = True
 
         # Logs the attributes
@@ -48,7 +48,7 @@ class Function:
             x (np.array): Array of positions.
 
         Returns:
-            Objective function fitness.
+            Single-objective function fitness.
 
         """
 

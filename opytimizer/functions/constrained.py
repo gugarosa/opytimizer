@@ -1,4 +1,4 @@
-"""Constrained objective function.
+"""Constrained single-objective functions.
 """
 
 import opytimizer.utils.exception as e
@@ -9,7 +9,7 @@ logger = l.get_logger(__name__)
 
 
 class ConstrainedFunction(Function):
-    """A ConstrainedFunction class that holds a single constrained objective function.
+    """A ConstrainedFunction class used to hold constrained single-objective functions.
 
     """
 
@@ -81,7 +81,7 @@ class ConstrainedFunction(Function):
             x (np.array): Array of positions.
 
         Returns:
-            Objective function fitness.
+            Constrained single-objective function fitness.
 
         """
 
