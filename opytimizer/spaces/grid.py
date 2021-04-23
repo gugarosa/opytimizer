@@ -1,9 +1,10 @@
 """Grid-based search space.
 """
 
+import copy
+
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.space import Space
@@ -17,39 +18,43 @@ class GridSpace(Space):
 
     """
 
-    def __init__(self, n_variables=1, step=(0.1,), lower_bound=(0,), upper_bound=(1,)):
+    def __init__(self, n_variables, step, lower_bound, upper_bound):
         """Initialization method.
 
         Args:
             n_variables (int): Number of decision variables.
-            step (tuple): Size of each variable step in the grid.
-            lower_bound (tuple): Lower bound tuple with the minimum possible values.
-            upper_bound (tuple): Upper bound tuple with the maximum possible values.
+            step (float, list, tuple, np.array): Variables' steps.
+            lower_bound (float, list, tuple, np.array): Minimum possible values.
+            upper_bound (float, list, tuple, np.array): Maximum possible values.
 
         """
 
         logger.info('Overriding class: Space -> GridSpace.')
 
-        # Defining a property to hold the step size
-        self.step = step
+        # Defines missing override arguments
+        # `n_agents = 1` is used as a placeholder for now
+        n_agents = 1
+        n_dimensions = 1
 
-        # Creating the searching grid
-        self._create_grid(step, lower_bound, upper_bound)
+        # Overrides its parent class with the receiving arguments
+        # `n_agents=1` is used as a placeholder for now
+        super(GridSpace, self).__init__(n_agents, n_variables, n_dimensions,
+                                        lower_bound, upper_bound)
 
-        # Override its parent class with the receiving arguments
-        super(GridSpace, self).__init__(len(self.grid), n_variables, n_iterations=1)
+        # Step size of each variable
+        self.step = np.asarray(step)
 
-        # Now, we need to build this class up
-        self._build(lower_bound, upper_bound)
+        # Creates the grid
+        self._create_grid()
 
-        # Initializing agents
-        self._initialize_agents()
+        # Builds the class
+        self.build()
 
         logger.info('Class overrided.')
 
     @property
     def step(self):
-        """tuple: Size of each variable step.
+        """np.array: Step size of each variable.
 
         """
 
@@ -57,14 +62,18 @@ class GridSpace(Space):
 
     @step.setter
     def step(self, step):
-        if not isinstance(step, tuple):
-            raise e.TypeError('`step` should be a tuple')
+        if not isinstance(step, np.ndarray):
+            raise e.TypeError('`step` should be a numpy array')
+        if not step.shape:
+            step = np.expand_dims(step, -1)
+        if step.shape[0] != self.n_variables:
+            raise e.SizeError('`step` should be the same size as `n_variables`')
 
         self._step = step
 
     @property
     def grid(self):
-        """list: Grid with possible searching values.
+        """np.array: Grid with possible search values.
 
         """
 
@@ -77,48 +86,29 @@ class GridSpace(Space):
 
         self._grid = grid
 
-    def _create_grid(self, step, lower_bound, upper_bound):
-        """Creates a grid of possible searches.
-
-        Args:
-            step (tuple): Size of each variable step in the grid.
-            lower_bound (tuple): Lower bound tuple with the minimum possible values.
-            upper_bound (tuple): Upper bound tuple with the maximum possible values.
+    def _create_grid(self):
+        """Creates a grid of possible search values.
 
         """
 
-        logger.debug('Running private method: create_grid().')
-
-        # Checks if number of steps equals the number of lower and upper bounds
-        if len(step) != len(lower_bound) or len(step) != len(upper_bound):
-            # If not, raises an error
-            raise e.SizeError('`step` should have the same size of `lower_bound` and `upper_bound`')
-
-        # Creating a meshgrid with all possible searches
+        # Creates a meshgrid with all possible search values
         mesh = np.meshgrid(*[s * np.arange(lb / s, ub / s + s)
-                             for s, lb, ub in zip(step, lower_bound, upper_bound)])
+                             for s, lb, ub in zip(self.step, self.lb, self.ub)])
 
-        # Transforming the meshgrid into a list of possible searches
+        # Transforms the meshgrid into a list
+        # and re-defines the number of agents to the length of grid
         self.grid = np.array(([m.ravel() for m in mesh])).T
-
-        logger.debug('Grid created with step size equal to %s.', step)
+        self.n_agents = len(self.grid)
 
     def _initialize_agents(self):
-        """Initialize agents' position array with grid values.
+        """nitializes agents with their positions and defines a best agent.
 
         """
-
-        logger.debug('Running private method: initialize_agents().')
 
         # Iterates through all agents and grid options
         for agent, grid in zip(self.agents, self.grid):
-            # Iterates through all decision variables
-            for j, (lb, ub, g) in enumerate(zip(self.lb, self.ub, grid)):
-                # For each decision variable, we use the grid values
-                agent.position[j] = r.generate_uniform_random_number(g, g, agent.n_dimensions)
+            # Initializes the agent
+            agent.fill_with_static(grid)
 
-                # Applies the lower and upper bounds
-                agent.lb[j] = lb
-                agent.ub[j] = ub
-
-        logger.debug('Agents initialized.')
+        # Defines a best agent
+        self.best_agent = copy.deepcopy(self.agents[0])

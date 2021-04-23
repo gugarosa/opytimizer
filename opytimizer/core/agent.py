@@ -1,4 +1,4 @@
-"""Agent structure.
+"""Agent.
 """
 
 import numpy as np
@@ -121,7 +121,9 @@ class Agent:
     def lb(self, lb):
         if not isinstance(lb, np.ndarray):
             raise e.TypeError('`lb` should be a numpy array')
-        if not lb.shape or lb.shape[0] != self.n_variables:
+        if not lb.shape:
+            lb = np.expand_dims(lb, -1)
+        if lb.shape[0] != self.n_variables:
             raise e.SizeError('`lb` should be the same size as `n_variables`')
 
         self._lb = lb
@@ -138,7 +140,9 @@ class Agent:
     def ub(self, ub):
         if not isinstance(ub, np.ndarray):
             raise e.TypeError('`ub` should be a numpy array')
-        if not ub.shape or ub.shape[0] != self.n_variables:
+        if not ub.shape:
+            ub = np.expand_dims(ub, -1)
+        if ub.shape[0] != self.n_variables:
             raise e.SizeError('`ub` should be the same size as `n_variables`')
 
         self._ub = ub
@@ -175,7 +179,9 @@ class Agent:
         # Makes sure that `values` is a numpy array
         # and has the same size of `n_variables`
         values = np.asarray(values)
-        if not values.shape or values.shape[0] != self.n_variables:
+        if not values.shape:
+            values = np.expand_dims(values, -1)
+        if values.shape[0] != self.n_variables:
             raise e.SizeError('`values` should be the same size as `n_variables`')
 
         # Iterates through all the decision variables
