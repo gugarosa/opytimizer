@@ -4,23 +4,31 @@ class Callback:
 
     """
 
-    def on_iteration_begin(self, iteration, logs):
+    def __init__(self):
+        """
+        """
+
+    def on_iteration_begin(self, iteration, history):
         """Performs a callback whenever an iteration begins.
 
         """
 
-        # print(logs.best_agent)
-
         pass
 
-    def on_iteration_end(self, iteration, logs):
+    def on_iteration_end(self, iteration, history):
         """Performs a callback whenever an iteration ends.
 
         """
 
-        print(logs.best_agent)
+        #
+        if history.iterations_per_snapshot > 0:
+            #
+            save_snapshot = iteration % history.iterations_per_snapshot
 
-        pass
+            #
+            if save_snapshot == 0:
+                #
+                history.save(f'snapshot_iter_{iteration}.pkl')
 
     def on_evaluate_before(self, *args):
         """Performs a callback prior to the `evaluate` method.

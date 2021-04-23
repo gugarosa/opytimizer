@@ -190,7 +190,7 @@ class Opytimizer:
                 logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
                 # Invokes the `on_iteration_begin` callback
-                self.callback.on_iteration_begin(t, opt_history)
+                self.callback.on_iteration_begin(t+1, opt_history)
 
                 # Current iteration
                 self.iteration = t
@@ -209,9 +209,9 @@ class Opytimizer:
                 opt_history.dump(**self.history_kwargs)
 
                 # Invokes the `on_iteration_end` callback
-                self.callback.on_iteration_end(t, opt_history)
+                self.callback.on_iteration_end(t+1, opt_history)
 
                 logger.to_file(f'Fitness: {self.space.best_agent.fit}')
                 logger.to_file(f'Position: {self.space.best_agent.position}')
 
-        return
+        return opt_history

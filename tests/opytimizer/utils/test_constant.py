@@ -8,7 +8,7 @@ def test_constant():
 
     assert constant.FLOAT_MAX == sys.float_info.max
 
-    assert constant.HISTORY_KEYS == ['agents', 'best_agent', 'local']
+    assert constant.HISTORY_KEYS == ['agents', 'best_agent', 'local_position']
 
     assert constant.LIGHT_SPEED == 3e5
 

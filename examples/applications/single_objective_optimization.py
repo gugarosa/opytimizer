@@ -29,4 +29,4 @@ opt = Opytimizer(space, optimizer, function)
 
 
 # Runs the optimization task
-history = opt.start(n_iterations=10)
+history = opt.start(n_iterations=100)
