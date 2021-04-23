@@ -8,15 +8,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_wwo_hyperparams():
-    hyperparams = {
+def test_wwo_params():
+    params = {
         'h_max': 5,
         'alpha': 1.001,
         'beta': 0.001,
         'k_max': 1
     }
 
-    new_wwo = wwo.WWO(hyperparams=hyperparams)
+    new_wwo = wwo.WWO(params=params)
 
     assert new_wwo.h_max == 5
 
@@ -27,7 +27,7 @@ def test_wwo_hyperparams():
     assert new_wwo.k_max == 1
 
 
-def test_wwo_hyperparams_setter():
+def test_wwo_params_setter():
     new_wwo = wwo.WWO()
 
     try:

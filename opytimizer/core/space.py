@@ -192,8 +192,8 @@ class Space:
     def _initialize_agents(self):
         """Initializes agents with their positions and defines a best agent.
 
-        As each child can have a different procedure of initialization,
-        you will need to implement it directly on the child's class.
+        As each child has a different procedure of initialization,
+        you will need to implement it directly on its class.
 
         """
 

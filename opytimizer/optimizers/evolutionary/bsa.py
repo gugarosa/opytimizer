@@ -27,18 +27,18 @@ class BSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BSA', hyperparams=None):
+    def __init__(self, algorithm='BSA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> BSA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(BSA, self).__init__(algorithm)
 
         # Experience from previous generation
@@ -48,7 +48,7 @@ class BSA(Optimizer):
         self.mix_rate = 1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

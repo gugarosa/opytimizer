@@ -26,18 +26,18 @@ class HGSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HGSO', hyperparams=None):
+    def __init__(self, algorithm='HGSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> HGSO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(HGSO, self).__init__(algorithm)
 
         # Number of clusters
@@ -62,7 +62,7 @@ class HGSO(Optimizer):
         self.K = 1.0
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

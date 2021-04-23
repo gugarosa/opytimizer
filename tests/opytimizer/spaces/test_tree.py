@@ -143,7 +143,7 @@ def test_tree_space_best_tree_setter():
         new_tree_space.best_tree = 'a'
     except:
         new_tree_space = tree.TreeSpace()
-        new_tree_space.best_tree = node.Node(name='0', node_type='FUNCTION')
+        new_tree_space.best_tree = node.Node(name='0', category='FUNCTION')
 
     assert isinstance(new_tree_space.best_tree, node.Node)
 

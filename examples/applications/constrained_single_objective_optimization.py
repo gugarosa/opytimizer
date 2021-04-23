@@ -31,14 +31,14 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'w': 0.7,
     'c1': 1.7,
     'c2': 1.7
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = PSO(params=params)
 
 # Creating Function's object
 f = Function(pointer=Sphere(), constraints=[c_1], penalty=100.0)

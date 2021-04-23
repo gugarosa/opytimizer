@@ -2,7 +2,7 @@ from opytimizer.optimizers.science.wwo import WWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'h_max': 5,
     'alpha': 1.001,
     'beta': 0.001,
@@ -10,4 +10,4 @@ hyperparams = {
 }
 
 # Creating a WWO optimizer
-o = WWO(hyperparams=hyperparams)
+o = WWO(params=params)

@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_fa_hyperparams():
-    hyperparams = {
+def test_fa_params():
+    params = {
         'alpha': 0.5,
         'beta': 0.2,
         'gamma': 1.0
     }
 
-    new_fa = fa.FA(hyperparams=hyperparams)
+    new_fa = fa.FA(params=params)
 
     assert new_fa.alpha == 0.5
 
@@ -24,7 +24,7 @@ def test_fa_hyperparams():
     assert new_fa.gamma == 1.0
 
 
-def test_fa_hyperparams_setter():
+def test_fa_params_setter():
     new_fa = fa.FA()
 
     try:

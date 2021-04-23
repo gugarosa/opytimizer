@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_js_hyperparams():
-    hyperparams = {
+def test_js_params():
+    params = {
         'eta': 4.0,
         'beta': 3.0,
         'gamma': 0.1
     }
 
-    new_js = js.JS(hyperparams=hyperparams)
+    new_js = js.JS(params=params)
 
     assert new_js.eta == 4.0
 
@@ -24,7 +24,7 @@ def test_js_hyperparams():
     assert new_js.gamma == 0.1
 
 
-def test_js_hyperparams_setter():
+def test_js_params_setter():
     new_js = js.JS()
 
     try:

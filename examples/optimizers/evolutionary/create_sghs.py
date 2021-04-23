@@ -2,7 +2,7 @@ from opytimizer.optimizers.evolutionary.hs import SGHS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'HMCR': 0.7,
     'PAR': 0.7,
     'LP': 100,
@@ -13,4 +13,4 @@ hyperparams = {
 }
 
 # Creating a SGHS optimizer
-o = SGHS(hyperparams=hyperparams)
+o = SGHS(params=params)

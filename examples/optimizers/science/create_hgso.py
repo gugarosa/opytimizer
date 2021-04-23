@@ -2,7 +2,7 @@ from opytimizer.optimizers.science.hgso import HGSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'n_clusters': 2,
     'l1': 0.0005,
     'l2': 100,
@@ -13,4 +13,4 @@ hyperparams = {
 }
 
 # Creating an HGSO optimizer
-o = HGSO(hyperparams=hyperparams)
+o = HGSO(params=params)

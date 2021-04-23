@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_pio_hyperparams():
-    hyperparams = {
+def test_pio_params():
+    params = {
         'n_c1': 150,
         'n_c2': 200,
         'R': 0.2
     }
 
-    new_pio = pio.PIO(hyperparams=hyperparams)
+    new_pio = pio.PIO(params=params)
 
     assert new_pio.n_c1 == 150
 
@@ -24,7 +24,7 @@ def test_pio_hyperparams():
     assert new_pio.R == 0.2
 
 
-def test_pio_hyperparams_setter():
+def test_pio_params_setter():
     new_pio = pio.PIO()
 
     try:

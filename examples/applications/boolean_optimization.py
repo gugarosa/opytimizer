@@ -19,13 +19,13 @@ n_iterations = 10
 s = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations, n_variables=n_variables)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'c1': r.generate_binary_random_number(size=(n_variables, 1)),
     'c2': r.generate_binary_random_number(size=(n_variables, 1))
 }
 
 # Creating BPSO's optimizer
-p = BPSO(hyperparams=hyperparams)
+p = BPSO(params=params)
 
 # Creating Function's object
 f = Function(pointer=Knapsack(values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100))

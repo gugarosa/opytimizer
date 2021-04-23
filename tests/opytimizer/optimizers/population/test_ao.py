@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_ao_hyperparams():
-    hyperparams = {
+def test_ao_params():
+    params = {
         'alpha': 0.1,
         'delta': 0.1,
         'n_cycles': 10,
@@ -17,7 +17,7 @@ def test_ao_hyperparams():
         'w': 0.005
     }
 
-    new_ao = ao.AO(hyperparams=hyperparams)
+    new_ao = ao.AO(params=params)
 
     assert new_ao.alpha == 0.1
 
@@ -30,7 +30,7 @@ def test_ao_hyperparams():
     assert new_ao.w == 0.005
 
 
-def test_ao_hyperparams_setter():
+def test_ao_params_setter():
     new_ao = ao.AO()
 
     try:
@@ -107,7 +107,7 @@ def test_ao_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'alpha': 0.1,
         'delta': 0.1,
         'n_cycles': 5,
@@ -115,7 +115,7 @@ def test_ao_run():
         'w': 0.005
     }
 
-    new_ao = ao.AO(hyperparams=hyperparams)
+    new_ao = ao.AO(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

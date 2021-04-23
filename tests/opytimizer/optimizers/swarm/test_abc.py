@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_abc_hyperparams():
-    hyperparams = {
+def test_abc_params():
+    params = {
         'n_trials': 5
     }
 
-    new_abc = abc.ABC(hyperparams=hyperparams)
+    new_abc = abc.ABC(params=params)
 
     assert new_abc.n_trials == 5
 
 
-def test_abc_hyperparams_setter():
+def test_abc_params_setter():
     new_abc = abc.ABC()
 
     try:
@@ -49,11 +49,11 @@ def test_abc_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'n_trials': 1
     }
 
-    new_abc = abc.ABC(hyperparams=hyperparams)
+    new_abc = abc.ABC(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

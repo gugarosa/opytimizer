@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_mfo_hyperparams():
-    hyperparams = {
+def test_mfo_params():
+    params = {
         'b': 1
     }
 
-    new_mfo = mfo.MFO(hyperparams=hyperparams)
+    new_mfo = mfo.MFO(params=params)
 
     assert new_mfo.b == 1
 
 
-def test_mfo_hyperparams_setter():
+def test_mfo_params_setter():
     new_mfo = mfo.MFO()
 
     try:

@@ -29,18 +29,18 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams=None):
+    def __init__(self, algorithm='PSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> PSO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(PSO, self).__init__(algorithm)
 
         # Inertia weight
@@ -53,7 +53,7 @@ class PSO(Optimizer):
         self.c2 = 1.7
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 
@@ -265,12 +265,12 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', hyperparams=None):
+    def __init__(self, algorithm='AIWPSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -282,8 +282,8 @@ class AIWPSO(PSO):
         # Maximum inertia weight
         self.w_max = 0.9
 
-        # Override its parent class with the receiving hyperparams
-        super(AIWPSO, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(AIWPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -427,19 +427,19 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='RPSO', hyperparams=None):
+    def __init__(self, algorithm='RPSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> RPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(RPSO, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(RPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -564,19 +564,19 @@ class SAVPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='SAVPSO', hyperparams=None):
+    def __init__(self, algorithm='SAVPSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> SAVPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(SAVPSO, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(SAVPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -666,19 +666,19 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='VPSO', hyperparams=None):
+    def __init__(self, algorithm='VPSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> VPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(VPSO, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(VPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 

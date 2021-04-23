@@ -27,25 +27,25 @@ class GSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GSA', hyperparams=None):
+    def __init__(self, algorithm='GSA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> GSA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(GSA, self).__init__(algorithm)
 
         # Initial gravity value
         self.G = 2.467
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

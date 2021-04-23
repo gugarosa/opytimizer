@@ -27,16 +27,16 @@ class IWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='IWO', hyperparams=None):
+    def __init__(self, algorithm='IWO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(IWO, self).__init__(algorithm)
 
         # Minimum number of seeds
@@ -55,7 +55,7 @@ class IWO(Optimizer):
         self.init_sigma = 3
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

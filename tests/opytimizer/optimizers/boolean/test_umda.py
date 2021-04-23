@@ -9,14 +9,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_umda_hyperparams():
-    hyperparams = {
+def test_umda_params():
+    params = {
         'p_selection': 0.75,
         'lower_bound': 0.05,
         'upper_bound': 0.95
     }
 
-    new_umda = umda.UMDA(hyperparams=hyperparams)
+    new_umda = umda.UMDA(params=params)
 
     assert new_umda.p_selection == 0.75
 
@@ -25,7 +25,7 @@ def test_umda_hyperparams():
     assert new_umda.upper_bound == 0.95
 
 
-def test_umda_hyperparams_setter():
+def test_umda_params_setter():
     new_umda = umda.UMDA()
 
     try:

@@ -27,18 +27,18 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams=None):
+    def __init__(self, algorithm='BA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> BA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(BA, self).__init__(algorithm)
 
         # Minimum frequency range
@@ -54,7 +54,7 @@ class BA(Optimizer):
         self.r = 0.5
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

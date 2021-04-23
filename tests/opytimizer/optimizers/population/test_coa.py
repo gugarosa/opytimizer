@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_coa_hyperparams():
-    hyperparams = {
+def test_coa_params():
+    params = {
         'n_p': 2
     }
 
-    new_coa = coa.COA(hyperparams=hyperparams)
+    new_coa = coa.COA(params=params)
 
     assert new_coa.n_p == 2
 
 
-def test_coa_hyperparams_setter():
+def test_coa_params_setter():
     new_coa = coa.COA()
 
     try:

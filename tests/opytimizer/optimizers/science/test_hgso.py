@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_hgso_hyperparams():
-    hyperparams = {
+def test_hgso_params():
+    params = {
         'n_clusters': 2,
         'l1': 0.0005,
         'l2': 100,
@@ -19,7 +19,7 @@ def test_hgso_hyperparams():
         'K': 1.0
     }
 
-    new_hgso = hgso.HGSO(hyperparams=hyperparams)
+    new_hgso = hgso.HGSO(params=params)
 
     assert new_hgso.n_clusters == 2
 
@@ -36,7 +36,7 @@ def test_hgso_hyperparams():
     assert new_hgso.K == 1.0
 
 
-def test_hgso_hyperparams_setter():
+def test_hgso_params_setter():
     new_hgso = hgso.HGSO()
 
     try:

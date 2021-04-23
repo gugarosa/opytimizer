@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_mvo_hyperparams():
-    hyperparams = {
+def test_mvo_params():
+    params = {
         'WEP_min': 0.2,
         'WEP_max': 1.0,
         'p': 0.5
     }
 
-    new_mvo = mvo.MVO(hyperparams=hyperparams)
+    new_mvo = mvo.MVO(params=params)
 
     assert new_mvo.WEP_min == 0.2
 
@@ -24,7 +24,7 @@ def test_mvo_hyperparams():
     assert new_mvo.p == 0.5
 
 
-def test_mvo_hyperparams_setter():
+def test_mvo_params_setter():
     new_mvo = mvo.MVO()
 
     try:

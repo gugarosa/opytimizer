@@ -1,4 +1,4 @@
-"""Optimizer structure.
+"""Optimizer.
 """
 
 import copy
@@ -19,22 +19,22 @@ class Optimizer:
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
+            algorithm (str): Indicates the algorithm's name.
 
         """
 
-        # We define the algorithm's name
+        # Algorithm's name
         self.algorithm = algorithm
 
-        # Also, we initialize hyperparameters as None
-        self.hyperparams = None
+        # Key-value hyperparameters
+        self.params = None
 
         # Indicates whether the optimizer is built or not
         self.built = False
 
     @property
     def algorithm(self):
-        """str: Indicates the algorithm name.
+        """str: Algorithm's name.
 
         """
 
@@ -45,19 +45,19 @@ class Optimizer:
         self._algorithm = algorithm
 
     @property
-    def hyperparams(self):
-        """dict: Contains the key-value parameters to meta-heuristics.
+    def params(self):
+        """dict: Key-value hyperparameters.
 
         """
 
-        return self._hyperparams
+        return self._params
 
-    @hyperparams.setter
-    def hyperparams(self, hyperparams):
-        if not (isinstance(hyperparams, dict) or hyperparams is None):
-            raise e.TypeError('`hyperparams` should be a dictionary')
+    @params.setter
+    def params(self, params):
+        if not (isinstance(params, dict) or params is None):
+            raise e.TypeError('`params` should be a dictionary')
 
-        self._hyperparams = hyperparams
+        self._params = params
 
     @property
     def built(self):
@@ -71,23 +71,23 @@ class Optimizer:
     def built(self, built):
         self._built = built
 
-    def _build(self, hyperparams):
+    def _build(self, params):
         """This method serves as the object building process.
 
         Args:
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.debug('Running private method: build().')
 
-        # We need to save the hyperparams object for faster looking up
-        self.hyperparams = hyperparams
+        # We need to save the params object for faster looking up
+        self.params = params
 
-        # Checks if hyperparams are really provided
-        if hyperparams:
+        # Checks if params are really provided
+        if params:
             # If one can find any hyperparam inside its object
-            for k, v in hyperparams.items():
+            for k, v in params.items():
                 # Set it as the one that will be used
                 setattr(self, k, v)
 
@@ -97,7 +97,7 @@ class Optimizer:
         # Logging attributes
         logger.debug('Algorithm: %s | Hyperparameters: %s | '
                      'Built: %s.',
-                     self.algorithm, str(hyperparams),
+                     self.algorithm, str(params),
                      self.built)
 
     def update(self):

@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_sa_hyperparams():
-    hyperparams = {
+def test_sa_params():
+    params = {
         'T': 100,
         'beta': 0.99,
     }
 
-    new_sa = sa.SA(hyperparams=hyperparams)
+    new_sa = sa.SA(params=params)
 
     assert new_sa.T == 100
 
     assert new_sa.beta == 0.99
 
 
-def test_sa_hyperparams_setter():
+def test_sa_params_setter():
     new_sa = sa.SA()
 
     try:
@@ -64,12 +64,12 @@ def test_sa_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'T': 100,
         'beta': 0.99
     }
 
-    new_sa = sa.SA(hyperparams=hyperparams)
+    new_sa = sa.SA(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

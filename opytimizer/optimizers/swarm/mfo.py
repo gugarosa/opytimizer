@@ -27,25 +27,25 @@ class MFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='MFO', hyperparams=None):
+    def __init__(self, algorithm='MFO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> MFO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(MFO, self).__init__(algorithm)
 
         # Spiral constant
         self.b = 1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

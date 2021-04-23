@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_wca_hyperparams():
-    hyperparams = {
+def test_wca_params():
+    params = {
         'nsr': 5,
         'd_max': 0.25
     }
 
-    new_wca = wca.WCA(hyperparams=hyperparams)
+    new_wca = wca.WCA(params=params)
 
     assert new_wca.nsr == 5
 
     assert new_wca.d_max == 0.25
 
 
-def test_wca_hyperparams_setter():
+def test_wca_params_setter():
     new_wca = wca.WCA()
 
     try:

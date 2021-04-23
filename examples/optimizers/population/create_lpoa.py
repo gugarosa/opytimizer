@@ -2,8 +2,8 @@ from opytimizer.optimizers.population.lpoa import LPOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 }
 
 # Creating an LPOA optimizer
-o = LPOA(hyperparams=hyperparams)
+o = LPOA(params=params)

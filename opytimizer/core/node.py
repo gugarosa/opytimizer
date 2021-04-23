@@ -1,4 +1,4 @@
-"""Node structure.
+"""Node.
 """
 
 import numpy as np
@@ -12,12 +12,12 @@ class Node:
 
     """
 
-    def __init__(self, name, node_type, value=None, left=None, right=None, parent=None):
+    def __init__(self, name, category, value=None, left=None, right=None, parent=None):
         """Initialization method.
 
         Args:
             name (str, int): Name of the node (e.g., it should be the terminal identifier or function name).
-            node_type (str): Type of the node (e.g., TERMINAL or FUNCTION).
+            category (str): Category of the node (e.g., TERMINAL or FUNCTION).
             value (np.array): Value of the node (only used if it is a terminal).
             left (Node): Pointer to node's left child.
             right (Node): Pointer to node's right child.
@@ -28,33 +28,29 @@ class Node:
         # Name of the node (e.g., it should be the terminal identifier or function name)
         self.name = name
 
-        # Type of the node (e.g., TERMINAL or FUNCTION)
-        self.node_type = node_type
+        # Category of the node (e.g., TERMINAL or FUNCTION)
+        self.category = category
 
         # Value of the node (only if it is a terminal node)
         self.value = value
 
-        # Pointer to node's left child
+        # Pointer to node's childs and parent
         self.left = left
-
-        # Pointer to node's right child
         self.right = right
-
-        # Pointer to node's parent
         self.parent = parent
 
         # Flag to identify whether the node is a left child
         self.flag = True
 
     def __repr__(self):
-        """Object representation as a formal string.
+        """Representation as a formal string.
 
         """
 
-        return f'{self.node_type}:{self.name}:{self.flag}'
+        return f'{self.category}:{self.name}:{self.flag}'
 
     def __str__(self):
-        """Object representation as an informal string.
+        """Representation as an informal string.
 
         """
 
@@ -79,19 +75,19 @@ class Node:
         self._name = name
 
     @property
-    def node_type(self):
-        """str: Type of the node (e.g., TERMINAL or FUNCTION).
+    def category(self):
+        """str: Category of the node (e.g., TERMINAL or FUNCTION).
 
         """
 
-        return self._node_type
+        return self._category
 
-    @node_type.setter
-    def node_type(self, node_type):
-        if node_type not in ['TERMINAL', 'FUNCTION']:
-            raise e.ValueError('`node_type` should be `TERMINAL` or `FUNCTION`')
+    @category.setter
+    def category(self, category):
+        if category not in ['TERMINAL', 'FUNCTION']:
+            raise e.ValueError('`category` should be `TERMINAL` or `FUNCTION`')
 
-        self._node_type = node_type
+        self._category = category
 
     @property
     def value(self):
@@ -103,7 +99,7 @@ class Node:
 
     @value.setter
     def value(self, value):
-        if self.node_type != 'TERMINAL':
+        if self.category != 'TERMINAL':
             self._value = None
         else:
             if not isinstance(value, np.ndarray):
@@ -121,9 +117,8 @@ class Node:
 
     @left.setter
     def left(self, left):
-        if left:
-            if not isinstance(left, Node):
-                raise e.TypeError('`left` should be a Node')
+        if left and not isinstance(left, Node):
+            raise e.TypeError('`left` should be a Node')
 
         self._left = left
 
@@ -137,9 +132,8 @@ class Node:
 
     @right.setter
     def right(self, right):
-        if right:
-            if not isinstance(right, Node):
-                raise e.TypeError('`right` should be a Node')
+        if right and not isinstance(right, Node):
+            raise e.TypeError('`right` should be a Node')
 
         self._right = right
 
@@ -153,9 +147,8 @@ class Node:
 
     @parent.setter
     def parent(self, parent):
-        if parent:
-            if not isinstance(parent, Node):
-                raise e.TypeError('`parent` should be a Node')
+        if parent and not isinstance(parent, Node):
+            raise e.TypeError('`parent` should be a Node')
 
         self._parent = parent
 
@@ -208,7 +201,7 @@ class Node:
 
     @property
     def position(self):
-        """np.array: Position after traversing the nodes.
+        """np.array: Position after traversing the node.
 
         """
 
@@ -216,7 +209,7 @@ class Node:
 
     @property
     def post_order(self):
-        """list: Traverses the nodes in post-order.
+        """list: Traverses the node in post-order.
 
         """
 
@@ -269,7 +262,7 @@ class Node:
 
     @property
     def pre_order(self):
-        """list: Traverses the nodes in pre-order.
+        """list: Traverses the node in pre-order.
 
         """
 
@@ -303,7 +296,7 @@ class Node:
             position (int): Position of the node.
 
         Returns:
-            The node at desired position.
+            Node at desired position.
 
         """
 
@@ -316,11 +309,11 @@ class Node:
             node = pre_order[position]
 
             # If the node is a terminal
-            if node.node_type == 'TERMINAL':
+            if node.category == 'TERMINAL':
                 return node.parent, node.flag
 
             # If the node is a function
-            if node.node_type == 'FUNCTION':
+            if node.category == 'FUNCTION':
                 # If it is a function node, we need to return the parent of its parent
                 if node.parent.parent:
                     return node.parent.parent, node.parent.flag
@@ -340,7 +333,7 @@ def _build_string(node):
         node (Node): An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        A formatted string ready to be printed.
+        Formatted string ready to be printed.
 
     """
 
@@ -453,7 +446,7 @@ def _evaluate(node):
         node (Node): An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        An output solution of size (n_variables x n_dimensions).
+        Output solution of size (n_variables x n_dimensions).
 
     """
 
@@ -464,7 +457,7 @@ def _evaluate(node):
         y = _evaluate(node.right)
 
         # If the node is an agent or constant
-        if node.node_type == 'TERMINAL':
+        if node.category == 'TERMINAL':
             return node.value
 
         # Checks if its a summation
@@ -511,13 +504,13 @@ def _evaluate(node):
 
 
 def _properties(node):
-    """Traverses the nodes and returns some useful properties.
+    """Traverses the node and returns some useful properties.
 
     Args:
         node (Node): An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        A dictionary containing some useful properties: `min_depth`, `max_depth`,
+        Dictionary containing some useful properties: `min_depth`, `max_depth`,
         `n_leaves` and `n_nodes`.
 
     """

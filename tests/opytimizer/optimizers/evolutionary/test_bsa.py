@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_bsa_hyperparams():
-    hyperparams = {
+def test_bsa_params():
+    params = {
         'F': 3.0,
         'mix_rate': 1
     }
 
-    new_bsa = bsa.BSA(hyperparams=hyperparams)
+    new_bsa = bsa.BSA(params=params)
 
     assert new_bsa.F == 3.0
 
     assert new_bsa.mix_rate == 1
 
 
-def test_bsa_hyperparams_setter():
+def test_bsa_params_setter():
     new_bsa = bsa.BSA()
 
     try:

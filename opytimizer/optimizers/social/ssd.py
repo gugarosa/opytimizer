@@ -29,18 +29,18 @@ class SSD(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SSD', hyperparams=None):
+    def __init__(self, algorithm='SSD', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> SSD.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(SSD, self).__init__(algorithm)
 
         # Exploration parameter
@@ -50,7 +50,7 @@ class SSD(Optimizer):
         self.decay = 0.99
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

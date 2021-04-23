@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_csa_hyperparams():
-    hyperparams = {
+def test_csa_params():
+    params = {
         'fl': 2.0,
         'AP': 0.1
     }
 
-    new_csa = csa.CSA(hyperparams=hyperparams)
+    new_csa = csa.CSA(params=params)
 
     assert new_csa.fl == 2.0
 
     assert new_csa.AP == 0.1
 
 
-def test_csa_hyperparams_setter():
+def test_csa_params_setter():
     new_csa = csa.CSA()
 
     try:

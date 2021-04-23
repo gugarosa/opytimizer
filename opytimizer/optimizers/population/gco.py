@@ -29,16 +29,16 @@ class GCO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GCO', hyperparams=None):
+    def __init__(self, algorithm='GCO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(GCO, self).__init__(algorithm)
 
         # Cross-ratio
@@ -48,7 +48,7 @@ class GCO(Optimizer):
         self.F = 1.25
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

@@ -25,18 +25,18 @@ class JS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='JS', hyperparams=None):
+    def __init__(self, algorithm='JS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> JS.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(JS, self).__init__(algorithm)
 
         # Chaotic map coefficient
@@ -49,7 +49,7 @@ class JS(Optimizer):
         self.gamma = 0.1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 
@@ -314,19 +314,19 @@ class NBJS(JS):
 
     """
 
-    def __init__(self, algorithm='NBJS', hyperparams=None):
+    def __init__(self, algorithm='NBJS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: JS -> NBJS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(NBJS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(NBJS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 

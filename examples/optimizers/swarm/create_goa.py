@@ -2,7 +2,7 @@ from opytimizer.optimizers.swarm.goa import GOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'c_min': 0.00001,
     'c_max': 1,
     'f': 0.5,
@@ -10,4 +10,4 @@ hyperparams = {
 }
 
 # Creating a GOA optimizer
-o = GOA(hyperparams=hyperparams)
+o = GOA(params=params)

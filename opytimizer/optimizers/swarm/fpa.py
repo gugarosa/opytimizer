@@ -27,16 +27,16 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='FPA', hyperparams=None):
+    def __init__(self, algorithm='FPA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(FPA, self).__init__(algorithm)
 
         # Lévy flight control parameter
@@ -49,7 +49,7 @@ class FPA(Optimizer):
         self.p = 0.8
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

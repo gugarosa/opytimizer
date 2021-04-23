@@ -28,18 +28,18 @@ class WWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WWO', hyperparams=None):
+    def __init__(self, algorithm='WWO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> WWO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(WWO, self).__init__(algorithm)
 
         # Maximum wave height
@@ -55,7 +55,7 @@ class WWO(Optimizer):
         self.k_max = 1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

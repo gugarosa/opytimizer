@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_iwo_hyperparams():
-    hyperparams = {
+def test_iwo_params():
+    params = {
         'min_seeds': 0,
         'max_seeds': 5,
         'e': 2,
@@ -17,7 +17,7 @@ def test_iwo_hyperparams():
         'init_sigma': 3
     }
 
-    new_iwo = iwo.IWO(hyperparams=hyperparams)
+    new_iwo = iwo.IWO(params=params)
 
     assert new_iwo.min_seeds == 0
 
@@ -30,7 +30,7 @@ def test_iwo_hyperparams():
     assert new_iwo.init_sigma == 3
 
 
-def test_iwo_hyperparams_setter():
+def test_iwo_params_setter():
     new_iwo = iwo.IWO()
 
     try:

@@ -28,18 +28,18 @@ class GOA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GOA', hyperparams=None):
+    def __init__(self, algorithm='GOA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> GOA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(GOA, self).__init__(algorithm)
 
         # Minimum comfort zone
@@ -55,7 +55,7 @@ class GOA(Optimizer):
         self.l = 1.5
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

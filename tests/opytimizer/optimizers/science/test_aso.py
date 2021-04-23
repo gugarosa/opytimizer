@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_aso_hyperparams():
-    hyperparams = {
+def test_aso_params():
+    params = {
         'alpha': 50.0,
         'beta': 0.2
     }
 
-    new_aso = aso.ASO(hyperparams=hyperparams)
+    new_aso = aso.ASO(params=params)
 
     assert new_aso.alpha == 50.0
 
     assert new_aso.beta == 0.2
 
 
-def test_aso_hyperparams_setter():
+def test_aso_params_setter():
     new_aso = aso.ASO()
 
     try:

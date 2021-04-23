@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_bwo_hyperparams():
-    hyperparams = {
+def test_bwo_params():
+    params = {
         'pp': 0.6,
         'cr': 0.44,
         'pm': 0.4,
     }
 
-    new_bwo = bwo.BWO(hyperparams=hyperparams)
+    new_bwo = bwo.BWO(params=params)
 
     assert new_bwo.pp == 0.6
 
@@ -24,7 +24,7 @@ def test_bwo_hyperparams():
     assert new_bwo.pm == 0.4
 
 
-def test_bwo_hyperparams_setter():
+def test_bwo_params_setter():
     new_bwo = bwo.BWO()
 
     try:

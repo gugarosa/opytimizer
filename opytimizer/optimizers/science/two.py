@@ -28,18 +28,18 @@ class TWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='TWO', hyperparams=None):
+    def __init__(self, algorithm='TWO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> TWO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(TWO, self).__init__(algorithm)
 
         # Static friction coefficient
@@ -58,7 +58,7 @@ class TWO(Optimizer):
         self.beta = 0.05
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

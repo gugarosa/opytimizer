@@ -8,15 +8,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_efo_hyperparams():
-    hyperparams = {
+def test_efo_params():
+    params = {
         'positive_field': 0.1,
         'negative_field': 0.5,
         'ps_ratio': 0.1,
         'r_ratio': 0.4
     }
 
-    new_efo = efo.EFO(hyperparams=hyperparams)
+    new_efo = efo.EFO(params=params)
 
     assert new_efo.positive_field == 0.1
 
@@ -27,7 +27,7 @@ def test_efo_hyperparams():
     assert new_efo.r_ratio == 0.4
 
 
-def test_efo_hyperparams_setter():
+def test_efo_params_setter():
     new_efo = efo.EFO()
 
     try:

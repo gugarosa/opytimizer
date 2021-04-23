@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_abo_hyperparams():
-    hyperparams = {
+def test_abo_params():
+    params = {
         'sunspot_ratio': 0.9,
         'a': 2.0
     }
 
-    new_abo = abo.ABO(hyperparams=hyperparams)
+    new_abo = abo.ABO(params=params)
 
     assert new_abo.sunspot_ratio == 0.9
     
     assert new_abo.a == 2.0
 
 
-def test_abo_hyperparams_setter():
+def test_abo_params_setter():
     new_abo = abo.ABO()
 
     try:

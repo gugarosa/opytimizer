@@ -33,7 +33,7 @@ s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
               functions=functions, lower_bound=lower_bound, upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'p_reproduction': 0.25,
     'p_mutation': 0.1,
     'p_crossover': 0.2,
@@ -41,7 +41,7 @@ hyperparams = {
 }
 
 # Creating GP's optimizer
-p = GP(hyperparams=hyperparams)
+p = GP(params=params)
 
 # Creating Function's object
 f = Function(pointer=Sphere())

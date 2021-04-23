@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_woa_hyperparams():
-    hyperparams = {
+def test_woa_params():
+    params = {
         'b': 1
     }
 
-    new_woa = woa.WOA(hyperparams=hyperparams)
+    new_woa = woa.WOA(params=params)
 
     assert new_woa.b == 1
 
 
-def test_woa_hyperparams_setter():
+def test_woa_params_setter():
     new_woa = woa.WOA()
 
     try:

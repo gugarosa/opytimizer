@@ -28,21 +28,21 @@ class PVS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PVS', hyperparams=None):
+    def __init__(self, algorithm='PVS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> PVS.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(PVS, self).__init__(algorithm)
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')

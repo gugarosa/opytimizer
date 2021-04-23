@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_hc_hyperparams():
-    hyperparams = {
+def test_hc_params():
+    params = {
         'r_mean': 0,
         'r_var': 0.1,
     }
 
-    new_hc = hc.HC(hyperparams=hyperparams)
+    new_hc = hc.HC(params=params)
 
     assert new_hc.r_mean == 0
 
     assert new_hc.r_var == 0.1
 
 
-def test_hc_hyperparams_setter():
+def test_hc_params_setter():
     new_hc = hc.HC()
 
     try:
@@ -59,12 +59,12 @@ def test_hc_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'r_mean': 0,
         'r_var': 0.1
     }
 
-    new_hc = hc.HC(hyperparams=hyperparams)
+    new_hc = hc.HC(params=params)
 
     search_space = search.SearchSpace(n_agents=50, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

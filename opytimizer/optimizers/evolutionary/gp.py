@@ -28,18 +28,18 @@ class GP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GP', hyperparams=None):
+    def __init__(self, algorithm='GP', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> GP.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(GP, self).__init__(algorithm)
 
         # Probability of reproduction
@@ -55,7 +55,7 @@ class GP(Optimizer):
         self.prunning_ratio = 0
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

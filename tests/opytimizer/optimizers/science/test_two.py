@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_two_hyperparams():
-    hyperparams = {
+def test_two_params():
+    params = {
         'mu_s': 1,
         'mu_k': 1,
         'delta_t': 1,
@@ -17,7 +17,7 @@ def test_two_hyperparams():
         'beta': 0.05
     }
 
-    new_two = two.TWO(hyperparams=hyperparams)
+    new_two = two.TWO(params=params)
 
     assert new_two.mu_s == 1
 
@@ -30,7 +30,7 @@ def test_two_hyperparams():
     assert new_two.beta == 0.05
 
 
-def test_two_hyperparams_setter():
+def test_two_params_setter():
     new_two = two.TWO()
 
     try:

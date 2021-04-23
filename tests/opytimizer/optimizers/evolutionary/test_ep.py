@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_ep_hyperparams():
-    hyperparams = {
+def test_ep_params():
+    params = {
         'bout_size': 0.1,
         'clip_ratio': 0.05
     }
 
-    new_ep = ep.EP(hyperparams=hyperparams)
+    new_ep = ep.EP(params=params)
 
     assert new_ep.bout_size == 0.1
 
     assert new_ep.clip_ratio == 0.05
 
 
-def test_ep_hyperparams_setter():
+def test_ep_params_setter():
     new_ep = ep.EP()
 
     try:
@@ -91,12 +91,12 @@ def test_ep_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'bout_size': 0.1,
         'clip_ratio': 0.05
     }
 
-    new_ep = ep.EP(hyperparams=hyperparams)
+    new_ep = ep.EP(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

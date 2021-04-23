@@ -28,16 +28,16 @@ class EFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='EFO', hyperparams=None):
+    def __init__(self, algorithm='EFO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(EFO, self).__init__(algorithm)
 
         # Positive field proportion
@@ -53,7 +53,7 @@ class EFO(Optimizer):
         self.r_ratio = 0.4
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

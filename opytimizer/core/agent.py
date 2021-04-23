@@ -33,10 +33,11 @@ class Agent:
         # Number of dimensions
         self.n_dimensions = n_dimensions
 
-        # Position vector based on the number of variables and dimensions
+        # N-dimensional array of positions
         self.position = np.zeros((n_variables, n_dimensions))
 
-        # Fitness value is initialized with float's largest number
+        # Fitness value
+        # Note it is initialized with largest float number
         self.fit = c.FLOAT_MAX
 
         # Lower bounds
@@ -81,7 +82,7 @@ class Agent:
 
     @property
     def position(self):
-        """np.array: N-dimensional array of values.
+        """np.array: N-dimensional array of positions.
 
         """
 
@@ -164,7 +165,7 @@ class Agent:
 
         # Iterates through all the decision variables
         for j in range(self.n_variables):
-            # Fills the array based on binary distribution
+            # Fills the array based on a binary distribution
             self.position[j] = r.generate_binary_random_number(self.n_dimensions)
 
     def fill_with_static(self, values):
@@ -186,7 +187,7 @@ class Agent:
 
         # Iterates through all the decision variables
         for j, value in enumerate(values):
-            # Fills the array based on static value
+            # Fills the array based on a static value
             self.position[j] = value
 
     def fill_with_uniform(self):
@@ -197,5 +198,5 @@ class Agent:
 
         # Iterates through all the decision variables
         for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-            # Fills the array based on uniform distribution
+            # Fills the array based on a uniform distribution
             self.position[j] = r.generate_uniform_random_number(lb, ub, self.n_dimensions)

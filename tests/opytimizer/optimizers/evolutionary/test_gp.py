@@ -10,15 +10,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_gp_hyperparams():
-    hyperparams = {
+def test_gp_params():
+    params = {
         'p_reproduction': 1.0,
         'p_mutation': 0.5,
         'p_crossover': 0.5,
         'prunning_ratio': 0.5
     }
 
-    new_gp = gp.GP(hyperparams=hyperparams)
+    new_gp = gp.GP(params=params)
 
     assert new_gp.p_reproduction == 1.0
 
@@ -29,7 +29,7 @@ def test_gp_hyperparams():
     assert new_gp.prunning_ratio == 0.5
 
 
-def test_gp_hyperparams_setter():
+def test_gp_params_setter():
     new_gp = gp.GP()
 
     try:

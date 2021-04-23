@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_ga_hyperparams():
-    hyperparams = {
+def test_ga_params():
+    params = {
         'p_selection': 0.75,
         'p_mutation': 0.25,
         'p_crossover': 0.5,
     }
 
-    new_ga = ga.GA(hyperparams=hyperparams)
+    new_ga = ga.GA(params=params)
 
     assert new_ga.p_selection == 0.75
 
@@ -24,7 +24,7 @@ def test_ga_hyperparams():
     assert new_ga.p_crossover == 0.5
 
 
-def test_ga_hyperparams_setter():
+def test_ga_params_setter():
     new_ga = ga.GA()
 
     try:

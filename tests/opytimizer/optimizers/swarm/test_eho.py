@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_eho_hyperparams():
-    hyperparams = {
+def test_eho_params():
+    params = {
         'alpha': 0.5,
         'beta': 0.1,
         'n_clans': 10
     }
 
-    new_eho = eho.EHO(hyperparams=hyperparams)
+    new_eho = eho.EHO(params=params)
 
     assert new_eho.alpha == 0.5
 
@@ -24,7 +24,7 @@ def test_eho_hyperparams():
     assert new_eho.n_clans == 10
 
 
-def test_eho_hyperparams_setter():
+def test_eho_params_setter():
     new_eho = eho.EHO()
 
     try:

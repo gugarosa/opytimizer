@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_epo_hyperparams():
-    hyperparams = {
+def test_epo_params():
+    params = {
         'f': 2.0,
         'l': 1.5
     }
 
-    new_epo = epo.EPO(hyperparams=hyperparams)
+    new_epo = epo.EPO(params=params)
 
     assert new_epo.f == 2.0
 
     assert new_epo.l == 1.5
 
 
-def test_epo_hyperparams_setter():
+def test_epo_params_setter():
     new_epo = epo.EPO()
 
     try:

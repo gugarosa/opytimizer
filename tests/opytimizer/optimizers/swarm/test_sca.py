@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_sca_hyperparams():
-    hyperparams = {
+def test_sca_params():
+    params = {
         'r_min': 0,
         'r_max': 2,
         'a': 3,
     }
 
-    new_sca = sca.SCA(hyperparams=hyperparams)
+    new_sca = sca.SCA(params=params)
 
     assert new_sca.r_min == 0
 
@@ -24,7 +24,7 @@ def test_sca_hyperparams():
     assert new_sca.a == 3
 
 
-def test_sca_hyperparams_setter():
+def test_sca_params_setter():
     new_sca = sca.SCA()
 
     try:
@@ -92,13 +92,13 @@ def test_sca_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'r_min': 0,
         'r_max': 2,
         'a': 3
     }
 
-    new_sca = sca.SCA(hyperparams=hyperparams)
+    new_sca = sca.SCA(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

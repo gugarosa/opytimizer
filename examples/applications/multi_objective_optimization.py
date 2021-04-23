@@ -24,14 +24,14 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'alpha': 0.5,
     'beta': 0.2,
     'gamma': 1.0
 }
 
 # Creating FA's optimizer
-p = FA(hyperparams=hyperparams)
+p = FA(params=params)
 
 # Defining task's main function
 z = WeightedFunction(functions=[Exponential(), Sphere()], weights=[0.5, 0.5])

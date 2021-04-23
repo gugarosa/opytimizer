@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_sfo_hyperparams():
-    hyperparams = {
+def test_sfo_params():
+    params = {
         'PP': 0.1,
         'A': 4,
         'e': 0.001
     }
 
-    new_sfo = sfo.SFO(hyperparams=hyperparams)
+    new_sfo = sfo.SFO(params=params)
 
     assert new_sfo.PP == 0.1
 
@@ -24,7 +24,7 @@ def test_sfo_hyperparams():
     assert new_sfo.e == 0.001
 
 
-def test_sfo_hyperparams_setter():
+def test_sfo_params_setter():
     new_sfo = sfo.SFO()
 
     try:

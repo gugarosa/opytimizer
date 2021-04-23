@@ -2,9 +2,9 @@ from opytimizer.optimizers.swarm.bfo import BFO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 
 }
 
 # Creating an BFO optimizer
-o = BFO(hyperparams=hyperparams)
+o = BFO(params=params)

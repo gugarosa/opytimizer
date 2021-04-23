@@ -61,13 +61,13 @@ b = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations,
                  n_variables=n_variables)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'c1': r.generate_binary_random_number(size=(n_variables, 1)),
     'c2': r.generate_binary_random_number(size=(n_variables, 1))
 }
 
 # Creating BPSO's optimizer
-p = BPSO(hyperparams=hyperparams)
+p = BPSO(params=params)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=b, optimizer=p, function=f)

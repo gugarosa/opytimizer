@@ -29,25 +29,25 @@ class ABC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABC', hyperparams=None):
+    def __init__(self, algorithm='ABC', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> ABC.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(ABC, self).__init__(algorithm)
 
         # Number of trial limits
         self.n_trials = 10
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

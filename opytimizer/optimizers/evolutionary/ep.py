@@ -27,16 +27,16 @@ class EP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='EP', hyperparams=None):
+    def __init__(self, algorithm='EP', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(EP, self).__init__(algorithm)
 
         # Size of bout during the tournament selection
@@ -46,7 +46,7 @@ class EP(Optimizer):
         self.clip_ratio = 0.05
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

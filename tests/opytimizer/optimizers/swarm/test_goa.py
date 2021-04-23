@@ -8,15 +8,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_goa_hyperparams():
-    hyperparams = {
+def test_goa_params():
+    params = {
         'c_min': 0.00001,
         'c_max': 1.0,
         'f': 0.5,
         'l': 1.5
     }
 
-    new_goa = goa.GOA(hyperparams=hyperparams)
+    new_goa = goa.GOA(params=params)
 
     assert new_goa.c_min == 0.00001
 
@@ -27,7 +27,7 @@ def test_goa_hyperparams():
     assert new_goa.l == 1.5
 
 
-def test_goa_hyperparams_setter():
+def test_goa_params_setter():
     new_goa = goa.GOA()
 
     try:

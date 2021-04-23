@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_de_hyperparams():
-    hyperparams = {
+def test_de_params():
+    params = {
         'CR': 0.9,
         'F': 0.7
     }
 
-    new_de = de.DE(hyperparams=hyperparams)
+    new_de = de.DE(params=params)
 
     assert new_de.CR == 0.9
 
     assert new_de.F == 0.7
 
 
-def test_de_hyperparams_setter():
+def test_de_params_setter():
     new_de = de.DE()
 
     try:
@@ -77,12 +77,12 @@ def test_de_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'CR': 0.9,
         'F': 0.7
     }
 
-    new_de = de.DE(hyperparams=hyperparams)
+    new_de = de.DE(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

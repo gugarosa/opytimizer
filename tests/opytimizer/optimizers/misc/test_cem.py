@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_cem_hyperparams():
-    hyperparams = {
+def test_cem_params():
+    params = {
         'n_updates': 5,
         'alpha': 0.7,
     }
 
-    new_cem = cem.CEM(hyperparams=hyperparams)
+    new_cem = cem.CEM(params=params)
 
     assert new_cem.n_updates == 5
 
     assert new_cem.alpha == 0.7
 
 
-def test_cem_hyperparams_setter():
+def test_cem_params_setter():
     new_cem = cem.CEM()
 
     try:
@@ -95,12 +95,12 @@ def test_cem_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'n_updates': 5,
         'alpha': 0.7
     }
 
-    new_cem = cem.CEM(hyperparams=hyperparams)
+    new_cem = cem.CEM(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

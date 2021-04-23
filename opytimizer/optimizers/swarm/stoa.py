@@ -28,21 +28,21 @@ class STOA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='STOA', hyperparams=None):
+    def __init__(self, algorithm='STOA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> STOA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(STOA, self).__init__(algorithm)
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')

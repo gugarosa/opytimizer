@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_es_hyperparams():
-    hyperparams = {
+def test_es_params():
+    params = {
         'child_ratio': 0.5
     }
 
-    new_es = es.ES(hyperparams=hyperparams)
+    new_es = es.ES(params=params)
 
     assert new_es.child_ratio == 0.5
 
 
-def test_es_hyperparams_setter():
+def test_es_params_setter():
     new_es = es.ES()
 
     try:
@@ -76,11 +76,11 @@ def test_es_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'child_ratio': 0.5
     }
 
-    new_es = es.ES(hyperparams=hyperparams)
+    new_es = es.ES(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

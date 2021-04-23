@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_wdo_hyperparams():
-    hyperparams = {
+def test_wdo_params():
+    params = {
         'v_max': 0.3,
         'alpha': 0.8,
         'g': 0.6,
@@ -17,7 +17,7 @@ def test_wdo_hyperparams():
         'RT': 1.5
     }
 
-    new_wdo = wdo.WDO(hyperparams=hyperparams)
+    new_wdo = wdo.WDO(params=params)
 
     assert new_wdo.v_max == 0.3
 
@@ -30,7 +30,7 @@ def test_wdo_hyperparams():
     assert new_wdo.RT == 1.5
 
 
-def test_wdo_hyperparams_setter():
+def test_wdo_params_setter():
     new_wdo = wdo.WDO()
 
     try:
@@ -125,7 +125,7 @@ def test_wdo_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'v_max': 0.3,
         'alpha': 0.8,
         'g': 0.6,
@@ -133,7 +133,7 @@ def test_wdo_run():
         'RT': 1.5
     }
 
-    new_wdo = wdo.WDO(hyperparams=hyperparams)
+    new_wdo = wdo.WDO(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

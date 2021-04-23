@@ -2,9 +2,9 @@ from opytimizer.optimizers.social.mvpa import MVPA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 
 }
 
 # Creating a MVPA optimizer
-o = MVPA(hyperparams=hyperparams)
+o = MVPA(params=params)

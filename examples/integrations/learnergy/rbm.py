@@ -12,7 +12,7 @@ train = torchvision.datasets.MNIST(
 
 
 def rbm(opytimizer):
-    # Gathering hyperparams
+    # Gathering params
     lr = opytimizer[0][0]
     momentum = opytimizer[1][0]
     decay = opytimizer[2][0]
@@ -45,14 +45,14 @@ s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 upper_bound=upper_bound)
 
 # Hyperparameters for the optimizer
-hyperparams = {
+params = {
     'w': 0.7,
     'c1': 1.7,
     'c2': 1.7
 }
 
 # Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
+p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class
 o = Opytimizer(space=s, optimizer=p, function=f)

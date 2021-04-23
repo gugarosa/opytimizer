@@ -27,18 +27,18 @@ class ABO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABO', hyperparams=None):
+    def __init__(self, algorithm='ABO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> ABO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(ABO, self).__init__(algorithm)
 
         # Ratio of sunspot butterflies
@@ -48,7 +48,7 @@ class ABO(Optimizer):
         self.a = 2.0
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

@@ -28,18 +28,18 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', hyperparams=None):
+    def __init__(self, algorithm='HS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> HS.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(HS, self).__init__(algorithm)
 
         # Harmony memory considering rate
@@ -52,7 +52,7 @@ class HS(Optimizer):
         self.bw = 1.0
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 
@@ -240,12 +240,12 @@ class IHS(HS):
 
     """
 
-    def __init__(self, algorithm='IHS', hyperparams=None):
+    def __init__(self, algorithm='IHS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -263,8 +263,8 @@ class IHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving hyperparams
-        super(IHS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(IHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -409,19 +409,19 @@ class GHS(IHS):
 
     """
 
-    def __init__(self, algorithm='GHS', hyperparams=None):
+    def __init__(self, algorithm='GHS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: IHS -> GHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(GHS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(GHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -484,12 +484,12 @@ class SGHS(HS):
 
     """
 
-    def __init__(self, algorithm='SGHS', hyperparams=None):
+    def __init__(self, algorithm='SGHS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -510,8 +510,8 @@ class SGHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving hyperparams
-        super(SGHS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(SGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -777,12 +777,12 @@ class NGHS(HS):
 
     """
 
-    def __init__(self, algorithm='NGHS', hyperparams=None):
+    def __init__(self, algorithm='NGHS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -791,8 +791,8 @@ class NGHS(HS):
         # Mutation probability
         self.pm = 0.1
 
-        # Override its parent class with the receiving hyperparams
-        super(NGHS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(NGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 
@@ -891,19 +891,19 @@ class GOGHS(NGHS):
 
     """
 
-    def __init__(self, algorithm='GOGHS', hyperparams=None):
+    def __init__(self, algorithm='GOGHS', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: NGHS -> GOGHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(GOGHS, self).__init__(algorithm, hyperparams)
+        # Override its parent class with the receiving params
+        super(GOGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
 

@@ -28,18 +28,18 @@ class SSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SSO', hyperparams=None):
+    def __init__(self, algorithm='SSO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> SSO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(SSO, self).__init__(algorithm)
 
         # Weighing constant
@@ -52,7 +52,7 @@ class SSO(Optimizer):
         self.C_g = 0.9
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

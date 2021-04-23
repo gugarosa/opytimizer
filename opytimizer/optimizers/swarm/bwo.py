@@ -28,18 +28,18 @@ class BWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BWO', hyperparams=None):
+    def __init__(self, algorithm='BWO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> BWO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(BWO, self).__init__(algorithm=algorithm)
 
         # Procreating rate
@@ -52,7 +52,7 @@ class BWO(Optimizer):
         self.pm = 0.4
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

@@ -29,16 +29,16 @@ class GA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GA', hyperparams=None):
+    def __init__(self, algorithm='GA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(GA, self).__init__(algorithm)
 
         # Probability of selection
@@ -51,7 +51,7 @@ class GA(Optimizer):
         self.p_crossover = 0.5
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

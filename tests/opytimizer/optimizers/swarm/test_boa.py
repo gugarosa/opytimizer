@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_boa_hyperparams():
-    hyperparams = {
+def test_boa_params():
+    params = {
         'c': 0.01,
         'a': 0.1,
         'p': 0.8
     }
 
-    new_boa = boa.BOA(hyperparams=hyperparams)
+    new_boa = boa.BOA(params=params)
 
     assert new_boa.c == 0.01
 
@@ -24,7 +24,7 @@ def test_boa_hyperparams():
     assert new_boa.p == 0.8
 
 
-def test_boa_hyperparams_setter():
+def test_boa_params_setter():
     new_boa = boa.BOA()
 
     try:

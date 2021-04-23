@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_hs_hyperparams():
-    hyperparams = {
+def test_hs_params():
+    params = {
         'HMCR': 0.7,
         'PAR': 0.7,
         'bw': 10.0
     }
 
-    new_hs = hs.HS(hyperparams=hyperparams)
+    new_hs = hs.HS(params=params)
 
     assert new_hs.HMCR == 0.7
 
@@ -24,7 +24,7 @@ def test_hs_hyperparams():
     assert new_hs.bw == 10.0
 
 
-def test_hs_hyperparams_setter():
+def test_hs_params_setter():
     new_hs = hs.HS()
 
     try:
@@ -93,13 +93,13 @@ def test_hs_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'HMCR': 0.7,
         'PAR': 0.7,
         'bw': 10.0
     }
 
-    new_hs = hs.HS(hyperparams=hyperparams)
+    new_hs = hs.HS(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],
@@ -114,15 +114,15 @@ def test_hs_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm hs failed to converge.'
 
 
-def test_ihs_hyperparams():
-    hyperparams = {
+def test_ihs_params():
+    params = {
         'PAR_min': 0.5,
         'PAR_max': 1,
         'bw_min': 2,
         'bw_max': 5
     }
 
-    new_ihs = hs.IHS(hyperparams=hyperparams)
+    new_ihs = hs.IHS(params=params)
 
     assert new_ihs.PAR_min == 0.5
 
@@ -133,7 +133,7 @@ def test_ihs_hyperparams():
     assert new_ihs.bw_max == 5
 
 
-def test_ihs_hyperparams_setter():
+def test_ihs_params_setter():
     new_ihs = hs.IHS()
 
     try:
@@ -243,8 +243,8 @@ def test_ghs_generate_new_harmony():
     assert agent.fit > 0
 
 
-def test_sghs_hyperparams():
-    hyperparams = {
+def test_sghs_params():
+    params = {
         'LP': 100,
         'HMCRm': 0.98,
         'PARm': 0.9,
@@ -252,7 +252,7 @@ def test_sghs_hyperparams():
         'bw_max': 10
     }
 
-    new_sghs = hs.SGHS(hyperparams=hyperparams)
+    new_sghs = hs.SGHS(params=params)
 
     assert new_sghs.LP == 100
 
@@ -265,7 +265,7 @@ def test_sghs_hyperparams():
     assert new_sghs.bw_max == 10
 
 
-def test_sghs_hyperparams_setter():
+def test_sghs_params_setter():
     new_sghs = hs.SGHS()
 
     try:
@@ -381,7 +381,7 @@ def test_sghs_run():
 
     new_function = function.Function(pointer=square)
 
-    new_sghs = hs.SGHS(hyperparams={'LP': 10})
+    new_sghs = hs.SGHS(params={'LP': 10})
 
     search_space = search.SearchSpace(n_agents=20, n_iterations=50,
                                       n_variables=2, lower_bound=[0, 0],
@@ -396,17 +396,17 @@ def test_sghs_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ihs failed to converge.'
 
 
-def test_nghs_hyperparams():
-    hyperparams = {
+def test_nghs_params():
+    params = {
         'pm': 0.1
     }
 
-    new_nghs = hs.NGHS(hyperparams=hyperparams)
+    new_nghs = hs.NGHS(params=params)
 
     assert new_nghs.pm == 0.1
 
 
-def test_nghs_hyperparams_setter():
+def test_nghs_params_setter():
     new_nghs = hs.NGHS()
 
     try:

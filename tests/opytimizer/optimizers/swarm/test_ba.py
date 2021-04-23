@@ -8,15 +8,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_ba_hyperparams():
-    hyperparams = {
+def test_ba_params():
+    params = {
         'f_min': 0,
         'f_max': 2,
         'A': 0.5,
         'r': 0.5
     }
 
-    new_ba = ba.BA(hyperparams=hyperparams)
+    new_ba = ba.BA(params=params)
 
     assert new_ba.f_min == 0
 
@@ -27,7 +27,7 @@ def test_ba_hyperparams():
     assert new_ba.r == 0.5
 
 
-def test_ba_hyperparams_setter():
+def test_ba_params_setter():
     new_ba = ba.BA()
 
     try:
@@ -123,14 +123,14 @@ def test_ba_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'f_min': 0,
         'f_max': 2,
         'A': 1,
         'r': 0.5
     }
 
-    new_ba = ba.BA(hyperparams=hyperparams)
+    new_ba = ba.BA(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

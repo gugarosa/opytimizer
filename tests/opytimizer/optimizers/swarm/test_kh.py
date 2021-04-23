@@ -8,8 +8,8 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_kh_hyperparams():
-    hyperparams = {
+def test_kh_params():
+    params = {
         'N_max': 0.01,
         'w_n': 0.42,
         'NN': 5,
@@ -21,7 +21,7 @@ def test_kh_hyperparams():
         'Mu': 0.05
     }
 
-    new_kh = kh.KH(hyperparams=hyperparams)
+    new_kh = kh.KH(params=params)
 
     assert new_kh.N_max == 0.01
     assert new_kh.w_n == 0.42
@@ -34,7 +34,7 @@ def test_kh_hyperparams():
     assert new_kh.Mu == 0.05
 
 
-def test_kh_hyperparams_setter():
+def test_kh_params_setter():
     new_kh = kh.KH()
 
     try:

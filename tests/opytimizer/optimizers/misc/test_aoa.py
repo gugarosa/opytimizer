@@ -8,15 +8,15 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_aoa_hyperparams():
-    hyperparams = {
+def test_aoa_params():
+    params = {
         'a_min': 0.2,
         'a_max': 1.0,
         'alpha': 5.0,
         'mu': 0.499
     }
 
-    new_aoa = aoa.AOA(hyperparams=hyperparams)
+    new_aoa = aoa.AOA(params=params)
 
     assert new_aoa.a_min == 0.2
 
@@ -27,7 +27,7 @@ def test_aoa_hyperparams():
     assert new_aoa.mu == 0.499
 
 
-def test_aoa_hyperparams_setter():
+def test_aoa_params_setter():
     new_aoa = aoa.AOA()
 
     try:
@@ -99,14 +99,14 @@ def test_aoa_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'a_min': 0.2,
         'a_max': 1.0,
         'alpha': 5,
         'mu': 0.499
     }
 
-    new_aoa = aoa.AOA(hyperparams=hyperparams)
+    new_aoa = aoa.AOA(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

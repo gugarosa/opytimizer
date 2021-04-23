@@ -29,18 +29,18 @@ class CSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CSA', hyperparams=None):
+    def __init__(self, algorithm='CSA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> CSA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(CSA, self).__init__(algorithm)
 
         # Flight length
@@ -50,7 +50,7 @@ class CSA(Optimizer):
         self.AP = 0.1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

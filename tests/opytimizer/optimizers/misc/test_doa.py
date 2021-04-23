@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_doa_hyperparams():
-    hyperparams = {
+def test_doa_params():
+    params = {
         'r': 1.0
     }
 
-    new_doa = doa.DOA(hyperparams=hyperparams)
+    new_doa = doa.DOA(params=params)
 
     assert new_doa.r == 1.0
     
 
-def test_doa_hyperparams_setter():
+def test_doa_params_setter():
     new_doa = doa.DOA()
 
     try:

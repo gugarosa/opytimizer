@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_sso_hyperparams():
-    hyperparams = {
+def test_sso_params():
+    params = {
         'C_w': 0.1,
         'C_p': 0.4,
         'C_g': 0.9
     }
 
-    new_sso = sso.SSO(hyperparams=hyperparams)
+    new_sso = sso.SSO(params=params)
 
     assert new_sso.C_w == 0.1
 
@@ -24,7 +24,7 @@ def test_sso_hyperparams():
     assert new_sso.C_g == 0.9
 
 
-def test_sso_hyperparams_setter():
+def test_sso_params_setter():
     new_sso = sso.SSO()
 
     try:

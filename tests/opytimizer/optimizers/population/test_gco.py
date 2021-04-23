@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_gco_hyperparams():
-    hyperparams = {
+def test_gco_params():
+    params = {
         'CR': 0.7,
         'F': 1.25
     }
 
-    new_gco = gco.GCO(hyperparams=hyperparams)
+    new_gco = gco.GCO(params=params)
 
     assert new_gco.CR == 0.7
 
     assert new_gco.F == 1.25
 
 
-def test_gco_hyperparams_setter():
+def test_gco_params_setter():
     new_gco = gco.GCO()
 
     try:

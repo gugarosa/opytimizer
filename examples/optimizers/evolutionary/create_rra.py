@@ -2,9 +2,9 @@ from opytimizer.optimizers.evolutionary.rra import RRA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 
 }
 
 # Creating an RRA optimizer
-o = RRA(hyperparams=hyperparams)
+o = RRA(params=params)

@@ -12,20 +12,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_bpso_hyperparams():
-    hyperparams = {
+def test_bpso_params():
+    params = {
         'c1': r.generate_binary_random_number(size=(1, 1)),
         'c2': r.generate_binary_random_number(size=(1, 1))
     }
 
-    new_bpso = bpso.BPSO(hyperparams=hyperparams)
+    new_bpso = bpso.BPSO(params=params)
 
     assert new_bpso.c1 == 0 or new_bpso.c1 == 1
 
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
-def test_bpso_hyperparams_setter():
+def test_bpso_params_setter():
     new_bpso = bpso.BPSO()
 
     try:

@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_sbo_hyperparams():
-    hyperparams = {
+def test_sbo_params():
+    params = {
         'alpha': 0.9,
         'p_mutation': 0.05,
         'z': 0.02
     }
 
-    new_sbo = sbo.SBO(hyperparams=hyperparams)
+    new_sbo = sbo.SBO(params=params)
 
     assert new_sbo.alpha == 0.9
 
@@ -24,7 +24,7 @@ def test_sbo_hyperparams():
     assert new_sbo.z == 0.02
 
 
-def test_sbo_hyperparams_setter():
+def test_sbo_params_setter():
     new_sbo = sbo.SBO()
 
     try:

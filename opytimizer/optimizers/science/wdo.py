@@ -25,18 +25,18 @@ class WDO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WDO', hyperparams=None):
+    def __init__(self, algorithm='WDO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> WDO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(WDO, self).__init__(algorithm)
 
         # Maximum velocity
@@ -55,7 +55,7 @@ class WDO(Optimizer):
         self.RT = 1.5
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

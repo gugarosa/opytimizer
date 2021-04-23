@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_mrfo_hyperparams():
-    hyperparams = {
+def test_mrfo_params():
+    params = {
         'S': 2.0
     }
 
-    new_mrfo = mrfo.MRFO(hyperparams=hyperparams)
+    new_mrfo = mrfo.MRFO(params=params)
 
     assert new_mrfo.S == 2.0
 
 
-def test_mrfo_hyperparams_setter():
+def test_mrfo_params_setter():
     new_mrfo = mrfo.MRFO()
 
     try:

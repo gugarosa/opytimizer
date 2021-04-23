@@ -8,21 +8,21 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_cs_hyperparams():
-    hyperparams = {
+def test_cs_params():
+    params = {
         'alpha': 1.0,
         'beta': 1.5,
         'p': 0.2
     }
 
-    new_cs = cs.CS(hyperparams=hyperparams)
+    new_cs = cs.CS(params=params)
 
     assert new_cs.alpha == 1.0
     assert new_cs.beta == 1.5
     assert new_cs.p == 0.2
 
 
-def test_cs_hyperparams_setter():
+def test_cs_params_setter():
     new_cs = cs.CS()
 
     try:

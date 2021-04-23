@@ -25,18 +25,18 @@ class AOA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='AOA', hyperparams=None):
+    def __init__(self, algorithm='AOA', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> AOA.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(AOA, self).__init__(algorithm)
 
         # Minimum accelerated function
@@ -52,7 +52,7 @@ class AOA(Optimizer):
         self.mu = 0.499
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

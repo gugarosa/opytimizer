@@ -29,18 +29,18 @@ class SFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SFO', hyperparams=None):
+    def __init__(self, algorithm='SFO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> SFO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(SFO, self).__init__(algorithm)
 
         # Percentage of initial sailfishes
@@ -53,7 +53,7 @@ class SFO(Optimizer):
         self.e = 0.001
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

@@ -10,14 +10,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_pso_hyperparams():
-    hyperparams = {
+def test_pso_params():
+    params = {
         'w': 2,
         'c1': 1.7,
         'c2': 1.7
     }
 
-    new_pso = pso.PSO(hyperparams=hyperparams)
+    new_pso = pso.PSO(params=params)
 
     assert new_pso.w == 2
 
@@ -26,7 +26,7 @@ def test_pso_hyperparams():
     assert new_pso.c2 == 1.7
 
 
-def test_pso_hyperparams_setter():
+def test_pso_params_setter():
     new_pso = pso.PSO()
 
     try:
@@ -132,20 +132,20 @@ def test_pso_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'
 
 
-def test_aiwpso_hyperparams():
-    hyperparams = {
+def test_aiwpso_params():
+    params = {
         'w_min': 1,
         'w_max': 3,
     }
 
-    new_aiwpso = pso.AIWPSO(hyperparams=hyperparams)
+    new_aiwpso = pso.AIWPSO(params=params)
 
     assert new_aiwpso.w_min == 1
 
     assert new_aiwpso.w_max == 3
 
 
-def test_aiwpso_hyperparams_setter():
+def test_aiwpso_params_setter():
     new_aiwpso = pso.AIWPSO()
 
     try:
@@ -245,19 +245,19 @@ def test_aiwpso_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm aiwpso failed to converge.'
 
 
-def test_rpso_hyperparams():
-    hyperparams = {
+def test_rpso_params():
+    params = {
         'c1': 1.7,
         'c2': 1.7
     }
 
-    new_rpso = pso.RPSO(hyperparams=hyperparams)
+    new_rpso = pso.RPSO(params=params)
 
     assert new_rpso.c1 == 1.7
     assert new_rpso.c2 == 1.7
 
 
-def test_rpso_hyperparams_setter():
+def test_rpso_params_setter():
     new_rpso = pso.RPSO()
 
     try:
@@ -352,14 +352,14 @@ def test_rpso_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm rpso failed to converge.'
 
 
-def test_savpso_hyperparams():
-    hyperparams = {
+def test_savpso_params():
+    params = {
         'w': 2,
         'c1': 1.7,
         'c2': 1.7
     }
 
-    new_savpso = pso.SAVPSO(hyperparams=hyperparams)
+    new_savpso = pso.SAVPSO(params=params)
 
     assert new_savpso.w == 2
 
@@ -368,7 +368,7 @@ def test_savpso_hyperparams():
     assert new_savpso.c2 == 1.7
 
 
-def test_savpso_hyperparams_setter():
+def test_savpso_params_setter():
     new_savpso = pso.SAVPSO()
 
     try:
@@ -441,14 +441,14 @@ def test_savpso_run():
     assert best_fitness <= constants.TEST_EPSILON, 'The algorithm pso failed to converge.'
 
 
-def test_vpso_hyperparams():
-    hyperparams = {
+def test_vpso_params():
+    params = {
         'w': 2,
         'c1': 1.7,
         'c2': 1.7
     }
 
-    new_vpso = pso.VPSO(hyperparams=hyperparams)
+    new_vpso = pso.VPSO(params=params)
 
     assert new_vpso.w == 2
 
@@ -457,7 +457,7 @@ def test_vpso_hyperparams():
     assert new_vpso.c2 == 1.7
 
 
-def test_vpso_hyperparams_setter():
+def test_vpso_params_setter():
     new_vpso = pso.VPSO()
 
     try:

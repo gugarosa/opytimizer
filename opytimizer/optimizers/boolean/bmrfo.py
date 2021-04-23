@@ -26,25 +26,25 @@ class BMRFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BMRFO', hyperparams=None):
+    def __init__(self, algorithm='BMRFO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> BMRFO.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(BMRFO, self).__init__(algorithm=algorithm)
 
         # Somersault foraging
         self.S = np.array([1])
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

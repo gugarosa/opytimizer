@@ -23,18 +23,18 @@ class HC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HC', hyperparams=None):
+    def __init__(self, algorithm='HC', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> HC.')
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(HC, self).__init__(algorithm)
 
         # Mean of noise distribution
@@ -44,7 +44,7 @@ class HC(Optimizer):
         self.r_var = 0.1
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

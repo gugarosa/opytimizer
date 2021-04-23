@@ -10,17 +10,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_bmrfo_hyperparams():
-    hyperparams = {
+def test_bmrfo_params():
+    params = {
         'S': r.generate_binary_random_number(size=(1, 1))
     }
 
-    new_bmrfo = bmrfo.BMRFO(hyperparams=hyperparams)
+    new_bmrfo = bmrfo.BMRFO(params=params)
 
     assert new_bmrfo.S == 0 or new_bmrfo.S == 1
 
 
-def test_bmrfo_hyperparams_setter():
+def test_bmrfo_params_setter():
     new_bmrfo = bmrfo.BMRFO()
 
     try:

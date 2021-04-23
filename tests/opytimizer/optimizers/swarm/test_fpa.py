@@ -8,14 +8,14 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_fpa_hyperparams():
-    hyperparams = {
+def test_fpa_params():
+    params = {
         'beta': 1.0,
         'eta': 0.5,
         'p': 0.5
     }
 
-    new_fpa = fpa.FPA(hyperparams=hyperparams)
+    new_fpa = fpa.FPA(params=params)
 
     assert new_fpa.beta == 1.0
 
@@ -24,7 +24,7 @@ def test_fpa_hyperparams():
     assert new_fpa.p == 0.5
 
 
-def test_fpa_hyperparams_setter():
+def test_fpa_params_setter():
     new_fpa = fpa.FPA()
 
     try:

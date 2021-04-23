@@ -21,23 +21,23 @@ def test_optimizer_algorithm():
     assert new_optimizer.algorithm == 'PSO'
 
 
-def test_optimizer_hyperparams():
+def test_optimizer_params():
     new_optimizer = optimizer.Optimizer()
 
-    assert new_optimizer.hyperparams == None
+    assert new_optimizer.params == None
 
 
-def test_optimizer_hyperparams_setter():
+def test_optimizer_params_setter():
     new_optimizer = optimizer.Optimizer()
 
     try:
-        new_optimizer.hyperparams = 1
+        new_optimizer.params = 1
     except:
-        new_optimizer.hyperparams = {
+        new_optimizer.params = {
             'w': 1.5
         }
 
-    assert new_optimizer.hyperparams['w'] == 1.5
+    assert new_optimizer.params['w'] == 1.5
 
 
 def test_optimizer_built():

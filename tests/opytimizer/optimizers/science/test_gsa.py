@@ -8,17 +8,17 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_gsa_hyperparams():
-    hyperparams = {
+def test_gsa_params():
+    params = {
         'G': 2.467,
     }
 
-    new_gsa = gsa.GSA(hyperparams=hyperparams)
+    new_gsa = gsa.GSA(params=params)
 
     assert new_gsa.G == 2.467
 
 
-def test_gsa_hyperparams_setter():
+def test_gsa_params_setter():
     new_gsa = gsa.GSA()
 
     try:
@@ -115,11 +115,11 @@ def test_gsa_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'G': 100
     }
 
-    new_gsa = gsa.GSA(hyperparams=hyperparams)
+    new_gsa = gsa.GSA(params=params)
 
     search_space = search.SearchSpace(n_agents=10, n_iterations=100,
                                       n_variables=2, lower_bound=[0, 0],

@@ -28,16 +28,16 @@ class SBO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SBO', hyperparams=None):
+    def __init__(self, algorithm='SBO', params=None):
         """Initialization method.
 
         Args:
             algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the mp_mutation-heuristics.
+            params (dict): Contains key-value parameters to the mp_mutation-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
+        # Override its parent class with the receiving params
         super(SBO, self).__init__(algorithm)
 
         # Step size
@@ -50,7 +50,7 @@ class SBO(Optimizer):
         self.z = 0.02
 
         # Now, we need to build this class up
-        self._build(hyperparams)
+        self._build(params)
 
         logger.info('Class overrided.')
 

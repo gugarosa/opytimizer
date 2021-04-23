@@ -8,20 +8,20 @@ from opytimizer.utils import constants
 np.random.seed(0)
 
 
-def test_ssd_hyperparams():
-    hyperparams = {
+def test_ssd_params():
+    params = {
         'c': 2.0,
         'decay': 0.99
     }
 
-    new_ssd = ssd.SSD(hyperparams=hyperparams)
+    new_ssd = ssd.SSD(params=params)
 
     assert new_ssd.c == 2.0
 
     assert new_ssd.decay == 0.99
 
 
-def test_ssd_hyperparams_setter():
+def test_ssd_params_setter():
     new_ssd = ssd.SSD()
 
     try:
@@ -88,12 +88,12 @@ def test_ssd_run():
 
     new_function = function.Function(pointer=square)
 
-    hyperparams = {
+    params = {
         'c': 2.0,
         'decay': 0.3
     }
 
-    new_ssd = ssd.SSD(hyperparams=hyperparams)
+    new_ssd = ssd.SSD(params=params)
 
     search_space = search.SearchSpace(n_agents=50, n_iterations=350,
                                       n_variables=2, lower_bound=[-100, -100],
