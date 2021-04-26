@@ -3,7 +3,7 @@ import sys
 from opytimizer.utils import constant
 
 
-def test_constant():
+def test_constant_constants():
     assert constant.EPSILON == 1e-32
 
     assert constant.FLOAT_MAX == sys.float_info.max

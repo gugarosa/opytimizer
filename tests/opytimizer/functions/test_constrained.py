@@ -9,13 +9,13 @@ def pointer(x):
 
 
 def test_constrained_function_name():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     assert new_constrained_function.name == 'pointer'
 
 
 def test_constrained_function_name_setter():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     try:
         new_constrained_function.name = 1
@@ -26,7 +26,7 @@ def test_constrained_function_name_setter():
 
 
 def test_constrained_function_constraints():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     assert new_constrained_function.constraints == []
 
@@ -48,13 +48,13 @@ def test_constrained_function_constraints_setter():
 
 
 def test_constrained_function_penalty():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     assert new_constrained_function.penalty == 0.0
 
 
 def test_constrained_function_penalty_setter():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     try:
         new_constrained_function.penalty = 'a'
@@ -70,13 +70,13 @@ def test_constrained_function_penalty_setter():
 
 
 def test_constrained_function_pointer():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     assert new_constrained_function.pointer.__name__ == 'pointer'
 
 
 def test_constrained_function_pointer_setter():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     try:
         new_constrained_function.pointer = 'a'
@@ -87,13 +87,13 @@ def test_constrained_function_pointer_setter():
 
 
 def test_constrained_function_built():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     assert new_constrained_function.built == True
 
 
 def test_constrained_function_built_setter():
-    new_constrained_function = constrained.ConstrainedFunction(pointer)
+    new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     new_constrained_function.built = False
 

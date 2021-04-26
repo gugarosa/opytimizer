@@ -4,13 +4,13 @@ from opytimizer.functions import weighted
 
 
 def test_weighted_functions():
-    new_weighted = weighted.WeightedFunction()
+    new_weighted = weighted.WeightedFunction([], [])
 
     assert type(new_weighted.functions) == list
 
 
 def test_weighted_functions_setter():
-    new_weighted = weighted.WeightedFunction()
+    new_weighted = weighted.WeightedFunction([], [])
 
     try:
         new_weighted.functions = None
@@ -21,13 +21,13 @@ def test_weighted_functions_setter():
 
 
 def test_weighted_weights():
-    new_weighted = weighted.WeightedFunction()
+    new_weighted = weighted.WeightedFunction([], [])
 
     assert type(new_weighted.weights) == list
 
 
 def test_weighted_weights_setter():
-    new_weighted = weighted.WeightedFunction()
+    new_weighted = weighted.WeightedFunction([], [])
 
     try:
         new_weighted.weights = None
