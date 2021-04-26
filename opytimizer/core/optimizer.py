@@ -29,9 +29,6 @@ class Optimizer:
         # Key-value arguments
         self.args = {}
 
-        # Key-value additional variables
-        self.add_vars = {}
-
         # Indicates whether the optimizer is built or not
         self.built = False
 
@@ -95,22 +92,7 @@ class Optimizer:
 
         self._args = args
 
-    @property
-    def add_vars(self):
-        """dict: Key-value additional variables.
-
-        """
-
-        return self._add_vars
-
-    @add_vars.setter
-    def add_vars(self, add_vars):
-        if not isinstance(add_vars, dict):
-            raise e.TypeError('`add_vars` should be a dictionary')
-
-        self._add_vars = add_vars
-
-    def build(self, params, args, add_vars=None):
+    def build(self, params, args):
         """Builds the object by creating its parameters.
 
         Args:
@@ -133,16 +115,22 @@ class Optimizer:
         # Registers the arguments
         self.args = args
 
-        # Register the additional variables
-        if add_vars:
-            self.add_vars = add_vars
-
         # Sets the `built` variable to true
         self.built = True
 
         # Logs the properties
         logger.debug('Algorithm: %s | Custom Parameters: %s | Built: %s.',
                      self.algorithm, str(params), self.built)
+
+    def create_additional_vars(self, space):
+        """Creates additional variables that are used by this optimizer.
+
+        This method is called before the optimization procedure and makes sure
+        that the additional variable is available as a property.
+
+        """
+
+        pass
 
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.

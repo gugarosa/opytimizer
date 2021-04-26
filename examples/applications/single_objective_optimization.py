@@ -27,8 +27,8 @@ function = Function(Sphere())
 opt = Opytimizer(space, optimizer, function, store_only_best_agent=True)
 
 # Runs the optimization task
-opt.start(n_iterations=1000)
-# opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=10)])
-# opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=50)])
+# opt.start(n_iterations=1000)
+opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=10)])
+opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=50)])
 
 # opt.save('out.pkl')

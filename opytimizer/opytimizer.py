@@ -4,8 +4,6 @@
 import pickle
 import time
 
-import numpy as np
-
 from tqdm import tqdm
 
 import opytimizer.utils.attribute as a
@@ -39,8 +37,9 @@ class Opytimizer:
         # Space
         self.space = space
 
-        # Optimizer
+        # Optimizer (and its additional variables)
         self.optimizer = optimizer
+        self.optimizer.create_additional_vars(space)
 
         # Function
         self.function = function
@@ -140,19 +139,6 @@ class Opytimizer:
 
         return {k: a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
 
-    def _create_optimizer_additional_vars(self):
-        """Creates the optimizer `additional` arguments as real variables.
-
-        """
-
-        #
-        for k, v in self.optimizer.add_vars.items():
-            #
-            var = np.zeros(tuple(a.rgetattr(self, item) for item in v))
-
-            #
-            a.rsetattr(self.optimizer, k, var)
-
     def evaluate(self, callbacks):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
 
@@ -202,13 +188,12 @@ class Opytimizer:
 
         logger.info('Starting optimization task.')
 
-        # Triggers starting time
-        start = time.time()
-
         # Additional properties
-        self._create_optimizer_additional_vars()
         self.n_iterations = n_iterations
         callbacks = CallbackVessel(callbacks)
+
+        # Triggers starting time
+        start = time.time()
 
         # Evaluates the search space
         self.evaluate(callbacks)
