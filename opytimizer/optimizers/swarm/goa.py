@@ -138,7 +138,7 @@ class GOA(Optimizer):
 
         """
 
-        # Calculates the social force (Eq. 2.3)
+        # Calculates the social force (eq. 2.3)
         s = self.f * np.exp(-r / self.l) - np.exp(-r)
 
         return s
@@ -155,7 +155,7 @@ class GOA(Optimizer):
 
         """
 
-        # Calculates the comfort coefficient (Eq. 2.8)
+        # Calculates the comfort coefficient (eq. 2.8)
         comfort = self.c_max - iteration * ((self.c_max - self.c_min) / n_iterations)
 
         # We copy a temporary list for iterating purposes
@@ -184,7 +184,7 @@ class GOA(Optimizer):
                 # Sums the current comfort to the total one
                 total_comfort += comfort * ((ub - lb) / 2) * s * unit
 
-            # Updates the agent's position (Eq. 2.7)
+            # Updates the agent's position (eq. 2.7)
             agent.position = comfort * total_comfort + best_agent.position
 
             # Checks the agent's limits

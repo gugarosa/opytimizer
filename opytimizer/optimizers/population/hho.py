@@ -65,7 +65,7 @@ class HHO(Optimizer):
         # Calculates the jump strength
         J = 2 * (1 - r1)
 
-        # Calculates the energy (Eq. 3)
+        # Calculates the energy (eq. 3)
         E = 2 * E_0 * (1 - (iteration / n_iterations))
 
         return np.fabs(E), J
@@ -95,7 +95,7 @@ class HHO(Optimizer):
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
-            # Updates the location vector (Eq. 1 - part 1)
+            # Updates the location vector (eq. 1 - part 1)
             location_vector = agents[j].position - r1 * \
                 np.fabs(agents[j].position - 2 * r2 * current_agent.position)
 
@@ -112,7 +112,7 @@ class HHO(Optimizer):
             lb = np.expand_dims(current_agent.lb, -1)
             ub = np.expand_dims(current_agent.ub, -1)
 
-            # Updates the location vector (Eq. 1 - part 2)
+            # Updates the location vector (eq. 1 - part 2)
             location_vector = (best_agent.position - average) - r3 * (lb + r4 * (ub - lb))
 
         return location_vector
@@ -141,7 +141,7 @@ class HHO(Optimizer):
             # Calculates the delta's position
             delta = best_agent.position - current_agent.position
 
-            # Calculates the location vector (Eq. 4)
+            # Calculates the location vector (eq. 4)
             location_vector = delta - energy * \
                 np.fabs(jump * best_agent.position - current_agent.position)
 
@@ -152,33 +152,33 @@ class HHO(Optimizer):
             # Calculates the delta's position
             delta = best_agent.position - current_agent.position
 
-            # Calculates the location vector (Eq. 6)
+            # Calculates the location vector (eq. 6)
             location_vector = best_agent.position - energy * np.fabs(delta)
 
             return location_vector
 
         # Soft besiege with rapid dives
         if w < 0.5 and energy >= 0.5:
-            # Calculates the `Y` position (Eq. 7)
+            # Calculates the `Y` position (eq. 7)
             Y = best_agent.position - energy * \
                 np.fabs(jump * best_agent.position - current_agent.position)
 
-            # Generates the Lévy's flight and random array (Eq. 9)
+            # Generates the Lévy's flight and random array (eq. 9)
             LF = d.generate_levy_distribution(1.5, (current_agent.n_variables, current_agent.n_dimensions))
             S = r.generate_uniform_random_number(size=(current_agent.n_variables, current_agent.n_dimensions))
 
-            # Calculates the `Z` position (Eq. 8)
+            # Calculates the `Z` position (eq. 8)
             Z = Y + S * LF
 
             # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
-            # If `Y` position is better than current agent's one (Eq. 10 - part 1)
+            # If `Y` position is better than current agent's one (eq. 10 - part 1)
             if Y_fit < current_agent.fit:
                 return Y
 
-            # If `Z` position is better than current agent's one (Eq. 10 - part 2)
+            # If `Z` position is better than current agent's one (eq. 10 - part 2)
             if Z_fit < current_agent.fit:
                 return Z
 
@@ -187,26 +187,26 @@ class HHO(Optimizer):
             # Averages the population's position
             average = np.mean([x.position for x in agents], axis=0)
 
-            # Calculates the `Y` position (Eq. 12)
+            # Calculates the `Y` position (eq. 12)
             Y = best_agent.position - energy * \
                 np.fabs(jump * best_agent.position - average)
 
-            # Generates the Lévy's flight and random array (Eq. 9)
+            # Generates the Lévy's flight and random array (eq. 9)
             LF = d.generate_levy_distribution(1.5, (current_agent.n_variables, current_agent.n_dimensions))
             S = r.generate_uniform_random_number(size=(current_agent.n_variables, current_agent.n_dimensions))
 
-            # Calculates the `Z` position (Eq. 13)
+            # Calculates the `Z` position (eq. 13)
             Z = Y + S * LF
 
             # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
-            # If `Y` position is better than current agent's one (Eq. 11 - part 1)
+            # If `Y` position is better than current agent's one (eq. 11 - part 1)
             if Y_fit < current_agent.fit:
                 return Y
 
-            # If `Z` position is better than current agent's one (Eq. 11 - part 2)
+            # If `Z` position is better than current agent's one (eq. 11 - part 2)
             if Z_fit < current_agent.fit:
                 return Z
 

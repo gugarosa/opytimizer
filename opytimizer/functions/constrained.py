@@ -13,7 +13,7 @@ class ConstrainedFunction(Function):
 
     """
 
-    def __init__(self, pointer, constraints=None, penalty=0.0):
+    def __init__(self, pointer, constraints, penalty=0.0):
         """Initialization method.
 
         Args:
@@ -29,10 +29,7 @@ class ConstrainedFunction(Function):
         super(ConstrainedFunction, self).__init__(pointer)
 
         # List of constraints
-        if constraints is None:
-            self.constraints = []
-        else:
-            self.constraints = constraints
+        self.constraints = constraints or []
 
         # Penalization factor
         self.penalty = penalty

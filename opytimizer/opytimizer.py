@@ -1,8 +1,10 @@
 """Optimization entry point.
 """
 
-import time
 import pickle
+import time
+
+import numpy as np
 
 from tqdm import tqdm
 
@@ -21,14 +23,14 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space, optimizer, function, store_best_only=False):
+    def __init__(self, space, optimizer, function, store_only_best_agent=False):
         """Initialization method.
 
         Args:
             space (Space): Space-child instance.
             optimizer (Optimizer): Optimizer-child instance.
             function (Function): Function or Function-child instance.
-            store_best_only (bool): Stores only the history of best agent.
+            store_only_best_agent (bool): Stores only the best agent.
 
         """
 
@@ -43,8 +45,8 @@ class Opytimizer:
         # Function
         self.function = function
 
-        # History
-        self.history = History(store_best_only)
+        # Optimization history
+        self.history = History(store_only_best_agent)
 
         # Total number of iterations
         self.total_iterations = 0
@@ -65,8 +67,7 @@ class Opytimizer:
     @space.setter
     def space(self, space):
         if not space.built:
-            raise e.BuildError(
-                '`space` should be built before using Opytimizer')
+            raise e.BuildError('`space` should be built before using Opytimizer')
 
         self._space = space
 
@@ -81,8 +82,7 @@ class Opytimizer:
     @optimizer.setter
     def optimizer(self, optimizer):
         if not optimizer.built:
-            raise e.BuildError(
-                '`optimizer` should be built before using Opytimizer')
+            raise e.BuildError('`optimizer` should be built before using Opytimizer')
 
         self._optimizer = optimizer
 
@@ -97,10 +97,24 @@ class Opytimizer:
     @function.setter
     def function(self, function):
         if not function.built:
-            raise e.BuildError(
-                '`function` should be built before using Opytimizer')
+            raise e.BuildError('`function` should be built before using Opytimizer')
 
         self._function = function
+
+    @property
+    def history(self):
+        """History: Optimization history.
+
+        """
+
+        return self._history
+
+    @history.setter
+    def history(self, history):
+        if not isinstance(history, History):
+            raise e.TypeError('`history` should be a History')
+
+        self._history = history
 
     @property
     def evaluate_args(self):
@@ -125,6 +139,19 @@ class Opytimizer:
         """
 
         return {k: a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
+
+    def _create_optimizer_additional_vars(self):
+        """Creates the optimizer `additional` arguments as real variables.
+
+        """
+
+        #
+        for k, v in self.optimizer.add_vars.items():
+            #
+            var = np.zeros(tuple(a.rgetattr(self, item) for item in v))
+
+            #
+            a.rsetattr(self.optimizer, k, var)
 
     def evaluate(self, callbacks):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
@@ -179,6 +206,7 @@ class Opytimizer:
         start = time.time()
 
         # Additional properties
+        self._create_optimizer_additional_vars()
         self.n_iterations = n_iterations
         callbacks = CallbackVessel(callbacks)
 

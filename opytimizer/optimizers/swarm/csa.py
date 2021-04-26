@@ -107,7 +107,7 @@ class CSA(Optimizer):
                 # Updates its current fitness to the newer one
                 agent.fit = fit
 
-                # Also updates the memory to current's agent position (Eq. 5)
+                # Also updates the memory to current's agent position (eq. 5)
                 memory[i] = copy.deepcopy(agent.position)
 
             # If agent's fitness is better than global fitness
@@ -136,7 +136,7 @@ class CSA(Optimizer):
 
             # Checks if first random number is greater than awareness probability
             if r1 >= self.AP:
-                # Updates agent's position (Eq. 2)
+                # Updates agent's position (eq. 2)
                 agent.position += r2 * self.fl * (memory[j] - agent.position)
 
             # If random number is smaller than probability

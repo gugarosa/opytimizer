@@ -101,7 +101,7 @@ class QSA(Optimizer):
         # Calculates the number of agents in each queue
         q_1, q_2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
 
-        # Represents the update patterns by Eq. 4 and Eq. 5
+        # Represents the update patterns by eq. 4 and eq. 5
         case = None
 
         # Iterates through all agents
@@ -150,10 +150,10 @@ class QSA(Optimizer):
                 # Generates an Erlang number
                 e = r.generate_gamma_random_number(1, 0.5, 1)
 
-                # Calculates the fluctuation (Eq. 6)
+                # Calculates the fluctuation (eq. 6)
                 F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (A.position - a.position)
 
-                # Updates the temporary agent's position (Eq. 4)
+                # Updates the temporary agent's position (eq. 4)
                 a.position = A.position + F_1
 
                 # Evaluates the agent
@@ -175,10 +175,10 @@ class QSA(Optimizer):
 
             # If case is defined as two
             else:
-                # Calculates the fluctuation (Eq. 7)
+                # Calculates the fluctuation (eq. 7)
                 F_2 = beta * alpha * (E * np.fabs(A.position - a.position))
 
-                # Updates the temporary agent's position (Eq. 5)
+                # Updates the temporary agent's position (eq. 5)
                 a.position += F_2
 
                 # Evaluates the agent
@@ -258,18 +258,18 @@ class QSA(Optimizer):
 
                 # If random number is smaller than confusion degree
                 if r2 < cv:
-                    # Calculates the fluctuation (Eq. 14)
+                    # Calculates the fluctuation (eq. 14)
                     F_1 = e * (A_1.position - A_2.position)
 
-                    # Update agent's position (Eq. 12)
+                    # Update agent's position (eq. 12)
                     a.position += F_1
 
                 # If random number is bigger than confusion degree
                 else:
-                    # Calculates the fluctuation (Eq. 15)
+                    # Calculates the fluctuation (eq. 15)
                     F_2 = e * (A.position - A_1.position)
 
-                    # Update agent's position (Eq. 13)
+                    # Update agent's position (eq. 13)
                     a.position += F_2
 
                 # Evaluates the agent
@@ -314,7 +314,7 @@ class QSA(Optimizer):
                     # Generates an Erlang number
                     e = r.generate_gamma_random_number(1, 0.5, 1)
 
-                    # Updates temporary agent's position (Eq. 17)
+                    # Updates temporary agent's position (eq. 17)
                     a.position[j] = A_1.position[j] + e * (A_2.position[j] - a.position[j])
 
                 # Evaluates the agent

@@ -3,7 +3,6 @@
 
 import copy
 
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -25,10 +24,13 @@ class Optimizer:
         self.algorithm = self.__class__.__name__
 
         # Key-value parameters
-        self.params = None
+        self.params = {}
 
         # Key-value arguments
-        self.args = None
+        self.args = {}
+
+        # Key-value additional variables
+        self.add_vars = {}
 
         # Indicates whether the optimizer is built or not
         self.built = False
@@ -73,7 +75,7 @@ class Optimizer:
 
     @params.setter
     def params(self, params):
-        if not (isinstance(params, dict) or params is None):
+        if not isinstance(params, dict):
             raise e.TypeError('`params` should be a dictionary')
 
         self._params = params
@@ -88,25 +90,41 @@ class Optimizer:
 
     @args.setter
     def args(self, args):
-        if not (isinstance(args, dict) or args is None):
+        if not isinstance(args, dict):
             raise e.TypeError('`args` should be a dictionary')
 
         self._args = args
 
-    def build(self, params, args):
+    @property
+    def add_vars(self):
+        """dict: Key-value additional variables.
+
+        """
+
+        return self._add_vars
+
+    @add_vars.setter
+    def add_vars(self, add_vars):
+        if not isinstance(add_vars, dict):
+            raise e.TypeError('`add_vars` should be a dictionary')
+
+        self._add_vars = add_vars
+
+    def build(self, params, args, add_vars=None):
         """Builds the object by creating its parameters.
 
         Args:
             params (dict): Key-value parameters to the meta-heuristic.
             args (dict): Key-value arguments to the meta-heuristic.
+            add_vars (dict): Key-value additional variables to the meta-heurisitc.
 
         """
 
-        # Saves the `params` for faster looking up
-        self.params = params
-
         # Checks if `params` are really provided
         if params:
+            # Saves the `params` for faster looking up
+            self.params = params
+        
             # Iterates through all parameters
             for k, v in params.items():
                 # Sets its key-value pair
@@ -115,6 +133,10 @@ class Optimizer:
         # Registers the arguments
         self.args = args
 
+        # Register the additional variables
+        if add_vars:
+            self.add_vars = add_vars
+
         # Sets the `built` variable to true
         self.built = True
 
@@ -122,7 +144,6 @@ class Optimizer:
         logger.debug('Algorithm: %s | Custom Parameters: %s | Built: %s.',
                      self.algorithm, str(params), self.built)
 
-    @d.pre_evaluate
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 

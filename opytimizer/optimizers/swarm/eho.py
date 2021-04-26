@@ -149,12 +149,12 @@ class EHO(Optimizer):
 
                 # If it is the first agent in clan
                 if j == 0:
-                    # Updates its position (Eq. 2)
+                    # Updates its position (eq. 2)
                     a.position = self.beta * centers[i]
 
                 # If it is not the first (best) agent in clan
                 else:
-                    # Updates its position (Eq. 1)
+                    # Updates its position (eq. 1)
                     a.position += self.alpha * (clan_agents[0].position - a.position) * r1
 
                 # Checks the agent's limits
@@ -186,7 +186,7 @@ class EHO(Optimizer):
             # Gathers the worst agent in clan
             worst = clan_agents[-1]
 
-            # Generates a new position for the worst agent in clan (Eq. 4)
+            # Generates a new position for the worst agent in clan (eq. 4)
             for j, (lb, ub) in enumerate(zip(worst.lb, worst.ub)):
                 # For each decision variable, we generate uniform random numbers
                 worst.position[j] = r.generate_uniform_random_number(lb, ub, size=worst.n_dimensions)

@@ -60,10 +60,10 @@ class GWO(Optimizer):
         r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 
-        # Calculates the `A` coefficient (Eq. 3.3)
+        # Calculates the `A` coefficient (eq. 3.3)
         A = 2 * a * r1 - a
 
-        # Calculates the `C` coefficient (Eq. 3.4)
+        # Calculates the `C` coefficient (eq. 3.4)
         C = 2 * r2
 
         return A, C
@@ -103,7 +103,7 @@ class GWO(Optimizer):
             X_2 = beta.position - A_2 * np.fabs(C_2 * beta.position - agent.position)
             X_3 = delta.position - A_3 * np.fabs(C_3 * delta.position - agent.position)
 
-            # Calculates the temporary agent (Eq. 3.7)
+            # Calculates the temporary agent (eq. 3.7)
             X.position = (X_1 + X_2 + X_3) / 3
 
             # Clips temporary agent's limits

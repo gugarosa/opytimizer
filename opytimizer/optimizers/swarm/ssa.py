@@ -54,7 +54,7 @@ class SSA(Optimizer):
 
         """
 
-        # Calculates the `c1` coefficient (Eq. 3.2)
+        # Calculates the `c1` coefficient (eq. 3.2)
         c1 = 2 * np.exp(-(4 * iteration / n_iterations) ** 2)
 
         # Iterates through every agent
@@ -69,17 +69,17 @@ class SSA(Optimizer):
 
                     # Checks if random number is smaller than 0.5
                     if c3 < 0.5:
-                        # Updates the leading salp position (Eq. 3.1 - part 1)
+                        # Updates the leading salp position (eq. 3.1 - part 1)
                         agents[i].position[j] = best_agent.position[j] + c1 * ((ub - lb) * c2 + lb)
 
                     # If random number is bigger or equal to 0.5
                     else:
-                        # Updates the leading salp position (Eq. 3.1 - part 2)
+                        # Updates the leading salp position (eq. 3.1 - part 2)
                         agents[i].position[j] = best_agent.position[j] - c1 * ((ub - lb) * c2 + lb)
 
             # If it is not the first agent
             else:
-                # Updates the follower salp position (Eq. 3.4)
+                # Updates the follower salp position (eq. 3.4)
                 agents[i].position = 0.5 * (agents[i].position + agents[i-1].position)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

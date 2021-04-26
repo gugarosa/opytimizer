@@ -13,7 +13,7 @@ class WeightedFunction:
 
     """
 
-    def __init__(self, functions=None, weights=None):
+    def __init__(self, functions, weights):
         """Initialization method.
 
         Args:
@@ -25,16 +25,10 @@ class WeightedFunction:
         logger.info('Creating class: WeightedFunction.')
 
         # List of functions
-        if functions is None:
-            self.functions = []
-        else:
-            self.functions = [Function(f) for f in functions]
+        self.functions = [Function(f) for f in functions] or []
 
         # List of weights
-        if weights is None:
-            self.weights = []
-        else:
-            self.weights = weights
+        self.weights = weights or []
 
         # Set built variable to 'True'
         self.built = True

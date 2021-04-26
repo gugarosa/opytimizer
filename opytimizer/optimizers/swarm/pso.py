@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -29,19 +28,35 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> PSO.')
 
-        # Override its parent class with the receiving params
-        super(PSO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(PSO, self).__init__()
+
+        # Additional variables that should be used in this optimizer
+        add_vars = {
+            'local_position': ('space.n_agents', 'space.n_variables', 'space.n_dimensions'),
+            'velocity': ('space.n_agents', 'space.n_variables', 'space.n_dimensions')
+        }
+
+        # Arguments that should be used in this optimizer
+        args = {
+            'evaluate': ['space', 'function', 'optimizer.local_position'],
+            'update': ['space.agents', 'space.best_agent', 'optimizer.local_position', 'optimizer.velocity'],
+            'history': {
+                'agents': 'space.agents',
+                'best_agent': 'space.best_agent',
+                'local_position': 'optimizer.local_position'
+            }
+        }
 
         # Inertia weight
         self.w = 0.7
@@ -53,7 +68,7 @@ class PSO(Optimizer):
         self.c2 = 1.7
 
         # Now, we need to build this class up
-        self._build(params)
+        self.build(params, args, add_vars=add_vars)
 
         logger.info('Class overrided.')
 
@@ -149,7 +164,7 @@ class PSO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, local_position, velocity):
+    def update(self, agents, best_agent, local_position, velocity):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -168,8 +183,7 @@ class PSO(Optimizer):
             # Updates current agent position
             agent.position = self._update_position(agent.position, velocity[i])
 
-    @d.pre_evaluate
-    def _evaluate(self, space, function, local_position):
+    def evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
         Args:

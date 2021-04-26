@@ -105,26 +105,26 @@ class EPO(Optimizer):
                 # Defines temperature as one
                 T = 1
 
-            # Calculates the temperature profile (Eq. 7)
+            # Calculates the temperature profile (eq. 7)
             T_p = T - n_iterations / (iteration - n_iterations)
 
-            # Calculates the polygon grid accuracy (Eq. 10)
+            # Calculates the polygon grid accuracy (eq. 10)
             P_grid = np.fabs(best_agent.position - agent.position)
 
             # Generates a uniform random number and the `C` coefficient
             r1 = r.generate_uniform_random_number()
             C = r.generate_uniform_random_number(size=agent.n_variables)
 
-            # Calculates the avoidance coefficient (Eq. 9)
+            # Calculates the avoidance coefficient (eq. 9)
             A = 2 * (T_p + P_grid) * r1 - T_p
 
-            # Calculates the social forces of emperor penguin (Eq. 12)
+            # Calculates the social forces of emperor penguin (eq. 12)
             S = (np.fabs(self.f * np.exp(-iteration / self.l) - np.exp(-iteration))) ** 2
 
-            # Calculates the distance between current agent and emperor penguin (Eq. 8)
+            # Calculates the distance between current agent and emperor penguin (eq. 8)
             D_ep = np.fabs(S * best_agent.position - C * agent.position)
 
-            # Updates current agent's position (Eq. 13)
+            # Updates current agent's position (eq. 13)
             agent.position = best_agent.position - A * D_ep
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

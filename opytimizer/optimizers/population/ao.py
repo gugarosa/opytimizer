@@ -177,7 +177,7 @@ class AO(Optimizer):
 
                 # If random number is smaller or equal to 0.5
                 if r1 <= 0.5:
-                    # Updates temporary agent's position (Eq. 3)
+                    # Updates temporary agent's position (eq. 3)
                     a.position = best_agent.position * (1 - (iteration / n_iterations)) + \
                         (average - best_agent.position * r2)
 
@@ -192,17 +192,17 @@ class AO(Optimizer):
                     D = np.linspace(1, agent.n_variables, agent.n_variables)
                     D = np.repeat(np.expand_dims(D, -1), agent.n_dimensions, axis=1)
 
-                    # Calculates current cycle value (Eq. 10)
+                    # Calculates current cycle value (eq. 10)
                     cycle = self.n_cycles + self.U * D
 
-                    # Calculates `theta` (Eq. 11)
+                    # Calculates `theta` (eq. 11)
                     theta = -self.w * D + (3 * np.pi) / 2
 
-                    # Calculates `x` and `y` positioning (Eq. 8 and 9)
+                    # Calculates `x` and `y` positioning (eq. 8 and 9)
                     x = cycle * np.sin(theta)
                     y = cycle * np.cos(theta)
 
-                    # Updates temporary agent's position (Eq. 5)
+                    # Updates temporary agent's position (eq. 5)
                     a.position = best_agent.position * levy + agents[idx].position + (y - x) * r2
 
             # If current iteration is bigger than 2/3 of maximum iterations
@@ -216,23 +216,23 @@ class AO(Optimizer):
                     lb = np.expand_dims(agent.lb, -1)
                     ub = np.expand_dims(agent.ub, -1)
 
-                    # Updates temporary agent's position (Eq. 13)
+                    # Updates temporary agent's position (eq. 13)
                     a.position = (best_agent.position - average) * \
                         self.alpha - r2 + ((ub - lb) * r2 + lb) * self.delta
 
                 # If random number is bigger than 0.5
                 else:
-                    # Calculates both motions (Eq. 16 and 17)
+                    # Calculates both motions (eq. 16 and 17)
                     G1 = 2 * r2 - 1
                     G2 = 2 * (1 - (iteration / n_iterations))
 
-                    # Calculates quality function (Eq. 15)
+                    # Calculates quality function (eq. 15)
                     QF = iteration ** (G1 / (1 - n_iterations) ** 2)
 
                     # Generates a Lévy distribution
                     levy = d.generate_levy_distribution(size=(agent.n_variables, agent.n_dimensions))
 
-                    # Updates temporary agent's position (Eq. 14)
+                    # Updates temporary agent's position (eq. 14)
                     a.position = QF * best_agent.position - \
                         (G1 * a.position * r2) - G2 * levy + r2 * G1
 

@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -150,4 +148,6 @@ class FA(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (eq. 9)
-                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)
+                    agent.position = beta * \
+                        (temp.position + agent.position) + \
+                        self.alpha * (r1 - 0.5)

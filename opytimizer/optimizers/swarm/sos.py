@@ -60,7 +60,7 @@ class SOS(Optimizer):
         a = copy.deepcopy(agent_i)
         b = copy.deepcopy(agent_j)
 
-        # Calculates the mutual vector (Eq. 3)
+        # Calculates the mutual vector (eq. 3)
         mutual_vector = (agent_i.position + agent_j.position) / 2
 
         # Calculates the benefitial factors
@@ -69,7 +69,7 @@ class SOS(Optimizer):
         # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Re-calculates the new positions (Eq. 1 and 2)
+        # Re-calculates the new positions (eq. 1 and 2)
         a.position += r1 * (best_agent.position - mutual_vector * BF_1)
         b.position += r1 * (best_agent.position - mutual_vector * BF_2)
 
@@ -110,7 +110,7 @@ class SOS(Optimizer):
         # Generates a uniform random number
         r1 = r.generate_uniform_random_number(-1, 1)
 
-        # Updates the agent's position (Eq. 4)
+        # Updates the agent's position (eq. 4)
         a.position += r1 * (best_agent.position - agent_j.position)
 
         # Checks its limits

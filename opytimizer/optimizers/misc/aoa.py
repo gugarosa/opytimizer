@@ -137,10 +137,10 @@ class AOA(Optimizer):
 
         """
 
-        # Calculating math optimizer accelarated coefficient (Eq. 2)
+        # Calculating math optimizer accelarated coefficient (eq. 2)
         MOA = self.a_min + iteration * ((self.a_max - self.a_min) / n_iterations)
 
-        # Calculating math optimizer probability (Eq. 4)
+        # Calculating math optimizer probability (eq. 4)
         MOP = 1 - (iteration ** (1 / self.alpha) / n_iterations ** (1 / self.alpha))
 
         # Iterates through all agents
@@ -160,12 +160,12 @@ class AOA(Optimizer):
 
                     # If probability is bigger than 0.5
                     if r2 > 0.5:
-                        # Updates position with (Eq. 3 - top)
+                        # Updates position with (eq. 3 - top)
                         agent.position[j] = best_agent.position[j] / (MOP + c.EPSILON) * search_partition
 
                     # If probability is smaller than 0.5
                     else:
-                        # Updates position with (Eq. 3 - bottom)
+                        # Updates position with (eq. 3 - bottom)
                         agent.position[j] = best_agent.position[j] * MOP * search_partition
 
                 # If probability is smaller than MOA
@@ -175,12 +175,12 @@ class AOA(Optimizer):
 
                     # If probability is bigger than 0.5
                     if r3 > 0.5:
-                        # Updates position with (Eq. 5 - top)
+                        # Updates position with (eq. 5 - top)
                         agent.position[j] = best_agent.position[j] - MOP * search_partition
 
                     # If probability is smaller than 0.5
                     else:
-                        # Updates position with (Eq. 5 - bottom)
+                        # Updates position with (eq. 5 - bottom)
                         agent.position[j] = best_agent.position[j] + MOP * search_partition
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

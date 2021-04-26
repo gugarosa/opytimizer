@@ -85,7 +85,7 @@ class COA(Optimizer):
         return sorted(agents[start:end], key=lambda x: x.fit)
 
     def _transition_packs(self, agents, n_c):
-        """Transits coyotes between packs (Eq. 4).
+        """Transits coyotes between packs (eq. 4).
 
         Args:
             agents (list): List of agents.
@@ -132,10 +132,10 @@ class COA(Optimizer):
             # Gets the agents for the specified pack
             pack_agents = self._get_agents_from_pack(agents, i, n_c)
 
-            # Gathers the alpha coyote (Eq. 5)
+            # Gathers the alpha coyote (eq. 5)
             alpha = pack_agents[0]
 
-            # Computes the cultural tendency (Eq. 6)
+            # Computes the cultural tendency (eq. 6)
             tendency = np.median(
                 np.array([agent.position for agent in pack_agents]), axis=0)
 
@@ -156,22 +156,22 @@ class COA(Optimizer):
                 r1 = r.generate_uniform_random_number()
                 r2 = r.generate_uniform_random_number()
 
-                # Updates the social condition (Eq. 12)
+                # Updates the social condition (eq. 12)
                 a.position += r1 * lambda_1 + r2 * lambda_2
 
                 # Checks the agent's limits
                 a.clip_by_bound()
 
-                # Evaluates the agent (Eq. 13)
+                # Evaluates the agent (eq. 13)
                 a.fit = function(a.position)
 
-                # If the new potision is better than current agent's position (Eq. 14)
+                # If the new potision is better than current agent's position (eq. 14)
                 if a.fit < agent.fit:
                     # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-            # Performs transition between packs (Eq. 4)
+            # Performs transition between packs (eq. 4)
             self._transition_packs(agents, n_c)
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):

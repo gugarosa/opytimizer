@@ -85,7 +85,7 @@ class ASO(Optimizer):
         self._beta = beta
 
     def _calculate_mass(self, agents):
-        """Calculates the atoms' masses (Eq. 17 and 18).
+        """Calculates the atoms' masses (eq. 17 and 18).
 
         Args:
             agents (list): List of agents.
@@ -199,14 +199,14 @@ class ASO(Optimizer):
                 # Sums up the current potential to the total one
                 total_potential += self._calculate_potential(agent, K_agent, average, iteration, n_iterations)
 
-            # Finally, calculates the acceleration (Eq. 16)
+            # Finally, calculates the acceleration (eq. 16)
             acceleration[i] = G * self.alpha * total_potential + \
                 self.beta * (best_agent.position - agent.position) / mass[i]
 
         return acceleration
 
     def _update_velocity(self, velocity, acceleration):
-        """Updates an atom's velocity (Eq. 21).
+        """Updates an atom's velocity (eq. 21).
 
         Args:
             velocity (np.array): Agent's velocity.
@@ -226,7 +226,7 @@ class ASO(Optimizer):
         return new_velocity
 
     def _update_position(self, position, velocity):
-        """Updates an atom's position (Eq. 22).
+        """Updates an atom's position (eq. 22).
 
         Args:
             position (np.array): Agent's position.
@@ -254,18 +254,18 @@ class ASO(Optimizer):
 
         """
 
-        # Calculates the masses (Eq. 17 and 18)
+        # Calculates the masses (eq. 17 and 18)
         mass = self._calculate_mass(agents)
 
-        # Calculates the acceleration (Eq. 16)
+        # Calculates the acceleration (eq. 16)
         acceleration = self._calculate_acceleration(agents, best_agent, mass, iteration, n_iterations)
 
         # Iterates through all agents
         for i, agent in enumerate(agents):
-            # Updates current agent's velocity (Eq. 21)
+            # Updates current agent's velocity (eq. 21)
             velocity[i] = self._update_velocity(velocity[i], acceleration[i])
 
-            # Updates current agent's position (Eq. 22)
+            # Updates current agent's position (eq. 22)
             agent.position = self._update_position(agent.position, velocity[i])
 
     def run(self, space, function, store_best_only=False, pre_evaluate=None):
