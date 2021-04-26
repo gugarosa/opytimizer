@@ -1,6 +1,7 @@
-from opytimizer.utils.history import History
+from opytimizer import Opytimizer
 
-h = History()
-h.load('snapshot_iter_100.pkl')
-
-print(h.best_agent[-1])
+# opt = Opytimizer()
+opt = Opytimizer.load('out.pkl')
+# print(len(opt.history.time))
+opt.start(n_iterations=100)
+print(opt.history.time)

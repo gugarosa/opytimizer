@@ -2,13 +2,14 @@
 """
 
 import time
+import pickle
 
 from tqdm import tqdm
 
 import opytimizer.utils.attribute as a
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
-from opytimizer.utils.callback import Callback
+from opytimizer.utils.callback import CallbackVessel
 from opytimizer.utils.history import History
 
 logger = l.get_logger(__name__)
@@ -20,17 +21,14 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space, optimizer, function, callback=None,
-                 store_best_only=True, iterations_per_snapshot=-1):
+    def __init__(self, space, optimizer, function, store_best_only=False):
         """Initialization method.
 
         Args:
             space (Space): Space-child instance.
             optimizer (Optimizer): Optimizer-child instance.
             function (Function): Function or Function-child instance.
-            callback (Callback): Pre-defined or customized callback object.
             store_best_only (bool): Stores only the history of best agent.
-            iterations_per_snapshot (int): Saves a snapshot every `n` iterations.
 
         """
 
@@ -45,11 +43,8 @@ class Opytimizer:
         # Function
         self.function = function
 
-        # Callback
-        self.callback = callback or Callback()
-
         # History
-        self.history = History(store_best_only, iterations_per_snapshot)
+        self.history = History(store_best_only)
 
         # Total number of iterations
         self.total_iterations = 0
@@ -125,82 +120,89 @@ class Opytimizer:
 
     @property
     def history_kwargs(self):
-        """Converts the optimizer `history` key-word arguments into real variables.
+        """Converts the optimizer `history` keyword arguments into real variables.
 
         """
 
         return {k: a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
 
-    def evaluate(self):
+    def evaluate(self, callbacks):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
+
+        Args:
+            callback (list): List of callbacks.
 
         """
 
         # Invokes the `on_evaluate_before` callback
-        self.callback.on_evaluate_before(*self.evaluate_args)
+        callbacks.on_evaluate_before(*self.evaluate_args)
 
         # Performs an evaluation over the search space
         self.optimizer.evaluate(*self.evaluate_args)
 
         # Invokes the `on_evaluate_after` callback
-        self.callback.on_evaluate_after()
+        callbacks.on_evaluate_after(*self.evaluate_args)
 
-    def update(self):
+    def update(self, callbacks):
         """Wraps the `update` pipeline with its corresponding callbacks.
+
+        Args:
+            callback (list): List of callbacks.
 
         """
 
         # Invokes the `on_update_before` callback
-        self.callback.on_update_before()
+        callbacks.on_update_before(*self.update_args)
 
         # Performs an update over the search space
         self.optimizer.update(*self.update_args)
 
         # Invokes the `on_update_after` callback
-        self.callback.on_update_after()
+        callbacks.on_update_after(*self.update_args)
 
         # Regardless of callbacks or not, every update on the search space
         # must meet the bounds limits
         self.space.clip_by_bound()
 
-    def start(self, n_iterations):
+    def start(self, n_iterations, callbacks=None):
         """Starts the optimization task.
 
         Args
             n_iterations (int): Number of iterations.
+            callback (list): List of callbacks.
 
         """
 
         logger.info('Starting optimization task.')
 
+        # Triggers starting time
+        start = time.time()
+
         # Additional properties
         self.n_iterations = n_iterations
-
-        # Defines starting and ending points of iterations,
-        # so when can handle multiple executions
-        start_iteration = self.total_iterations
-        end_iteration = self.total_iterations + n_iterations
+        callbacks = CallbackVessel(callbacks)
 
         # Evaluates the search space
-        self.evaluate()
+        self.evaluate(callbacks)
 
         # Initializes a progress bar
         with tqdm(total=n_iterations) as b:
             # Loops through all iterations
-            for t in range(start_iteration, end_iteration):
-                logger.to_file(f'Iteration {t+1}/{end_iteration}')
+            for t in range(n_iterations):
+                logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
-                # Invokes the `on_iteration_begin` callback
-                self.callback.on_iteration_begin(t+1, self.history)
-
-                # Current iteration
+                # Saves the number of total iterations and current iteration
+                self.total_iterations += 1
                 self.iteration = t
 
+                # Invokes the `on_iteration_begin` callback
+                callbacks.on_iteration_begin(self.total_iterations, self)
+
                 # Updates the search space
-                self.update()
+                self.update(callbacks)
 
                 # Re-evaluates the search space
-                self.evaluate()
+                self.evaluate(callbacks)
 
                 # Updates the progress bar status
                 b.set_postfix(fitness=self.space.best_agent.fit)
@@ -210,10 +212,47 @@ class Opytimizer:
                 self.history.dump(**self.history_kwargs)
 
                 # Invokes the `on_iteration_end` callback
-                self.callback.on_iteration_end(t+1, self.history)
+                callbacks.on_iteration_end(self.total_iterations, self)
 
                 logger.to_file(f'Fitness: {self.space.best_agent.fit}')
                 logger.to_file(f'Position: {self.space.best_agent.position}')
 
-        # Saves the number of total iterations that have be runned on object
-        self.total_iterations += n_iterations
+        # Stops the timer and calculates the optimization time
+        end = time.time()
+        opt_time = end - start
+
+        # Dumps the elapsed time to model's history
+        self.history.dump(time=opt_time)
+
+        logger.info('Optimization task ended.')
+        logger.info('It took %s seconds.', opt_time)
+
+    def save(self, file_path):
+        """Saves the optimization model to a pickle file.
+
+        Args:
+            file_path (str): Path of file to be saved.
+
+        """
+
+        # Opens a destination file
+        with open(file_path, 'wb') as dest_file:
+            # Dumps object to file
+            pickle.dump(self, dest_file)
+
+    @classmethod
+    def load(cls, file_path):
+        """Loads the optimization model from a pickle file without needing
+        to instantiate the class.
+
+        Args:
+            file_path (str): Path of file to be loaded.
+
+        """
+
+        # Opens an input file
+        with open(file_path, "rb") as input_file:
+            # Loads object from file
+            model = pickle.load(input_file)
+
+            return model

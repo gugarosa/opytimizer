@@ -1,8 +1,6 @@
 """History-based object that helps in saving the optimization history.
 """
 
-import pickle
-
 import numpy as np
 
 import opytimizer.utils.constant as c
@@ -17,9 +15,8 @@ class History:
 
     """
 
-    def __init__(self, store_best_only=False, iterations_per_snapshot=-1):
+    def __init__(self, store_best_only=False):
         self.store_best_only = store_best_only
-        self.iterations_per_snapshot = iterations_per_snapshot
 
     @property
     def store_best_only(self):
@@ -130,32 +127,3 @@ class History:
         attr = np.hstack(attr)
 
         return attr
-
-    def save(self, file_path):
-        """Saves the optimization history to a pickle file.
-
-        Args:
-            file_path (str): Path of file to be saved.
-
-        """
-
-        # Opens a destination file
-        with open(file_path, 'wb') as dest_file:
-            # Dumps object to file
-            pickle.dump(self, dest_file)
-
-    def load(self, file_path):
-        """Loads the optimization history from a pickle file.
-
-        Args:
-            file_path (str): Path of file to be loaded.
-
-        """
-
-        # Opens an input file
-        with open(file_path, "rb") as input_file:
-            # Loads object from file
-            history = pickle.load(input_file)
-
-            # Updates the object's values
-            self.__dict__.update(history.__dict__)

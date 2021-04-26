@@ -6,7 +6,7 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces import SearchSpace
 
-from opytimizer.utils.callback import Callback
+from opytimizer.utils.callback import SnapshotCallback
 
 # Random seed for experimental consistency
 np.random.seed(0)
@@ -24,10 +24,11 @@ space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = FA()
 function = Function(Sphere())
 
-# Bundle every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function, store_best_only=True)
 
 # Runs the optimization task
-opt.start(n_iterations=100)
+opt.start(n_iterations=100, callbacks=[SnapshotCallback(iterations_per_snapshot=10)])
+opt.start(n_iterations=100, callbacks=[SnapshotCallback(iterations_per_snapshot=10)])
 
-print(len(opt.history.best_agent))
+opt.save('out.pkl')
