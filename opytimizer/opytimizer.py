@@ -177,7 +177,7 @@ class Opytimizer:
         # must meet the bounds limits
         self.space.clip_by_bound()
 
-    def start(self, n_iterations, callbacks=None):
+    def start(self, n_iterations=1, callbacks=None):
         """Starts the optimization task.
 
         Args

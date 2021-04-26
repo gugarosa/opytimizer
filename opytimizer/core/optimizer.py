@@ -106,7 +106,7 @@ class Optimizer:
         if params:
             # Saves the `params` for faster looking up
             self.params = params
-        
+
             # Iterates through all parameters
             for k, v in params.items():
                 # Sets its key-value pair
@@ -159,9 +159,6 @@ class Optimizer:
 
         As each child has a different procedure of update,
         you will need to implement it directly on its class.
-
-        Raises:
-            NotImplementedError.
 
         """
 
