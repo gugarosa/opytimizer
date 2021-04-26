@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -425,7 +424,7 @@ class GP(Optimizer):
         # Performs the mutation
         self._mutation(space)
 
-    @d.pre_evaluate
+    
     def _evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 

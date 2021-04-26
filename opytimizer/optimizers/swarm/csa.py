@@ -7,7 +7,6 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -86,7 +85,7 @@ class CSA(Optimizer):
 
         self._AP = AP
 
-    @d.pre_evaluate
+    
     def _evaluate(self, space, function, memory):
         """Evaluates the search space according to the objective function.
 

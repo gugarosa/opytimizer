@@ -7,7 +7,6 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -146,7 +145,7 @@ class BPSO(Optimizer):
             # Updates current agent positions
             agent.position = self._update_position(agent.position, velocity[i])
 
-    @d.pre_evaluate
+    
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 

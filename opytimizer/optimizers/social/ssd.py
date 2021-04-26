@@ -7,7 +7,6 @@ import numpy as np
 from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
@@ -190,7 +189,7 @@ class SSD(Optimizer):
             # Updates current agent velocities
             velocity[i] = self._update_velocity(agent.position, mean, local_position[i])
 
-    @d.pre_evaluate
+    
     def _evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 

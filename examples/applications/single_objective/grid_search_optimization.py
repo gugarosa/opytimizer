@@ -5,7 +5,6 @@ from opytimizer.core import Function
 from opytimizer.optimizers.misc import GS
 from opytimizer.spaces import GridSpace
 
-
 # Number of decision variables and step size of the grid
 n_variables = 2
 step = [0.1, 1]
