@@ -5,8 +5,8 @@ This is an utilities package. Common things shared across the application should
 
 .. toctree::
     opytimizer.utils.attribute
+    opytimizer.utils.callback
     opytimizer.utils.constant
-    opytimizer.utils.decorator
     opytimizer.utils.exception
     opytimizer.utils.history
     opytimizer.utils.logging
