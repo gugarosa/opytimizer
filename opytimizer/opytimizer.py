@@ -208,7 +208,7 @@ class Opytimizer:
                 b.set_postfix(fitness=self.space.best_agent.fit)
                 b.update()
 
-                # Dumps key-word arguments in optimization history
+                # Dumps keyword arguments to model's history
                 self.history.dump(**self.history_kwargs)
 
                 # Invokes the `on_iteration_end` callback
@@ -235,10 +235,10 @@ class Opytimizer:
 
         """
 
-        # Opens a destination file
-        with open(file_path, 'wb') as dest_file:
+        # Opens an output file
+        with open(file_path, 'wb') as output_file:
             # Dumps object to file
-            pickle.dump(self, dest_file)
+            pickle.dump(self, output_file)
 
     @classmethod
     def load(cls, file_path):
@@ -253,6 +253,6 @@ class Opytimizer:
         # Opens an input file
         with open(file_path, "rb") as input_file:
             # Loads object from file
-            model = pickle.load(input_file)
+            opt_model = pickle.load(input_file)
 
-            return model
+            return opt_model

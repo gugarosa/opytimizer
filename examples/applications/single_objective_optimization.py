@@ -6,7 +6,7 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm.fa import FA
 from opytimizer.spaces import SearchSpace
 
-from opytimizer.utils.callback import SnapshotCallback
+from opytimizer.utils.callback import CheckpointCallback
 
 # Random seed for experimental consistency
 np.random.seed(0)
@@ -28,7 +28,7 @@ function = Function(Sphere())
 opt = Opytimizer(space, optimizer, function, store_best_only=True)
 
 # Runs the optimization task
-opt.start(n_iterations=100, callbacks=[SnapshotCallback(iterations_per_snapshot=10)])
-opt.start(n_iterations=100, callbacks=[SnapshotCallback(iterations_per_snapshot=10)])
+opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=10)])
+opt.start(n_iterations=100, callbacks=[CheckpointCallback(frequency=50)])
 
 opt.save('out.pkl')
