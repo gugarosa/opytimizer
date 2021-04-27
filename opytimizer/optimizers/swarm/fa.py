@@ -40,6 +40,7 @@ class FA(Optimizer):
         super(FA, self).__init__()
 
         # Arguments that should be used in this optimizer
+        # Note they must be properties from Opytimizer class
         args = {
             'evaluate': ['space', 'function'],
             'update': ['space.agents', 'n_iterations'],

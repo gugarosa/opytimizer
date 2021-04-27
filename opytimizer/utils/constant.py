@@ -11,10 +11,6 @@ EPSILON = 1e-32
 # the maximum float possible
 FLOAT_MAX = sys.float_info.max
 
-# If necessary, one can apply custom rules to keys' dumping
-# when using the History object
-HISTORY_KEYS = ['agents', 'best_agent', 'local_position']
-
 # When working with relativity theories, it is necessary
 # to define a constant for the speed of light
 LIGHT_SPEED = 3e5

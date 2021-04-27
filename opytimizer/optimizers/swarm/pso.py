@@ -48,7 +48,8 @@ class PSO(Optimizer):
             'history': {
                 'agents': 'space.agents',
                 'best_agent': 'space.best_agent',
-                'local_position': 'optimizer.local_position'
+                'local_position': 'optimizer.local_position',
+                'w': 'optimizer.w'
             }
         }
 

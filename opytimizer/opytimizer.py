@@ -21,14 +21,14 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space, optimizer, function, store_only_best_agent=False):
+    def __init__(self, space, optimizer, function, save_agents=False):
         """Initialization method.
 
         Args:
             space (Space): Space-child instance.
             optimizer (Optimizer): Optimizer-child instance.
             function (Function): Function or Function-child instance.
-            store_only_best_agent (bool): Stores only the best agent.
+            save_agents (bool): Saves all agents in the search space.
 
         """
 
@@ -45,7 +45,7 @@ class Opytimizer:
         self.function = function
 
         # Optimization history
-        self.history = History(store_only_best_agent)
+        self.history = History(save_agents)
 
         # Total number of iterations
         self.total_iterations = 0
@@ -114,6 +114,23 @@ class Opytimizer:
             raise e.TypeError('`history` should be a History')
 
         self._history = history
+
+    @property
+    def total_iterations(self):
+        """int: Total number of iterations.
+
+        """
+
+        return self._total_iterations
+
+    @total_iterations.setter
+    def total_iterations(self, total_iterations):
+        if not isinstance(total_iterations, int):
+            raise e.TypeError('`total_iterations` should be an integer')
+        if total_iterations < 0:
+            raise e.ValueError('`total_iterations` should be >= 0')
+
+        self._total_iterations = total_iterations
 
     @property
     def evaluate_args(self):

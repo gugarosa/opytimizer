@@ -23,7 +23,11 @@ optimizer = PSO()
 function = Function(Sphere())
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function, store_only_best_agent=True)
+opt = Opytimizer(space, optimizer, function, save_agents=True)
 
 # Runs the optimization task
-opt.start(n_iterations=1000)
+opt.start(n_iterations=10)
+
+# print(opt.history.best_agent)
+
+print(opt.history.get_key_convergence('local_position', index=19))

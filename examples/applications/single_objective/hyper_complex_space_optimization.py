@@ -33,7 +33,7 @@ optimizer = PSO()
 function = Function(wrapper)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function, store_only_best_agent=True)
+opt = Opytimizer(space, optimizer, function, save_agents=False)
 
 # Runs the optimization task
 opt.start(n_iterations=1000)
