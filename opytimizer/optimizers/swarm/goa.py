@@ -39,8 +39,8 @@ class GOA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> GOA.')
 
-        # Override its parent class with the receiving params
-        super(GOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(GOA, self).__init__()
 
         # Minimum comfort zone
         self.c_min = 0.00001
@@ -54,8 +54,8 @@ class GOA(Optimizer):
         # Attractive length scale
         self.l = 1.5
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

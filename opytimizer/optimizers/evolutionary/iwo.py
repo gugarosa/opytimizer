@@ -36,8 +36,8 @@ class IWO(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(IWO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(IWO, self).__init__()
 
         # Minimum number of seeds
         self.min_seeds = 0
@@ -54,8 +54,8 @@ class IWO(Optimizer):
         # Initial standard deviation
         self.init_sigma = 3
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

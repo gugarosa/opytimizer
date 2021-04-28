@@ -40,8 +40,8 @@ class SFO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> SFO.')
 
-        # Override its parent class with the receiving params
-        super(SFO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(SFO, self).__init__()
 
         # Percentage of initial sailfishes
         self.PP = 0.1
@@ -52,8 +52,8 @@ class SFO(Optimizer):
         # Attack power decrease
         self.e = 0.001
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

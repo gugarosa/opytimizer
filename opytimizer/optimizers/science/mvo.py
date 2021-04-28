@@ -36,8 +36,8 @@ class MVO(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(MVO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(MVO, self).__init__()
 
         # Minimum value for the Wormhole Existence Probability
         self.WEP_min = 0.2
@@ -48,8 +48,8 @@ class MVO(Optimizer):
         # Exploitation accuracy
         self.p = 6.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

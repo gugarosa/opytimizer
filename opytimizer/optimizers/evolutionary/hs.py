@@ -39,8 +39,8 @@ class HS(Optimizer):
 
         logger.info('Overriding class: Optimizer -> HS.')
 
-        # Override its parent class with the receiving params
-        super(HS, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(HS, self).__init__()
 
         # Harmony memory considering rate
         self.HMCR = 0.7
@@ -51,8 +51,8 @@ class HS(Optimizer):
         # Bandwidth parameter
         self.bw = 1.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -263,7 +263,7 @@ class IHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(IHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -420,7 +420,7 @@ class GHS(IHS):
 
         logger.info('Overriding class: IHS -> GHS.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(GHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -510,7 +510,7 @@ class SGHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(SGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -791,7 +791,7 @@ class NGHS(HS):
         # Mutation probability
         self.pm = 0.1
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(NGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -902,7 +902,7 @@ class GOGHS(NGHS):
 
         logger.info('Overriding class: NGHS -> GOGHS.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(GOGHS, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')

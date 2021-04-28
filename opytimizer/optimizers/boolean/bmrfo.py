@@ -37,14 +37,14 @@ class BMRFO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> BMRFO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(BMRFO, self).__init__(algorithm=algorithm)
 
         # Somersault foraging
         self.S = np.array([1])
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

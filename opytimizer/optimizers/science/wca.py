@@ -38,8 +38,8 @@ class WCA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> WCA.')
 
-        # Override its parent class with the receiving params
-        super(WCA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(WCA, self).__init__()
 
         # Number of rivers + sea
         self.nsr = 2
@@ -47,8 +47,8 @@ class WCA(Optimizer):
         # Maximum evaporation condition
         self.d_max = 0.1
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

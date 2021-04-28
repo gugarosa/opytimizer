@@ -38,8 +38,8 @@ class EO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> EO.')
 
-        # Override its parent class with the receiving params
-        super(EO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(EO, self).__init__()
 
         # Exploration constant
         self.a1 = 2.0
@@ -53,8 +53,8 @@ class EO(Optimizer):
         # Velocity
         self.V = 1.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

@@ -36,7 +36,7 @@ class FA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> FA.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(FA, self).__init__()
 
         # Randomization parameter

@@ -39,8 +39,8 @@ class CS(Optimizer):
 
         logger.info('Overriding class: Optimizer -> CS.')
 
-        # Override its parent class with the receiving params
-        super(CS, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(CS, self).__init__()
 
         # Step size
         self.alpha = 1
@@ -51,8 +51,8 @@ class CS(Optimizer):
         # Probability of replacing worst nests
         self.p = 0.2
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

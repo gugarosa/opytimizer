@@ -37,8 +37,8 @@ class DE(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(DE, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(DE, self).__init__()
 
         # Crossover probability
         self.CR = 0.9
@@ -46,8 +46,8 @@ class DE(Optimizer):
         # Differential weight
         self.F = 0.7
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

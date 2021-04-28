@@ -36,14 +36,14 @@ class WOA(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(WOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(WOA, self).__init__()
 
         # Logarithmic spiral
         self.b = 1
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

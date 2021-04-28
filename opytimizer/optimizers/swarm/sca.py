@@ -36,8 +36,8 @@ class SCA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> SCA.')
 
-        # Override its parent class with the receiving params
-        super(SCA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(SCA, self).__init__()
 
         # Minimum function range
         self.r_min = 0
@@ -48,8 +48,8 @@ class SCA(Optimizer):
         # Constant for defining the next position's region
         self.a = 3
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

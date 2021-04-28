@@ -36,8 +36,8 @@ class AOA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> AOA.')
 
-        # Override its parent class with the receiving params
-        super(AOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(AOA, self).__init__()
 
         # Minimum accelerated function
         self.a_min = 0.2
@@ -51,8 +51,8 @@ class AOA(Optimizer):
         # Control parameter
         self.mu = 0.499
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

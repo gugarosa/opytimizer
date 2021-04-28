@@ -37,14 +37,14 @@ class DOA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> DOA.')
 
-        # Override its parent class with the receiving params
-        super(DOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(DOA, self).__init__()
 
         # Chaos multiplier
         self.r = 1.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

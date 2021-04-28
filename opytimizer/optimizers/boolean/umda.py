@@ -33,8 +33,8 @@ class UMDA(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(UMDA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(UMDA, self).__init__()
 
         # Probability of selection
         self.p_selection = 0.75
@@ -45,8 +45,8 @@ class UMDA(Optimizer):
         # Distribution upper bound
         self.upper_bound = 0.95
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

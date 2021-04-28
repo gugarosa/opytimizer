@@ -39,14 +39,14 @@ class MRFO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> MRFO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(MRFO, self).__init__(algorithm=algorithm)
 
         # Somersault foraging
         self.S = 2.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

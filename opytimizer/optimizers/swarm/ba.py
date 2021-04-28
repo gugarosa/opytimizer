@@ -38,8 +38,8 @@ class BA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> BA.')
 
-        # Override its parent class with the receiving params
-        super(BA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(BA, self).__init__()
 
         # Minimum frequency range
         self.f_min = 0
@@ -53,8 +53,8 @@ class BA(Optimizer):
         # Pulse rate
         self.r = 0.5
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

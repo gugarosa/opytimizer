@@ -38,8 +38,8 @@ class BSA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> BSA.')
 
-        # Override its parent class with the receiving params
-        super(BSA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(BSA, self).__init__()
 
         # Experience from previous generation
         self.F = 3.0
@@ -47,8 +47,8 @@ class BSA(Optimizer):
         # Number of non-crosses
         self.mix_rate = 1
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

@@ -39,7 +39,7 @@ class BPSO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> BPSO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(BPSO, self).__init__(algorithm=algorithm)
 
         # Cognitive constant
@@ -48,8 +48,8 @@ class BPSO(Optimizer):
         # Social constant
         self.c2 = np.array([1])
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

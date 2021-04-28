@@ -34,8 +34,8 @@ class HC(Optimizer):
 
         logger.info('Overriding class: Optimizer -> HC.')
 
-        # Override its parent class with the receiving params
-        super(HC, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(HC, self).__init__()
 
         # Mean of noise distribution
         self.r_mean = 0
@@ -43,8 +43,8 @@ class HC(Optimizer):
         # Variance of noise distribution
         self.r_var = 0.1
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

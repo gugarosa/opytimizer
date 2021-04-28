@@ -38,8 +38,8 @@ class KH(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(KH, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(KH, self).__init__()
 
         # Maximum induced speed
         self.N_max = 0.01
@@ -68,8 +68,8 @@ class KH(Optimizer):
         # Mutation probability
         self.Mu = 0.05
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

@@ -36,14 +36,14 @@ class ES(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(ES, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(ES, self).__init__()
 
         # Ratio of children in the population
         self.child_ratio = 0.5
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

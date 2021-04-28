@@ -50,7 +50,7 @@ class PSO(Optimizer):
         # Social constant
         self.c2 = 1.7
 
-        # Now, we need to build this class up
+        # Builds the class
         self.build(params)
 
         logger.info('Class overrided.')
@@ -199,7 +199,7 @@ class AIWPSO(PSO):
         # Maximum inertia weight
         self.w_max = 0.9
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(AIWPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -359,7 +359,7 @@ class RPSO(PSO):
 
         logger.info('Overriding class: PSO -> RPSO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(RPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -501,7 +501,7 @@ class SAVPSO(PSO):
 
         logger.info('Overriding class: PSO -> SAVPSO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(SAVPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')
@@ -606,7 +606,7 @@ class VPSO(PSO):
 
         logger.info('Overriding class: PSO -> VPSO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(VPSO, self).__init__(algorithm, params)
 
         logger.info('Class overrided.')

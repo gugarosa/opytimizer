@@ -37,8 +37,8 @@ class HGSO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> HGSO.')
 
-        # Override its parent class with the receiving params
-        super(HGSO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(HGSO, self).__init__()
 
         # Number of clusters
         self.n_clusters = 2
@@ -61,8 +61,8 @@ class HGSO(Optimizer):
         # Solubility constant
         self.K = 1.0
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

@@ -37,8 +37,8 @@ class EFO(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(EFO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(EFO, self).__init__()
 
         # Positive field proportion
         self.positive_field = 0.1
@@ -52,8 +52,8 @@ class EFO(Optimizer):
         # Probability of selecting a random eletromagnet
         self.r_ratio = 0.4
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

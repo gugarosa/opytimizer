@@ -36,8 +36,8 @@ class EP(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(EP, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(EP, self).__init__()
 
         # Size of bout during the tournament selection
         self.bout_size = 0.1
@@ -45,8 +45,8 @@ class EP(Optimizer):
         # Clipping ratio to helps the algorithm's convergence
         self.clip_ratio = 0.05
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

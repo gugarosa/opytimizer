@@ -38,14 +38,14 @@ class COA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> COA.')
 
-        # Override its parent class with the receiving params
-        super(COA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(COA, self).__init__()
 
         # Number of packs
         self.n_p = 2
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

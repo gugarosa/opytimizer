@@ -39,8 +39,8 @@ class SSD(Optimizer):
 
         logger.info('Overriding class: Optimizer -> SSD.')
 
-        # Override its parent class with the receiving params
-        super(SSD, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(SSD, self).__init__()
 
         # Exploration parameter
         self.c = 2.0
@@ -48,8 +48,8 @@ class SSD(Optimizer):
         # Decay rate
         self.decay = 0.99
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

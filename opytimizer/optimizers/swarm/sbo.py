@@ -37,8 +37,8 @@ class SBO(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(SBO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(SBO, self).__init__()
 
         # Step size
         self.alpha = 0.9
@@ -49,8 +49,8 @@ class SBO(Optimizer):
         # Percentage of width between lower and upper bounds
         self.z = 0.02
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

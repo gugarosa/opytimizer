@@ -34,8 +34,8 @@ class CEM(Optimizer):
 
         """
 
-        # Override its parent class with the receiving params
-        super(CEM, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(CEM, self).__init__()
 
         # Amount of positions to employ in mean and std updates
         self.n_updates = 5
@@ -43,8 +43,8 @@ class CEM(Optimizer):
         # Learning rate
         self.alpha = 0.7
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

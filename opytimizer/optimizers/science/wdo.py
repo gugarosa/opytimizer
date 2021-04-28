@@ -36,8 +36,8 @@ class WDO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> WDO.')
 
-        # Override its parent class with the receiving params
-        super(WDO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(WDO, self).__init__()
 
         # Maximum velocity
         self.v_max = 0.3
@@ -54,8 +54,8 @@ class WDO(Optimizer):
         # Pressure constant
         self.RT = 1.5
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

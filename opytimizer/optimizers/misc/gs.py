@@ -32,17 +32,7 @@ class GS(Optimizer):
         # Overrides its parent class with the receiving params
         super(GS, self).__init__()
 
-        # Arguments that should be used in this optimizer
-        args = {
-            'evaluate': ['space', 'function'],
-            'update': [],
-            'history': {
-                'agents': 'space.agents',
-                'best_agent': 'space.best_agent'
-            }
-        }
-
         # Builds the class
-        self.build(params, args)
+        self.build(params)
 
         logger.info('Class overrided.')

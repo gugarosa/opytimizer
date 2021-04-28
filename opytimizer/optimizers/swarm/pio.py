@@ -38,8 +38,8 @@ class PIO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> PIO.')
 
-        # Override its parent class with the receiving params
-        super(PIO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(PIO, self).__init__()
 
         # Number of mapping iterations
         self.n_c1 = 150
@@ -50,8 +50,8 @@ class PIO(Optimizer):
         # Map and compass factor
         self.R = 0.2
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 

@@ -39,10 +39,10 @@ class MOA(Optimizer):
 
         logger.info('Overriding class: Optimizer -> MOA.')
 
-        # Override its parent class with the receiving params
-        super(MOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(MOA, self).__init__()
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')

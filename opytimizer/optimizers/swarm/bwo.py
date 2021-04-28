@@ -39,7 +39,7 @@ class BWO(Optimizer):
 
         logger.info('Overriding class: Optimizer -> BWO.')
 
-        # Override its parent class with the receiving params
+        # Overrides its parent class with the receiving params
         super(BWO, self).__init__(algorithm=algorithm)
 
         # Procreating rate
@@ -51,8 +51,8 @@ class BWO(Optimizer):
         # Mutation rate
         self.pm = 0.4
 
-        # Now, we need to build this class up
-        self._build(params)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
