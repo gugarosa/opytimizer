@@ -126,7 +126,7 @@ class ABO(Optimizer):
         return agent.position, agent.fit, False
 
     def update(self, agents, function, iteration, n_iterations):
-        """Method that wraps Artificial Butterfly Optimization over all agents and variables.
+        """Wraps Artificial Butterfly Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -203,7 +203,7 @@ class ABC(Optimizer):
                 agents[max_index] = copy.deepcopy(a)
 
     def update(self, agents, function, trials):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.

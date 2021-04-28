@@ -178,7 +178,7 @@ class TWO(Optimizer):
             agent.fit = function(agent.position)
 
     def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps Tug of War Optimization over all agents and variables.
+        """Wraps Tug of War Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

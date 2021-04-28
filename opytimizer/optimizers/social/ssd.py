@@ -150,7 +150,7 @@ class SSD(Optimizer):
         return new_velocity
 
     def update(self, agents, function, local_position, velocity):
-        """Method that wraps mean global solution, position and velocity updates over all agents and variables.
+        """Wraps mean global solution, position and velocity updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -201,7 +201,7 @@ class SSD(Optimizer):
 
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculate the fitness value of current agent
+            # Calculates the fitness value of current agent
             fit = function(agent.position)
 
             # If fitness is better than agent's best fit

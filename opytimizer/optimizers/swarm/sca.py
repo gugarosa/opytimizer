@@ -134,7 +134,7 @@ class SCA(Optimizer):
         return new_position
 
     def update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps Sine Cosine Algorithm over all agents and variables.
+        """Wraps Sine Cosine Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

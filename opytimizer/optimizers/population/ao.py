@@ -147,7 +147,7 @@ class AO(Optimizer):
         self._w = w
 
     def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps Aquila Optimizer over all agents and variables.
+        """Wraps Aquila Optimizer over all agents and variables.
 
         Args:
             agents (list): List of agents.

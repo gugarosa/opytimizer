@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -37,7 +35,7 @@ class BMRFO(Optimizer):
         logger.info('Overriding class: Optimizer -> BMRFO.')
 
         # Overrides its parent class with the receiving params
-        super(BMRFO, self).__init__(algorithm=algorithm)
+        super(BMRFO, self).__init__()
 
         # Somersault foraging
         self.S = np.array([1])
@@ -87,7 +85,8 @@ class BMRFO(Optimizer):
         # Checks if current iteration proportion is smaller than random generated number
         if iteration / n_iterations < u:
             # Generates binary random positions
-            r_position = r.generate_binary_random_number(size=(agents[i].n_variables, agents[i].n_dimensions))
+            r_position = r.generate_binary_random_number(
+                size=(agents[i].n_variables, agents[i].n_dimensions))
 
             # Checks if the index is equal to zero
             if i == 0:
@@ -176,12 +175,11 @@ class BMRFO(Optimizer):
 
         return somersault_foraging
 
-    def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps chain, cyclone and somersault foraging updates over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps chain, cyclone and somersault foraging updates over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
             iteration (int): Number of current iteration.
             n_iterations (int): Maximum number of iterations.
@@ -189,19 +187,20 @@ class BMRFO(Optimizer):
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
 
             # If random number is smaller than 1/2
             if r1 < 0.5:
                 # Performs the cyclone foraging
-                agent.position = self._cyclone_foraging(agents, best_agent.position, i, iteration, n_iterations)
+                agent.position = self._cyclone_foraging(
+                    space.agents, space.best_agent.position, i, iteration, n_iterations)
 
             # If random number is bigger than 1/2
             else:
                 # Performs the chain foraging
-                agent.position = self._chain_foraging(agents, best_agent.position, i)
+                agent.position = self._chain_foraging(space.agents, space.best_agent.position, i)
 
             # Clips the agent's limits
             agent.clip_by_bound()
@@ -210,59 +209,12 @@ class BMRFO(Optimizer):
             agent.fit = function(agent.position)
 
             # If new agent's fitness is better than best
-            if agent.fit < best_agent.fit:
+            if agent.fit < space.best_agent.fit:
                 # Replace the best agent's position and fitness with its copy
-                best_agent.position = copy.deepcopy(agent.position)
-                best_agent.fit = copy.deepcopy(agent.fit)
+                space.best_agent.position = copy.deepcopy(agent.position)
+                space.best_agent.fit = copy.deepcopy(agent.fit)
 
         # Iterates through all agents
-        for agent in agents:
+        for agent in space.agents:
             # Performs the somersault foraging
-            agent.position = self._somersault_foraging(agent.position, best_agent.position)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, function, t, space.n_iterations)
-
-                # Checking if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            agent.position = self._somersault_foraging(agent.position, space.best_agent.position)

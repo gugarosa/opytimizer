@@ -175,7 +175,7 @@ class SFO(Optimizer):
         return new_position
 
     def update(self, agents, best_agent, function, sardines, iteration):
-        """Method that wraps Sailfish Optimizer updates.
+        """Wraps Sailfish Optimizer updates.
 
         Args:
             agents (list): List of agents (sailfishes).

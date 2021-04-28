@@ -62,6 +62,21 @@ class DOA(Optimizer):
 
         self._r = r
 
+    @property
+    def chaotic_map(self):
+        """np.array: Array of chaotic maps.
+
+        """
+
+        return self._chaotic_map
+
+    @chaotic_map.setter
+    def chaotic_map(self, chaotic_map):
+        if not isinstance(chaotic_map, np.ndarray):
+            raise e.TypeError('`chaotic_map` should be a numpy array')
+
+        self._chaotic_map = chaotic_map
+
     def create_additional_vars(self, space):
         """Creates additional variables that are used by this optimizer.
 

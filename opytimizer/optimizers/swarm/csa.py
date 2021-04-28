@@ -115,7 +115,7 @@ class CSA(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def update(self, agents, memory):
-        """Method that wraps the Crow Search Algorithm over all agents and variables.
+        """Wraps the Crow Search Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

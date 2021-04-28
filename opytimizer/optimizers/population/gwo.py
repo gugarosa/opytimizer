@@ -68,7 +68,7 @@ class GWO(Optimizer):
         return A, C
 
     def update(self, agents, function, iteration, n_iterations):
-        """Method that wraps the Grey Wolf Optimization over all agents and variables.
+        """Wraps the Grey Wolf Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

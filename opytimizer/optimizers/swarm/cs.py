@@ -206,7 +206,7 @@ class CS(Optimizer):
                 agent.fit = copy.deepcopy(new_agent.fit)
 
     def update(self, agents, best_agent, function):
-        """Method that wraps Cuckoo Search algorithm over all agents and variables.
+        """Wraps Cuckoo Search algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

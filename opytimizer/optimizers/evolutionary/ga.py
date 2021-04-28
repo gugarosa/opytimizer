@@ -208,7 +208,7 @@ class GA(Optimizer):
         return alpha, beta
 
     def update(self, agents, function):
-        """Method that wraps selection, crossover and mutation over all agents and variables.
+        """Wraps selection, crossover and mutation over all agents and variables.
 
         Args:
             agents (list): List of agents.

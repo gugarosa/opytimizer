@@ -117,7 +117,7 @@ class COA(Optimizer):
                 agents[j]), copy.deepcopy(agents[i])
 
     def update(self, agents, function, n_c):
-        """Method that wraps Coyote Optimization Algorithm over all agents and variables.
+        """Wraps Coyote Optimization Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

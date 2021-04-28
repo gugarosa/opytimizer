@@ -248,7 +248,7 @@ class WWO(Optimizer):
                 agents[0].fit - agents[-1].fit + c.EPSILON))
 
     def update(self, agents, best_agent, function, height, length):
-        """Method that wraps Water Wave Optimization over all agents and variables.
+        """Wraps Water Wave Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -151,7 +151,7 @@ class GSA(Optimizer):
         return new_position
 
     def update(self, agents, velocity, iteration):
-        """Method that wraps Gravitational Search Algorithm over all agents and variables.
+        """Wraps Gravitational Search Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -84,7 +84,7 @@ class WOA(Optimizer):
         return a
 
     def update(self, agents, best_agent, coefficient):
-        """Method that wraps Whale Optimization Algorithm updates.
+        """Wraps Whale Optimization Algorithm updates.
 
         Args:
             agents (list): List of agents.

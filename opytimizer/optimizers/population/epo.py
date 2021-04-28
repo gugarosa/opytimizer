@@ -80,7 +80,7 @@ class EPO(Optimizer):
         self._l = l
 
     def update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps the Emperor Penguin Optimization over all agents and variables.
+        """Wraps the Emperor Penguin Optimization over all agents and variables.
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.

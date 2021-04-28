@@ -87,7 +87,7 @@ class SA(Optimizer):
         self._beta = beta
 
     def update(self, agents, function):
-        """Method that wraps Simulated Annealing over all agents and variables.
+        """Wraps Simulated Annealing over all agents and variables.
 
         Args:
             agents (list): List of agents.

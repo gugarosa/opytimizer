@@ -242,7 +242,7 @@ class ASO(Optimizer):
         return new_position
 
     def update(self, agents, best_agent, velocity, iteration, n_iterations):
-        """Method that wraps the Atom Search Optimization over all agents and variables.
+        """Wraps the Atom Search Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

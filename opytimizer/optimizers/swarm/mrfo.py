@@ -39,7 +39,7 @@ class MRFO(Optimizer):
         logger.info('Overriding class: Optimizer -> MRFO.')
 
         # Overrides its parent class with the receiving params
-        super(MRFO, self).__init__(algorithm=algorithm)
+        super(MRFO, self).__init__()
 
         # Somersault foraging
         self.S = 2.0
@@ -179,7 +179,7 @@ class MRFO(Optimizer):
         return somersault_foraging
 
     def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps chain, cyclone and somersault foraging updates over all agents and variables.
+        """Wraps chain, cyclone and somersault foraging updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

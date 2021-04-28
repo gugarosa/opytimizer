@@ -140,7 +140,7 @@ class AEO(Optimizer):
         return a
 
     def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps production and consumption updates over all
+        """Wraps production and consumption updates over all
         agents and variables (eq. 1-8).
 
         Args:
@@ -208,7 +208,7 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
     def _update_decomposition(self, agents, best_agent, function):
-        """Method that wraps decomposition updates over all
+        """Wraps decomposition updates over all
         agents and variables (eq. 9).
 
         Args:
@@ -251,7 +251,7 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
     def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps composition and decomposition.
+        """Wraps composition and decomposition.
 
         Args:
             agents (list): List of agents.

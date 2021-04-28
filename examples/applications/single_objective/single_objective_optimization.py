@@ -19,11 +19,11 @@ upper_bound = [10, 10]
 
 # Creates the space, optimizer and function
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
-optimizer = CEM()
+optimizer = AOA()
 function = Function(Sphere())
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function, save_agents=True)
+opt = Opytimizer(space, optimizer, function, save_agents=False)
 
 # Runs the optimization task
 opt.start(n_iterations=1000)

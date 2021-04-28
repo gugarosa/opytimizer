@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -98,8 +96,7 @@ class UMDA(Optimizer):
         if upper_bound < 0 or upper_bound > 1:
             raise e.ValueError('`upper_bound` should be between 0 and 1')
         if upper_bound < self.lower_bound:
-            raise e.ValueError(
-                '`upper_bound` should be greater than `lower_bound')
+            raise e.ValueError('`upper_bound` should be greater than `lower_bound')
 
         self._upper_bound = upper_bound
 
@@ -149,77 +146,29 @@ class UMDA(Optimizer):
 
         return new_position
 
-    def update(self, agents):
-        """Method that wraps selection, probability calculation and
-        position sampling over all agents and variables.
+    def update(self, space):
+        """Wraps Univariate Marginal Distribution Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
 
         """
         # Retrieving the number of agents
-        n_agents = len(agents)
+        n_agents = len(space.agents)
 
         # Selects the individuals through ranking
         n_selected = int(n_agents * self.p_selection)
 
         # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the probability of ocurrence from selected agents
-        probs = self._calculate_probability(agents[:n_selected])
+        probs = self._calculate_probability(space.agents[:n_selected])
 
         # Iterates through every agents
-        for agent in agents:
+        for agent in space.agents:
             # Samples new agent's position
             agent.position = self._sample_position(probs)
 
             # Checking its limits
             agent.clip_by_bound()
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents)
-
-                # Checking if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

@@ -117,7 +117,7 @@ class DE(Optimizer):
         return a
 
     def update(self, agents, function):
-        """Method that wraps selection and mutation updates over all
+        """Wraps selection and mutation updates over all
         agents and variables (eq. 1-4).
 
         Args:

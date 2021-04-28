@@ -194,7 +194,7 @@ class BSA(Optimizer):
                     trial_agents[i].position[j] = copy.deepcopy(agents[i].position[j])
 
     def update(self, agents, function, old_agents):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -206,7 +206,7 @@ class BSA(Optimizer):
         # Performs the permuting operator
         self._permute(agents, old_agents)
 
-        # Calculate the trial agents based on the mutation operator
+        # Calculates the trial agents based on the mutation operator
         trial_agents = self._mutate(agents, old_agents)
 
         # Performs the crossover

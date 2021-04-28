@@ -143,7 +143,7 @@ class GOA(Optimizer):
         return s
 
     def update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps the Grasshopper Optimization Algorithm over all agents and variables.
+        """Wraps the Grasshopper Optimization Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

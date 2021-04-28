@@ -189,7 +189,7 @@ class IWO(Optimizer):
         return a
 
     def update(self, agents, n_agents, function):
-        """Method that wraps offsprings generations over all agents and variables.
+        """Wraps offsprings generations over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -209,7 +209,7 @@ class IWO(Optimizer):
 
         # Iterates through all agents
         for agent in agents:
-            # Calculate the seeding ratio based on its fitness
+            # Calculates the seeding ratio based on its fitness
             ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit + c.EPSILON)
 
             # Calculates the number of produced seeds

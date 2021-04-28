@@ -191,7 +191,7 @@ class EHO(Optimizer):
                 worst.position[j] = r.generate_uniform_random_number(lb, ub, size=worst.n_dimensions)
 
     def update(self, agents, function, n_ci):
-        """Method that wraps Elephant Herd Optimization over all agents and variables.
+        """Wraps Elephant Herd Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -156,7 +156,7 @@ class SOS(Optimizer):
             agent_j.fit = copy.deepcopy(p.fit)
 
     def update(self, agents, best_agent, function):
-        """Method that wraps Symbiotic Organisms Search. over all agents and variables.
+        """Wraps Symbiotic Organisms Search. over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -188,7 +188,7 @@ class EO(Optimizer):
         return C_avg
 
     def update(self, agents, function, C, iteration, n_iterations):
-        """Method that wraps Equilibrium Optimizer over all agents and variables.
+        """Wraps Equilibrium Optimizer over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -105,7 +105,7 @@ class SBO(Optimizer):
         self._z = z
 
     def update(self, agents, best_agent, function, sigma):
-        """Method that wraps updates over all agents and variables (eq. 1-7).
+        """Wraps updates over all agents and variables (eq. 1-7).
 
         Args:
             agents (list): List of agents.

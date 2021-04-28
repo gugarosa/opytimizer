@@ -182,7 +182,7 @@ class WDO(Optimizer):
         return new_position
 
     def update(self, agents, best_agent, function, velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

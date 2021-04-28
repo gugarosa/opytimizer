@@ -106,7 +106,7 @@ class MVO(Optimizer):
         self._p = p
 
     def update(self, agents, best_agent, function, WEP, TDR):
-        """Method that wraps updates over all agents and variables (eq. 3.1-3.4).
+        """Wraps updates over all agents and variables (eq. 3.1-3.4).
 
         Args:
             agents (list): List of agents.

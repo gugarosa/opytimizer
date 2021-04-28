@@ -597,7 +597,7 @@ class KH(Optimizer):
         return a
 
     def update(self, agents, function, iteration, n_iterations, motion, foraging):
-        """Method that wraps motion and genetic updates over all agents and variables.
+        """Wraps motion and genetic updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

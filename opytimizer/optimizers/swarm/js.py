@@ -201,7 +201,7 @@ class JS(Optimizer):
         return motion
 
     def update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps the Jellyfish Search over all agents and variables.
+        """Wraps the Jellyfish Search over all agents and variables.
 
         Args:
             agents (list): List of agents.

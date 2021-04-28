@@ -66,7 +66,7 @@ class MFO(Optimizer):
         self._b = b
 
     def update(self, agents, iteration, n_iterations):
-        """Method that wraps global and local pollination updates over all agents and variables.
+        """Wraps global and local pollination updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

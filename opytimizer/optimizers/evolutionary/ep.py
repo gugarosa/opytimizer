@@ -143,7 +143,7 @@ class EP(Optimizer):
         return new_strategy
 
     def update(self, agents, n_agents, function, strategy):
-        """Method that wraps evolution over all agents and variables.
+        """Wraps evolution over all agents and variables.
 
         Args:
             agents (list): List of agents.

@@ -326,7 +326,7 @@ class QSA(Optimizer):
                     agent.fit = copy.deepcopy(a.fit)
 
     def update(self, agents, function, iteration, n_iterations):
-        """Method that wraps the Queue Search Algorithm over all agents and variables.
+        """Wraps the Queue Search Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

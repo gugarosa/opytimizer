@@ -125,7 +125,7 @@ class WCA(Optimizer):
 
         # Iterate through every raindrop
         for k in range(self.nsr, len(agents)):
-            # Calculate the euclidean distance between sea and raindrop / strream
+            # Calculates the euclidean distance between sea and raindrop / strream
             distance = (np.linalg.norm(best_agent.position - agents[k].position))
 
             # If distance if smaller than evaporation condition

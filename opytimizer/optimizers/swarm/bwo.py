@@ -39,7 +39,7 @@ class BWO(Optimizer):
         logger.info('Overriding class: Optimizer -> BWO.')
 
         # Overrides its parent class with the receiving params
-        super(BWO, self).__init__(algorithm=algorithm)
+        super(BWO, self).__init__()
 
         # Procreating rate
         self.pp = 0.6
@@ -153,7 +153,7 @@ class BWO(Optimizer):
         return alpha
 
     def update(self, agents, n_variables, function):
-        """Method that wraps procreation, cannibalism and mutation over all agents and variables.
+        """Wraps procreation, cannibalism and mutation over all agents and variables.
 
         Args:
             agents (list): List of agents.

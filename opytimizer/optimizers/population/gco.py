@@ -188,7 +188,7 @@ class GCO(Optimizer):
             life[i] += 10 * life_fit
 
     def update(self, agents, function, life, counter):
-        """Method that wraps dark- and light-zone updates over all agents and variables.
+        """Wraps dark- and light-zone updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

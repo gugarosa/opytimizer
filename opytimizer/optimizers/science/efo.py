@@ -151,7 +151,7 @@ class EFO(Optimizer):
         return positive_index, negative_index, neutral_index
 
     def update(self, agents, function, phi, RI):
-        """Method that wraps updates over all agents and variables (eq. 1-4).
+        """Wraps updates over all agents and variables (eq. 1-4).
 
         Args:
             agents (list): List of agents.

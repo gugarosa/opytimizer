@@ -392,7 +392,7 @@ class RPSO(PSO):
         return new_velocity
 
     def update(self, agents, best_agent, local_position, velocity, mass):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -528,7 +528,7 @@ class SAVPSO(PSO):
         return new_velocity
 
     def update(self, agents, best_agent, local_position, velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -658,7 +658,7 @@ class VPSO(PSO):
         return new_position
 
     def update(self, agents, best_agent, local_position, velocity, v_velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.

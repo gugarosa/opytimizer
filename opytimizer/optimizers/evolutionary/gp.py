@@ -407,7 +407,7 @@ class GP(Optimizer):
         return father, mother
 
     def update(self, space):
-        """Method that wraps reproduction, crossover and mutation operators over all trees.
+        """Wraps reproduction, crossover and mutation operators over all trees.
 
         Args:
             space (TreeSpace): A TreeSpace object.

@@ -106,7 +106,7 @@ class SSO(Optimizer):
         self._C_g = C_g
 
     def update(self, agents, best_agent, local_position):
-        """Method that wraps velocity and position updates over all agents and variables.
+        """Wraps velocity and position updates over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -155,7 +155,7 @@ class SSO(Optimizer):
 
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculate the fitness value of current agent
+            # Calculates the fitness value of current agent
             fit = function(agent.position)
 
             # If fitness is better than agent's best fit

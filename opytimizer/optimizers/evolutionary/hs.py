@@ -152,7 +152,7 @@ class HS(Optimizer):
         return a
 
     def update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -848,7 +848,7 @@ class NGHS(HS):
         return a
 
     def update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.
@@ -946,7 +946,7 @@ class GOGHS(NGHS):
         return a
 
     def update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.

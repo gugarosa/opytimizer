@@ -110,7 +110,7 @@ class BH(Optimizer):
                     agent.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
 
     def update(self, agents, best_agent, function):
-        """Method that wraps the update pipeline over all agents and variables.
+        """Wraps the update pipeline over all agents and variables.
 
         Args:
             agents (list): List of agents.

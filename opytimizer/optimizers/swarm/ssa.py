@@ -43,7 +43,7 @@ class SSA(Optimizer):
         logger.info('Class overrided.')
 
     def update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps the Salp Swarm Algorithm over all agents and variables.
+        """Wraps the Salp Swarm Algorithm over all agents and variables.
 
         Args:
             agents (list): List of agents.

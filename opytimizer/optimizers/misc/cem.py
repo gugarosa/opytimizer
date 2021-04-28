@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -80,6 +78,36 @@ class CEM(Optimizer):
             raise e.ValueError('`alpha` should be >= 0')
 
         self._alpha = alpha
+
+    @property
+    def mean(self):
+        """np.array: Array of means.
+
+        """
+
+        return self._mean
+
+    @mean.setter
+    def mean(self, mean):
+        if not isinstance(mean, np.ndarray):
+            raise e.TypeError('`mean` should be a numpy array')
+
+        self._mean = mean
+
+    @property
+    def std(self):
+        """np.array: Array of standard deviations.
+
+        """
+
+        return self._std
+
+    @std.setter
+    def std(self, std):
+        if not isinstance(std, np.ndarray):
+            raise e.TypeError('`std` should be a numpy array')
+
+        self._std = std
 
     def create_additional_vars(self, space):
         """Creates additional variables that are used by this optimizer.

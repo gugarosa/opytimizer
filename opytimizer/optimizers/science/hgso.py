@@ -215,7 +215,7 @@ class HGSO(Optimizer):
         return new_position
 
     def update(self, agents, best_agent, function, coefficient, pressure, constant, iteration, n_iterations):
-        """Method that wraps Henry Gas Solubility Optimization over all agents and variables.
+        """Wraps Henry Gas Solubility Optimization over all agents and variables.
 
         Args:
             agents (list): List of agents.
