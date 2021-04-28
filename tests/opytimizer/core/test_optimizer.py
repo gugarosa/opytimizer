@@ -42,25 +42,6 @@ def test_optimizer_params_setter():
     assert new_optimizer.params['w'] == 1.5
 
 
-def test_optimizer_args():
-    new_optimizer = optimizer.Optimizer()
-
-    assert new_optimizer.args == {}
-
-
-def test_optimizer_args_setter():
-    new_optimizer = optimizer.Optimizer()
-
-    try:
-        new_optimizer.args = 1
-    except:
-        new_optimizer.args = {
-            'evaluate': ['arg1', 'arg2']
-        }
-
-    assert new_optimizer.args['evaluate'] == ['arg1', 'arg2']
-
-
 def test_optimizer_built():
     new_optimizer = optimizer.Optimizer()
 
@@ -81,7 +62,7 @@ def test_optimizer_built_setter():
 def test_optimizer_build():
     new_optimizer = optimizer.Optimizer()
 
-    new_optimizer.build({'w': 1.5}, {})
+    new_optimizer.build({'w': 1.5})
 
 
 def test_optimizer_create_additional_vars():

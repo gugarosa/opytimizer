@@ -3,7 +3,6 @@
 
 import numpy as np
 
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 
 
@@ -94,7 +93,7 @@ class History:
             else:
                 getattr(self, key).append(output)
 
-    def get_key_convergence(self, key, index=0):
+    def get_convergence(self, key, index=0):
         """Gets the convergence list of a specified key.
 
         Args:
@@ -109,29 +108,30 @@ class History:
         # Gathers the numpy array from the attribute
         attr = np.asarray(getattr(self, key), dtype=list)
 
-        #
+        # Checks if the key is `agents`
         if key in ['agents']:
-            #
+            # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), index, 0)])
             attr_fit = np.hstack(attr[(slice(None), index, 1)])
 
             return attr_pos, attr_fit
 
-        #
-        elif key in ['best_agent']:
-            #
+        # Checks if the key is `best_agent`
+        if key in ['best_agent']:
+            # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), 0)])
             attr_fit = np.hstack(attr[(slice(None), 1)])
 
             return attr_pos, attr_fit
 
-        elif key in ['local_position']:
-            #
+        # Checks if the key is `local_position`
+        if key in ['local_position']:
+            # Gathers positions
             attr_pos = np.hstack(attr[(slice(None), index)])
 
             return attr_pos
 
-        #
+        # Gathers the attribute
         attr = np.hstack(attr[(slice(None))])
 
         return attr

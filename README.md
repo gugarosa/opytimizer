@@ -187,7 +187,7 @@ optimizer = PSO()
 function = Function(sphere)
 
 opt = Opytimizer(space, optimizer, function)
-opt.start(n_iterations=10000)
+opt.start(n_iterations=1000)
 ```
 
 ---
