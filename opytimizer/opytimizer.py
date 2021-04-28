@@ -3,6 +3,7 @@
 
 import pickle
 import time
+from inspect import signature
 
 from tqdm import tqdm
 
@@ -138,7 +139,10 @@ class Opytimizer:
 
         """
 
-        return [a.rgetattr(self, v) for v in self.optimizer.args['evaluate']]
+        # Inspect the `evaluate` and retrieve its parameters
+        args = signature(self.optimizer.evaluate).parameters
+
+        return [a.rgetattr(self, v) for v in args]
 
     @property
     def update_args(self):
@@ -146,15 +150,10 @@ class Opytimizer:
 
         """
 
-        return [a.rgetattr(self, v) for v in self.optimizer.args['update']]
+        # Inspect the `update` and retrieve its parameters
+        args = signature(self.optimizer.update).parameters
 
-    @property
-    def history_kwargs(self):
-        """Converts the optimizer `history` keyword arguments into real variables.
-
-        """
-
-        return {k: a.rgetattr(self, v) for k, v in self.optimizer.args['history'].items()}
+        return [a.rgetattr(self, v) for v in args]
 
     def evaluate(self, callbacks):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
@@ -239,7 +238,8 @@ class Opytimizer:
                 b.update()
 
                 # Dumps keyword arguments to model's history
-                self.history.dump(**self.history_kwargs)
+                self.history.dump(agents=self.space.agents,
+                                  best_agent=self.space.best_agent)
 
                 # Invokes the `on_iteration_end` callback
                 callbacks.on_iteration_end(self.total_iterations, self)

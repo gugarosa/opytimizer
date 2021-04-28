@@ -1,4 +1,5 @@
 import numpy as np
+
 from opytimizer.math import random
 
 np.random.seed(0)

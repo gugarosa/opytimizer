@@ -39,17 +39,6 @@ class FA(Optimizer):
         # Override its parent class with the receiving params
         super(FA, self).__init__()
 
-        # Arguments that should be used in this optimizer
-        # Note they must be properties from Opytimizer class
-        args = {
-            'evaluate': ['space', 'function'],
-            'update': ['space.agents', 'n_iterations'],
-            'history': {
-                'agents': 'space.agents',
-                'best_agent': 'space.best_agent'
-            }
-        }
-
         # Randomization parameter
         self.alpha = 0.5
 
@@ -60,7 +49,7 @@ class FA(Optimizer):
         self.gamma = 1.0
 
         # Builds the class
-        self.build(params, args)
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -115,11 +104,11 @@ class FA(Optimizer):
 
         self._gamma = gamma
 
-    def update(self, agents, n_iterations):
+    def update(self, space, n_iterations):
         """Method that wraps Firefly Algorithm over all agents and variables (eq. 3-9).
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             n_iterations (int): Maximum number of iterations.
 
         """
@@ -131,10 +120,10 @@ class FA(Optimizer):
         self.alpha *= (1 - delta)
 
         # We copy a temporary list for iterating purposes
-        temp_agents = copy.deepcopy(agents)
+        temp_agents = copy.deepcopy(space.agents)
 
         # Iterating through 'i' agents
-        for agent in agents:
+        for agent in space.agents:
             # Iterating through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j' (eq. 8)

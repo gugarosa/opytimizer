@@ -26,8 +26,8 @@ function = Function(Sphere())
 opt = Opytimizer(space, optimizer, function, save_agents=True)
 
 # Runs the optimization task
-opt.start(n_iterations=10)
+opt.start(n_iterations=1000)
 
 # print(opt.history.best_agent)
 
-print(opt.history.get_key_convergence('local_position', index=19))
+# print(opt.history.get_key_convergence('local_position', index=19))

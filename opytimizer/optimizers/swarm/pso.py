@@ -41,18 +41,6 @@ class PSO(Optimizer):
         # Overrides its parent class with the receiving params
         super(PSO, self).__init__()
 
-        # Arguments that should be used in this optimizer
-        args = {
-            'evaluate': ['space', 'function'],
-            'update': ['space.agents', 'space.best_agent'],
-            'history': {
-                'agents': 'space.agents',
-                'best_agent': 'space.best_agent',
-                'local_position': 'optimizer.local_position',
-                'w': 'optimizer.w'
-            }
-        }
-
         # Inertia weight
         self.w = 0.7
 
@@ -63,7 +51,7 @@ class PSO(Optimizer):
         self.c2 = 1.7
 
         # Now, we need to build this class up
-        self.build(params, args)
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -158,17 +146,16 @@ class PSO(Optimizer):
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def update(self, agents, best_agent):
+    def update(self, space):
         """Wraps Particle Swarm Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
 
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Generates random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
@@ -176,7 +163,7 @@ class PSO(Optimizer):
             # Updates agent's velocity (p. 294)
             self.velocity[i] = self.w * self.velocity[i] + \
                                self.c1 * r1 * (self.local_position[i] - agent.position) + \
-                               self.c2 * r2 * (best_agent.position - agent.position)
+                               self.c2 * r2 * (space.best_agent.position - agent.position)
 
             # Updates agent's position (p. 294)
             agent.position += self.velocity[i]

@@ -26,9 +26,6 @@ class Optimizer:
         # Key-value parameters
         self.params = {}
 
-        # Key-value arguments
-        self.args = {}
-
         # Indicates whether the optimizer is built or not
         self.built = False
 
@@ -77,28 +74,11 @@ class Optimizer:
 
         self._params = params
 
-    @property
-    def args(self):
-        """dict: Key-value arguments.
-
-        """
-
-        return self._args
-
-    @args.setter
-    def args(self, args):
-        if not isinstance(args, dict):
-            raise e.TypeError('`args` should be a dictionary')
-
-        self._args = args
-
-    def build(self, params, args):
+    def build(self, params):
         """Builds the object by creating its parameters.
 
         Args:
             params (dict): Key-value parameters to the meta-heuristic.
-            args (dict): Key-value arguments to the meta-heuristic.
-            add_vars (dict): Key-value additional variables to the meta-heurisitc.
 
         """
 
@@ -111,9 +91,6 @@ class Optimizer:
             for k, v in params.items():
                 # Sets its key-value pair
                 setattr(self, k, v)
-
-        # Registers the arguments
-        self.args = args
 
         # Sets the `built` variable to true
         self.built = True
@@ -135,7 +112,11 @@ class Optimizer:
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
-        If you need a specific evaluate method, please re-implement it on child's class.
+        If you need a specific evaluate method, please re-implement
+        it on child's class.
+
+        Also, note that function only accept arguments that are
+        found on Opytimizer class.
 
         Args:
             space (Space): A Space object that will be evaluated.
@@ -157,8 +138,11 @@ class Optimizer:
     def update(self):
         """Updates the agents' position array.
 
-        As each child has a different procedure of update,
-        you will need to implement it directly on its class.
+        As each child has a different procedure of update, you will need
+        to implement it directly on its class.
+
+        Also, note that function only accept arguments that are
+        found on Opytimizer class.
 
         """
 
