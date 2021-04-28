@@ -47,6 +47,9 @@ class Opytimizer:
         # Optimization history
         self.history = History(save_agents)
 
+        # Current iteration
+        self.iteration = 0
+
         # Total number of iterations
         self.total_iterations = 0
 
@@ -116,6 +119,23 @@ class Opytimizer:
         self._history = history
 
     @property
+    def iteration(self):
+        """int: Current iteration.
+
+        """
+
+        return self._iteration
+
+    @iteration.setter
+    def iteration(self, iteration):
+        if not isinstance(iteration, int):
+            raise e.TypeError('`iteration` should be an integer')
+        if iteration < 0:
+            raise e.ValueError('`iteration` should be >= 0')
+
+        self._iteration = iteration
+
+    @property
     def total_iterations(self):
         """int: Total number of iterations.
 
@@ -138,7 +158,7 @@ class Opytimizer:
 
         """
 
-        # Inspect the `evaluate` and retrieve its parameters
+        # Inspects the `evaluate` and retrieves its parameters
         args = signature(self.optimizer.evaluate).parameters
 
         return [getattr(self, v) for v in args]
@@ -149,7 +169,7 @@ class Opytimizer:
 
         """
 
-        # Inspect the `update` and retrieve its parameters
+        # Inspects the `update` and retrieves its parameters
         args = signature(self.optimizer.update).parameters
 
         return [getattr(self, v) for v in args]
