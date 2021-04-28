@@ -116,7 +116,7 @@ class DE(Optimizer):
 
         return a
 
-    def _update(self, agents, function):
+    def update(self, agents, function):
         """Method that wraps selection and mutation updates over all
         agents and variables (eq. 1-4).
 
@@ -172,7 +172,7 @@ class DE(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits

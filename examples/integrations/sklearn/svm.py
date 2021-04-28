@@ -11,12 +11,12 @@ from opytimizer.spaces.search import SearchSpace
 # Loading digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
 def _svm(opytimizer):
-    # Gathering params
+    # Gathers params
     C = opytimizer[0][0]
 
     # Instanciating an SVC class

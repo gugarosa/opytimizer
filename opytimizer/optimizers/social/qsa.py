@@ -325,7 +325,7 @@ class QSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _update(self, agents, function, iteration, n_iterations):
+    def update(self, agents, function, iteration, n_iterations):
         """Method that wraps the Queue Search Algorithm over all agents and variables.
 
         Args:
@@ -374,7 +374,7 @@ class QSA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meets the bounds limits

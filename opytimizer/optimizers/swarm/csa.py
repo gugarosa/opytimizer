@@ -85,7 +85,7 @@ class CSA(Optimizer):
         self._AP = AP
 
     
-    def _evaluate(self, space, function, memory):
+    def evaluate(self, space, function, memory):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -114,7 +114,7 @@ class CSA(Optimizer):
                 space.best_agent.position = copy.deepcopy(memory[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def _update(self, agents, memory):
+    def update(self, agents, memory):
         """Method that wraps the Crow Search Algorithm over all agents and variables.
 
         Args:
@@ -173,7 +173,7 @@ class CSA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, memory)
 
                 # Checking if agents meet the bounds limits

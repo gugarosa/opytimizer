@@ -151,7 +151,7 @@ class HS(Optimizer):
 
         return a
 
-    def _update(self, agents, function):
+    def update(self, agents, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
@@ -204,7 +204,7 @@ class HS(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
@@ -364,16 +364,16 @@ class IHS(HS):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating pitch adjusting rate
+                # Updates pitch adjusting rate
                 self.PAR = self.PAR_min + \
                     (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
 
-                # Updating bandwidth parameter
+                # Updates bandwidth parameter
                 self.bw = self.bw_max * \
                     np.exp((np.log(self.bw_min / self.bw_max) /
                             space.n_iterations) * t)
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
@@ -702,10 +702,10 @@ class SGHS(HS):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating harmony memory considering rate
+                # Updates harmony memory considering rate
                 self.HMCR = r.generate_gaussian_random_number(self.HMCRm, 0.01)[0]
 
-                # Updating pitch adjusting rate
+                # Updates pitch adjusting rate
                 self.PAR = r.generate_gaussian_random_number(self.PARm, 0.05)[0]
 
                 # Storing both values
@@ -722,7 +722,7 @@ class SGHS(HS):
                     # Replaces by the minimum bandwidth
                     self.bw = self.bw_min
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function)
 
                 # Checking if agents meet the bounds limits
@@ -847,7 +847,7 @@ class NGHS(HS):
 
         return a
 
-    def _update(self, agents, function):
+    def update(self, agents, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
@@ -945,7 +945,7 @@ class GOGHS(NGHS):
 
         return a
 
-    def _update(self, agents, function):
+    def update(self, agents, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:

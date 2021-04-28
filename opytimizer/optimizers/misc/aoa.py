@@ -125,7 +125,7 @@ class AOA(Optimizer):
 
         self._mu = mu
 
-    def _update(self, agents, best_agent, iteration, n_iterations):
+    def update(self, agents, best_agent, iteration, n_iterations):
         """Method that wraps Arithmetic Optimization Algorithm over all agents and variables.
 
         Args:
@@ -208,7 +208,7 @@ class AOA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits

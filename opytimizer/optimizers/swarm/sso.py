@@ -105,7 +105,7 @@ class SSO(Optimizer):
 
         self._C_g = C_g
 
-    def _update(self, agents, best_agent, local_position):
+    def update(self, agents, best_agent, local_position):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -143,7 +143,7 @@ class SSO(Optimizer):
                     agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
 
     
-    def _evaluate(self, space, function, local_position):
+    def evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -201,7 +201,7 @@ class SSO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, local_position)
 
                 # Checking if agents meet the bounds limits

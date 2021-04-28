@@ -76,7 +76,7 @@ class GSA(Optimizer):
 
         """
 
-        # Gathering the best and worst agents
+        # Gathers the best and worst agents
         best, worst = agents[0].fit, agents[-1].fit
 
         # Calculating agents' masses using equation 15
@@ -150,7 +150,7 @@ class GSA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, velocity, iteration):
+    def update(self, agents, velocity, iteration):
         """Method that wraps Gravitational Search Algorithm over all agents and variables.
 
         Args:
@@ -209,7 +209,7 @@ class GSA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, velocity, t)
 
                 # Checking if agents meet the bounds limits

@@ -176,7 +176,7 @@ class BMRFO(Optimizer):
 
         return somersault_foraging
 
-    def _update(self, agents, best_agent, function, iteration, n_iterations):
+    def update(self, agents, best_agent, function, iteration, n_iterations):
         """Method that wraps chain, cyclone and somersault foraging updates over all agents and variables.
 
         Args:
@@ -246,7 +246,7 @@ class BMRFO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits

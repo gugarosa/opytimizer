@@ -105,7 +105,7 @@ class FA(Optimizer):
         self._gamma = gamma
 
     def update(self, space, n_iterations):
-        """Method that wraps Firefly Algorithm over all agents and variables (eq. 3-9).
+        """Wraps Firefly Algorithm over all agents and variables (eq. 3-9).
 
         Args:
             space (Space): Space containing agents and update-related information.

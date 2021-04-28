@@ -150,7 +150,7 @@ class EFO(Optimizer):
 
         return positive_index, negative_index, neutral_index
 
-    def _update(self, agents, function, phi, RI):
+    def update(self, agents, function, phi, RI):
         """Method that wraps updates over all agents and variables (eq. 1-4).
 
         Args:
@@ -253,7 +253,7 @@ class EFO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 RI = self._update(space.agents, function, phi, RI)
 
                 # Checking if agents meet the bounds limits

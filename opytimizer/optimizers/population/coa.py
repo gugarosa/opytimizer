@@ -116,7 +116,7 @@ class COA(Optimizer):
             agents[i], agents[j] = copy.deepcopy(
                 agents[j]), copy.deepcopy(agents[i])
 
-    def _update(self, agents, function, n_c):
+    def update(self, agents, function, n_c):
         """Method that wraps Coyote Optimization Algorithm over all agents and variables.
 
         Args:
@@ -208,7 +208,7 @@ class COA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, n_c)
 
                 # Checking if agents meet the bounds limits

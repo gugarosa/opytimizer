@@ -181,7 +181,7 @@ class WDO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, velocity):
+    def update(self, agents, best_agent, function, velocity):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -197,13 +197,13 @@ class WDO(Optimizer):
             # Generates a random index based on the number of agents
             index = r.generate_integer_random_number(0, len(agents))
 
-            # Updating velocity
+            # Updates velocity
             velocity[i] = self._update_velocity(agent.position, best_agent.position, velocity[i], velocity[index], i + 1)
 
             # Clips the velocity values between (-v_max, v_max)
             velocity = np.clip(velocity, -self.v_max, self.v_max)
 
-            # Updating agent's position
+            # Updates agent's position
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Checks agent limits
@@ -241,7 +241,7 @@ class WDO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, velocity)
 
                 # Checking if agents meet the bounds limits

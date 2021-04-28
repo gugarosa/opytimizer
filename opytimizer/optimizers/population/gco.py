@@ -187,7 +187,7 @@ class GCO(Optimizer):
             # Adds 10 * new life fitness to cell's life
             life[i] += 10 * life_fit
 
-    def _update(self, agents, function, life, counter):
+    def update(self, agents, function, life, counter):
         """Method that wraps dark- and light-zone updates over all agents and variables.
 
         Args:
@@ -236,7 +236,7 @@ class GCO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, life, counter)
 
                 # Checking if agents meet the bounds limits

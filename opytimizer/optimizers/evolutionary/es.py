@@ -120,7 +120,7 @@ class ES(Optimizer):
 
         return new_strategy
 
-    def _update(self, agents, n_agents, function, n_children, strategy):
+    def update(self, agents, n_agents, function, n_children, strategy):
         """Method that wraps evolution over all agents and variables.
 
         Args:
@@ -194,7 +194,7 @@ class ES(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 space.agents = self._update(space.agents, space.n_agents, function, n_children, strategy)
 
                 # Checking if agents meet the bounds limits

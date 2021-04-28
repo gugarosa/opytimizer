@@ -596,7 +596,7 @@ class KH(Optimizer):
 
         return a
 
-    def _update(self, agents, function, iteration, n_iterations, motion, foraging):
+    def update(self, agents, function, iteration, n_iterations, motion, foraging):
         """Method that wraps motion and genetic updates over all agents and variables.
 
         Args:
@@ -654,7 +654,7 @@ class KH(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, t, space.n_iterations, motion, foraging)
 
                 # Checking if agents meet the bounds limits

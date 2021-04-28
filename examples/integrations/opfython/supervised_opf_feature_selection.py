@@ -12,7 +12,7 @@ from opytimizer.spaces.boolean import BooleanSpace
 # Loading digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
@@ -25,7 +25,7 @@ X_train, X_val, Y_train, Y_val = s.split(
 
 
 def supervised_opf_feature_selection(opytimizer):
-    # Gathering features
+    # Gathers features
     features = opytimizer[:, 0].astype(bool)
 
     # Remaking training and validation subgraphs with selected features

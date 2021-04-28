@@ -178,7 +178,7 @@ class WCA(Optimizer):
             # Updates river position
             agents[k].position += r1 * 2 * (best_agent.position - agents[k].position)
 
-    def _update(self, agents, best_agent, flows):
+    def update(self, agents, best_agent, flows):
         """Updates the agents position.
 
         Args:
@@ -223,7 +223,7 @@ class WCA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, flows)
 
                 # Checking if agents meet the bounds limits

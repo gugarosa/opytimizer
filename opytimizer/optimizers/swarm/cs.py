@@ -205,7 +205,7 @@ class CS(Optimizer):
                 agent.position = copy.deepcopy(new_agent.position)
                 agent.fit = copy.deepcopy(new_agent.fit)
 
-    def _update(self, agents, best_agent, function):
+    def update(self, agents, best_agent, function):
         """Method that wraps Cuckoo Search algorithm over all agents and variables.
 
         Args:
@@ -253,7 +253,7 @@ class CS(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meet the bounds limits

@@ -247,7 +247,7 @@ class WWO(Optimizer):
             length[i] *= self.alpha ** -((agent.fit - agents[-1].fit + c.EPSILON) / (
                 agents[0].fit - agents[-1].fit + c.EPSILON))
 
-    def _update(self, agents, best_agent, function, height, length):
+    def update(self, agents, best_agent, function, height, length):
         """Method that wraps Water Wave Optimization over all agents and variables.
 
         Args:
@@ -338,7 +338,7 @@ class WWO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, height, length)
 
                 # Checking if agents meet the bounds limits

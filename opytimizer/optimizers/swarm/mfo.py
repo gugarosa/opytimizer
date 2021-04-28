@@ -65,7 +65,7 @@ class MFO(Optimizer):
 
         self._b = b
 
-    def _update(self, agents, iteration, n_iterations):
+    def update(self, agents, iteration, n_iterations):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
@@ -138,7 +138,7 @@ class MFO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits

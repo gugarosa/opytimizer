@@ -439,7 +439,7 @@ def _build_string(node):
     return lines, len(lines[0]), start, end
 
 
-def _evaluate(node):
+def evaluate(node):
     """Evaluates a node and outputs its solution array.
 
     Args:
@@ -521,7 +521,7 @@ def _properties(node):
     # Initializing number of leaves and nodes as 0
     n_leaves = n_nodes = 0
 
-    # Gathering a list of possible nodes
+    # Gathers a list of possible nodes
     nodes = [node]
 
     # While there is a nonde

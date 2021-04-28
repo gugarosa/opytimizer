@@ -125,7 +125,7 @@ class ABO(Optimizer):
         # Return current agent as well as a false variable
         return agent.position, agent.fit, False
 
-    def _update(self, agents, function, iteration, n_iterations):
+    def update(self, agents, function, iteration, n_iterations):
         """Method that wraps Artificial Butterfly Optimization over all agents and variables.
 
         Args:
@@ -210,7 +210,7 @@ class ABO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits

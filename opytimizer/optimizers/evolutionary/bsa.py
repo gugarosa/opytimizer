@@ -193,7 +193,7 @@ class BSA(Optimizer):
                     # Makes a deepcopy on such position
                     trial_agents[i].position[j] = copy.deepcopy(agents[i].position[j])
 
-    def _update(self, agents, function, old_agents):
+    def update(self, agents, function, old_agents):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
@@ -252,7 +252,7 @@ class BSA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, old_agents)
 
                 # Checking if agents meet the bounds limits

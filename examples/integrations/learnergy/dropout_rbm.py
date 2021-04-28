@@ -12,7 +12,7 @@ train = torchvision.datasets.MNIST(
 
 
 def dropout_rbm(opytimizer):
-    # Gathering params
+    # Gathers params
     dropout = opytimizer[0][0]
 
     # Creating an RBM

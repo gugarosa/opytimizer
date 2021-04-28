@@ -12,7 +12,7 @@ train = torchvision.datasets.MNIST(
 
 
 def rbm(opytimizer):
-    # Gathering params
+    # Gathers params
     lr = opytimizer[0][0]
     momentum = opytimizer[1][0]
     decay = opytimizer[2][0]

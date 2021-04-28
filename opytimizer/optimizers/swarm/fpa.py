@@ -148,7 +148,7 @@ class FPA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function):
+    def update(self, agents, best_agent, function):
         """Method that wraps global and local pollination updates over all agents and variables.
 
         Args:
@@ -220,7 +220,7 @@ class FPA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meet the bounds limits

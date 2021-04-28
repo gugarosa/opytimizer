@@ -152,7 +152,7 @@ class BWO(Optimizer):
 
         return alpha
 
-    def _update(self, agents, n_variables, function):
+    def update(self, agents, n_variables, function):
         """Method that wraps procreation, cannibalism and mutation over all agents and variables.
 
         Args:
@@ -261,7 +261,7 @@ class BWO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 space.agents = self._update(space.agents, space.n_variables, function)
 
                 # Checking if agents meet the bounds limits

@@ -105,7 +105,7 @@ class MVO(Optimizer):
 
         self._p = p
 
-    def _update(self, agents, best_agent, function, WEP, TDR):
+    def update(self, agents, best_agent, function, WEP, TDR):
         """Method that wraps updates over all agents and variables (eq. 3.1-3.4).
 
         Args:
@@ -200,7 +200,7 @@ class MVO(Optimizer):
                 # Calculates the Travelling Distance Rate
                 TDR = 1 - ((t + 1) ** (1 / self.p) / space.n_iterations ** (1 / self.p))
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, WEP, TDR)
 
                 # Checking if agents meet the bounds limits

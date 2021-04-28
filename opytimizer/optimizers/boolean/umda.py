@@ -149,7 +149,7 @@ class UMDA(Optimizer):
 
         return new_position
 
-    def _update(self, agents):
+    def update(self, agents):
         """Method that wraps selection, probability calculation and
         position sampling over all agents and variables.
 
@@ -203,7 +203,7 @@ class UMDA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents)
 
                 # Checking if agents meet the bounds limits

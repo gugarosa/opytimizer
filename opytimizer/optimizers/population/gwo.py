@@ -67,7 +67,7 @@ class GWO(Optimizer):
 
         return A, C
 
-    def _update(self, agents, function, iteration, n_iterations):
+    def update(self, agents, function, iteration, n_iterations):
         """Method that wraps the Grey Wolf Optimization over all agents and variables.
 
         Args:
@@ -143,7 +143,7 @@ class GWO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, t, space.n_iterations)
 
                 # Checking if agents meet the bounds limits

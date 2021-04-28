@@ -103,7 +103,7 @@ class BPSO(Optimizer):
         local_partial = np.logical_and(self.c1, np.logical_xor(r1, np.logical_xor(local_position, position)))
         global_partial = np.logical_and(self.c2, np.logical_xor(r2, np.logical_xor(best_position, position)))
 
-        # Updating new velocity
+        # Updates new velocity
         new_velocity = np.logical_or(local_partial, global_partial)
 
         return new_velocity
@@ -125,7 +125,7 @@ class BPSO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, local_position, velocity):
+    def update(self, agents, best_agent, local_position, velocity):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -145,7 +145,7 @@ class BPSO(Optimizer):
             agent.position = self._update_position(agent.position, velocity[i])
 
     
-    def _evaluate(self, space, function, local_position):
+    def evaluate(self, space, function, local_position):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -204,7 +204,7 @@ class BPSO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, local_position, velocity)
 
                 # Checking if agents meet the bounds limits

@@ -11,7 +11,7 @@ from opytimizer.spaces.search import SearchSpace
 # Loading digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
@@ -24,7 +24,7 @@ X_train, X_test, Y_train, Y_test = s.split(
 
 
 def unsupervised_opf_clustering(opytimizer):
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     max_k = int(opytimizer[0][0])
 

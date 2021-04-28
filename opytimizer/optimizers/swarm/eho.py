@@ -190,7 +190,7 @@ class EHO(Optimizer):
                 # For each decision variable, we generate uniform random numbers
                 worst.position[j] = r.generate_uniform_random_number(lb, ub, size=worst.n_dimensions)
 
-    def _update(self, agents, function, n_ci):
+    def update(self, agents, function, n_ci):
         """Method that wraps Elephant Herd Optimization over all agents and variables.
 
         Args:
@@ -255,7 +255,7 @@ class EHO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, n_ci)
 
                 # Checking if agents meet the bounds limits

@@ -406,7 +406,7 @@ class GP(Optimizer):
 
         return father, mother
 
-    def _update(self, space):
+    def update(self, space):
         """Method that wraps reproduction, crossover and mutation operators over all trees.
 
         Args:
@@ -424,7 +424,7 @@ class GP(Optimizer):
         self._mutation(space)
 
     
-    def _evaluate(self, space, function):
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -477,7 +477,7 @@ class GP(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating trees with designed operators
+                # Updates trees with designed operators
                 self._update(space)
 
                 # After the update, we need to re-evaluate the tree space

@@ -155,7 +155,7 @@ class SOS(Optimizer):
             agent_j.position = copy.deepcopy(p.position)
             agent_j.fit = copy.deepcopy(p.fit)
 
-    def _update(self, agents, best_agent, function):
+    def update(self, agents, best_agent, function):
         """Method that wraps Symbiotic Organisms Search. over all agents and variables.
 
         Args:
@@ -205,7 +205,7 @@ class SOS(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meets the bounds limits

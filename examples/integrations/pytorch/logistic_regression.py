@@ -13,7 +13,7 @@ from opytimizer.spaces.search import SearchSpace
 # Loading digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
@@ -42,7 +42,7 @@ def fit(model, loss, opt, x, y):
     # Performing backward pass
     output.backward()
 
-    # Updating parameters
+    # Updates parameters
     opt.step()
 
     return output.item()
@@ -77,7 +77,7 @@ def logistic_regression(opytimizer):
     batch_size = 100
     epochs = 100
 
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
     momentum = opytimizer[1][0]

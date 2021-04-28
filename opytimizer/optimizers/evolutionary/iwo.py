@@ -157,7 +157,7 @@ class IWO(Optimizer):
         # Calculating the iteration coefficient
         coef = ((n_iterations - iteration) ** self.e) / ((n_iterations + c.EPSILON) ** self.e)
 
-        # Updating the Spatial Dispersial
+        # Updates the Spatial Dispersial
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
 
     def _produce_offspring(self, agent, function):
@@ -188,7 +188,7 @@ class IWO(Optimizer):
 
         return a
 
-    def _update(self, agents, n_agents, function):
+    def update(self, agents, n_agents, function):
         """Method that wraps offsprings generations over all agents and variables.
 
         Args:
@@ -260,7 +260,7 @@ class IWO(Optimizer):
                 # Calculates the current Spatial Dispersal
                 self._spatial_dispersal(t, space.n_iterations)
 
-                # Updating agents
+                # Updates agents
                 space.agents = self._update(space.agents, space.n_agents, function)
 
                 # Checking if agents meet the bounds limits

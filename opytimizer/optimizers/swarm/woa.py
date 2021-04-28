@@ -83,7 +83,7 @@ class WOA(Optimizer):
 
         return a
 
-    def _update(self, agents, best_agent, coefficient):
+    def update(self, agents, best_agent, coefficient):
         """Method that wraps Whale Optimization Algorithm updates.
 
         Args:
@@ -168,7 +168,7 @@ class WOA(Optimizer):
                 # Linearly decreases the coefficient
                 a = 2 - 2 * t / (space.n_iterations - 1)
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, a)
 
                 # Checking if agents meet the bounds limits

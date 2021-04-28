@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -64,8 +62,19 @@ class DOA(Optimizer):
 
         self._r = r
 
-    def _chaotic_map(self, lb, ub):
-        """Calculates the chaotic maps (eq. 3).
+    def create_additional_vars(self, space):
+        """Creates additional variables that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Array of chaotic maps
+        self.chaotic_map = np.zeros((space.n_agents, space.n_variables))
+
+    def _calculate_chaotic_map(self, lb, ub):
+        """Calculates the chaotic map (eq. 3).
 
         Args:
             lb (float): Lower bound value.
@@ -84,81 +93,29 @@ class DOA(Optimizer):
 
         return c_map
 
-    def _update(self, agents, best_agent, chaotic_map):
-        """Method that wraps global and local pollination updates over all agents and variables.
+    def update(self, space):
+        """Wraps Darcy Optimization Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            chaotic_map (np.array): Array of current chaotic maps.
+            space (Space): Space containing agents and update-related information.
 
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
                 # Generates a chaotic map
-                c_map = self._chaotic_map(lb, ub)
+                c_map = self._calculate_chaotic_map(lb, ub)
 
                 # Updates the agent's position (eq. 6)
-                agent.position[j] += (2 * (best_agent.position[j] - agent.position[j]) / (
-                    c_map - chaotic_map[i][j])) * (ub - lb) / len(agents)
+                agent.position[j] += (2 * (space.best_agent.position[j] - agent.position[j]) / (
+                    c_map - self.chaotic_map[i][j])) * (ub - lb) / len(space.agents)
 
                 # Updates current chaotic map with newer value
-                chaotic_map[i][j] = c_map
+                self.chaotic_map[i][j] = c_map
 
                 # Checks if position has exceed the bounds
                 if (agent.position[j] < lb) or (agent.position[j] > ub):
                     # If yes, replace its value with the proposed equation (eq. 7)
-                    agent.position[j] = best_agent.position[j] * c_map
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instantiates an array to hold the chaotic maps
-        chaotic_map = np.zeros((space.n_agents, space.n_variables))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, chaotic_map)
-
-                # Checking if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                    agent.position[j] = space.best_agent.position[j] * c_map

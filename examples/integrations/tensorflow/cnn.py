@@ -16,7 +16,7 @@ X_train, X_val = X_train / 255.0, X_val / 255.0
 
 
 def cnn(opytimizer):
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
     beta_1 = opytimizer[1][0]
@@ -43,7 +43,7 @@ def cnn(opytimizer):
     # Fitting the model
     history = model.fit(X_train, Y_train, epochs=3, validation_data=(X_val, Y_val))
 
-    # Gathering validation accuracy
+    # Gathers validation accuracy
     val_acc = history.history['val_accuracy'][-1]
 
     # Cleaning up memory

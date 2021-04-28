@@ -10,7 +10,7 @@ logger = l.get_logger(__name__)
 
 
 class HC(Optimizer):
-    """A HC class, inherited from Optimizer.
+    """An HC class, inherited from Optimizer.
 
     This is the designed class to define HC-related
     variables and methods.
@@ -76,8 +76,8 @@ class HC(Optimizer):
 
         self._r_var = r_var
 
-    def _update(self, space):
-        """Method that wraps Hill Climbing over all agents and variables (p. 252).
+    def update(self, space):
+        """Wraps Hill Climbing over all agents and variables (p. 252).
 
         Args:
             space (Space): Space containing agents and update-related information.
@@ -90,5 +90,5 @@ class HC(Optimizer):
             noise = r.generate_gaussian_random_number(
                 self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions))
 
-            # Updating agent's position
+            # Updates agent's position
             agent.position += noise

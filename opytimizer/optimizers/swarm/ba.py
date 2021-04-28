@@ -184,7 +184,7 @@ class BA(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
+    def update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
         """Method that wraps Bat Algorithm over all agents and variables.
 
         Args:
@@ -204,13 +204,13 @@ class BA(Optimizer):
 
         # Iterates through all agents
         for i, agent in enumerate(agents):
-            # Updating frequency
+            # Updates frequency
             frequency[i] = self._update_frequency(self.f_min, self.f_max)
 
-            # Updating velocity
+            # Updates velocity
             velocity[i] = self._update_velocity(agent.position, best_agent.position, frequency[i], velocity[i])
 
-            # Updating agent's position
+            # Updates agent's position
             agent.position = self._update_position(agent.position, velocity[i])
 
             # Generating a random probability
@@ -274,7 +274,7 @@ class BA(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, t, frequency, velocity, loudness, pulse_rate)
 
                 # Checking if agents meet the bounds limits

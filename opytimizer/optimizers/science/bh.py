@@ -109,7 +109,7 @@ class BH(Optimizer):
                     # For each decision variable, we generate uniform random numbers
                     agent.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
 
-    def _update(self, agents, best_agent, function):
+    def update(self, agents, best_agent, function):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
@@ -151,7 +151,7 @@ class BH(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function)
 
                 # Checking if agents meet the bounds limits

@@ -11,18 +11,18 @@ from opytimizer.spaces.search import SearchSpace
 # Loading digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
 def k_means_clustering(opytimizer):
-    # Gathering params
+    # Gathers params
     n_clusters = int(opytimizer[0][0])
 
     # Instanciating an KMeans class
     kmeans = KMeans(n_clusters=n_clusters, random_state=1).fit(X)
 
-    # Gathering predicitions
+    # Gathers predicitions
     preds = kmeans.labels_
 
     # Calculating adjusted rand index

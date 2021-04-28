@@ -104,7 +104,7 @@ class SBO(Optimizer):
 
         self._z = z
 
-    def _update(self, agents, best_agent, function, sigma):
+    def update(self, agents, best_agent, function, sigma):
         """Method that wraps updates over all agents and variables (eq. 1-7).
 
         Args:
@@ -180,7 +180,7 @@ class SBO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function, sigma)
 
                 # Checking if agents meet the bounds limits

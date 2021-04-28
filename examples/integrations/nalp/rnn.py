@@ -26,7 +26,7 @@ dataset = LanguageModelingDataset(encoded_tokens, max_length=10, batch_size=64)
 
 
 def rnn(opytimizer):
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
 
@@ -44,7 +44,7 @@ def rnn(opytimizer):
     # Fitting the RNN
     history = rnn.fit(dataset.batches, epochs=100)
 
-    # Gathering last iteration's accuracy
+    # Gathers last iteration's accuracy
     acc = history.history['accuracy'][-1]
 
     return 1 - acc

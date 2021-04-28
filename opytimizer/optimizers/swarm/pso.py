@@ -305,7 +305,7 @@ class AIWPSO(PSO):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent,
                              local_position, velocity)
 
@@ -391,7 +391,7 @@ class RPSO(PSO):
 
         return new_velocity
 
-    def _update(self, agents, best_agent, local_position, velocity, mass):
+    def update(self, agents, best_agent, local_position, velocity, mass):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -449,7 +449,7 @@ class RPSO(PSO):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent,
                              local_position, velocity, mass)
 
@@ -527,7 +527,7 @@ class SAVPSO(PSO):
 
         return new_velocity
 
-    def _update(self, agents, best_agent, local_position, velocity):
+    def update(self, agents, best_agent, local_position, velocity):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -657,7 +657,7 @@ class VPSO(PSO):
 
         return new_position
 
-    def _update(self, agents, best_agent, local_position, velocity, v_velocity):
+    def update(self, agents, best_agent, local_position, velocity, v_velocity):
         """Method that wraps velocity and position updates over all agents and variables.
 
         Args:
@@ -713,7 +713,7 @@ class VPSO(PSO):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent,
                              local_position, velocity, v_velocity)
 

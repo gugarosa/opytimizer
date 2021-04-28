@@ -124,7 +124,7 @@ class ABC(Optimizer):
 
         # Iterate through all food sources
         for i, agent in enumerate(agents):
-            # Gathering a random source to be used
+            # Gathers a random source to be used
             source = r.generate_integer_random_number(0, len(agents))
 
             # Measuring food source location
@@ -202,7 +202,7 @@ class ABC(Optimizer):
                 # We copy the temporary agent to the current one
                 agents[max_index] = copy.deepcopy(a)
 
-    def _update(self, agents, function, trials):
+    def update(self, agents, function, trials):
         """Method that wraps the update pipeline over all agents and variables.
 
         Args:
@@ -250,7 +250,7 @@ class ABC(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, function, trials)
 
                 # Checking if agents meet the bounds limits

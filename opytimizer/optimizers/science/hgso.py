@@ -214,7 +214,7 @@ class HGSO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, coefficient, pressure, constant, iteration, n_iterations):
+    def update(self, agents, best_agent, function, coefficient, pressure, constant, iteration, n_iterations):
         """Method that wraps Henry Gas Solubility Optimization over all agents and variables.
 
         Args:
@@ -309,7 +309,7 @@ class HGSO(Optimizer):
             for t in range(space.n_iterations):
                 logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
 
-                # Updating agents
+                # Updates agents
                 self._update(space.agents, space.best_agent, function,
                              coefficient, pressure, constant, t, space.n_iterations)
 
