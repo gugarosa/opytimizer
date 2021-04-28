@@ -9,7 +9,7 @@ class CustomCallback(Callback):
 
     def __init__(self):
         """Initialization method for the customized callback.
-        
+
         """
 
         # You only need to override its parent class

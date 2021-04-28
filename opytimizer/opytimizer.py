@@ -7,7 +7,6 @@ from inspect import signature
 
 from tqdm import tqdm
 
-import opytimizer.utils.attribute as a
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.utils.callback import CallbackVessel
@@ -142,7 +141,7 @@ class Opytimizer:
         # Inspect the `evaluate` and retrieve its parameters
         args = signature(self.optimizer.evaluate).parameters
 
-        return [a.rgetattr(self, v) for v in args]
+        return [getattr(self, v) for v in args]
 
     @property
     def update_args(self):
@@ -153,7 +152,7 @@ class Opytimizer:
         # Inspect the `update` and retrieve its parameters
         args = signature(self.optimizer.update).parameters
 
-        return [a.rgetattr(self, v) for v in args]
+        return [getattr(self, v) for v in args]
 
     def evaluate(self, callbacks):
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
