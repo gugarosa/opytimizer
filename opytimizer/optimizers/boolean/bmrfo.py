@@ -26,11 +26,10 @@ class BMRFO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BMRFO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -189,7 +188,7 @@ class BMRFO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
@@ -216,7 +215,7 @@ class BMRFO(Optimizer):
                 best_agent.position = copy.deepcopy(agent.position)
                 best_agent.fit = copy.deepcopy(agent.fit)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Performs the somersault foraging
             agent.position = self._somersault_foraging(agent.position, best_agent.position)

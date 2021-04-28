@@ -29,11 +29,10 @@ class GCO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GCO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -126,7 +125,7 @@ class GCO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Generates the first random number, between 0 and 100
             r1 = r.generate_uniform_random_number(0, 100)
@@ -177,7 +176,7 @@ class GCO(Optimizer):
         # Calculates the minimum and maximum fitness
         min_fit, max_fit = np.min(fits), np.max(fits)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Resets the cell life to 10
             life[i] = 10

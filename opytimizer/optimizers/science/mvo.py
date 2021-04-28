@@ -27,11 +27,10 @@ class MVO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='MVO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -127,7 +126,7 @@ class MVO(Optimizer):
         # Normalizes every individual's fitness
         norm_fitness = fitness / norm
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # For every decision variable
             for j in range(agent.n_variables):

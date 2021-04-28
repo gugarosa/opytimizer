@@ -28,11 +28,10 @@ class BPSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BPSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -137,7 +136,7 @@ class BPSO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
             velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i])
@@ -156,7 +155,7 @@ class BPSO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
             fit = function(agent.position)

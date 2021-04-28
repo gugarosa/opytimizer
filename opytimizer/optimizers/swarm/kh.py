@@ -29,11 +29,10 @@ class KH(Optimizer):
 
     """
 
-    def __init__(self, algorithm='KH', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -616,7 +615,7 @@ class KH(Optimizer):
         # Calculates the food location (eq. 12)
         food = self._food_location(agents, function)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, _ in enumerate(agents):
             # Updates current agent's position
             agents[i].position = self._update_position(agents, i, iteration, n_iterations, food, motion[i], foraging[i])

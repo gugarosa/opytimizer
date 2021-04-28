@@ -28,11 +28,10 @@ class DE(Optimizer):
 
     """
 
-    def __init__(self, algorithm='DE', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -127,7 +126,7 @@ class DE(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Randomly picks three distinct other agents, not including current one
             C = d.generate_choice_distribution(np.setdiff1d(range(0, len(agents)), i), size=3)

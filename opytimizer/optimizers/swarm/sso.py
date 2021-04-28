@@ -27,11 +27,10 @@ class SSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -154,7 +153,7 @@ class SSO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Calculate the fitness value of current agent
             fit = function(agent.position)

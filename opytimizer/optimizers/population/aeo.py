@@ -27,11 +27,10 @@ class AEO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='AEO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -156,7 +155,7 @@ class AEO(Optimizer):
         # Sorting agents according to their energy
         agents.sort(key=lambda x: x.fit, reverse=True)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # If it is the first agent
             if i == 0:
@@ -219,7 +218,7 @@ class AEO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Makes a deep copy of current agent
             a = copy.deepcopy(agent)

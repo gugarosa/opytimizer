@@ -25,11 +25,10 @@ class BH(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BH', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -60,7 +59,7 @@ class BH(Optimizer):
         # Event's horizon cost
         cost = 0
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Generate an uniform random number
             r1 = r.generate_uniform_random_number()

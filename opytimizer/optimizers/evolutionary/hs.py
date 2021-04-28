@@ -28,11 +28,10 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -240,11 +239,10 @@ class IHS(HS):
 
     """
 
-    def __init__(self, algorithm='IHS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -409,11 +407,10 @@ class GHS(IHS):
 
     """
 
-    def __init__(self, algorithm='GHS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -484,11 +481,10 @@ class SGHS(HS):
 
     """
 
-    def __init__(self, algorithm='SGHS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -777,11 +773,10 @@ class NGHS(HS):
 
     """
 
-    def __init__(self, algorithm='NGHS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -891,11 +886,10 @@ class GOGHS(NGHS):
 
     """
 
-    def __init__(self, algorithm='GOGHS', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """

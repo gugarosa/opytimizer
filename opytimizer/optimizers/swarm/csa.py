@@ -28,11 +28,10 @@ class CSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CSA', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """

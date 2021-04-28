@@ -25,11 +25,10 @@ class SCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SCA', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -157,7 +156,7 @@ class SCA(Optimizer):
         # A random number to decide whether sine or cosine should be used
         r4 = r.generate_uniform_random_number()
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Updates agent's position
             agent.position = self._update_position(agent.position, best_agent.position, r1, r2, r3, r4)

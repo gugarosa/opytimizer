@@ -27,11 +27,10 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -203,7 +202,7 @@ class BA(Optimizer):
         # Declaring alpha constant
         alpha = 0.9
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updating frequency
             frequency[i] = self._update_frequency(self.f_min, self.f_max)

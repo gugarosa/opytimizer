@@ -27,11 +27,10 @@ class EP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='EP', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -160,7 +159,7 @@ class EP(Optimizer):
         # Creating a list for the produced children
         children = []
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Mutates a parent and generates a new child
             a = self._mutate_parent(agent, function, strategy[i])
@@ -180,7 +179,7 @@ class EP(Optimizer):
         # Creates an empty array of wins
         wins = np.zeros(len(agents))
 
-        # Iterate through all agents in the new population
+        # Iterates through all agents in the new population
         for i, agent in enumerate(agents):
             # Iterate through all tournament individuals
             for _ in range(n_individuals):
@@ -215,7 +214,7 @@ class EP(Optimizer):
         # Instantiate an array of strategies
         strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i in range(space.n_agents):
             # For every decision variable
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):

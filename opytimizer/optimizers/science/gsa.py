@@ -27,11 +27,10 @@ class GSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GSA', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -173,7 +172,7 @@ class GSA(Optimizer):
         # Calculating agents' attraction force
         force = self._calculate_force(agents, mass, gravity)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
             velocity[i] = self._update_velocity(force[i], mass[i], velocity[i])

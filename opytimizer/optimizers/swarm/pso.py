@@ -182,11 +182,10 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -348,11 +347,10 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='RPSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -408,7 +406,7 @@ class RPSO(PSO):
         # Calculating the maximum velocity
         max_velocity = np.max(velocity)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocities
             velocity[i] = self._update_velocity(
@@ -490,11 +488,10 @@ class SAVPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='SAVPSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -553,7 +550,7 @@ class SAVPSO(PSO):
         # Divides by the number of agents
         positions /= len(agents)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Generates a random index for selecting an agent
             idx = r.generate_integer_random_number(0, len(agents))
@@ -595,11 +592,10 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='VPSO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -673,7 +669,7 @@ class VPSO(PSO):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates current agent velocity
             velocity[i], v_velocity[i] = self._update_velocity(

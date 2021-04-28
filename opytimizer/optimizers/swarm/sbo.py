@@ -28,11 +28,10 @@ class SBO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SBO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the mp_mutation-heuristics.
 
         """
@@ -125,7 +124,7 @@ class SBO(Optimizer):
         # Calculates the probability of each agent's fitness
         probs = [fit / total_fitness for fit in fitness]
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # For every decision variable
             for j in range(agent.n_variables):

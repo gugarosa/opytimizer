@@ -25,11 +25,10 @@ class WDO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WDO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -193,7 +192,7 @@ class WDO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Generates a random index based on the number of agents
             index = r.generate_integer_random_number(0, len(agents))

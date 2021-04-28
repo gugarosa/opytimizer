@@ -25,11 +25,10 @@ class CEM(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CEM', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -93,7 +92,7 @@ class CEM(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Iterate through all decision variables
             for j, (m, s) in enumerate(zip(mean, std)):

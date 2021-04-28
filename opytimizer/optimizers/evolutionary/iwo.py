@@ -27,11 +27,10 @@ class IWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='IWO', params=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
             params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
@@ -208,7 +207,7 @@ class IWO(Optimizer):
         # Sorting agents
         agents.sort(key=lambda x: x.fit)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Calculate the seeding ratio based on its fitness
             ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit + c.EPSILON)
