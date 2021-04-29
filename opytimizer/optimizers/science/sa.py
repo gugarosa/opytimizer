@@ -159,7 +159,7 @@ class SA(Optimizer):
                 # Updates agents
                 self._update(space.agents, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

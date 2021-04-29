@@ -10,5 +10,5 @@ params = {
     'final_sigma': 0.001
 }
 
-# Creating an IWO optimizer
+# Creates an IWO optimizer
 o = IWO(params=params)

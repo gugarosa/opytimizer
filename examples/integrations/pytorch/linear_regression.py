@@ -11,7 +11,7 @@ from opytimizer.spaces.search import SearchSpace
 # Setting up a random seed
 torch.manual_seed(42)
 
-# Creating X and Y data
+# Creates X and Y data
 # Note that it is important to mantain consistency during opytimizer tasks
 X = torch.linspace(-1, 1, 101)
 Y = 2 * X + torch.randn(X.size()) * 0.33
@@ -79,7 +79,7 @@ def linear_regression(opytimizer):
 
     return final_cost
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=linear_regression)
 
 # Number of agents, decision variables and iterations
@@ -91,7 +91,7 @@ n_iterations = 100
 lower_bound = (0, 0)
 upper_bound = (1, 1)
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
@@ -103,7 +103,7 @@ params = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
+# Creates PSO's optimizer
 p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class

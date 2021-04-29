@@ -7,5 +7,5 @@ params = {
     'decay': 0.99
 }
 
-# Creating an SSD optimizer
+# Creates an SSD optimizer
 o = SSD(params=params)

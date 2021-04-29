@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a FOA optimizer
+# Creates a FOA optimizer
 o = FOA(params=params)

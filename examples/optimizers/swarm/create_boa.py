@@ -8,5 +8,5 @@ params = {
     'p': 0.8
 }
 
-# Creating a BOA optimizer
+# Creates a BOA optimizer
 o = BOA(params=params)

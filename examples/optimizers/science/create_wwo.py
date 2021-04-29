@@ -9,5 +9,5 @@ params = {
     'k_max': 1
 }
 
-# Creating a WWO optimizer
+# Creates a WWO optimizer
 o = WWO(params=params)

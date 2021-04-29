@@ -156,7 +156,7 @@ class EP(Optimizer):
 
         """
 
-        # Creating a list for the produced children
+        # Creates a list for the produced children
         children = []
 
         # Iterates through all agents
@@ -237,7 +237,7 @@ class EP(Optimizer):
                 # Updates agents
                 space.agents = self._update(space.agents, space.n_agents, function, strategy)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

@@ -8,5 +8,5 @@ params = {
     'gamma': 0.1
 }
 
-# Creating a NBJS optimizer
+# Creates a NBJS optimizer
 o = NBJS(params=params)

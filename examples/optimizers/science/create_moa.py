@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a MOA optimizer
+# Creates a MOA optimizer
 o = MOA(params=params)

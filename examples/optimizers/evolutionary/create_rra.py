@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an RRA optimizer
+# Creates an RRA optimizer
 o = RRA(params=params)

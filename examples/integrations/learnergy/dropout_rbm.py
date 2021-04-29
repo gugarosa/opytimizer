@@ -6,7 +6,7 @@ from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
-# Creating training and testing dataset
+# Creates training and testing dataset
 train = torchvision.datasets.MNIST(
     root='./data', train=True, download=True, transform=torchvision.transforms.ToTensor())
 
@@ -15,7 +15,7 @@ def dropout_rbm(opytimizer):
     # Gathers params
     dropout = opytimizer[0][0]
 
-    # Creating an RBM
+    # Creates an RBM
     model = DropoutRBM(n_visible=784, n_hidden=128, steps=1, learning_rate=0.1,
                        momentum=0, decay=0, temperature=1, dropout=dropout, use_gpu=False)
 
@@ -25,7 +25,7 @@ def dropout_rbm(opytimizer):
     return error
 
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=dropout_rbm)
 
 # Number of agents, decision variables and iterations
@@ -37,7 +37,7 @@ n_iterations = 5
 lower_bound = (0,)
 upper_bound = (1,)
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
@@ -49,7 +49,7 @@ params = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
+# Creates PSO's optimizer
 p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class

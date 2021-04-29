@@ -236,7 +236,7 @@ class GP(Optimizer):
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
         # and find_node() stops at a terminal node whose father is a root
         if sub_tree:
-            # Creating a new random sub-tree
+            # Creates a new random sub-tree
             branch = space.grow(space.min_depth, space.max_depth)
 
             # Checks if sub-tree should be positioned in the left

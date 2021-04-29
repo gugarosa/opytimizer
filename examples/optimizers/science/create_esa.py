@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an ESA optimizer
+# Creates an ESA optimizer
 o = ESA(params=params)

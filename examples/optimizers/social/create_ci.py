@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an CI optimizer
+# Creates an CI optimizer
 o = CI(params=params)

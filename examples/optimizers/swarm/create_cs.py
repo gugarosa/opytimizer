@@ -8,5 +8,5 @@ params = {
     'p': 0.2
 }
 
-# Creating a CS optimizer
+# Creates a CS optimizer
 o = CS(params=params)

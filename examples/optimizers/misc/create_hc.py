@@ -7,5 +7,5 @@ params = {
     'r_var': 0.1
 }
 
-# Creating a HC optimizer
+# Creates a HC optimizer
 o = HC(params=params)

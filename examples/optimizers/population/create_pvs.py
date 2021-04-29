@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.pvs import PVS
 params = {
 }
 
-# Creating a PVS optimizer
+# Creates a PVS optimizer
 o = PVS(params=params)

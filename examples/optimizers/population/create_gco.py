@@ -7,5 +7,5 @@ params = {
     'F': 1.25
 }
 
-# Creating a GCO optimizer
+# Creates a GCO optimizer
 o = GCO(params=params)

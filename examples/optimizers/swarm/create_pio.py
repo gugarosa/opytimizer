@@ -8,5 +8,5 @@ params = {
     'R': 0.2
 }
 
-# Creating an PIO optimizer
+# Creates an PIO optimizer
 o = PIO(params=params)

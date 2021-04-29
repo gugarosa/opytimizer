@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an STOA optimizer
+# Creates an STOA optimizer
 o = STOA(params=params)

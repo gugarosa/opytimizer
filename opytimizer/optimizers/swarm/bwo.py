@@ -162,7 +162,7 @@ class BWO(Optimizer):
 
         """
 
-        # Retrieving the number of agents
+        # Retrieves the number of agents
         n_agents = len(agents)
 
         # Calculates the number agents that reproduces, are cannibals and mutates
@@ -174,7 +174,7 @@ class BWO(Optimizer):
         # Selecting the best solutions and saving in auxiliary population
         agents1 = copy.deepcopy(agents[:n_reproduct])
 
-        # Creating an empty auxiliary population
+        # Creates an empty auxiliary population
         agents2 = []
 
         # For every possible reproducting agent
@@ -185,7 +185,7 @@ class BWO(Optimizer):
             # Making a deepcopy of father and mother
             father, mother = copy.deepcopy(agents[int(idx[0])]), copy.deepcopy(agents[int(idx[1])])
 
-            # Creating an empty list of auxiliary agents
+            # Creates an empty list of auxiliary agents
             new_agents = []
 
             # For every possible pair of variables
@@ -193,7 +193,7 @@ class BWO(Optimizer):
                 # Procreates parents into two new offsprings
                 y1, y2 = self._procreating(father, mother)
 
-                # Checking `y1` and `y2` limits
+                # Checks `y1` and `y2` limits
                 y1.clip_by_bound()
                 y2.clip_by_bound()
 
@@ -218,7 +218,7 @@ class BWO(Optimizer):
             # Performs the mutation
             alpha = self._mutation(agents1[idx])
 
-            # Checking `alpha` limits
+            # Checks `alpha` limits
             alpha.clip_by_bound()
 
             # Calculates new fitness for `alpha`
@@ -264,7 +264,7 @@ class BWO(Optimizer):
                 # Updates agents
                 space.agents = self._update(space.agents, space.n_variables, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

@@ -10,5 +10,5 @@ params = {
     'c2': 2
 }
 
-# Creating an AIWPSO optimizer
+# Creates an AIWPSO optimizer
 o = AIWPSO(params=params)

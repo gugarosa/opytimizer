@@ -8,5 +8,5 @@ params = {
     'c2': 1.7
 }
 
-# Creating a PSO optimizer
+# Creates a PSO optimizer
 o = PSO(params=params)

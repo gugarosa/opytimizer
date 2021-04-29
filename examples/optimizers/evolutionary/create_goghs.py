@@ -6,5 +6,5 @@ params = {
     'pm': 0.1
 }
 
-# Creating a GOGHS optimizer
+# Creates a GOGHS optimizer
 o = GOGHS(params=params)

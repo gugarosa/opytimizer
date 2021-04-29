@@ -8,5 +8,5 @@ params = {
     'c2': 1.7
 }
 
-# Creating an SAVPSO optimizer
+# Creates an SAVPSO optimizer
 o = SAVPSO(params=params)

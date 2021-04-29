@@ -8,5 +8,5 @@ params = {
     'p': 6
 }
 
-# Creating a MVO optimizer
+# Creates a MVO optimizer
 o = MVO(params=params)

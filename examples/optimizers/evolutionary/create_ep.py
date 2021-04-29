@@ -7,5 +7,5 @@ params = {
     'clip_ratio': 0.05
 }
 
-# Creating an EP optimizer
+# Creates an EP optimizer
 o = EP(params=params)

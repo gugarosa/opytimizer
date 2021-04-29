@@ -7,5 +7,5 @@ params = {
     'beta': 0.999
 }
 
-# Creating a SA optimizer
+# Creates a SA optimizer
 o = SA(params=params)

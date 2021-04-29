@@ -9,5 +9,5 @@ params = {
     'prunning_ratio': 0.0
 }
 
-# Creating a GP optimizer
+# Creates a GP optimizer
 o = GP(params=params)

@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an AIG optimizer
+# Creates an AIG optimizer
 o = AIG(params=params)

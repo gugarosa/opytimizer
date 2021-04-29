@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.ppa import PPA
 params = {
 }
 
-# Creating a PPA optimizer
+# Creates a PPA optimizer
 o = PPA(params=params)

@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a FFOA optimizer
+# Creates a FFOA optimizer
 o = FFOA(params=params)

@@ -27,7 +27,7 @@ functions = ['SUM', 'MUL', 'DIV']
 lower_bound = (-10, -10)
 upper_bound = (10, 10)
 
-# Creating the TreeSpace object
+# Creates the TreeSpace object
 s = TreeSpace(n_trees=n_trees, n_terminals=n_terminals, n_variables=n_variables,
               n_iterations=n_iterations, min_depth=min_depth, max_depth=max_depth,
               functions=functions, lower_bound=lower_bound, upper_bound=upper_bound)
@@ -40,10 +40,10 @@ params = {
     'prunning_ratio': 0.0
 }
 
-# Creating GP's optimizer
+# Creates GP's optimizer
 p = GP(params=params)
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=Sphere())
 
 # Finally, we can create an Opytimizer class

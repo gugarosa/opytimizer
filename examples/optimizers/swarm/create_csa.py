@@ -7,5 +7,5 @@ params = {
     'AP': 0.1
 }
 
-# Creating a CSA optimizer
+# Creates a CSA optimizer
 o = CSA(params=params)

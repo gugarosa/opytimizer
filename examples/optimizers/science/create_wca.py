@@ -7,5 +7,5 @@ params = {
     'd_max': 0.1
 }
 
-# Creating a WCA optimizer
+# Creates a WCA optimizer
 o = WCA(params=params)

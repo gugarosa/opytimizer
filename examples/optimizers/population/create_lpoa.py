@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.lpoa import LPOA
 params = {
 }
 
-# Creating an LPOA optimizer
+# Creates an LPOA optimizer
 o = LPOA(params=params)

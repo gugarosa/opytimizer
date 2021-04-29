@@ -6,5 +6,5 @@ params = {
     'G': 2.467
 }
 
-# Creating a GSA optimizer
+# Creates a GSA optimizer
 o = GSA(params=params)

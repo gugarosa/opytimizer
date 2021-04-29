@@ -7,5 +7,5 @@ params = {
     'l': 1.5
 }
 
-# Creating an EPO optimizer
+# Creates an EPO optimizer
 o = EPO(params=params)

@@ -8,5 +8,5 @@ params = {
     'c2': 1.7
 }
 
-# Creating an VPSO optimizer
+# Creates an VPSO optimizer
 o = VPSO(params=params)

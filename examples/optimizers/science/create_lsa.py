@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an LSA optimizer
+# Creates an LSA optimizer
 o = LSA(params=params)

@@ -7,5 +7,5 @@ params = {
     'c2': 1.7
 }
 
-# Creating an RPSO optimizer
+# Creates an RPSO optimizer
 o = RPSO(params=params)

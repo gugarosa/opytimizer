@@ -10,5 +10,5 @@ params = {
     'w': 0.005
 }
 
-# Creating an AO optimizer
+# Creates an AO optimizer
 o = AO(params=params)

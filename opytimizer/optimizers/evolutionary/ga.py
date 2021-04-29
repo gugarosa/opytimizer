@@ -207,23 +207,23 @@ class GA(Optimizer):
 
         return alpha, beta
 
-    def update(self, agents, function):
-        """Wraps selection, crossover and mutation over all agents and variables.
+    def update(self, space, function):
+        """Wraps Genetic Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
-        # Creating a list to hold the new population
+        # Creates a list to hold the new population
         new_agents = []
 
-        # Retrieving the number of agents
-        n_agents = len(agents)
+        # Retrieves the number of agents
+        n_agents = len(space.agents)
 
         # Calculates a list of fitness from every agent
-        fitness = [agent.fit + c.EPSILON for agent in agents]
+        fitness = [agent.fit + c.EPSILON for agent in space.agents]
 
         # Selects the parents
         selected = self._roulette_selection(n_agents, fitness)
@@ -231,7 +231,7 @@ class GA(Optimizer):
         # For every pair of selected parents
         for s in g.n_wise(selected):
             # Performs the crossover and mutation
-            alpha, beta = self._crossover(agents[s[0]], agents[s[1]])
+            alpha, beta = self._crossover(space.agents[s[0]], space.agents[s[1]])
             alpha, beta = self._mutation(alpha, beta)
 
             # Checking `alpha` and `beta` limits
@@ -245,57 +245,7 @@ class GA(Optimizer):
             # Appends the mutated agents to the children
             new_agents.extend([alpha, beta])
 
-        # Joins both populations
-        agents += new_agents
-
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
-
-        return agents[:n_agents]
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                space.agents = self._update(space.agents, function)
-
-                # Checking if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Joins both populations, sort agents and gathers best `n_agents`
+        space.agents += new_agents
+        space.agents.sort(key=lambda x: x.fit)
+        space.agents = space.agents[:n_agents]

@@ -8,5 +8,5 @@ params = {
     'C_g': 0.9
 }
 
-# Creating a SSO optimizer
+# Creates a SSO optimizer
 o = SSO(params=params)

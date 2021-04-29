@@ -12,5 +12,5 @@ params = {
     'K': 1.0
 }
 
-# Creating an HGSO optimizer
+# Creates an HGSO optimizer
 o = HGSO(params=params)

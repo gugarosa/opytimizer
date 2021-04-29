@@ -6,5 +6,5 @@ params = {
     'pm': 0.1
 }
 
-# Creating a NGHS optimizer
+# Creates a NGHS optimizer
 o = NGHS(params=params)

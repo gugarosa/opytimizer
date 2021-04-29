@@ -299,7 +299,7 @@ class ASO(Optimizer):
                 # Updates agents
                 self._update(space.agents, space.best_agent, velocity, t, space.n_iterations)
 
-                # Checking if agents meets the bounds limits
+                # Checks if agents meets the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

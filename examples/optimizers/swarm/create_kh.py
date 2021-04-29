@@ -14,5 +14,5 @@ params = {
     'Mu': 0.05
 }
 
-# Creating a KH optimizer
+# Creates a KH optimizer
 o = KH(params=params)

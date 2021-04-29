@@ -6,5 +6,5 @@ params = {
     'b': 1
 }
 
-# Creating an WOA optimizer
+# Creates an WOA optimizer
 o = WOA(params=params)

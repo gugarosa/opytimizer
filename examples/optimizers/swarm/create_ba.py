@@ -9,5 +9,5 @@ params = {
     'r': 0.5
 }
 
-# Creating a BA optimizer
+# Creates a BA optimizer
 o = BA(params=params)

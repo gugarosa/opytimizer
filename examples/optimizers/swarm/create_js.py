@@ -8,5 +8,5 @@ params = {
     'gamma': 0.1
 }
 
-# Creating a JS optimizer
+# Creates a JS optimizer
 o = JS(params=params)

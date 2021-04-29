@@ -31,7 +31,7 @@ def k_means_clustering(opytimizer):
     return 1 - ari
 
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=k_means_clustering)
 
 # Number of agents, decision variables and iterations
@@ -43,7 +43,7 @@ n_iterations = 100
 lower_bound = (1,)
 upper_bound = (100,)
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
@@ -55,7 +55,7 @@ params = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
+# Creates PSO's optimizer
 p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class

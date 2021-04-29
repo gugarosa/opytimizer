@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a FSO optimizer
+# Creates a FSO optimizer
 o = FSO(params=params)

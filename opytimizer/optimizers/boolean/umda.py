@@ -153,7 +153,7 @@ class UMDA(Optimizer):
             space (Space): Space containing agents and update-related information.
 
         """
-        # Retrieving the number of agents
+        # Retrieves the number of agents
         n_agents = len(space.agents)
 
         # Selects the individuals through ranking
@@ -170,5 +170,5 @@ class UMDA(Optimizer):
             # Samples new agent's position
             agent.position = self._sample_position(probs)
 
-            # Checking its limits
+            # Checks its limits
             agent.clip_by_bound()

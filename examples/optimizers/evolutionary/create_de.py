@@ -7,5 +7,5 @@ params = {
     'F': 0.7
 }
 
-# Creating a DE optimizer
+# Creates a DE optimizer
 o = DE(params=params)

@@ -8,5 +8,5 @@ params = {
     'p': 0.8
 }
 
-# Creating a FPA optimizer
+# Creates a FPA optimizer
 o = FPA(params=params)

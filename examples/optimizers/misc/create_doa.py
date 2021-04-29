@@ -6,5 +6,5 @@ params = {
     'r': 1.0
 }
 
-# Creating a DOA optimizer
+# Creates a DOA optimizer
 o = DOA(params=params)

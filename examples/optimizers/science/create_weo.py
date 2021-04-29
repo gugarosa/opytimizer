@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a WEO optimizer
+# Creates a WEO optimizer
 o = WEO(params=params)

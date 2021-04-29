@@ -8,5 +8,5 @@ params = {
     'S': np.array([1])
 }
 
-# Creating a BMRFO optimizer
+# Creates a BMRFO optimizer
 o = BMRFO(params=params)

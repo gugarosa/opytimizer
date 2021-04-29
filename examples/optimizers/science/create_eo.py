@@ -9,5 +9,5 @@ params = {
     'V': 1
 }
 
-# Creating an EO optimizer
+# Creates an EO optimizer
 o = EO(params=params)

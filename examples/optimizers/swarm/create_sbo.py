@@ -8,5 +8,5 @@ params = {
     'z': 0.02
 }
 
-# Creating a SBO optimizer
+# Creates a SBO optimizer
 o = SBO(params=params)

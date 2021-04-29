@@ -48,7 +48,7 @@ def supervised_opf_feature_selection(opytimizer):
     return 1 - acc
 
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=supervised_opf_feature_selection)
 
 # Number of agents, decision variables and iterations
@@ -56,7 +56,7 @@ n_agents = 5
 n_variables = 64
 n_iterations = 3
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 b = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations,
                  n_variables=n_variables)
 
@@ -66,7 +66,7 @@ params = {
     'c2': r.generate_binary_random_number(size=(n_variables, 1))
 }
 
-# Creating BPSO's optimizer
+# Creates BPSO's optimizer
 p = BPSO(params=params)
 
 # Finally, we can create an Opytimizer class

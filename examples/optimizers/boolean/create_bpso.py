@@ -10,5 +10,5 @@ params = {
     'c2': np.array([1])
 }
 
-# Creating a BPSO optimizer
+# Creates a BPSO optimizer
 o = BPSO(params=params)

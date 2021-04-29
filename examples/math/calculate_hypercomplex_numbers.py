@@ -2,7 +2,7 @@ import numpy as np
 
 import opytimizer.math.hyper as h
 
-# Creating an array with ones
+# Creates an array with ones
 a = np.ones((2, 4))
 print(f'Array: {a}')
 

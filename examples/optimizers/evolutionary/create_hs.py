@@ -8,5 +8,5 @@ params = {
     'bw': 1.0
 }
 
-# Creating a HS optimizer
+# Creates a HS optimizer
 o = HS(params=params)

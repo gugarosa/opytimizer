@@ -9,5 +9,5 @@ params = {
     'l': 1.5
 }
 
-# Creating a GOA optimizer
+# Creates a GOA optimizer
 o = GOA(params=params)

@@ -9,5 +9,5 @@ params = {
     'r_ratio': 0.4,
 }
 
-# Creating an EFO optimizer
+# Creates an EFO optimizer
 o = EFO(params=params)

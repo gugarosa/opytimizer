@@ -6,5 +6,5 @@ params = {
     'n_p': 2
 }
 
-# Creating a COA optimizer
+# Creates a COA optimizer
 o = COA(params=params)

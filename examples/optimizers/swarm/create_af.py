@@ -6,5 +6,5 @@ params = {
     
 }
 
-# Creating an AF optimizer
+# Creates an AF optimizer
 o = AF(params=params)

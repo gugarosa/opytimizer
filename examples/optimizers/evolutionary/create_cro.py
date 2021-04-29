@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a CRO optimizer
+# Creates a CRO optimizer
 o = CRO(params=params)

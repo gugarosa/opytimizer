@@ -9,10 +9,10 @@ from opytimizer.core.function import Function
 from opytimizer.optimizers.swarm.pso import PSO
 from opytimizer.spaces.search import SearchSpace
 
-# Creating a character TextCorpus from file
+# Creates a character TextCorpus from file
 corpus = TextCorpus(from_file='examples/integrations/nalp/chapter1_harry.txt', corpus_type='char')
 
-# Creating an IntegerEncoder
+# Creates an IntegerEncoder
 encoder = IntegerEncoder()
 
 # Learns the encoding based on the TextCorpus dictionary and reverse dictionary
@@ -21,7 +21,7 @@ encoder.learn(corpus.vocab_index, corpus.index_vocab)
 # Applies the encoding on new data
 encoded_tokens = encoder.encode(corpus.tokens)
 
-# Creating Language Modeling Dataset
+# Creates Language Modeling Dataset
 dataset = LanguageModelingDataset(encoded_tokens, max_length=10, batch_size=64)
 
 
@@ -30,7 +30,7 @@ def rnn(opytimizer):
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
 
-    # Creating the RNN
+    # Creates the RNN
     rnn = RNNGenerator(vocab_size=corpus.vocab_size, embedding_size=256, hidden_size=512)
 
     # As NALP's RNNs are stateful, we need to build it with a fixed batch size
@@ -50,7 +50,7 @@ def rnn(opytimizer):
     return 1 - acc
 
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=rnn)
 
 # Number of agents, decision variables and iterations
@@ -62,7 +62,7 @@ n_iterations = 3
 lower_bound = (0,)
 upper_bound = (1,)
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
@@ -74,7 +74,7 @@ params = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
+# Creates PSO's optimizer
 p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class

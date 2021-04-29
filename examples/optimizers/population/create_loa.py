@@ -5,5 +5,5 @@ from opytimizer.optimizers.population.loa import LOA
 params = {
 }
 
-# Creating an LOA optimizer
+# Creates an LOA optimizer
 o = LOA(params=params)

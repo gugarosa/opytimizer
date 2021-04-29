@@ -6,5 +6,5 @@ params = {
     'S': 2.0
 }
 
-# Creating an MRFO optimizer
+# Creates an MRFO optimizer
 o = MRFO(params=params)

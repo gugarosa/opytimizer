@@ -6,5 +6,5 @@ params = {
     'n_trials': 10
 }
 
-# Creating an ABC optimizer
+# Creates an ABC optimizer
 o = ABC(params=params)

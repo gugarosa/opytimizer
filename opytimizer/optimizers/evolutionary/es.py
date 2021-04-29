@@ -132,7 +132,7 @@ class ES(Optimizer):
 
         """
 
-        # Creating a list for the produced children
+        # Creates a list for the produced children
         children = []
 
         # Iterate through all children
@@ -197,7 +197,7 @@ class ES(Optimizer):
                 # Updates agents
                 space.agents = self._update(space.agents, space.n_agents, function, n_children, strategy)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

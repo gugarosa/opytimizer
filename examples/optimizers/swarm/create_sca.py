@@ -8,5 +8,5 @@ params = {
     'a': 3
 }
 
-# Creating a SCA optimizer
+# Creates a SCA optimizer
 o = SCA(params=params)

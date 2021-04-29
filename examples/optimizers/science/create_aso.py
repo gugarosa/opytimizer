@@ -7,5 +7,5 @@ params = {
     'beta': 0.2
 }
 
-# Creating an ASO optimizer
+# Creates an ASO optimizer
 o = ASO(params=params)

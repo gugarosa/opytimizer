@@ -10,5 +10,5 @@ params = {
     'beta': 0.05
 }
 
-# Creating a TWO optimizer
+# Creates a TWO optimizer
 o = TWO(params=params)

@@ -7,5 +7,5 @@ params = {
     'mix_rate': 1
 }
 
-# Creating a BSA optimizer
+# Creates a BSA optimizer
 o = BSA(params=params)

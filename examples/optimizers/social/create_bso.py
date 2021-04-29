@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an BSO optimizer
+# Creates an BSO optimizer
 o = BSO(params=params)

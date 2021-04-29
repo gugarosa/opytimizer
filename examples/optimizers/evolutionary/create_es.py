@@ -6,5 +6,5 @@ params = {
     'child_ratio': 0.5
 }
 
-# Creating an ES optimizer
+# Creates an ES optimizer
 o = ES(params=params)

@@ -36,7 +36,7 @@ class CNN(torch.nn.Module):
         # Overriding initial class
         super(CNN, self).__init__()
 
-        # Creating sequential model for convolutional part
+        # Creates sequential model for convolutional part
         self.conv = torch.nn.Sequential()
 
         # First convolutional block
@@ -53,7 +53,7 @@ class CNN(torch.nn.Module):
         self.conv.add_module("maxpool_2", torch.nn.MaxPool2d(kernel_size=2))
         self.conv.add_module("relu_2", torch.nn.ReLU())
 
-        # Creating sequential model for fully connected part
+        # Creates sequential model for fully connected part
         self.fc = torch.nn.Sequential()
 
         # Fully connected block
@@ -153,7 +153,7 @@ def cnn(opytimizer):
     return 1 - acc
 
 
-# Creating Function's object
+# Creates Function's object
 f = Function(pointer=cnn)
 
 # Number of agents, decision variables and iterations
@@ -165,7 +165,7 @@ n_iterations = 100
 lower_bound = (0, 0)
 upper_bound = (1, 1)
 
-# Creating the SearchSpace class
+# Creates the SearchSpace class
 s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
                 n_variables=n_variables, lower_bound=lower_bound,
                 upper_bound=upper_bound)
@@ -177,7 +177,7 @@ params = {
     'c2': 1.7
 }
 
-# Creating PSO's optimizer
+# Creates PSO's optimizer
 p = PSO(params=params)
 
 # Finally, we can create an Opytimizer class

@@ -8,5 +8,5 @@ params = {
     'upper_bound': 0.95
 }
 
-# Creating a UMDA optimizer
+# Creates a UMDA optimizer
 o = UMDA(params=params)

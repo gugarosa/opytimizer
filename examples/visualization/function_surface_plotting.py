@@ -10,13 +10,13 @@ def f(x, y):
 # Defining both `x` and `y` arrays
 x = y = np.linspace(-10, 10, 100)
 
-# Creating a meshgrid from both `x` and `y`
+# Creates a meshgrid from both `x` and `y`
 x, y = np.meshgrid(x, y)
 
 # Calculating f(x, y)
 z = f(x, y)
 
-# Creating final array for further plotting
+# Creates final array for further plotting
 points = np.asarray([x, y, z])
 
 # Plotting the surface

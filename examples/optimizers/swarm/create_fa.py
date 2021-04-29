@@ -8,5 +8,5 @@ params = {
     'gamma': 1.0
 }
 
-# Creating a FA optimizer
+# Creates a FA optimizer
 o = FA(params=params)

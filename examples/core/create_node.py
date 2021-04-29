@@ -2,7 +2,7 @@ import numpy as np
 
 from opytimizer.core.node import Node
 
-# Creating two new Nodes
+# Creates two new Nodes
 n1 = Node(name='0', category='TERMINAL', value=np.array(1))
 n2 = Node(name='1', category='TERMINAL', value=np.array(2))
 

@@ -8,5 +8,5 @@ params = {
     'pm': 0.4
 }
 
-# Creating a BWO optimizer
+# Creates a BWO optimizer
 o = BWO(params=params)

@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating a MVPA optimizer
+# Creates a MVPA optimizer
 o = MVPA(params=params)

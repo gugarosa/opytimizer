@@ -9,5 +9,5 @@ params = {
     'mu': 0.499
 }
 
-# Creating an AOA optimizer
+# Creates an AOA optimizer
 o = AOA(params=params)

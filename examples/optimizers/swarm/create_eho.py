@@ -8,5 +8,5 @@ params = {
     'n_clans': 10
 }
 
-# Creating an EHO optimizer
+# Creates an EHO optimizer
 o = EHO(params=params)

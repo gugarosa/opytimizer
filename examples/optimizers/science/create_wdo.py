@@ -10,5 +10,5 @@ params = {
     'RT': 1.5
 }
 
-# Creating a WDO optimizer
+# Creates a WDO optimizer
 o = WDO(params=params)

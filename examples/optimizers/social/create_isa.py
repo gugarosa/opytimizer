@@ -6,5 +6,5 @@ params = {
 
 }
 
-# Creating an ISA optimizer
+# Creates an ISA optimizer
 o = ISA(params=params)

@@ -7,5 +7,5 @@ params = {
     'a': 2.0
 }
 
-# Creating an ABO optimizer
+# Creates an ABO optimizer
 o = ABO(params=params)

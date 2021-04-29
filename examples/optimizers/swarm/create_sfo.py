@@ -8,5 +8,5 @@ params = {
     'e': 0.001
 }
 
-# Creating a SFO optimizer
+# Creates a SFO optimizer
 o = SFO(params=params)

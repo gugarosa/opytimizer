@@ -8,5 +8,5 @@ params = {
     'p_crossover': 0.5,
 }
 
-# Creating a GA optimizer
+# Creates a GA optimizer
 o = GA(params=params)

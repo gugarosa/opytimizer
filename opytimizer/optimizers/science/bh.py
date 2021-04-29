@@ -67,7 +67,7 @@ class BH(Optimizer):
             # Updates agent's position
             agent.position += r1 * (best_agent.position - agent.position)
 
-            # Checking agents limits
+            # Checks agents limits
             agent.clip_by_bound()
 
             # Evaluates agent
@@ -154,7 +154,7 @@ class BH(Optimizer):
                 # Updates agents
                 self._update(space.agents, space.best_agent, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space

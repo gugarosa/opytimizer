@@ -12,5 +12,5 @@ params = {
     'bw_max': 10.0
 }
 
-# Creating a SGHS optimizer
+# Creates a SGHS optimizer
 o = SGHS(params=params)

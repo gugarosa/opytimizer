@@ -6,5 +6,5 @@ params = {
     'b': 1
 }
 
-# Creating a MFO optimizer
+# Creates a MFO optimizer
 o = MFO(params=params)

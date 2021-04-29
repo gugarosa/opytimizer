@@ -10,5 +10,5 @@ params = {
     'bw_max': 10.0
 }
 
-# Creating an IHS optimizer
+# Creates an IHS optimizer
 o = IHS(params=params)

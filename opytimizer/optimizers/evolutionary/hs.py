@@ -163,7 +163,7 @@ class HS(Optimizer):
         # Generates a new harmony
         agent = self._generate_new_harmony(agents)
 
-        # Checking agent limits
+        # Checks agent limits
         agent.clip_by_bound()
 
         # Calculates the new harmony fitness
@@ -207,7 +207,7 @@ class HS(Optimizer):
                 # Updates agents
                 self._update(space.agents, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
@@ -376,7 +376,7 @@ class IHS(HS):
                 # Updates agents
                 self._update(space.agents, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
@@ -725,7 +725,7 @@ class SGHS(HS):
                 # Updates agents
                 self._update(space.agents, function)
 
-                # Checking if agents meet the bounds limits
+                # Checks if agents meet the bounds limits
                 space.clip_by_bound()
 
                 # After the update, we need to re-evaluate the search space
@@ -859,7 +859,7 @@ class NGHS(HS):
         # Generates a new harmony
         agent = self._generate_new_harmony(agents[0], agents[-1])
 
-        # Checking agent limits
+        # Checks agent limits
         agent.clip_by_bound()
 
         # Calculates the new harmony fitness
@@ -916,7 +916,7 @@ class GOGHS(NGHS):
         # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # Creating pseudo-harmonies
+        # Creates pseudo-harmonies
         A = np.zeros((a.n_variables))
         B = np.zeros((a.n_variables))
 
@@ -958,7 +958,7 @@ class GOGHS(NGHS):
         agent = self._generate_new_harmony(agents[0], agents[-1])
         opp_agent = self._generate_opposition_harmony(agent, agents)
 
-        # Checking agents limits
+        # Checks agents limits
         agent.clip_by_bound()
         opp_agent.clip_by_bound()
 
@@ -966,7 +966,7 @@ class GOGHS(NGHS):
         agent.fit = function(agent.position)
         opp_agent.fit = function(opp_agent.position)
 
-        # Checking if oppisition-based is better than agent
+        # Checks if oppisition-based is better than agent
         if opp_agent.fit < agent.fit:
             # Copies the agent
             agent = copy.deepcopy(opp_agent)
