@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -83,13 +81,47 @@ class EP(Optimizer):
 
         self._clip_ratio = clip_ratio
 
-    def _mutate_parent(self, agent, function, strategy):
+    @property
+    def strategy(self):
+        """np.array: Array of strategies.
+
+        """
+
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy):
+        if not isinstance(strategy, np.ndarray):
+            raise e.TypeError('`strategy` should be a numpy array')
+
+        self._strategy = strategy
+
+    def create_additional_vars(self, space):
+        """Creates additional variables that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Array of strategies
+        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
+        # Iterates through all agents
+        for i in range(space.n_agents):
+            # For every decision variable
+            for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
+                # Initializes the strategy array with the proposed EP distance
+                self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
+                    0, ub - lb, size=space.agents[i].n_dimensions)
+
+    def _mutate_parent(self, agent, index, function):
         """Mutates a parent into a new child (eq. 5.1).
 
         Args:
             agent (Agent): An agent instance to be reproduced.
+            index (int): Index of current agent.
             function (Function): A Function object that will be used as the objective function.
-            strategy (np.array): An array holding the strategies that conduct the searching process.
 
         Returns:
             A mutated child.
@@ -103,7 +135,7 @@ class EP(Optimizer):
         r1 = r.generate_gaussian_random_number()
 
         # Updates its position
-        a.position += strategy * r1
+        a.position += self.strategy[index] * r1
 
         # Clips its limits
         a.clip_by_bound()
@@ -113,11 +145,11 @@ class EP(Optimizer):
 
         return a
 
-    def _update_strategy(self, strategy, lower_bound, upper_bound):
+    def _update_strategy(self, index, lower_bound, upper_bound):
         """Updates the strategy and performs a clipping process to help its convergence (eq. 5.2).
 
         Args:
-            strategy (np.array): An strategy array to be updated.
+            index (int): Index of current agent.
             lower_bound (np.array): An array holding the lower bounds.
             upper_bound (np.array): An array holding the upper bounds.
 
@@ -127,130 +159,69 @@ class EP(Optimizer):
         """
 
         # Calculates the number of variables and dimensions
-        n_variables, n_dimensions = strategy.shape[0], strategy.shape[1]
+        n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
         # Generates a uniform random number
         r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
         # Calculates the new strategy
-        new_strategy = strategy + r1 * (np.sqrt(np.abs(strategy)))
+        self.strategy[index] += r1 * (np.sqrt(np.abs(self.strategy[index])))
 
         # For every decision variable
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
             # Uses the clip ratio to help the convergence
-            new_strategy[j] = np.clip(new_strategy[j], lb, ub) * self.clip_ratio
+            self.strategy[index][j] = np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
 
-        return new_strategy
-
-    def update(self, agents, n_agents, function, strategy):
-        """Wraps evolution over all agents and variables.
+    def update(self, space, function):
+        """Wraps Evolutionary Programming over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            n_agents (int): Number of possible agents in the space.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            strategy (np.array): An array of strategies.
-
-        Returns:
-            A new population with more fitted individuals.
 
         """
+
+        # Calculates the number of agents
+        n_agents = len(space.agents)
 
         # Creates a list for the produced children
         children = []
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Mutates a parent and generates a new child
-            a = self._mutate_parent(agent, function, strategy[i])
+            a = self._mutate_parent(agent, i, function)
 
             # Updates the strategy
-            strategy[i] = self._update_strategy(strategy[i], agent.lb, agent.ub)
+            self._update_strategy(i, agent.lb, agent.ub)
 
             # Appends the mutated agent to the children
             children.append(a)
 
         # Joins both populations
-        agents += children
+        space.agents += children
 
         # Number of individuals to be selected
         n_individuals = int(n_agents * self.bout_size)
 
         # Creates an empty array of wins
-        wins = np.zeros(len(agents))
+        wins = np.zeros(len(space.agents))
 
         # Iterates through all agents in the new population
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Iterate through all tournament individuals
             for _ in range(n_individuals):
                 # Gathers a random index
-                index = r.generate_integer_random_number(0, len(agents))
+                index = r.generate_integer_random_number(0, len(space.agents))
 
                 # If current agent's fitness is smaller than selected one
-                if agent.fit < agents[index].fit:
+                if agent.fit < space.agents[index].fit:
                     # Increases its winning by one
                     wins[i] += 1
 
         # Sorts the agents list based on its winnings
-        agents = [agents for _, agents in sorted(
-            zip(wins, agents), key=lambda pair: pair[0], reverse=True)]
+        space.agents = [agents for _, agents in sorted(
+            zip(wins, space.agents), key=lambda pair: pair[0], reverse=True)]
 
-        return agents[:n_agents]
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instantiate an array of strategies
-        strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Iterates through all agents
-        for i in range(space.n_agents):
-            # For every decision variable
-            for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                # Initializes the strategy array with the proposed EP distance
-                strategy[i][j] = 0.05 * r.generate_uniform_random_number(
-                    0, ub - lb, size=space.agents[i].n_dimensions)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                space.agents = self._update(space.agents, space.n_agents, function, strategy)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Gathers the best `n_agents`
+        space.agents = space.agents[:n_agents]
