@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -116,23 +114,22 @@ class DE(Optimizer):
 
         return a
 
-    def update(self, agents, function):
-        """Wraps selection and mutation updates over all
-        agents and variables (eq. 1-4).
+    def update(self, space, function):
+        """Wraps Differential Evolution over all agents and variables (eq. 1-4).
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Randomly picks three distinct other agents, not including current one
-            C = d.generate_choice_distribution(np.setdiff1d(range(0, len(agents)), i), size=3)
+            C = d.generate_choice_distribution(np.setdiff1d(range(0, len(space.agents)), i), size=3)
 
             # Mutates the current agent
-            a = self._mutate_agent(agent, agents[C[0]], agents[C[1]], agents[C[2]])
+            a = self._mutate_agent(agent, space.agents[C[0]], space.agents[C[1]], space.agents[C[2]])
 
             # Check agent limits
             a.clip_by_bound()
@@ -145,50 +142,3 @@ class DE(Optimizer):
                 # Copy its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, function)
-
-                # Checking if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
