@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -50,6 +48,12 @@ class EFO(Optimizer):
 
         # Probability of selecting a random eletromagnet
         self.r_ratio = 0.4
+
+        # Golden ratio
+        self.phi = (1 + np.sqrt(5)) / 2
+
+        # Eletromagnetic index
+        self.RI = 0
 
         # Builds the class
         self.build(params)
@@ -127,6 +131,38 @@ class EFO(Optimizer):
 
         self._r_ratio = r_ratio
 
+    @property
+    def phi(self):
+        """float: Golden ratio.
+
+        """
+
+        return self._phi
+
+    @phi.setter
+    def phi(self, phi):
+        if not isinstance(phi, (float, int)):
+            raise e.TypeError('`phi` should be a float or integer')
+
+        self._phi = phi
+
+    @property
+    def RI(self):
+        """float: Eletromagnetic index.
+
+        """
+
+        return self._RI
+
+    @RI.setter
+    def RI(self, RI):
+        if not isinstance(RI, int):
+            raise e.TypeError('`RI` should be an integer')
+        if RI < 0:
+            raise e.TypeError('`RI` should be >= 0')
+
+        self._RI = RI
+
     def _calculate_indexes(self, n_agents):
         """Calculates the indexes of positive, negative and neutral particles.
 
@@ -139,10 +175,12 @@ class EFO(Optimizer):
         """
 
         # Calculates a positive particle's index
-        positive_index = int(r.generate_uniform_random_number(0, n_agents * self.positive_field))
+        positive_index = int(r.generate_uniform_random_number(
+            0, n_agents * self.positive_field))
 
         # Calculates a negative particle's index
-        negative_index = int(r.generate_uniform_random_number(n_agents * (1 - self.negative_field), n_agents))
+        negative_index = int(r.generate_uniform_random_number(
+            n_agents * (1 - self.negative_field), n_agents))
 
         # Calculates a neutral particle's index
         neutral_index = int(r.generate_uniform_random_number(
@@ -150,25 +188,23 @@ class EFO(Optimizer):
 
         return positive_index, negative_index, neutral_index
 
-    def update(self, agents, function, phi, RI):
-        """Wraps updates over all agents and variables (eq. 1-4).
+    def update(self, space, function):
+        """Wraps Electromagnetic Field Optimization over all agents and variables (eq. 1-4).
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            phi (float): Golden ratio constant.
-            RI (int): Index of particle's eletromagnet.
 
         """
 
         # Sorts agents according to their fitness
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the number of total agents
-        n_agents = len(agents)
+        n_agents = len(space.agents)
 
         # Making a deepcopy of current's best agent
-        agent = copy.deepcopy(agents[0])
+        agent = copy.deepcopy(space.agents[0])
 
         # Generates a uniform random number for the force
         force = r.generate_uniform_random_number()
@@ -184,13 +220,14 @@ class EFO(Optimizer):
             # If random number is smaller than the probability of selecting eletromagnets
             if r1 < self.ps_ratio:
                 # Applies agent's position as positive particle's position
-                agent.position[j] = agents[pos].position[j]
+                agent.position[j] = space.agents[pos].position[j]
 
             # If random number is bigger
             else:
                 # Calculates the new agent's position
-                agent.position[j] = agents[neg].position[j] + phi * force * (
-                    agents[pos].position[j] - agents[neu].position[j]) - force * (agents[neg].position[j] - agents[neu].position[j])
+                agent.position[j] = space.agents[neg].position[j] + self.phi * force * \
+                    (space.agents[pos].position[j] - space.agents[neu].position[j]) \
+                    - force * (space.agents[neg].position[j] - space.agents[neu].position[j])
 
         # Clips the agent's position to its limits
         agent.clip_by_bound()
@@ -201,75 +238,20 @@ class EFO(Optimizer):
         # If random number is smaller than probability of changing a random eletromagnet
         if r2 < self.r_ratio:
             # Update agent's position based on RI
-            agent.position[RI] = r.generate_uniform_random_number(agent.lb[RI], agent.ub[RI])
+            agent.position[self.RI] = r.generate_uniform_random_number(agent.lb[self.RI], agent.ub[self.RI])
 
             # Increases RI by one
-            RI += 1
+            self.RI += 1
 
             # If RI exceeds the number of variables
-            if RI >= agent.n_variables:
+            if self.RI >= agent.n_variables:
                 # Resets it to one
-                RI = 1
+                self.RI = 1
 
         # Calculates the agent's fitness
         agent.fit = function(agent.position)
 
         # If newly generated agent fitness is better than worst fitness
-        if agent.fit < agents[-1].fit:
+        if agent.fit < space.agents[-1].fit:
             # Updates the corresponding agent's object
-            agents[-1] = copy.deepcopy(agent)
-
-        return RI
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Defines the golden ratio
-        phi = (1 + np.sqrt(5)) / 2
-
-        # Defines the eletromagnetic index
-        RI = 0
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                RI = self._update(space.agents, function, phi, RI)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            space.agents[-1] = copy.deepcopy(agent)

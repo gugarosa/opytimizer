@@ -2,12 +2,10 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -105,20 +103,25 @@ class MVO(Optimizer):
 
         self._p = p
 
-    def update(self, agents, best_agent, function, WEP, TDR):
-        """Wraps updates over all agents and variables (eq. 3.1-3.4).
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Multi-Verse Optimizer over all agents and variables (eq. 3.1-3.4).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            WEP (float): Current iteration's Wormhole Existence Probability.
-            TDR (floar): Current iteration's Travelling Distance Rate.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
+        # Calculates the Wormhole Existence Probability
+        WEP = self.WEP_min + (iteration + 1) * ((self.WEP_max - self.WEP_min) / n_iterations)
+
+        # Calculates the Travelling Distance Rate
+        TDR = 1 - ((iteration + 1) ** (1 / self.p) / n_iterations ** (1 / self.p))
+
         # Gathers the fitness for each individual
-        fitness = [agent.fit for agent in agents]
+        fitness = [agent.fit for agent in space.agents]
 
         # Calculates the norm of the fitness
         norm = np.linalg.norm(fitness)
@@ -127,7 +130,7 @@ class MVO(Optimizer):
         norm_fitness = fitness / norm
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # For every decision variable
             for j in range(agent.n_variables):
                 # Generates a uniform random number
@@ -139,7 +142,7 @@ class MVO(Optimizer):
                     white_hole = g.weighted_wheel_selection(norm_fitness)
 
                     # Gathers current agent's position as white hole's position
-                    agent.position[j] = agents[white_hole].position[j]
+                    agent.position[j] = space.agents[white_hole].position[j]
 
                 # Generates a second uniform random number
                 r2 = r.generate_uniform_random_number()
@@ -155,68 +158,15 @@ class MVO(Optimizer):
                     # If random number is smaller than 0.5
                     if r3 < 0.5:
                         # Updates the agent's position with `+`
-                        agent.position[j] = best_agent.position[j] + TDR * width
+                        agent.position[j] = space.best_agent.position[j] + TDR * width
 
                     # If not
                     else:
                         # Updates the agent's position with `-`
-                        agent.position[j] = best_agent.position[j] - TDR * width
+                        agent.position[j] = space.best_agent.position[j] - TDR * width
 
             # Clips the agent limits
             agent.clip_by_bound()
 
             # Calculates its fitness
             agent.fit = function(agent.position)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Calculates the Wormhole Existence Probability
-                WEP = self.WEP_min + (t + 1) * ((self.WEP_max - self.WEP_min) / space.n_iterations)
-
-                # Calculates the Travelling Distance Rate
-                TDR = 1 - ((t + 1) ** (1 / self.p) / space.n_iterations ** (1 / self.p))
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, function, WEP, TDR)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

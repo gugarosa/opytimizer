@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -142,7 +140,8 @@ class TWO(Optimizer):
         if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
         if beta <= 0 or beta > 1:
-            raise e.ValueError('`beta` should be greater than 0 and less than 1')
+            raise e.ValueError(
+                '`beta` should be greater than 0 and less than 1')
 
         self._beta = beta
 
@@ -168,8 +167,7 @@ class TWO(Optimizer):
                 r2 = r.generate_gaussian_random_number()
 
                 # Updates the agent's position
-                agent.position = best_agent.position + \
-                    (r2 / iteration) * (best_agent.position - agent.position)
+                agent.position = best_agent.position + (r2 / iteration) * (best_agent.position - agent.position)
 
             # Clips its limits
             agent.clip_by_bound()
@@ -177,12 +175,11 @@ class TWO(Optimizer):
             # Re-calculates its fitness
             agent.fit = function(agent.position)
 
-    def update(self, agents, best_agent, function, iteration, n_iterations):
+    def update(self, space, function, iteration, n_iterations):
         """Wraps Tug of War Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
@@ -190,17 +187,17 @@ class TWO(Optimizer):
         """
 
         # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
         # Gathers best and worst fitness
-        best_fit, worst_fit = agents[0].fit, agents[-1].fit
+        best_fit, worst_fit = space.agents[0].fit, space.agents[-1].fit
 
         # Calculates the agents' weights
         weights = [(agent.fit - worst_fit) /
-                   (best_fit - worst_fit + c.EPSILON) + 1 for agent in agents]
+                   (best_fit - worst_fit + c.EPSILON) + 1 for agent in space.agents]
 
         # We copy a temporary list for iterating purposes
-        temp_agents = copy.deepcopy(agents)
+        temp_agents = copy.deepcopy(space.agents)
 
         # Linearly decreasing `mu_k`
         mu_k = self.mu_k - (self.mu_k - 0.1) * (iteration / n_iterations)
@@ -227,66 +224,20 @@ class TWO(Optimizer):
                     r1 = r.generate_gaussian_random_number(size=(temp1.n_variables, temp1.n_dimensions))
 
                     # Calculates the displacement (eq. 9-10)
-                    delta += 0.5 * acceleration * self.delta_t ** 2 + np.multiply(self.alpha ** iteration * self.beta * (
-                        np.expand_dims(temp1.ub, -1) - np.expand_dims(temp1.lb, -1)), r1)
+                    delta += 0.5 * acceleration * self.delta_t ** 2 + \
+                             np.multiply(self.alpha ** iteration * self.beta * (np.expand_dims(temp1.ub, -1) \
+                             - np.expand_dims(temp1.lb, -1)), r1)
 
             # Updates the temporary agent's position (eq. 11)
             temp1.position += delta
 
         # Performs the constraint handling
-        self._constraint_handle(temp_agents, best_agent, function, iteration)
+        self._constraint_handle(temp_agents, space.best_agent, function, iteration+1)
 
         # Iterates through real and temporary populations
-        for agent, temp in zip(agents, temp_agents):
+        for agent, temp in zip(space.agents, temp_agents):
             # If temporary agent is better than real one
             if temp.fit < agent.fit:
                 # Updates its position and fitness
                 agent.position = copy.deepcopy(temp.position)
                 agent.fit = copy.deepcopy(temp.fit)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, function, t+1, space.n_iterations)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
