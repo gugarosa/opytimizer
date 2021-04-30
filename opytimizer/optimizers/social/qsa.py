@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -150,7 +148,8 @@ class QSA(Optimizer):
                 e = r.generate_gamma_random_number(1, 0.5, 1)
 
                 # Calculates the fluctuation (eq. 6)
-                F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (A.position - a.position)
+                F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + \
+                    e * (A.position - a.position)
 
                 # Updates the temporary agent's position (eq. 4)
                 a.position = A.position + F_1
@@ -325,11 +324,11 @@ class QSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def update(self, agents, function, iteration, n_iterations):
-        """Wraps the Queue Search Algorithm over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Queue Search Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
@@ -340,57 +339,10 @@ class QSA(Optimizer):
         beta = np.exp(np.log(1 / (iteration + c.EPSILON)) * np.sqrt(iteration / n_iterations))
 
         # Performs the first business phase
-        self._business_one(agents, function, beta)
+        self._business_one(space.agents, function, beta)
 
         # Performs the second business phase
-        self._business_two(agents, function)
+        self._business_two(space.agents, function)
 
         # Performs the third business phase
-        self._business_three(agents, function)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, function, t, space.n_iterations)
-
-                # Checks if agents meets the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        self._business_three(space.agents, function)

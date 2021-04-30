@@ -93,8 +93,8 @@ class ES(Optimizer):
 
         self._strategy = strategy
 
-    def create_additional_vars(self, space):
-        """Creates additional variables that are used by this optimizer.
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
             space (Space): A Space object containing meta-information.

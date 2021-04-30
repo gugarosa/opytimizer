@@ -58,7 +58,7 @@ def test_bpso_evaluate():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
-    new_bpso.create_additional_vars(boolean_space)
+    new_bpso.create_additional_attrs(boolean_space)
 
     local_position = np.zeros((2, 2, 1))
 
@@ -71,6 +71,6 @@ def test_bpso_update():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
-    new_bpso.create_additional_vars(boolean_space)
+    new_bpso.create_additional_attrs(boolean_space)
 
     new_bpso.update(boolean_space)

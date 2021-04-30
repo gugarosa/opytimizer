@@ -393,8 +393,7 @@ class GHS(IHS):
             # If harmony memory is not used
             else:
                 # Generate a uniform random number
-                a.position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=a.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
 
         return a
 
@@ -491,7 +490,7 @@ class SGHS(HS):
 
     @property
     def HMCRm(self):
-        """float: Mean harmony memory considering rate
+        """float: Mean harmony memory considering rate.
 
         """
 
@@ -559,8 +558,55 @@ class SGHS(HS):
 
         self._bw_max = bw_max
 
-    def create_additional_vars(self, space):
-        """Creates additional variables that are used by this optimizer.
+    @property
+    def lp(self):
+        """int: Current learning period.
+
+        """
+
+        return self._lp
+
+    @lp.setter
+    def lp(self, lp):
+        if not isinstance(lp, int):
+            raise e.TypeError('`lp` should be a integer')
+        if lp <= 0:
+            raise e.ValueError('`lp` should be > 0')
+
+        self._lp = lp
+
+    @property
+    def HMCR_history(self):
+        """list: Historical harmony memory considering rates.
+
+        """
+
+        return self._HMCR_history
+
+    @HMCR_history.setter
+    def HMCR_history(self, HMCR_history):
+        if not isinstance(HMCR_history, list):
+            raise e.TypeError('`HMCR_history` should be a list')
+
+        self._HMCR_history = HMCR_history
+
+    @property
+    def PAR_history(self):
+        """list: Historical pitch adjusting rates.
+
+        """
+
+        return self._PAR_history
+
+    @PAR_history.setter
+    def PAR_history(self, PAR_history):
+        if not isinstance(PAR_history, list):
+            raise e.TypeError('`PAR_history` should be a list')
+
+        self._PAR_history = PAR_history
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
             space (Space): A Space object containing meta-information.
@@ -858,7 +904,7 @@ class GOGHS(NGHS):
         return a
 
     def update(self, space, function):
-        """Wraps Generalized Opposition-based Global Harmony Search over all agents and variables.
+        """Wraps Generalized Opposition Global-Best Harmony Search over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.
