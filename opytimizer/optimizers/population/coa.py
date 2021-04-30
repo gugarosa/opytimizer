@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -65,13 +63,40 @@ class COA(Optimizer):
 
         self._n_p = n_p
 
-    def _get_agents_from_pack(self, agents, index, n_c):
+    @property
+    def n_c(self):
+        """int: Number of coyotes per pack.
+
+        """
+
+        return self._n_c
+
+    @n_c.setter
+    def n_c(self, n_c):
+        if not isinstance(n_c, int):
+            raise e.TypeError('`n_c` should be an integer')
+        if n_c <= 0:
+            raise e.ValueError('`n_c` should be > 0')
+
+        self._n_c = n_c
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Calculates the number of coyotes per pack
+        self.n_c = space.n_agents // self.n_p
+
+    def _get_agents_from_pack(self, agents, index):
         """Gets a set of agents from a specified pack.
 
         Args:
             agents (list): List of agents.
             index (int): Index of pack.
-            n_c (int): Number of agents per pack.
 
         Returns:
             A sorted list of agents that belongs to the specified pack.
@@ -79,16 +104,15 @@ class COA(Optimizer):
         """
 
         # Defines the starting and ending points
-        start, end = index * n_c, (index + 1) * n_c
+        start, end = index * self.n_c, (index + 1) * self.n_c
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _transition_packs(self, agents, n_c):
+    def _transition_packs(self, agents):
         """Transits coyotes between packs (eq. 4).
 
         Args:
             agents (list): List of agents.
-            n_c (int): Number of coyotes per pack.
 
         """
 
@@ -105,38 +129,35 @@ class COA(Optimizer):
             p2 = r.generate_integer_random_number(high=self.n_p)
 
             # Gathers two random coyotes
-            c1 = r.generate_integer_random_number(high=n_c)
-            c2 = r.generate_integer_random_number(high=n_c)
+            c1 = r.generate_integer_random_number(high=self.n_c)
+            c2 = r.generate_integer_random_number(high=self.n_c)
 
             # Calculates their indexes
-            i = n_c * p1 + c1
-            j = n_c * p2 + c2
+            i = self.n_c * p1 + c1
+            j = self.n_c * p2 + c2
 
             # Performs a swap betweeh them
-            agents[i], agents[j] = copy.deepcopy(
-                agents[j]), copy.deepcopy(agents[i])
+            agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
-    def update(self, agents, function, n_c):
+    def update(self, space, function):
         """Wraps Coyote Optimization Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            n_c (int): Number of agents per pack.
 
         """
 
         # Iterates through all packs
         for i in range(self.n_p):
             # Gets the agents for the specified pack
-            pack_agents = self._get_agents_from_pack(agents, i, n_c)
+            pack_agents = self._get_agents_from_pack(space.agents, i)
 
             # Gathers the alpha coyote (eq. 5)
             alpha = pack_agents[0]
 
             # Computes the cultural tendency (eq. 6)
-            tendency = np.median(
-                np.array([agent.position for agent in pack_agents]), axis=0)
+            tendency = np.median(np.array([agent.position for agent in pack_agents]), axis=0)
 
             # Iterates through all coyotes in the pack
             for agent in pack_agents:
@@ -171,60 +192,4 @@ class COA(Optimizer):
                     agent.fit = copy.deepcopy(a.fit)
 
             # Performs transition between packs (eq. 4)
-            self._transition_packs(agents, n_c)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Calculates the number of coyotes per pack
-        n_c = space.n_agents // self.n_p
-
-        # If number of coyotes per pack equals to zero
-        if n_c == 0:
-            # Throws an error
-            raise e.ValueError(
-                'Number of agents should be divisible by number of packs')
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, function, n_c)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            self._transition_packs(space.agents)
