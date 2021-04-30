@@ -439,7 +439,7 @@ def _build_string(node):
     return lines, len(lines[0]), start, end
 
 
-def evaluate(node):
+def _evaluate(node):
     """Evaluates a node and outputs its solution array.
 
     Args:

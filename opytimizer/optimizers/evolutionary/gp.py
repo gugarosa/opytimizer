@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -157,7 +155,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be reproducted
-        n_individuals = int(space.n_trees * self.p_reproduction)
+        n_individuals = int(space.n_agents * self.p_reproduction)
 
         # Gathers a list of selected individuals to be replaced
         selected = g.tournament_selection(fitness, n_individuals)
@@ -188,7 +186,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be mutated
-        n_individuals = int(space.n_trees * self.p_mutation)
+        n_individuals = int(space.n_agents * self.p_mutation)
 
         # Gathers a list of selected individuals to be replaced
         selected = g.tournament_selection(fitness, n_individuals)
@@ -279,7 +277,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be crossovered
-        n_individuals = int(space.n_trees * self.p_crossover)
+        n_individuals = int(space.n_agents * self.p_crossover)
 
         # Checks if `n_individuals` is an odd number
         if n_individuals % 2 != 0:
@@ -407,10 +405,10 @@ class GP(Optimizer):
         return father, mother
 
     def update(self, space):
-        """Wraps reproduction, crossover and mutation operators over all trees.
+        """Wraps Genetic Programming over all trees.
 
         Args:
-            space (TreeSpace): A TreeSpace object.
+            space (TreeSpace): TreeSpace containing agents and update-related information.
 
         """
 
@@ -423,7 +421,6 @@ class GP(Optimizer):
         # Performs the mutation
         self._mutation(space)
 
-    
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
@@ -450,49 +447,3 @@ class GP(Optimizer):
                 space.best_tree = copy.deepcopy(tree)
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (TreeSpace): A TreeSpace object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial tree space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates trees with designed operators
-                self._update(space)
-
-                # After the update, we need to re-evaluate the tree space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents,
-                             best_agent=space.best_agent,
-                             best_tree=space.best_tree)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

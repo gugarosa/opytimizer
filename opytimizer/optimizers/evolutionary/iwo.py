@@ -3,12 +3,10 @@
 
 import copy
 
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as ex
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -188,29 +186,31 @@ class IWO(Optimizer):
 
         return a
 
-    def update(self, agents, n_agents, function):
-        """Wraps offsprings generations over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Invasive Weed Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            n_agents (int): Number of possible agents in the space.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-
-        Returns:
-            A new population with more fitted individuals.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Creates a list for the produced offsprings
+        # Calculates the current Spatial Dispersal
+        self._spatial_dispersal(iteration, n_iterations)
+
+        # Calculates the number of agents and creates list of offsprings
+        n_agents = len(space.agents)
         offsprings = []
 
         # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
         # Iterates through all agents
-        for agent in agents:
+        for agent in space.agents:
             # Calculates the seeding ratio based on its fitness
-            ratio = (agent.fit - agents[-1].fit) / (agents[0].fit - agents[-1].fit + c.EPSILON)
+            ratio = (agent.fit - space.agents[-1].fit) / (space.agents[0].fit - space.agents[-1].fit + c.EPSILON)
 
             # Calculates the number of produced seeds
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)
@@ -223,60 +223,7 @@ class IWO(Optimizer):
                 # Appends the agent to the offsprings
                 offsprings.append(a)
 
-        # Joins both populations
-        agents += offsprings
-
-        # Performs a new sort on the merged population
-        agents.sort(key=lambda x: x.fit)
-
-        return agents[:n_agents]
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Calculates the current Spatial Dispersal
-                self._spatial_dispersal(t, space.n_iterations)
-
-                # Updates agents
-                space.agents = self._update(space.agents, space.n_agents, function)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Joins both populations, sorts and gathers best `n_agents`
+        space.agents += offsprings
+        space.agents.sort(key=lambda x: x.fit)
+        space.agents = space.agents[:n_agents]
