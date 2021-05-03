@@ -131,7 +131,7 @@ class DE(Optimizer):
             # Mutates the current agent
             a = self._mutate_agent(agent, space.agents[C[0]], space.agents[C[1]], space.agents[C[2]])
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
@@ -139,6 +139,6 @@ class DE(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

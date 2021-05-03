@@ -233,7 +233,7 @@ class AO(Optimizer):
                     a.position = QF * space.best_agent.position - \
                         (G1 * a.position * r2) - G2 * levy + r2 * G1
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
@@ -241,6 +241,6 @@ class AO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

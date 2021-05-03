@@ -95,7 +95,7 @@ class WOA(Optimizer):
 
         # Iterates through all agents
         for agent in agents:
-            # Generating an uniform random number
+            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
 
             # Calculates the `A` coefficient

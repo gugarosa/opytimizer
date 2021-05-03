@@ -317,7 +317,7 @@ class GP(Optimizer):
 
         """
 
-        # Copying father tree to the father's offspring structure
+        # Copiesing father tree to the father's offspring structure
         father_offspring = copy.deepcopy(father)
 
         # Calculating father's crossover point
@@ -326,7 +326,7 @@ class GP(Optimizer):
         # Finds the node at desired crossover point
         sub_father, flag_father = father_offspring.find_node(father_point)
 
-        # Copying mother tree to the mother's offspring structure
+        # Copiesing mother tree to the mother's offspring structure
         mother_offspring = copy.deepcopy(mother)
 
         # Calculating mother's crossover point

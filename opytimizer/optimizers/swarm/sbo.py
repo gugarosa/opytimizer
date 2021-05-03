@@ -145,7 +145,7 @@ class SBO(Optimizer):
                     # Mutates the decision variable position
                     agent.position[j] += sigma[j] * r.generate_gaussian_random_number()
 
-            # Check agent limits
+            # Checks agent's limits
             agent.clip_by_bound()
 
             # Calculates its fitness

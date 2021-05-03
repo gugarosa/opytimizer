@@ -139,7 +139,7 @@ class BA(Optimizer):
 
         """
 
-        # Generating beta random number
+        # Generates beta random number
         beta = rnd.generate_uniform_random_number()
 
         # Calculating new frequency
@@ -213,10 +213,10 @@ class BA(Optimizer):
             # Updates agent's position
             agent.position = self._update_position(agent.position, velocity[i])
 
-            # Generating a random probability
+            # Generates a random probability
             p = rnd.generate_uniform_random_number()
 
-            # Generating a random number
+            # Generates a random number
             e = rnd.generate_gaussian_random_number()
 
             # Check if probability is bigger than current pulse rate
@@ -233,7 +233,7 @@ class BA(Optimizer):
 
             # Checks if probability is smaller than loudness and if fit is better
             if p < loudness[i] and agent.fit < best_agent.fit:
-                # Copying the new solution to space's best agent
+                # Copiesing the new solution to space's best agent
                 best_agent = copy.deepcopy(agent)
 
                 # Increasing pulse rate (eq. 6)

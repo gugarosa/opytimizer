@@ -98,13 +98,13 @@ class SA(Optimizer):
             # Mimics its position
             a = copy.deepcopy(agent)
 
-            # Generating a random noise from a gaussian distribution
+            # Generates a random noise from a gaussian distribution
             noise = r.generate_gaussian_random_number(0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
 
             # Applying the noise
             a.position += noise
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
@@ -115,13 +115,13 @@ class SA(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
             # Checks if state should be updated or not
             elif r1 < np.exp(-(a.fit - agent.fit) / self.T):
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 

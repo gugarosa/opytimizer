@@ -3,11 +3,8 @@
 
 import copy
 
-from tqdm import tqdm
-
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -152,27 +149,29 @@ class BWO(Optimizer):
 
         return alpha
 
-    def update(self, agents, n_variables, function):
-        """Wraps procreation, cannibalism and mutation over all agents and variables.
+    def update(self, space, function):
+        """Wraps Black Widow Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            n_variables (int): Number of decision variables.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Retrieves the number of agents
-        n_agents = len(agents)
+        n_agents = len(space.agents)
+        n_variables = space.n_variables
 
         # Calculates the number agents that reproduces, are cannibals and mutates
-        n_reproduct, n_cannibals, n_mutate = int(n_agents * self.pp), int(n_agents * self.cr), int(n_agents * self.pm)
+        n_reproduct = int(n_agents * self.pp)
+        n_cannibals = int(n_agents * self.cr)
+        n_mutate = int(n_agents * self.pm)
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # Selecting the best solutions and saving in auxiliary population
-        agents1 = copy.deepcopy(agents[:n_reproduct])
+        agents1 = copy.deepcopy(space.agents[:n_reproduct])
 
         # Creates an empty auxiliary population
         agents2 = []
@@ -183,7 +182,7 @@ class BWO(Optimizer):
             idx = r.generate_uniform_random_number(0, n_agents, size=2)
 
             # Making a deepcopy of father and mother
-            father, mother = copy.deepcopy(agents[int(idx[0])]), copy.deepcopy(agents[int(idx[1])])
+            father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(space.agents[int(idx[1])])
 
             # Creates an empty list of auxiliary agents
             new_agents = []
@@ -204,7 +203,7 @@ class BWO(Optimizer):
                 # Appends the mother and mutated agents to the new population
                 new_agents.extend([mother, y1, y2])
 
-            # Sorting new population
+            # Sorts new population
             new_agents.sort(key=lambda x: x.fit)
 
             # Extending auxiliary population with the number of cannibals (s. 3.3)
@@ -227,57 +226,7 @@ class BWO(Optimizer):
             # Appends the mutated agent to the auxiliary population
             agents2.extend([alpha])
 
-        # Joins both populations
-        agents += agents2
-
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
-
-        return agents[:n_agents]
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                space.agents = self._update(space.agents, space.n_variables, function)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Joins both populations, sorts them and retrieves `n_agents`
+        space.agents += agents2
+        space.agents.sort(key=lambda x: x.fit)
+        space.agents = space.agents[:n_agents]

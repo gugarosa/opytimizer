@@ -138,6 +138,4 @@ class FA(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (eq. 9)
-                    agent.position = beta * \
-                        (temp.position + agent.position) + \
-                        self.alpha * (r1 - 0.5)
+                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)

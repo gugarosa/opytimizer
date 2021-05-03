@@ -119,7 +119,7 @@ class PIO(Optimizer):
 
         """
 
-        # Generating random number
+        # Generates random number
         r1 = r.generate_uniform_random_number()
 
         # Calculates new velocity
@@ -186,7 +186,7 @@ class PIO(Optimizer):
 
         """
 
-        # Generating random number
+        # Generates random number
         r1 = r.generate_uniform_random_number()
 
         # Calculates new position based on center

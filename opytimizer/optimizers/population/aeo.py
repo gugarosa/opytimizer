@@ -149,7 +149,7 @@ class AEO(Optimizer):
 
         """
 
-        # Sorting agents according to their energy
+        # Sorts agents according to their energy
         agents.sort(key=lambda x: x.fit, reverse=True)
 
         # Iterates through all agents
@@ -192,7 +192,7 @@ class AEO(Optimizer):
                     # It will surely be a carnivore
                     a = self._carnivore_consumption(agent, agents[j], C)
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
@@ -200,7 +200,7 @@ class AEO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
@@ -235,7 +235,7 @@ class AEO(Optimizer):
             # Updates the new agent position
             a.position = best_agent.position + D * (e * best_agent.position - _h * agent.position)
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
@@ -243,7 +243,7 @@ class AEO(Optimizer):
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 

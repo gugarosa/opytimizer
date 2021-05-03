@@ -293,7 +293,7 @@ class AIWPSO(PSO):
         # Before starting the optimization process
         # We need to copy fitness values to temporary array
         for i, agent in enumerate(space.agents):
-            # Copying fitness from agent's fitness
+            # Copiesing fitness from agent's fitness
             fitness[i] = agent.fit
 
         # We will define a History object for further dumping
@@ -378,7 +378,7 @@ class RPSO(PSO):
 
         """
 
-        # Generating random numbers
+        # Generates random numbers
         r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 
@@ -518,7 +518,7 @@ class SAVPSO(PSO):
 
         """
 
-        # Generating a random number
+        # Generates a random number
         r1 = r.generate_uniform_random_number()
 
         # Calculates new velocity
@@ -622,7 +622,7 @@ class VPSO(PSO):
 
         """
 
-        # Generating uniform random numbers
+        # Generates uniform random numbers
         r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 

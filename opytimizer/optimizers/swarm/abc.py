@@ -90,7 +90,7 @@ class ABC(Optimizer):
         # Change its location according to equation 2.2
         a.position = agent.position + (agent.position - neighbour.position) * r1
 
-        # Check agent limits
+        # Checks agent's limits
         a.clip_by_bound()
 
         # Evaluating its fitness
@@ -191,7 +191,7 @@ class ABC(Optimizer):
             # Updates its position with a random shakeness
             a.position += r.generate_uniform_random_number(-1, 1)
 
-            # Check agent limits
+            # Checks agent's limits
             a.clip_by_bound()
 
             # Recalculates its fitness

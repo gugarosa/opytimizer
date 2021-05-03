@@ -549,7 +549,7 @@ class KH(Optimizer):
 
         # Iterates through all variables
         for j in range(a.n_variables):
-            # Generating a uniform random number
+            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
             # If sampled uniform number if smaller than crossover probability
@@ -583,12 +583,12 @@ class KH(Optimizer):
 
         # Iterates through all variables
         for j in range(a.n_variables):
-            # Generating a uniform random number
+            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
             # If sampled uniform number if smaller than mutation probability
             if r1 < Mu:
-                # Generating another uniform random number
+                # Generates another uniform random number
                 r2 = r.generate_uniform_random_number()
 
                 # Mutates the current position
@@ -609,7 +609,7 @@ class KH(Optimizer):
 
         """
 
-        # Sorting agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Calculates the food location (eq. 12)

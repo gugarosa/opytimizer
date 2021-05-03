@@ -167,7 +167,7 @@ class HS(Optimizer):
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # If newly generated agent fitness is better
@@ -315,7 +315,7 @@ class IHS(HS):
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # If newly generated agent fitness is better
@@ -698,7 +698,7 @@ class SGHS(HS):
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # If newly generated agent fitness is better
@@ -823,7 +823,7 @@ class NGHS(HS):
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Updates the worst agent's position and fitness
@@ -929,7 +929,7 @@ class GOGHS(NGHS):
             # Copies the agent
             agent = copy.deepcopy(opp_agent)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # If generated agent fitness is better

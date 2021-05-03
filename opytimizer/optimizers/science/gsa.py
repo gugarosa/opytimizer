@@ -145,7 +145,7 @@ class GSA(Optimizer):
 
         """
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculating the current gravity

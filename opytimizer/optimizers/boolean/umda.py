@@ -159,7 +159,7 @@ class UMDA(Optimizer):
         # Selects the individuals through ranking
         n_selected = int(n_agents * self.p_selection)
 
-        # Sorting agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the probability of ocurrence from selected agents

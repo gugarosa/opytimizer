@@ -173,7 +173,7 @@ class SSD(Optimizer):
 
         """
 
-        # Generating random numbers
+        # Generates random numbers
         r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 
@@ -213,7 +213,7 @@ class SSD(Optimizer):
                 # Also updates the local best position to current agent's position
                 self.local_position[i] = copy.deepcopy(agent.position)
 
-            # Sorting agents
+            # Sorts agents
             space.agents.sort(key=lambda x: x.fit)
 
             # Calculates the mean global solution

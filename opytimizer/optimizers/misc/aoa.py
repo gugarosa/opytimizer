@@ -142,7 +142,7 @@ class AOA(Optimizer):
         for agent in space.agents:
             # Iterates through all variables
             for j in range(agent.n_variables):
-                # Generating random probability
+                # Generates random probability
                 r1 = r.generate_uniform_random_number()
 
                 # Calculates the search partition
