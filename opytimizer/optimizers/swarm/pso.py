@@ -251,7 +251,7 @@ class AIWPSO(PSO):
         # Initial counter
         p = 0
 
-        # Iterating through every agent
+        # Iterates through every agent
         for i, agent in enumerate(agents):
             # If current agent fitness is smaller than its best
             if agent.fit < fitness[i]:

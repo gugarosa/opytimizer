@@ -122,9 +122,9 @@ class FA(Optimizer):
         # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
 
-        # Iterating through 'i' agents
+        # Iterates through 'i' agents
         for agent in space.agents:
-            # Iterating through 'j' agents
+            # Iterates through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j' (eq. 8)
                 distance = g.euclidean_distance(agent.position, temp.position)

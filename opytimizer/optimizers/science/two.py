@@ -202,12 +202,12 @@ class TWO(Optimizer):
         # Linearly decreasing `mu_k`
         mu_k = self.mu_k - (self.mu_k - 0.1) * (iteration / n_iterations)
 
-        # Iterating through 'i' agents
+        # Iterates through 'i' agents
         for i, temp1 in enumerate(temp_agents):
             # Initializes `delta` as zero
             delta = 0.0
 
-            # Iterating through 'j' agents
+            # Iterates through 'j' agents
             for j, temp2 in enumerate(temp_agents):
                 # If weight from agent `i` is smaller than weight from agent `j`
                 if weights[i] < weights[j]:

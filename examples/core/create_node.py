@@ -13,7 +13,7 @@ print(f'Post Order: {n1.post_order} | Size: {n1.n_nodes}.')
 # Additionally, one can stack nodes to create a tree
 t = Node(name='SUM', category='FUNCTION', left=n1, right=n2)
 
-# Defining `n1` and `n2` parent as `t`
+# Defines `n1` and `n2` parent as `t`
 n1.parent = t
 n2.parent = t
 

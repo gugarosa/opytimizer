@@ -38,7 +38,7 @@ class WCA(Optimizer):
         # Overrides its parent class with the receiving params
         super(WCA, self).__init__()
 
-        # Number of rivers + sea
+        # Number of sea + rivers
         self.nsr = 2
 
         # Maximum evaporation condition
@@ -106,24 +106,27 @@ class WCA(Optimizer):
 
         """
 
-        # Our initial cost will be 0
-        cost = 0
-
         # Array of flows
         self.flows = np.zeros(self.nsr, dtype=int)
 
-        # For every river + sea
-        for i in range(self.nsr):
-            # We accumulates its fitness
-            cost += space.agents[i].fit
+    def _flow_intensity(self, agents):
+        """Calculates the intensity of each possible flow (eq. 6).
 
-        # Iterating again over rivers + sea
+        Args:
+            agents (list): List of agents.
+
+        """
+
+        # Calculates the cost
+        cost = np.sum([agents[i].fit for i in range(self.nsr)])
+
+        # Iterates again over sea + rivers
         for i in range(self.nsr):
-            # Calculates its particular flow intensity (eq. 6)
-            self.flows[i] = round(np.fabs(space.agents[i].fit / cost) * (len(space.agents) - self.nsr))
+            # Calculates its particular flow intensity
+            self.flows[i] = np.floor(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
 
     def _raining_process(self, agents, best_agent):
-        """Performs the raining process (eq. 12).
+        """Performs the raining process (eq. 11-12).
 
         Args:
             agents (list): List of agents.
@@ -131,77 +134,111 @@ class WCA(Optimizer):
 
         """
 
-        # Iterate through every raindrop
-        for k in range(self.nsr, len(agents)):
-            # Calculates the euclidean distance between sea and raindrop / strream
-            distance = (np.linalg.norm(best_agent.position - agents[k].position))
+        # Iterates through all sea + rivers
+        for i in range(0, self.nsr):
+            # Iterates through all raindrops that belongs to specific sea or river
+            for j in range(self.nsr, self.flows[i] + self.nsr):
+                # Calculates the euclidean distance between sea and raindrop / stream
+                distance = (np.linalg.norm(best_agent.position - agents[j].position))
 
-            # If distance if smaller than evaporation condition
-            if distance > self.d_max:
-                # Generates a new random gaussian number
-                r1 = r.generate_gaussian_random_number(1, agents[k].n_variables)
+                # If distance if smaller than evaporation condition
+                if distance < self.d_max:
+                    # If it is supposed to replace the sea streams' position
+                    if i == 0:
+                        # Updates position (eq. 12)
+                        r1 = r.generate_gaussian_random_number(1, agents[j].n_variables)
+                        agents[j].position = best_agent.position + np.sqrt(0.1) * r1
 
-                # Changes the stream position
-                agents[k].position = best_agent.position + np.sqrt(0.1) * r1
+                    # If it is supposed to replace the river streams' position
+                    else:
+                        # Updates position (eq. 11)
+                        agents[j].fill_with_uniform()
 
-    def _update_stream(self, agents):
+    def _update_stream(self, agents, function):
         """Updates every stream position (eq. 8).
 
         Args:
             agents (list): List of agents.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
-        # Defining a counter to the summation of flows
+        # Defines a counter to the summation of flows
         n_flows = 0
 
         # For every river, ignoring the sea
-        for k in range(1, self.nsr):
-            # Accumulate the number of flows
-            n_flows += self.flows[k]
+        for i in range(0, self.nsr):
+            # Accumulates the number of flows
+            n_flows += self.flows[i]
 
-            # Iterate through every possible flow
-            for i in range((n_flows - self.flows[k]), n_flows):
-                # Calculates a random uniform number between 0 and 1
+            # Iterates through every possible flow
+            for j in range((self.nsr + n_flows - self.flows[i]), self.nsr + n_flows):
+                # Calculates a random uniform number
                 r1 = r.generate_uniform_random_number()
 
-                # Updates stream position
-                agents[i].position += r1 * 2 * (agents[i].position - agents[k].position)
+                # Updates river position
+                agents[j].position += r1 * 2 * (agents[i].position - agents[j].position)
 
-    def _update_river(self, agents, best_agent):
+                # Clips its limits and recalculates its fitness
+                agents[j].clip_by_bound()
+                agents[j].fit = function(agents[j].position)
+
+    def _update_river(self, agents, best_agent, function):
         """Updates every river position (eq. 9).
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # For every river, ignoring the sea
-        for k in range(1, self.nsr):
-            # Calculates a random uniform number between 0 and 1
+        for i in range(1, self.nsr):
+            # Calculates a random uniform
             r1 = r.generate_uniform_random_number()
 
             # Updates river position
-            agents[k].position += r1 * 2 * (best_agent.position - agents[k].position)
+            agents[i].position += r1 * 2 * (best_agent.position - agents[i].position)
 
-    def update(self, space, n_iterations):
+            # Clips its limits and recalculates its fitness
+            agents[i].clip_by_bound()
+            agents[i].fit = function(agents[i].position)
+
+    def update(self, space, function, n_iterations):
         """Wraps Water Cycle Algorithm over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
             n_iterations (int): Maximum number of iterations.
 
         """
 
+        # Calculates the flow intensity
+        self._flow_intensity(space.agents)
+
         # Updates every stream position
-        self._update_stream(space.agents)
+        self._update_stream(space.agents, function)
 
         # Updates every river position
-        self._update_river(space.agents, space.best_agent)
+        self._update_river(space.agents, space.best_agent, function)
 
-        # Sorts agents
-        space.agents.sort(key=lambda x: x.fit)
+        # Iterates through all rivers
+        for i in range(1, self.nsr):
+            # Iterates through all raindrops
+            for j in range(self.nsr, len(space.agents)):
+                # If raindrop position is better than river's
+                if space.agents[j].fit < space.agents[i].fit:
+                    # Exchanges their positions
+                    space.agents[i], space.agents[j] = space.agents[j], space.agents[i]
+
+        # Iterates through all rivers:
+        for i in range(1, self.nsr):
+            # If river position is better than seá's
+            if space.agents[i].fit < space.agents[0].fit:
+                # Exchanges their positions
+                space.agents[i], space.agents[0] = space.agents[0], space.agents[i]
 
         # Performs the raining process (eq. 12)
         self._raining_process(space.agents, space.best_agent)

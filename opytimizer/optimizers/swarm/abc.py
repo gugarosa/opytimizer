@@ -143,7 +143,7 @@ class ABC(Optimizer):
         # Calculating the fitness somatory
         total = sum(agent.fit for agent in agents)
 
-        # Defining food sources' counter
+        # Defines food sources' counter
         k = 0
 
         # While counter is less than the amount of food sources

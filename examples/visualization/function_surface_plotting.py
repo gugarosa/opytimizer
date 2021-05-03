@@ -7,7 +7,7 @@ def f(x, y):
     return x**2 + y**2
 
 
-# Defining both `x` and `y` arrays
+# Defines both `x` and `y` arrays
 x = y = np.linspace(-10, 10, 100)
 
 # Creates a meshgrid from both `x` and `y`

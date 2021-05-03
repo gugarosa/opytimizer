@@ -160,12 +160,12 @@ class GOA(Optimizer):
         # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(agents)
 
-        # Iterating through 'i' agents
+        # Iterates through 'i' agents
         for agent in agents:
             # Initializes the total comfort as zero
             total_comfort = np.zeros((agent.n_variables, agent.n_dimensions))
 
-            # Iterating through 'j' agents
+            # Iterates through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j'
                 distance = g.euclidean_distance(agent.position, temp.position)

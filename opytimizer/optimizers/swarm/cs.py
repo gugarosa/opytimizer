@@ -163,7 +163,7 @@ class CS(Optimizer):
         # It will be used to replace or not a certain nest
         b = d.generate_bernoulli_distribution(1 - prob, len(agents))
 
-        # Iterating through every new agent
+        # Iterates through every new agent
         for j, new_agent in enumerate(new_agents):
             # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
@@ -191,7 +191,7 @@ class CS(Optimizer):
 
         """
 
-        # Iterating through each agent and new agent
+        # Iterates through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
             # Check agent limits
             new_agent.clip_by_bound()

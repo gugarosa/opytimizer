@@ -112,7 +112,7 @@ class BH(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
-            function (Function): A function object.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
