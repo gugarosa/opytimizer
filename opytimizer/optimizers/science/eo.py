@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -125,48 +123,67 @@ class EO(Optimizer):
 
         self._V = V
 
-    def _calculate_equilibrium(self, agents, C):
+    @property
+    def C(self):
+        """list: Concentrations (agents).
+
+        """
+
+        return self._C
+
+    @C.setter
+    def C(self, C):
+        if not isinstance(C, list):
+            raise e.TypeError('`C` should be a list')
+
+        self._C = C
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # List of concentrations (agents)
+        self.C = [copy.deepcopy(space.agents[0]) for _ in range(4)]
+
+    def _calculate_equilibrium(self, agents):
         """Calculates the equilibrium concentrations.
 
         Args:
             agents (list): List of agents.
-            C (list): List of concentrations to be updated.
-
-        Returns:
-            List of equilibrium concentrations.
 
         """
 
         # Iterates through all agents
         for agent in agents:
             # If current agent's fitness is smaller than C0
-            if agent.fit < C[0].fit:
+            if agent.fit < self.C[0].fit:
                 # Replaces C0 object
-                C[0] = copy.deepcopy(agent)
+                self.C[0] = copy.deepcopy(agent)
 
             # If current agent's fitness is between C0 and C1
-            elif agent.fit < C[1].fit:
+            elif agent.fit < self.C[1].fit:
                 # Replaces C1 object
-                C[1] = copy.deepcopy(agent)
+                self.C[1] = copy.deepcopy(agent)
 
             # If current agent's fitness is between C1 and C2
-            elif agent.fit < C[2].fit:
+            elif agent.fit < self.C[2].fit:
                 # Replaces C2 object
-                C[2] = copy.deepcopy(agent)
+                self.C[2] = copy.deepcopy(agent)
 
             # If current agent's fitness is between C2 and C3
-            elif agent.fit < C[3].fit:
+            elif agent.fit < self.C[3].fit:
                 # Replaces C3 object
-                C[3] = copy.deepcopy(agent)
+                self.C[3] = copy.deepcopy(agent)
 
-        return C
-
-    def _average_concentration(self, function, C):
+    def _average_concentration(self, function):
         """Averages the concentrations.
 
         Args:
             function (Function): A Function object that will be used as the objective function.
-            C (list): List of concentrations.
 
         Returns:
             Averaged concentration.
@@ -174,10 +191,10 @@ class EO(Optimizer):
         """
 
         # Makes a deepcopy to withhold the future update
-        C_avg = copy.deepcopy(C[0])
+        C_avg = copy.deepcopy(self.C[0])
 
         # Update the position with concentrations' averager
-        C_avg.position = np.mean([c.position for c in C], axis=0)
+        C_avg.position = np.mean([c.position for c in self.C], axis=0)
 
         # Clips its limits
         C_avg.clip_by_bound()
@@ -187,30 +204,29 @@ class EO(Optimizer):
 
         return C_avg
 
-    def update(self, agents, function, C, iteration, n_iterations):
+    def update(self, space, function, iteration, n_iterations):
         """Wraps Equilibrium Optimizer over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            C (list): List of concentrations.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
         # Calculates the equilibrium and average concentrations
-        C = self._calculate_equilibrium(agents, C)
-        C_avg = self._average_concentration(function, C)
+        self._calculate_equilibrium(space.agents)
+        C_avg = self._average_concentration(function)
 
         # Makes a pool of both concentrations and their average (eq. 7)
-        C_pool = C + [C_avg]
+        C_pool = self.C + [C_avg]
 
         # Calculates the time (eq. 9)
         t = (1 - iteration / n_iterations) ** (self.a2 * iteration / n_iterations)
 
         # Iterates through all agents
-        for agent in agents:
+        for agent in space.agents:
             # Generates a integer between [0, 5) to select the concentration
             i = rnd.generate_integer_random_number(0, 5)
 
@@ -244,53 +260,3 @@ class EO(Optimizer):
             # Updates agent's position (eq. 16)
             agent.position = C_pool[i].position + (
                 agent.position - C_pool[i].position) * F + (G / (lambd * self.V)) * (1 - F)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Creates a list of concentrations (agents)
-        C = [copy.deepcopy(space.agents[0]) for _ in range(4)]
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, function, C, t, space.n_iterations)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

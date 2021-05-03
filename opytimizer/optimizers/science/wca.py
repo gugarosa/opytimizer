@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -85,34 +83,44 @@ class WCA(Optimizer):
 
         self._d_max = d_max
 
-    def _flow_intensity(self, agents):
-        """Calculates the intensity of each possible flow (eq. 6).
+    @property
+    def flows(self):
+        """np.array: Array of flows.
+
+        """
+
+        return self._flows
+
+    @flows.setter
+    def flows(self, flows):
+        if not isinstance(flows, np.ndarray):
+            raise e.TypeError('`flows` should be a numpy array')
+
+        self._flows = flows
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
-            agents (list): List of agents.
-
-        Returns:
-            It returns an array of flows' intensity.
+            space (Space): A Space object containing meta-information.
 
         """
 
         # Our initial cost will be 0
         cost = 0
 
-        # Creates an empty integer array of number of rivers + sea
-        flows = np.zeros(self.nsr, dtype=int)
+        # Array of flows
+        self.flows = np.zeros(self.nsr, dtype=int)
 
         # For every river + sea
         for i in range(self.nsr):
             # We accumulates its fitness
-            cost += agents[i].fit
+            cost += space.agents[i].fit
 
         # Iterating again over rivers + sea
         for i in range(self.nsr):
-            # Calculates its particular flow intensity
-            flows[i] = round(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
-
-        return flows
+            # Calculates its particular flow intensity (eq. 6)
+            self.flows[i] = round(np.fabs(space.agents[i].fit / cost) * (len(space.agents) - self.nsr))
 
     def _raining_process(self, agents, best_agent):
         """Performs the raining process (eq. 12).
@@ -136,12 +144,11 @@ class WCA(Optimizer):
                 # Changes the stream position
                 agents[k].position = best_agent.position + np.sqrt(0.1) * r1
 
-    def _update_stream(self, agents, flows):
+    def _update_stream(self, agents):
         """Updates every stream position (eq. 8).
 
         Args:
             agents (list): List of agents.
-            flows (np.array): Array of flows' intensity.
 
         """
 
@@ -151,10 +158,10 @@ class WCA(Optimizer):
         # For every river, ignoring the sea
         for k in range(1, self.nsr):
             # Accumulate the number of flows
-            n_flows += flows[k]
+            n_flows += self.flows[k]
 
             # Iterate through every possible flow
-            for i in range((n_flows - flows[k]), n_flows):
+            for i in range((n_flows - self.flows[k]), n_flows):
                 # Calculates a random uniform number between 0 and 1
                 r1 = r.generate_uniform_random_number()
 
@@ -178,77 +185,26 @@ class WCA(Optimizer):
             # Updates river position
             agents[k].position += r1 * 2 * (best_agent.position - agents[k].position)
 
-    def update(self, agents, best_agent, flows):
-        """Updates the agents position.
+    def update(self, space, n_iterations):
+        """Wraps Water Cycle Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            flows (np.array): Array of flows' intensity.
+            space (Space): Space containing agents and update-related information.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
         # Updates every stream position
-        self._update_stream(agents, flows)
+        self._update_stream(space.agents)
 
         # Updates every river position
-        self._update_river(agents, best_agent)
+        self._update_river(space.agents, space.best_agent)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
+        # Performs the raining process (eq. 12)
+        self._raining_process(space.agents, space.best_agent)
 
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # Calculating the flow's intensity (eq. 6)
-        flows = self._flow_intensity(space.agents)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, flows)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Sorting agents
-                space.agents.sort(key=lambda x: x.fit)
-
-                # Performs the raining process (eq. 12)
-                self._raining_process(space.agents, space.best_agent)
-
-                # Updates the evaporation condition
-                self.d_max -= (self.d_max / space.n_iterations)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Updates the evaporation condition
+        self.d_max -= (self.d_max / n_iterations)
