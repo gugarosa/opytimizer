@@ -216,7 +216,7 @@ class Opytimizer:
         """Starts the optimization task.
 
         Args
-            n_iterations (int): Number of iterations.
+            n_iterations (int): Maximum number of iterations.
             callback (list): List of callbacks.
 
         """

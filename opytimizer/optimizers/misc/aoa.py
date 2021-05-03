@@ -127,7 +127,7 @@ class AOA(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """

@@ -71,7 +71,7 @@ class MRFO(Optimizer):
             agents (list): List of agents.
             best_position (np.array): Global best position.
             i (int): Index of current manta ray.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -182,7 +182,7 @@ class MRFO(Optimizer):
         Args:
             space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """

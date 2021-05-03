@@ -141,7 +141,7 @@ class GSA(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
 
         """
 

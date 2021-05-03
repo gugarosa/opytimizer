@@ -182,7 +182,7 @@ class SFO(Optimizer):
             best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
             sardines (list): List of agents (sardines).
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
 
         """
 

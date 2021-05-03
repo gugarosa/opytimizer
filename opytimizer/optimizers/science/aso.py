@@ -141,7 +141,7 @@ class ASO(Optimizer):
             agent (Agent): Agent to have its potential calculated.
             K_agent (Agent): Neighbour agent.
             average (np.array): Array of average positions.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
@@ -190,7 +190,7 @@ class ASO(Optimizer):
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             mass (np.array): Array of masses.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -234,7 +234,7 @@ class ASO(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """

@@ -4,10 +4,8 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -155,73 +153,25 @@ class SOS(Optimizer):
             agent_j.position = copy.deepcopy(p.position)
             agent_j.fit = copy.deepcopy(p.fit)
 
-    def update(self, agents, best_agent, function):
-        """Wraps Symbiotic Organisms Search. over all agents and variables.
+    def update(self, space, function):
+        """Wraps Symbiotic Organisms Search over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
+        for i, agent in enumerate(space.agents):
             # Generates a random integer for mutualism and performs it
-            j = r.generate_integer_random_number(0, len(agents), exclude_value=i)
-            self._mutualism(agent, agents[j], best_agent, function)
+            j = r.generate_integer_random_number( 0, len(space.agents), exclude_value=i)
+            self._mutualism(agent, space.agents[j], space.best_agent, function)
 
             # Re-generates a random integer for commensalism and performs it
-            j = r.generate_integer_random_number(0, len(agents), exclude_value=i)
-            self._commensalism(agent, agents[j], best_agent, function)
+            j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
+            self._commensalism(agent, space.agents[j], space.best_agent, function)
 
             # Re-generates a random integer for parasitism and performs it
-            j = r.generate_integer_random_number(0, len(agents), exclude_value=i)
-            self._parasitism(agent, agents[j], function)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, function)
-
-                # Checks if agents meets the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
+            self._parasitism(agent, space.agents[j], function)

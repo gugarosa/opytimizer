@@ -360,7 +360,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             motion (np.array): Array of motions.
 
@@ -445,7 +445,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             food (np.array): Food location.
             foraging (np.array): Array of foraging motions.
@@ -475,7 +475,7 @@ class KH(Optimizer):
         Args:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Number of dimensions.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -497,7 +497,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             food (np.array): Food location.
             motion (np.array): Array of motions.
@@ -602,7 +602,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             motion (np.array): Array of motions.
             foraging (np.array): Array of foraging motions.

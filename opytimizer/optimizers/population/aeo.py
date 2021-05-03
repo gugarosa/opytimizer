@@ -47,7 +47,7 @@ class AEO(Optimizer):
         Args:
             agent (Agent): Current agent.
             best_agent (Agent): Best agent.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -144,7 +144,7 @@ class AEO(Optimizer):
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
@@ -253,7 +253,7 @@ class AEO(Optimizer):
         Args:
             space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
