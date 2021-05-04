@@ -17,18 +17,18 @@ X = torch.linspace(-1, 1, 101)
 Y = 2 * X + torch.randn(X.size()) * 0.33
 
 def fit(model, loss, opt, x, y):
-    # Declaring initial variables
+    # Declares initial variables
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
     # Resetting the gradient
     opt.zero_grad()
 
-    # Performing the foward pass
+    # Performs the foward pass
     fw_x = model.forward(x.view(len(x), 1)).squeeze()
     output = loss.forward(fw_x, y)
 
-    # Performing backward pass
+    # Performs backward pass
     output.backward()
 
     # Updates parameters
@@ -52,13 +52,13 @@ def linear_regression(opytimizer):
     learning_rate = opytimizer[0][0]
     momentum = opytimizer[1][0]
 
-    # Declaring the loss function
+    # Declares the loss function
     loss = torch.nn.MSELoss(reduction='mean')
 
-    # Declaring the optimization algorithm
+    # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
-    # Performing training loop
+    # Performs training loop
     for _ in range(epochs):
         # Initial cost as 0.0
         cost = 0.0
@@ -68,7 +68,7 @@ def linear_regression(opytimizer):
 
         # For every batch
         for k in range(num_batches):
-            # Declaring initial and ending for each batch
+            # Declares initial and ending for each batch
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting

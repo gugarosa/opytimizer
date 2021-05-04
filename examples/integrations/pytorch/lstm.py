@@ -61,25 +61,25 @@ class LSTM(torch.nn.Module):
         c0 = Variable(torch.zeros(
             [1, batch_size, self.n_hidden]), requires_grad=False)
 
-        # Performing forward pass
+        # Performs forward pass
         fx, _ = self.lstm.forward(x, (h0, c0))
 
         return self.linear.forward(fx[-1])
 
 
 def fit(model, loss, opt, x, y):
-    # Declaring initial variables
+    # Declares initial variables
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
     # Resetting the gradient
     opt.zero_grad()
 
-    # Performing the foward pass
+    # Performs the foward pass
     fw_x = model.forward(x)
     output = loss.forward(fw_x, y)
 
-    # Performing backward pass
+    # Performs backward pass
     output.backward()
 
     # Updates parameters
@@ -89,10 +89,10 @@ def fit(model, loss, opt, x, y):
 
 
 def predict(model, x_val):
-    # Declaring validation variable
+    # Declares validation variable
     x = Variable(x_val, requires_grad=False)
 
-    # Performing backward pass with this variable
+    # Performs backward pass with this variable
     output = model.forward(x)
 
     # Getting the index of the prediction
@@ -119,13 +119,13 @@ def lstm(opytimizer):
     learning_rate = opytimizer[0][0]
     momentum = opytimizer[1][0]
 
-    # Declaring the loss function
+    # Declares the loss function
     loss = torch.nn.CrossEntropyLoss(reduction='mean')
 
-    # Declaring the optimization algorithm
+    # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
-    # Performing training loop
+    # Performs training loop
     for _ in range(epochs):
         # Initial cost as 0.0
         cost = 0.0
@@ -135,7 +135,7 @@ def lstm(opytimizer):
 
         # For every batch
         for k in range(num_batches):
-            # Declaring initial and ending for each batch
+            # Declares initial and ending for each batch
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting

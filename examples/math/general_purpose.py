@@ -8,7 +8,7 @@ for pair in g.n_wise(individuals, 2):
     # Outputting pairs
     print(f'Pair: {pair}')
 
-# Performing a tournmanet selection over list
+# Performs a tournmanet selection over list
 selected = g.tournament_selection(individuals, 2)
 
 # Outputting selected individuals

@@ -6,7 +6,7 @@ import opytimizer.math.hyper as h
 a = np.ones((2, 4))
 print(f'Array: {a}')
 
-# Declaring lower and upper bounds
+# Declares lower and upper bounds
 lb = np.array([-5, -5])
 ub = np.array([-2, -2])
 
