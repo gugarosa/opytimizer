@@ -121,10 +121,8 @@ class SFO(Optimizer):
         # Makes a deepcopy of agent
         a = copy.deepcopy(agent)
 
-        # Iterates through all decision variables
-        for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # For each decision variable, we generate uniform random numbers
-            a.position[j] = r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+        # Fills agent with new random positions
+        a.fill_with_uniform()
 
         return a
 

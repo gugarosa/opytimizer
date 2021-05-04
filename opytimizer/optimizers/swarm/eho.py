@@ -186,9 +186,7 @@ class EHO(Optimizer):
             worst = clan_agents[-1]
 
             # Generates a new position for the worst agent in clan (eq. 4)
-            for j, (lb, ub) in enumerate(zip(worst.lb, worst.ub)):
-                # For each decision variable, we generate uniform random numbers
-                worst.position[j] = r.generate_uniform_random_number(lb, ub, size=worst.n_dimensions)
+            worst.fill_with_uniform()
 
     def update(self, agents, function, n_ci):
         """Wraps Elephant Herd Optimization over all agents and variables.

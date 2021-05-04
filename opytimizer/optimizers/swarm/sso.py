@@ -4,11 +4,8 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
-
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -105,51 +102,38 @@ class SSO(Optimizer):
 
         self._C_g = C_g
 
-    def update(self, agents, best_agent, local_position):
-        """Wraps velocity and position updates over all agents and variables.
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            local_position (np.array): Array of local best posisitons.
+    @property
+    def local_position(self):
+        """np.array: Array of local positions.
 
         """
 
-        # Iterates through all agents
-        for i, agent in enumerate(agents):
-            # Iterates through every decision variable
-            for j in range(agent.n_variables):
-                # Generates a uniform random number
-                r1 = r.generate_uniform_random_number()
+        return self._local_position
 
-                # If random number is smaller than `C_w`
-                if r1 < self.C_w:
-                    # Ignores the position update
-                    pass
+    @local_position.setter
+    def local_position(self, local_position):
+        if not isinstance(local_position, np.ndarray):
+            raise e.TypeError('`local_position` should be a numpy array')
 
-                # If random number is between `C_w` and `C_p`
-                elif r1 < self.C_p:
-                    # Updates agent's position with its local position
-                    agent.position[j] = local_position[i][j]
+        self._local_position = local_position
 
-                # If random number is between `C_p` and `C_g`
-                elif r1 < self.C_g:
-                    # Updates agent's position with best position
-                    agent.position[j] = best_agent.position[j]
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
-                # If random number is greater than `C_g`
-                else:
-                    # Updates agent's position with random number
-                    agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
+        Args:
+            space (Space): A Space object containing meta-information.
 
-    
-    def evaluate(self, space, function, local_position):
+        """
+
+        # Arrays of local positions
+        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            local_position (np.array): Array of local best posisitons.
 
         """
 
@@ -164,62 +148,45 @@ class SSO(Optimizer):
                 agent.fit = fit
 
                 # Also updates the local best position to current's agent position
-                local_position[i] = copy.deepcopy(agent.position)
+                self.local_position[i] = copy.deepcopy(agent.position)
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
                 # Makes a deep copy of agent's local best position and fitness to the best agent
-                space.best_agent.position = copy.deepcopy(local_position[i])
+                space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space):
+        """Wraps Simplified Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            space (Space): Space containing agents and update-related information.
 
         """
 
-        # Instanciating array of local positions
-        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Iterates through every decision variable
+            for j in range(agent.n_variables):
+                # Generates a uniform random number
+                r1 = r.generate_uniform_random_number()
 
-        # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluate)
+                # If random number is smaller than `C_w`
+                if r1 < self.C_w:
+                    # Ignores the position update
+                    pass
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+                # If random number is between `C_w` and `C_p`
+                elif r1 < self.C_p:
+                    # Updates agent's position with its local position
+                    agent.position[j] = self.local_position[i][j]
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
+                # If random number is between `C_p` and `C_g`
+                elif r1 < self.C_g:
+                    # Updates agent's position with best position
+                    agent.position[j] = space.best_agent.position[j]
 
-                # Updates agents
-                self._update(space.agents, space.best_agent, local_position)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents,
-                             local=local_position,
-                             best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                # If random number is greater than `C_g`
+                else:
+                    # Updates agent's position with random number
+                    agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)

@@ -102,10 +102,8 @@ class BH(Optimizer):
 
             # If distance is smaller than horizon's radius
             if distance < radius:
-                # Generates a new random star
-                for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
-                    # For each decision variable, we generate uniform random numbers
-                    agent.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
+                # Fills agent with new random positions
+                agent.fill_with_uniform()
 
     def update(self, space, function):
         """Wraps Black Hole over all agents and variables.

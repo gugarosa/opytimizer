@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as log
 from opytimizer.core.optimizer import Optimizer
 
@@ -75,26 +73,26 @@ class WOA(Optimizer):
         # Makes a deepcopy of agent
         a = copy.deepcopy(agent)
 
-        # Iterates through all decision variables
-        for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # For each decision variable, we generate uniform random numbers
-            a.position[j] = r.generate_uniform_random_number(
-                lb, ub, a.n_dimensions)
+        # Fills agent with new random positions
+        a.fill_with_uniform()
 
         return a
 
-    def update(self, agents, best_agent, coefficient):
-        """Wraps Whale Optimization Algorithm updates.
+    def update(self, space, iteration, n_iterations):
+        """Wraps Whale Optimization Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            coefficient (float): A linearly decreased coefficient.
+            space (Space): Space containing agents and update-related information.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations
 
         """
 
+        # Linearly decreases the coefficient
+        coefficient = 2 - 2 * iteration / (n_iterations - 1)
+
         # Iterates through all agents
-        for agent in agents:
+        for agent in space.agents:
             # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
 
@@ -112,10 +110,10 @@ class WOA(Optimizer):
                 # If `A` is smaller than 1
                 if np.fabs(A) < 1:
                     # Calculates the distance coefficient
-                    D = np.fabs(C * best_agent.position - agent.position)
+                    D = np.fabs(C * space.best_agent.position - agent.position)
 
                     # Updates the agent's position
-                    agent.position = best_agent.position - A * D
+                    agent.position = space.best_agent.position - A * D
 
                 # If `A` is bigger or equal to 1
                 else:
@@ -134,57 +132,7 @@ class WOA(Optimizer):
                 l = r.generate_gaussian_random_number()
 
                 # Calculates the distance coefficient
-                D = np.fabs(best_agent.position - agent.position)
+                D = np.fabs(space.best_agent.position - agent.position)
 
                 # Updates the agent's position
-                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + best_agent.position
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Linearly decreases the coefficient
-                a = 2 - 2 * t / (space.n_iterations - 1)
-
-                # Updates agents
-                self._update(space.agents, space.best_agent, a)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + space.best_agent.position
