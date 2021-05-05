@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -99,44 +97,71 @@ class EHO(Optimizer):
     @n_clans.setter
     def n_clans(self, n_clans):
         if not isinstance(n_clans, int):
-            raise e.TypeError('`n_clans` should be integer')
+            raise e.TypeError('`n_clans` should be an integer')
         if n_clans < 1:
             raise e.ValueError('`n_clans` should be > 0')
 
         self._n_clans = n_clans
 
-    def _get_agents_from_clan(self, agents, index, n_ci):
+    @property
+    def n_ci(self):
+        """int: Number of elephants per clan.
+
+        """
+
+        return self._n_ci
+
+    @n_ci.setter
+    def n_ci(self, n_ci):
+        if not isinstance(n_ci, int):
+            raise e.TypeError('`n_ci` should be an integer')
+        if n_ci < 1:
+            raise e.ValueError('`n_ci` should be > 0')
+
+        self._n_ci = n_ci
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Number of elephants per clan
+        self.n_ci = space.n_agents // self.n_clans
+
+    def _get_agents_from_clan(self, agents, index):
         """Gets a set of agents from a specified clan.
 
         Args:
             agents (list): List of agents.
             index (int): Index of clan.
-            n_ci (int): Number of agents per clan.
 
         Returns:
             A sorted list of agents that belongs to the specified clan.
+
         """
 
         # Defines the starting and ending points
-        start, end = index * n_ci, (index + 1) * n_ci
+        start, end = index * self.n_ci, (index + 1) * self.n_ci
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _updating_operator(self, agents, centers, function, n_ci):
+    def _updating_operator(self, agents, centers, function):
         """Performs the separating operator.
 
         Args:
             agents (list): List of agents.
             centers (list): List of centers.
             function (Function): A Function object that will be used as the objective function.
-            n_ci (int): Number of agents per clan.
 
         """
 
         # Iterates through every clan
         for i in range(self.n_clans):
             # Gets the agents for the specified clan
-            clan_agents = self._get_agents_from_clan(agents, i, n_ci)
+            clan_agents = self._get_agents_from_clan(agents, i)
 
             # Iterates through every agent in clan
             for j, agent in enumerate(clan_agents):
@@ -168,19 +193,18 @@ class EHO(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _separating_operator(self, agents, n_ci):
+    def _separating_operator(self, agents):
         """Performs the separating operator.
 
         Args:
             agents (list): List of agents.
-            n_ci (int): Number of agents per clan.
 
         """
 
         # Iterates through every clan
         for i in range(self.n_clans):
             # Gets the agents for the specified clan
-            clan_agents = self._get_agents_from_clan(agents, i, n_ci)
+            clan_agents = self._get_agents_from_clan(agents, i)
 
             # Gathers the worst agent in clan
             worst = clan_agents[-1]
@@ -188,13 +212,12 @@ class EHO(Optimizer):
             # Generates a new position for the worst agent in clan (eq. 4)
             worst.fill_with_uniform()
 
-    def update(self, agents, function, n_ci):
+    def update(self, space, function):
         """Wraps Elephant Herd Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            n_ci (int): Number of agents per clan.
 
         """
 
@@ -204,7 +227,7 @@ class EHO(Optimizer):
         # Iterates through every clan
         for i in range(self.n_clans):
             # Gets the agents for the specified clan
-            clan_agents = self._get_agents_from_clan(agents, i, n_ci)
+            clan_agents = self._get_agents_from_clan(space.agents, i)
 
             # Calculates the clan's center position
             clan_center = np.mean(np.array([agent.position for agent in clan_agents]), axis=0)
@@ -213,63 +236,7 @@ class EHO(Optimizer):
             centers.append(clan_center)
 
         # Performs the updating operator
-        self._updating_operator(agents, centers, function, n_ci)
+        self._updating_operator(space.agents, centers, function)
 
         # Performs the separating operators
-        self._separating_operator(agents, n_ci)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Calculates the number of elephants per clan
-        n_ci = space.n_agents // self.n_clans
-
-        # If number of elephants per clan equals to zero
-        if n_ci == 0:
-            # Throws an error
-            raise e.ValueError(
-                'Number of agents should be divisible by number of clans')
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updates agents
-                self._update(space.agents, function, n_ci)
-
-                # Checks if agents meet the bounds limits
-                space.clip_by_bound()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        self._separating_operator(space.agents)
