@@ -121,13 +121,13 @@ class CS(Optimizer):
 
         # Then, we iterate for every agent
         for new_agent in new_agents:
-            # Calculating the Lévy distribution
+            # Calculates the Lévy distribution
             step = d.generate_levy_distribution(self.beta, new_agent.n_variables)
 
             # Expanding its dimension to perform entrywise multiplication
             step = np.expand_dims(step, axis=1)
 
-            # Calculating the difference vector between local and best positions
+            # Calculates the difference vector between local and best positions
             # Alpha controls the intensity of the step size
             step_size = self.alpha * step * (new_agent.position - best_agent.position)
 
@@ -170,7 +170,7 @@ class CS(Optimizer):
             k = r.generate_integer_random_number(0, len(agents)-1)
             l = r.generate_integer_random_number(0, len(agents)-1, exclude_value=k)
 
-            # Calculating the random walk between these two nests
+            # Calculates the random walk between these two nests
             step_size = r1 * (agents[k].position - agents[l].position)
 
             # Finally, we replace the old nest

@@ -152,7 +152,7 @@ class IWO(Optimizer):
 
         """
 
-        # Calculating the iteration coefficient
+        # Calculates the iteration coefficient
         coef = ((n_iterations - iteration) ** self.e) / ((n_iterations + c.EPSILON) ** self.e)
 
         # Updates the Spatial Dispersial

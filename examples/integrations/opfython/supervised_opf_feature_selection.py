@@ -42,7 +42,7 @@ def supervised_opf_feature_selection(opytimizer):
     # Predicts new data
     preds = opf.predict(X_val_selected)
 
-    # Calculating accuracy
+    # Calculates accuracy
     acc = g.opf_accuracy(Y_val, preds)
 
     return 1 - acc

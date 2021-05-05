@@ -28,7 +28,7 @@ def _svm(opytimizer):
     # Fitting model using cross-validation
     scores = cross_val_score(svc, X, Y, cv=k_fold, n_jobs=-1)
 
-    # Calculating scores mean
+    # Calculates scores mean
     mean_score = np.mean(scores)
 
     return 1 - mean_score

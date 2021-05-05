@@ -132,7 +132,7 @@ def cnn(opytimizer):
         # Initial cost as 0.0
         cost = 0.0
 
-        # Calculating the number of batches
+        # Calculates the number of batches
         num_batches = len(X_train) // batch_size
 
         # For every batch
@@ -147,7 +147,7 @@ def cnn(opytimizer):
     # Predicting samples from evaluating set
     preds = predict(model, X_val)
 
-    # Calculating accuracy
+    # Calculates accuracy
     acc = np.mean(preds == Y_val)
 
     return 1 - acc

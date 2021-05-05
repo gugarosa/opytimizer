@@ -157,7 +157,7 @@ class ABC(Optimizer):
 
         """
 
-        # Calculating the fitness somatory
+        # Calculates the fitness somatory
         total = sum(agent.fit for agent in agents)
 
         # Defines food sources' counter
@@ -193,7 +193,7 @@ class ABC(Optimizer):
 
         """
 
-        # Calculating the maximum trial counter value and index
+        # Calculates the maximum trial counter value and index
         max_trial, max_index = np.max(self.trial), np.argmax(self.trial)
 
         # If maximum trial is bigger than number of possible trials

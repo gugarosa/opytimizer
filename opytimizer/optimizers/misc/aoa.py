@@ -132,10 +132,10 @@ class AOA(Optimizer):
 
         """
 
-        # Calculating math optimizer accelarated coefficient (eq. 2)
+        # Calculates math optimizer accelarated coefficient (eq. 2)
         MOA = self.a_min + iteration * ((self.a_max - self.a_min) / n_iterations)
 
-        # Calculating math optimizer probability (eq. 4)
+        # Calculates math optimizer probability (eq. 4)
         MOP = 1 - (iteration ** (1 / self.alpha) / n_iterations ** (1 / self.alpha))
 
         # Iterates through all agents

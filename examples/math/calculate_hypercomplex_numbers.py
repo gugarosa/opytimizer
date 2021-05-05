@@ -10,7 +10,7 @@ print(f'Array: {a}')
 lb = np.array([-5, -5])
 ub = np.array([-2, -2])
 
-# Calculating the hypercomplex number norm
+# Calculates the hypercomplex number norm
 norm = h.norm(a)
 print(f'Norm Array: {norm}')
 

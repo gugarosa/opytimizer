@@ -1,4 +1,4 @@
-"""Jellyfish Search.
+"""Jellyfish Search-based algorithms.
 """
 
 import numpy as np

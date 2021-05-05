@@ -63,7 +63,7 @@ def linear_regression(opytimizer):
         # Initial cost as 0.0
         cost = 0.0
 
-        # Calculating the number of batches
+        # Calculates the number of batches
         num_batches = len(X) // batch_size
 
         # For every batch
@@ -74,7 +74,7 @@ def linear_regression(opytimizer):
             # Cost will be the loss accumulated from model's fitting
             cost += fit(model, loss, opt, X[start:end], Y[start:end])
 
-    # Calculating final cost
+    # Calculates final cost
     final_cost = cost / num_batches
 
     return final_cost

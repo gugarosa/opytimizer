@@ -13,7 +13,7 @@ x = y = np.linspace(-10, 10, 100)
 # Creates a meshgrid from both `x` and `y`
 x, y = np.meshgrid(x, y)
 
-# Calculating f(x, y)
+# Calculates f(x, y)
 z = f(x, y)
 
 # Creates final array for further plotting

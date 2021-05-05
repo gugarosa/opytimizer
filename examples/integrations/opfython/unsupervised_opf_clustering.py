@@ -41,7 +41,7 @@ def unsupervised_opf_clustering(opytimizer):
     # Predicts new data
     preds, _ = opf.predict(X_test)
 
-    # Calculating accuracy
+    # Calculates accuracy
     acc = g.opf_accuracy(Y_test, preds)
 
     return 1 - acc

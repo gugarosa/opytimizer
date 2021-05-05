@@ -25,7 +25,7 @@ def k_means_clustering(opytimizer):
     # Gathers predicitions
     preds = kmeans.labels_
 
-    # Calculating adjusted rand index
+    # Calculates adjusted rand index
     ari = metrics.adjusted_rand_score(Y, preds)
 
     return 1 - ari

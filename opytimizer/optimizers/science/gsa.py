@@ -103,7 +103,7 @@ class GSA(Optimizer):
         # Gathers the best and worst agents
         best, worst = agents[0].fit, agents[-1].fit
 
-        # Calculating agents' masses using equation 15
+        # Calculates agents' masses using equation 15
         mass = [(agent.fit - worst) / (best - worst) for agent in agents]
 
         # Normalizing agents' masses
@@ -148,13 +148,13 @@ class GSA(Optimizer):
         # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Calculating the current gravity
+        # Calculates the current gravity
         gravity = self.G / (iteration + 1)
 
-        # Calculating agents' mass
+        # Calculates agents' mass
         mass = self._calculate_mass(space.agents)
 
-        # Calculating agents' attraction force
+        # Calculates agents' attraction force
         force = self._calculate_force(space.agents, mass, gravity)
 
         # Iterates through all agents

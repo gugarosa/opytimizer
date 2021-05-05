@@ -225,7 +225,7 @@ class GP(Optimizer):
         # Deep copying a new mutated tree from initial tree
         mutated_tree = copy.deepcopy(tree)
 
-        # Calculating mutation point
+        # Calculates mutation point
         mutation_point = int(r.generate_uniform_random_number(2, max_nodes))
 
         # Finds the node at desired mutation point
@@ -320,7 +320,7 @@ class GP(Optimizer):
         # Copiesing father tree to the father's offspring structure
         father_offspring = copy.deepcopy(father)
 
-        # Calculating father's crossover point
+        # Calculates father's crossover point
         father_point = int(r.generate_uniform_random_number(2, max_father))
 
         # Finds the node at desired crossover point
@@ -329,7 +329,7 @@ class GP(Optimizer):
         # Copiesing mother tree to the mother's offspring structure
         mother_offspring = copy.deepcopy(mother)
 
-        # Calculating mother's crossover point
+        # Calculates mother's crossover point
         mother_point = int(r.generate_uniform_random_number(2, max_mother))
 
         # Finds the node at desired crossover point
