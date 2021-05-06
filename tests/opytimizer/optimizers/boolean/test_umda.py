@@ -1,12 +1,7 @@
 import numpy as np
-from opytimark.markers.boolean import Knapsack
 
-from opytimizer.core import function
 from opytimizer.optimizers.boolean import umda
 from opytimizer.spaces import boolean
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_umda_params():
@@ -87,8 +82,7 @@ def test_umda_build():
 def test_umda_calculate_probability():
     new_umda = umda.UMDA()
 
-    boolean_space = boolean.BooleanSpace(
-        n_agents=5, n_iterations=20, n_variables=2)
+    boolean_space = boolean.BooleanSpace(n_agents=5, n_variables=2)
 
     probs = new_umda._calculate_probability(boolean_space.agents)
 
@@ -105,22 +99,9 @@ def test_umda_sample_position():
     assert position == 1
 
 
-def test_umda_run():
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=Knapsack(
-        values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100))
-
+def test_umda_update():
     new_umda = umda.UMDA()
 
-    boolean_space = boolean.BooleanSpace(
-        n_agents=2, n_iterations=10, n_variables=5)
+    boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
-    history = new_umda.run(boolean_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm umda failed to converge.'
+    new_umda.update(boolean_space)

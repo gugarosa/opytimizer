@@ -5,9 +5,6 @@ import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import bmrfo
 from opytimizer.spaces import boolean
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_bmrfo_params():

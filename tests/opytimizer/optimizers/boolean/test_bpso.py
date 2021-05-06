@@ -1,15 +1,11 @@
 import sys
 
 import numpy as np
-from opytimark.markers.boolean import Knapsack
 
 import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import bpso
 from opytimizer.spaces import boolean
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_bpso_params():
@@ -49,6 +45,27 @@ def test_bpso_build():
     assert new_bpso.built == True
 
 
+def test_bpso_create_additional_attrs():
+    boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
+    
+    new_bpso = bpso.BPSO()
+    new_bpso.create_additional_attrs(boolean_space)
+
+    try:
+        new_bpso.local_position = 1
+    except:
+        new_bpso.local_position = np.array([1])
+
+    assert new_bpso.local_position == 1
+
+    try:
+        new_bpso.velocity = 1
+    except:
+        new_bpso.velocity = np.array([1])
+
+    assert new_bpso.velocity == 1
+
+
 def test_bpso_evaluate():
     def square(x):
         return np.sum(x**2)
@@ -59,8 +76,6 @@ def test_bpso_evaluate():
 
     new_bpso = bpso.BPSO()
     new_bpso.create_additional_attrs(boolean_space)
-
-    local_position = np.zeros((2, 2, 1))
 
     new_bpso.evaluate(boolean_space, new_function)
 
