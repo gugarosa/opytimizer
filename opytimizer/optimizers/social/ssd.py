@@ -191,6 +191,34 @@ class SSD(Optimizer):
 
         return new_velocity
 
+    def evaluate(self, space, function):
+        """Evaluates the search space according to the objective function.
+
+        Args:
+            space (Space): A Space object that will be evaluated.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Calculates the fitness value of current agent
+            fit = function(agent.position)
+
+            # If fitness is better than agent's best fit
+            if fit < agent.fit:
+                # Updates its current fitness to the newer one
+                agent.fit = fit
+
+                # Also updates the local best position to current's agent position
+                self.local_position[i] = copy.deepcopy(agent.position)
+
+            # If agent's fitness is better than global fitness
+            if agent.fit < space.best_agent.fit:
+                # Makes a deep copy of agent's local best position and fitness to the best agent
+                space.best_agent.position = copy.deepcopy(self.local_position[i])
+                space.best_agent.fit = copy.deepcopy(agent.fit)
+
     def update(self, space, function):
         """Wraps Social Ski Driver over all agents and variables.
 
@@ -231,31 +259,3 @@ class SSD(Optimizer):
 
         # Reduces exploration parameter
         self.c *= self.decay
-
-    def evaluate(self, space, function):
-        """Evaluates the search space according to the objective function.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-
-        """
-
-        # Iterates through all agents
-        for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
-            fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
-            if fit < agent.fit:
-                # Updates its current fitness to the newer one
-                agent.fit = fit
-
-                # Also updates the local best position to current's agent position
-                self.local_position[i] = copy.deepcopy(agent.position)
-
-            # If agent's fitness is better than global fitness
-            if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
-                space.best_agent.position = copy.deepcopy(self.local_position[i])
-                space.best_agent.fit = copy.deepcopy(agent.fit)
