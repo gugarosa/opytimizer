@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.misc import doa
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_doa_params():
@@ -16,7 +12,7 @@ def test_doa_params():
     new_doa = doa.DOA(params=params)
 
     assert new_doa.r == 1.0
-    
+
 
 def test_doa_params_setter():
     new_doa = doa.DOA()
@@ -34,31 +30,34 @@ def test_doa_params_setter():
     assert new_doa.r == 1.0
 
 
-def test_doa_build():
-    new_doa = doa.DOA()
-
-    assert new_doa.built == True
-
-
-def test_doa_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+def test_doa_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_doa = doa.DOA()
+    new_doa.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    try:
+        new_doa.chaotic_map = 1
+    except:
+        new_doa.chaotic_map = np.array([1])
 
-    history = new_doa.run(search_space, new_function, pre_evaluate=hook)
+    assert new_doa.chaotic_map == 1
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm doa failed to converge.'
+def test_doa_calculate_chaotic_map():
+    new_doa = doa.DOA()
+
+    c_map = new_doa._calculate_chaotic_map(0, 1)
+
+    assert c_map.shape == (1,)
+
+
+def test_doa_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_doa = doa.DOA()
+    new_doa.create_additional_attrs(search_space)
+
+    new_doa.update(search_space)

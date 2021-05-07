@@ -78,12 +78,6 @@ def test_aoa_params_setter():
     assert new_aoa.mu == 0.499
 
 
-def test_aoa_build():
-    new_aoa = aoa.AOA()
-
-    assert new_aoa.built == True
-
-
 def test_aoa_update():
     new_aoa = aoa.AOA()
 

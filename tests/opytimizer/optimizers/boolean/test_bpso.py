@@ -39,12 +39,6 @@ def test_bpso_params_setter():
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
-def test_bpso_build():
-    new_bpso = bpso.BPSO()
-
-    assert new_bpso.built == True
-
-
 def test_bpso_create_additional_attrs():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
     

@@ -73,12 +73,6 @@ def test_umda_params_setter():
     assert new_umda.upper_bound == 0.95
 
 
-def test_umda_build():
-    new_umda = umda.UMDA()
-
-    assert new_umda.built == True
-
-
 def test_umda_calculate_probability():
     new_umda = umda.UMDA()
 

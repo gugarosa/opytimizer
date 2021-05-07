@@ -46,12 +46,6 @@ def test_cem_params_setter():
     assert new_cem.alpha == 0.5
 
 
-def test_cem_build():
-    new_cem = cem.CEM()
-
-    assert new_cem.built == True
-
-
 def test_cem_create_additional_attrs():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])

@@ -28,12 +28,6 @@ def test_bmrfo_params_setter():
     assert new_bmrfo.S == 0 or new_bmrfo.S == 1
 
 
-def test_bmrfo_build():
-    new_bmrfo = bmrfo.BMRFO()
-
-    assert new_bmrfo.built == True
-
-
 def test_bmrfo_cyclone_foraging():
     new_bmrfo = bmrfo.BMRFO()
 
