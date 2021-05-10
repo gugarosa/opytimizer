@@ -133,28 +133,31 @@ class HHO(Optimizer):
         # Generates a uniform random number
         w = r.generate_uniform_random_number()
 
+        # Without rapid dives
+        if w >= 0.5:
+            # Soft besiege
+            if energy >= 0.5:
+                # Calculates the delta's position
+                delta = best_agent.position - current_agent.position
+
+                # Calculates the location vector (eq. 4)
+                location_vector = delta - energy * np.fabs(jump * best_agent.position - current_agent.position)
+
+                return location_vector
+
+            # Hard besiege
+            else:
+                # Calculates the delta's position
+                delta = best_agent.position - current_agent.position
+
+                # Calculates the location vector (eq. 6)
+                location_vector = best_agent.position - energy * np.fabs(delta)
+
+                return location_vector
+
+        # With rapid dives
         # Soft besiege
-        if w >= 0.5 and energy >= 0.5:
-            # Calculates the delta's position
-            delta = best_agent.position - current_agent.position
-
-            # Calculates the location vector (eq. 4)
-            location_vector = delta - energy * np.fabs(jump * best_agent.position - current_agent.position)
-
-            return location_vector
-
-        # Hard besiege
-        if w >= 0.5 and energy < 0.5:
-            # Calculates the delta's position
-            delta = best_agent.position - current_agent.position
-
-            # Calculates the location vector (eq. 6)
-            location_vector = best_agent.position - energy * np.fabs(delta)
-
-            return location_vector
-
-        # Soft besiege with rapid dives
-        if w < 0.5 and energy >= 0.5:
+        if energy >= 0.5:
             # Calculates the `Y` position (eq. 7)
             Y = best_agent.position - energy * np.fabs(jump * best_agent.position - current_agent.position)
 
@@ -177,7 +180,7 @@ class HHO(Optimizer):
             if Z_fit < current_agent.fit:
                 return Z
 
-        # Hard besiege with rapid dives
+        # Hard besiege
         else:
             # Averages the population's position
             average = np.mean([x.position for x in agents], axis=0)
