@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.population import coa
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -26,32 +24,68 @@ def test_coa_params_setter():
     except:
         new_coa.n_p = 2
 
+    assert new_coa.n_p == 2
 
-def test_coa_build():
+    try:
+        new_coa.n_p = -1
+    except:
+        new_coa.n_p = 2
+
+    assert new_coa.n_p == 2
+
+
+def test_coa_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_coa = coa.COA()
+    new_coa.create_additional_attrs(search_space)
 
-    assert new_coa.built == True
+    try:
+        new_coa.n_c = 'a'
+    except:
+        new_coa.n_c = 1
+
+    assert new_coa.n_c == 1
+
+    try:
+        new_coa.n_c = -1
+    except:
+        new_coa.n_c = 1
+
+    assert new_coa.n_c == 1
 
 
-def test_coa_run():
+def test_coa_get_agents_from_pack():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_coa = coa.COA()
+    new_coa.create_additional_attrs(search_space)
+
+    agents = new_coa._get_agents_from_pack(search_space.agents, 0)
+
+    assert len(agents) == 5
+
+
+def test_coa_transition_packs():
+    search_space = search.SearchSpace(n_agents=200, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_coa = coa.COA()
+    new_coa.create_additional_attrs(search_space)
+
+    new_coa._transition_packs(search_space.agents)
+
+
+def test_coa_update():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_coa = coa.COA()
+    new_coa.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_coa.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm coa failed to converge.'
+    new_coa.update(search_space, square)
