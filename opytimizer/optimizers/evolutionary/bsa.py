@@ -163,7 +163,7 @@ class BSA(Optimizer):
 
         Args:
             agents (list): List of agents.
-            old_agents (list): List of trial agents.
+            trial_agents (list): List of trial agents.
 
         """
 
