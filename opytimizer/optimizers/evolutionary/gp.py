@@ -404,23 +404,6 @@ class GP(Optimizer):
 
         return father, mother
 
-    def update(self, space):
-        """Wraps Genetic Programming over all trees.
-
-        Args:
-            space (TreeSpace): TreeSpace containing agents and update-related information.
-
-        """
-
-        # Performs the reproduction
-        self._reproduction(space)
-
-        # Performs the crossover
-        self._crossover(space)
-
-        # Performs the mutation
-        self._mutation(space)
-
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
@@ -447,3 +430,20 @@ class GP(Optimizer):
                 space.best_tree = copy.deepcopy(tree)
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
+
+    def update(self, space):
+        """Wraps Genetic Programming over all trees.
+
+        Args:
+            space (TreeSpace): TreeSpace containing agents and update-related information.
+
+        """
+
+        # Performs the reproduction
+        self._reproduction(space)
+
+        # Performs the crossover
+        self._crossover(space)
+
+        # Performs the mutation
+        self._mutation(space)

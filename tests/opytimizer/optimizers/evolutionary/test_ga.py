@@ -60,6 +60,42 @@ def test_ga_params_setter():
     assert new_ga.p_crossover == 0.5
 
 
+def test_ga_roulette_selection():
+    new_ga = ga.GA()
+
+    fitness = [10, 20, 30, 40, 50]
+
+    idx = new_ga._roulette_selection(len(fitness), fitness)
+
+    assert len(idx) == 4
+
+
+def test_ga_crossover():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_ga = ga.GA()
+
+    alpha, beta = new_ga._crossover(
+        search_space.agents[0], search_space.agents[1])
+
+    assert type(alpha).__name__ == 'Agent'
+    assert type(beta).__name__ == 'Agent'
+
+
+def test_ga_mutation():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_ga = ga.GA()
+
+    alpha, beta = new_ga._mutation(
+        search_space.agents[0], search_space.agents[1])
+
+    assert type(alpha).__name__ == 'Agent'
+    assert type(beta).__name__ == 'Agent'
+
+
 def test_ga_update():
     def square(x):
         return np.sum(x**2)

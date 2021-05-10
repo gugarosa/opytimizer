@@ -51,6 +51,9 @@ class IWO(Optimizer):
         # Initial standard deviation
         self.init_sigma = 3
 
+        # Standard deviation
+        self.sigma = 0
+
         # Builds the class
         self.build(params)
 
@@ -142,6 +145,21 @@ class IWO(Optimizer):
             raise ex.ValueError('`init_sigma` should be >= `final_sigma`')
 
         self._init_sigma = init_sigma
+
+    @property
+    def sigma(self):
+        """float: Standard deviation.
+
+        """
+
+        return self._sigma
+
+    @sigma.setter
+    def sigma(self, sigma):
+        if not isinstance(sigma, (float, int)):
+            raise ex.TypeError('`sigma` should be a float or integer')
+
+        self._sigma = sigma
 
     def _spatial_dispersal(self, iteration, n_iterations):
         """Calculates the Spatial Dispersal coefficient (eq. 1).
