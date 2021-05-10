@@ -432,7 +432,7 @@ class GP(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
     def update(self, space):
-        """Wraps Genetic Programming over all trees.
+        """Wraps Genetic Programming over all trees and variables.
 
         Args:
             space (TreeSpace): TreeSpace containing agents and update-related information.

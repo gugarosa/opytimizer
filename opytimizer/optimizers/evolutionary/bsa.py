@@ -216,7 +216,7 @@ class BSA(Optimizer):
                     trial_agents[i].position[j] = copy.deepcopy(agents[i].position[j])
 
     def update(self, space, function):
-        """Wraps the Backtracking Search Optimization Algorithm over all agents and variables.
+        """Wraps Backtracking Search Optimization Algorithm over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.

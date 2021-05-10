@@ -248,7 +248,7 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
     def update(self, space, function, iteration, n_iterations):
-        """Wraps Artificial Ecosystem-based Optimization.
+        """Wraps Artificial Ecosystem-based Optimization over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.

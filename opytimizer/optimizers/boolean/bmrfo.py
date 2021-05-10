@@ -176,7 +176,7 @@ class BMRFO(Optimizer):
         return somersault_foraging
 
     def update(self, space, function, iteration, n_iterations):
-        """Wraps chain, cyclone and somersault foraging updates over all agents and variables.
+        """Wraps Boolean Manta Ray Foraging Optimization over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.

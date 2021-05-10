@@ -229,8 +229,7 @@ class GCO(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
-            life (np.array): An array holding each cell's current life.
-            counter (np.array): An array holding each cell's copy counter.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 

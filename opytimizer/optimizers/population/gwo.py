@@ -70,6 +70,7 @@ class GWO(Optimizer):
 
         Args:
             space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
