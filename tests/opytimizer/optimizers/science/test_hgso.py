@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import hgso
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -124,31 +122,56 @@ def test_hgso_params_setter():
     assert new_hgso.K == 1.0
 
 
-def test_hgso_build():
-    new_hgso = hgso.HGSO()
+def test_hgso_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    assert new_hgso.built == True
+    new_hgso = hgso.HGSO()
+    new_hgso.create_additional_attrs(search_space)
+
+    try:
+        new_hgso.coefficient = 1
+    except:
+        new_hgso.coefficient = np.array([1])
+
+    assert new_hgso.coefficient == np.array([1])
+
+    try:
+        new_hgso.pressure = 1
+    except:
+        new_hgso.pressure = np.array([1])
+
+    assert new_hgso.pressure == np.array([1])
+
+    try:
+        new_hgso.constant = 1
+    except:
+        new_hgso.constant = np.array([1])
+
+    assert new_hgso.constant == np.array([1])
+
+
+def test_hgso_update_position():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_hgso = hgso.HGSO()
+    new_hgso.create_additional_attrs(search_space)
+
+    position = new_hgso._update_position(
+        search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5)
+
+    assert position[0][0] == 0.3886188939596681
 
 
 def test_hgso_run():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
+    new_hgso.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_hgso.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm hgso failed to converge.'
+    new_hgso.update(search_space, square, 1, 10)
