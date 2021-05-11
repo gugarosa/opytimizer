@@ -11,7 +11,7 @@ from opytimizer.spaces.search import SearchSpace
 # Loading CIFAR-10 data
 (X_train, Y_train), (X_val, Y_val) = datasets.cifar10.load_data()
 
-# Normalizing inputs between 0 and 1
+# Normalizes inputs between 0 and 1
 X_train, X_val = X_train / 255.0, X_val / 255.0
 
 

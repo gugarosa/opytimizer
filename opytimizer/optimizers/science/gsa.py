@@ -104,10 +104,10 @@ class GSA(Optimizer):
         best, worst = agents[0].fit, agents[-1].fit
 
         # Calculates agents' masses using equation 15
-        mass = [(agent.fit - worst) / (best - worst) for agent in agents]
+        mass = [(agent.fit - worst) / (best - worst + c.EPSILON) for agent in agents]
 
-        # Normalizing agents' masses
-        norm_mass = mass / np.sum(mass)
+        # Normalizes agents' masses
+        norm_mass = mass / (np.sum(mass) + c.EPSILON)
 
         return norm_mass
 
@@ -131,7 +131,7 @@ class GSA(Optimizer):
         # Transforms the force into an array
         force = np.asarray(force)
 
-        # Applying a stochastic trait to the force
+        # Applies a stochastic trait to the force
         force = np.sum(r.generate_uniform_random_number() * force, axis=1)
 
         return force

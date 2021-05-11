@@ -101,7 +101,7 @@ class SA(Optimizer):
             # Generates a random noise from a gaussian distribution
             noise = r.generate_gaussian_random_number(0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
 
-            # Applying the noise
+            # Applies the noise
             a.position += noise
 
             # Checks agent's limits
