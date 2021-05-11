@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import eho
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_eho_params():
@@ -64,41 +60,73 @@ def test_eho_params_setter():
     assert new_eho.n_clans == 10
 
 
-def test_eho_build():
+def test_eho_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=20, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_eho = eho.EHO()
+    new_eho.create_additional_attrs(search_space)
 
-    assert new_eho.built == True
+    try:
+        new_eho.n_ci = 'a'
+    except:
+        new_eho.n_ci = 1
+
+    assert new_eho.n_ci == 1
+
+    try:
+        new_eho.n_ci = -1
+    except:
+        new_eho.n_ci = 1
+
+    assert new_eho.n_ci == 1
 
 
-def test_eho_run():
+def test_eho_get_agents_from_clan():
+    search_space = search.SearchSpace(n_agents=20, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_eho = eho.EHO()
+    new_eho.create_additional_attrs(search_space)
+
+    agents = new_eho._get_agents_from_clan(search_space.agents, 0)
+
+    assert len(agents) == 2
+
+
+def test_eho_updating_operator():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=20, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
+    new_eho.create_additional_attrs(search_space)
 
-    
+    centers = [np.random.normal(size=(2, 1)) for _ in range(10)]
 
-    try:
-        search_space = search.SearchSpace(n_agents=5, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_eho._updating_operator(search_space.agents, centers, square)
 
-        history = new_eho.run(search_space, new_function, pre_evaluate=hook)
 
-    except:
-        search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+def test_eho_separating_operator():
+    search_space = search.SearchSpace(n_agents=20, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-        history = new_eho.run(search_space, new_function, pre_evaluate=hook)
+    new_eho = eho.EHO()
+    new_eho.create_additional_attrs(search_space)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+    new_eho._separating_operator(search_space.agents)
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm eho failed to converge.'
+
+def test_eho_update():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=20, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_eho = eho.EHO()
+    new_eho.create_additional_attrs(search_space)
+
+    new_eho.update(search_space, square)

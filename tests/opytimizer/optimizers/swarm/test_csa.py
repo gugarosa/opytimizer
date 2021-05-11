@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import csa
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_csa_params():
@@ -42,31 +38,42 @@ def test_csa_params_setter():
     assert new_csa.AP == 0.1
 
 
-def test_csa_build():
+def test_csa_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_csa = csa.CSA()
+    new_csa.create_additional_attrs(search_space)
 
-    assert new_csa.built == True
+    try:
+        new_csa.memory = 1
+    except:
+        new_csa.memory = np.array([1])
+
+    assert new_csa.memory == 1
 
 
-def test_csa_run():
+def test_csa_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_csa = csa.CSA()
+    new_csa.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_csa.evaluate(search_space, square)
 
-    history = new_csa.run(search_space, new_function, pre_evaluate=hook)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+def test_csa_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm csa failed to converge.'
+    new_csa = csa.CSA()
+    new_csa.create_additional_attrs(search_space)
+
+    new_csa.update(search_space)
+
+    new_csa.AP = 1
+    new_csa.update(search_space)

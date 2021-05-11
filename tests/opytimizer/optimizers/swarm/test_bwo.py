@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import bwo
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_bwo_params():
@@ -64,51 +60,37 @@ def test_bwo_params_setter():
     assert new_bwo.pm == 0.4
 
 
-def test_bwo_build():
+def test_bwo_procreating():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
     new_bwo = bwo.BWO()
 
-    assert new_bwo.built == True
+    y1, y2 = new_bwo._procreating(
+        search_space.agents[0], search_space.agents[1])
+
+    assert type(y1).__name__ == 'Agent'
+    assert type(y2).__name__ == 'Agent'
+
+
+def test_bwo_mutation():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_bwo = bwo.BWO()
+
+    alpha = new_bwo._mutation(search_space.agents[0])
+
+    assert type(alpha).__name__ == 'Agent'
 
 
 def test_bwo_update():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_bwo = bwo.BWO()
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=10,
-                                      n_variables=2, lower_bound=[1, 1],
-                                      upper_bound=[10, 10])
-
-    new_bwo._evaluate(search_space, new_function)
-
-    new_bwo._update(search_space.agents,
-                    search_space.n_variables, new_function)
-
-    assert search_space.agents[0].position[0] != 0
-
-
-def test_bwo_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
-
-    new_bwo = bwo.BWO()
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=30,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_bwo.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm bwo failed to converge.'
+    new_bwo.update(search_space, square)
