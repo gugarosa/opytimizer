@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import sso
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_sso_params():
@@ -64,31 +60,39 @@ def test_sso_params_setter():
     assert new_sso.C_g == 0.9
 
 
-def test_sso_build():
+def test_sso_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_sso = sso.SSO()
+    new_sso.create_additional_attrs(search_space)
 
-    assert new_sso.built == True
+    try:
+        new_sso.local_position = 1
+    except:
+        new_sso.local_position = np.array([1])
+
+    assert new_sso.local_position == np.array([1])
 
 
-def test_sso_run():
+def test_sso_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sso = sso.SSO()
+    new_sso.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_sso.evaluate(search_space, square)
 
-    history = new_sso.run(search_space, new_function, pre_evaluate=hook)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+def test_sso_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm sso failed to converge.'
+    new_sso = sso.SSO()
+    new_sso.create_additional_attrs(search_space)
+
+    new_sso.update(search_space)
