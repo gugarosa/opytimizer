@@ -21,7 +21,7 @@ def fit(model, loss, opt, x, y):
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
-    # Resetting the gradient
+    # Resets the gradient
     opt.zero_grad()
 
     # Performs the foward pass

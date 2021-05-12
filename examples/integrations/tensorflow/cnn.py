@@ -8,7 +8,7 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Loading CIFAR-10 data
+# Loads CIFAR-10 data
 (X_train, Y_train), (X_val, Y_val) = datasets.cifar10.load_data()
 
 # Normalizes inputs between 0 and 1

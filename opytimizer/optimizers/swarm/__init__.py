@@ -22,7 +22,7 @@ from opytimizer.optimizers.swarm.kh import KH
 from opytimizer.optimizers.swarm.mfo import MFO
 from opytimizer.optimizers.swarm.mrfo import MRFO
 from opytimizer.optimizers.swarm.pio import PIO
-from opytimizer.optimizers.swarm.pso import PSO, AIWPSO, RPSO, SAVPSO, VPSO
+from opytimizer.optimizers.swarm.pso import AIWPSO, PSO, RPSO, SAVPSO, VPSO
 from opytimizer.optimizers.swarm.sbo import SBO
 from opytimizer.optimizers.swarm.sca import SCA
 from opytimizer.optimizers.swarm.sfo import SFO

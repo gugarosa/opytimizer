@@ -1,8 +1,8 @@
 import tensorflow as tf
-from nalp.corpus.text import TextCorpus
-from nalp.datasets.language_modeling import LanguageModelingDataset
-from nalp.encoders.integer import IntegerEncoder
-from nalp.models.generators.rnn import RNNGenerator
+from nalp.corpus import TextCorpus
+from nalp.datasets import LanguageModelingDataset
+from nalp.encoders import IntegerEncoder
+from nalp.models.generators import RNNGenerator
 
 from opytimizer import Opytimizer
 from opytimizer.core import Function
@@ -12,17 +12,13 @@ from opytimizer.spaces import SearchSpace
 # Creates a character TextCorpus from file
 corpus = TextCorpus(from_file='examples/integrations/nalp/chapter1_harry.txt', corpus_type='char')
 
-# Creates an IntegerEncoder
+# Creating an IntegerEncoder, learning encoding and encoding tokens
 encoder = IntegerEncoder()
-
-# Learns the encoding based on the TextCorpus dictionary and reverse dictionary
 encoder.learn(corpus.vocab_index, corpus.index_vocab)
-
-# Applies the encoding on new data
 encoded_tokens = encoder.encode(corpus.tokens)
 
-# Creates Language Modeling Dataset
-dataset = LanguageModelingDataset(encoded_tokens, max_length=10, batch_size=64)
+# Creating Language Modeling Dataset
+dataset = LanguageModelingDataset(encoded_tokens, max_contiguous_pad_length=10, batch_size=64)
 
 
 def rnn(opytimizer):

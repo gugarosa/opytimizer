@@ -1,5 +1,5 @@
 import torchvision
-from learnergy.models.binary import DropoutRBM
+from learnergy.models.bernoulli import DropoutRBM
 
 from opytimizer import Opytimizer
 from opytimizer.core import Function

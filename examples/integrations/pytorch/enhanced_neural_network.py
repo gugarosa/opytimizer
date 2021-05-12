@@ -10,18 +10,18 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
 # Gathers samples and targets
 X = digits.data
 Y = digits.target
 
-# Splitting the data
+# Splits the data
 X_train, X_val, Y_train, Y_val = train_test_split(
     X, Y, test_size=0.5, random_state=42)
 
-# Converting from numpy array to torch tensors
+# Converts from numpy array to torch tensors
 X_train = torch.from_numpy(X_train).float()
 X_val = torch.from_numpy(X_val).float()
 Y_train = torch.from_numpy(Y_train).long()
@@ -32,7 +32,7 @@ def fit(model, loss, opt, x, y):
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
-    # Resetting the gradient
+    # Resets the gradient
     opt.zero_grad()
 
     # Performs the foward pass
@@ -55,7 +55,7 @@ def predict(model, x_val):
     # Performs backward pass with this variable
     output = model.forward(x)
 
-    # Getting the index of the prediction
+    # Gets the index of the prediction
     y_val = output.data.numpy().argmax(axis=1)
 
     return y_val

@@ -1,5 +1,5 @@
 import torchvision
-from learnergy.models.binary import RBM
+from learnergy.models.bernoulli import RBM
 
 from opytimizer import Opytimizer
 from opytimizer.core import Function

@@ -8,7 +8,7 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
 # Gathers samples and targets
@@ -18,7 +18,7 @@ Y = digits.target
 # Adding 1 to labels, i.e., OPF should have labels from 1+
 Y += 1
 
-# Splitting data into training and testing sets
+# Splits data into training and testing sets
 X_train, X_test, Y_train, Y_test = s.split(
     X, Y, percentage=0.5, random_state=1)
 

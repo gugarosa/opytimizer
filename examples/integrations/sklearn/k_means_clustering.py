@@ -8,7 +8,7 @@ from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
 # Gathers samples and targets
