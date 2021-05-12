@@ -4,9 +4,9 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import KFold, cross_val_score
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
 # Loading digits dataset
 digits = load_digits()
@@ -34,35 +34,21 @@ def _svm(opytimizer):
     return 1 - mean_score
 
 
-# Creates Function's object
-f = Function(pointer=_svm)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 10
 n_variables = 1
-n_iterations = 100
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (0.00001,)
-upper_bound = (10,)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [0.000001]
+upper_bound = [10]
 
-# Creates the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(_svm)
 
-# Parameters for the optimizer
-params = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creates PSO's optimizer
-p = PSO(params=params)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=100)

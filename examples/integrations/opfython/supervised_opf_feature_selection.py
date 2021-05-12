@@ -5,9 +5,9 @@ from sklearn.datasets import load_digits
 
 import opytimizer.math.random as r
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.boolean.bpso import BPSO
-from opytimizer.spaces.boolean import BooleanSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.boolean import BPSO
+from opytimizer.spaces import BooleanSpace
 
 # Loading digits dataset
 digits = load_digits()
@@ -48,17 +48,9 @@ def supervised_opf_feature_selection(opytimizer):
     return 1 - acc
 
 
-# Creates Function's object
-f = Function(pointer=supervised_opf_feature_selection)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 5
 n_variables = 64
-n_iterations = 3
-
-# Creates the SearchSpace class
-b = BooleanSpace(n_agents=n_agents, n_iterations=n_iterations,
-                 n_variables=n_variables)
 
 # Parameters for the optimizer
 params = {
@@ -66,11 +58,13 @@ params = {
     'c2': r.generate_binary_random_number(size=(n_variables, 1))
 }
 
-# Creates BPSO's optimizer
-p = BPSO(params=params)
+# Creates the space, optimizer and function
+space = BooleanSpace(n_agents, n_variables)
+optimizer = BPSO()
+function = Function(supervised_opf_feature_selection)
 
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=b, optimizer=p, function=f)
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=3)

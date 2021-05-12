@@ -5,9 +5,9 @@ from nalp.encoders.integer import IntegerEncoder
 from nalp.models.generators.rnn import RNNGenerator
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
 # Creates a character TextCorpus from file
 corpus = TextCorpus(from_file='examples/integrations/nalp/chapter1_harry.txt', corpus_type='char')
@@ -50,35 +50,21 @@ def rnn(opytimizer):
     return 1 - acc
 
 
-# Creates Function's object
-f = Function(pointer=rnn)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 5
 n_variables = 1
-n_iterations = 3
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (0,)
-upper_bound = (1,)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [0]
+upper_bound = [1]
 
-# Creates the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(rnn)
 
-# Parameters for the optimizer
-params = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creates PSO's optimizer
-p = PSO(params=params)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=3)

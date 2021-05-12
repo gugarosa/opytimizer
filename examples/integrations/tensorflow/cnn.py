@@ -4,9 +4,9 @@ import tensorflow as tf
 from tensorflow.keras import datasets, layers, models, optimizers
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
 # Loading CIFAR-10 data
 (X_train, Y_train), (X_val, Y_val) = datasets.cifar10.load_data()
@@ -56,35 +56,21 @@ def cnn(opytimizer):
     return 1 - val_acc
 
 
-# Creates Function's object
-f = Function(pointer=cnn)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 5
 n_variables = 2
-n_iterations = 3
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (0, 0)
-upper_bound = (0.001, 1)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [0, 0]
+upper_bound = [0.001, 1]
 
-# Creates the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(cnn)
 
-# Parameters for the optimizer
-params = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creates PSO's optimizer
-p = PSO(params=params)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=3)
