@@ -240,7 +240,7 @@ class SFO(Optimizer):
         # Checks if attack power is smaller than 0.5
         if AP < 0.5:
             # Calculates the number of sardines possible replacements (eq. 11)
-            alpha = int(len(space.sardines) * AP)
+            alpha = int(len(self.sardines) * AP)
 
             # Calculates the number of variables possible replacements (eq. 12)
             beta = int(n_variables * AP)
@@ -260,7 +260,7 @@ class SFO(Optimizer):
 
                     # Updates the sardine's position (eq. 9)
                     self.sardines[i].position[j] = r1 * \
-                        (space.best_agent.position[j] - space.sardines[i].position[j] + AP)
+                        (space.best_agent.position[j] - self.sardines[i].position[j] + AP)
 
                 # Clips sardine's limits
                 self.sardines[i].clip_by_bound()

@@ -1,11 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import sca
 from opytimizer.spaces import search
-from opytimizer.utils import constant
-
-np.random.seed(0)
 
 
 def test_sca_params():
@@ -69,12 +65,6 @@ def test_sca_params_setter():
     assert new_sca.a == 0.5
 
 
-def test_sca_build():
-    new_sca = sca.SCA()
-
-    assert new_sca.built == True
-
-
 def test_sca_update_position():
     new_sca = sca.SCA()
 
@@ -83,31 +73,10 @@ def test_sca_update_position():
     assert position > 0
 
 
-def test_sca_run():
-    def square(x):
-        return np.sum(x**2)
+def test_sca_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    def hook(optimizer, space, function):
-        return
+    new_sca = sca.SCA()
 
-    new_function = function.Function(pointer=square)
-
-    params = {
-        'r_min': 0,
-        'r_max': 2,
-        'a': 3
-    }
-
-    new_sca = sca.SCA(params=params)
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_sca.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm sca failed to converge.'
+    new_sca.update(search_space, 1, 10)

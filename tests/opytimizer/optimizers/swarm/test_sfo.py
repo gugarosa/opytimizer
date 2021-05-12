@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import sfo
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -64,31 +62,69 @@ def test_sfo_params_setter():
     assert new_sfo.e == 0.001
 
 
-def test_sfo_build():
+def test_sfo_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=3,
+                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+
     new_sfo = sfo.SFO()
+    new_sfo.create_additional_attrs(search_space)
 
-    assert new_sfo.built == True
+    try:
+        new_sfo.sardines = 1
+    except:
+        new_sfo.sardines = []
+
+    assert new_sfo.sardines == []
 
 
-def test_sfo_run():
+def test_sfo_generate_random_agent():
+    search_space = search.SearchSpace(n_agents=10, n_variables=3,
+                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+
+    new_sfo = sfo.SFO()
+    new_sfo.create_additional_attrs(search_space)
+
+    agent = new_sfo._generate_random_agent(search_space.agents[0])
+
+    assert type(agent).__name__ == 'Agent'
+
+
+def test_sfo_calculate_lambda_i():
+    search_space = search.SearchSpace(n_agents=10, n_variables=3,
+                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+
+    new_sfo = sfo.SFO()
+    new_sfo.create_additional_attrs(search_space)
+
+    lambda_i = new_sfo._calculate_lambda_i(10, 10)
+
+    assert lambda_i[0] == 0.006862958487313442
+
+
+def test_sfo_update_sailfish():
+    search_space = search.SearchSpace(n_agents=10, n_variables=3,
+                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+
+    new_sfo = sfo.SFO()
+    new_sfo.create_additional_attrs(search_space)
+
+    position = new_sfo._update_sailfish(
+        search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5)
+
+    assert position[0][0] == 11.052797425211782
+
+
+def test_sfo_update():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=5,
+                                      lower_bound=[0, 0, 0, 0, 0], upper_bound=[10, 10, 10, 10, 10])
 
     new_sfo = sfo.SFO()
+    new_sfo.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=500,
-                                      n_variables=3, lower_bound=[0, 0, 0],
-                                      upper_bound=[10, 10, 10])
+    new_sfo.update(search_space, square, 1)
 
-    history = new_sfo.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm sfo failed to converge.'
+    new_sfo.A = 1
+    new_sfo.update(search_space, square, 350)
