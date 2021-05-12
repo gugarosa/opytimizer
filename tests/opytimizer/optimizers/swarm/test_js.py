@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import js
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -64,55 +62,75 @@ def test_js_params_setter():
     assert new_js.gamma == 0.1
 
 
-def test_js_build():
-    new_js = js.JS()
-
-    assert new_js.built == True
-
-
-def test_js_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+def test_js_initialize_chaotic_map():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_js.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm js failed to converge.'
+    new_js._initialize_chaotic_map(search_space.agents)
 
 
-def test_nbjs_run():
-    def square(x):
-        return np.sum(x**2)
+def test_js_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    def hook(optimizer, space, function):
-        return
+    new_js = js.JS()
+    new_js.create_additional_attrs(search_space)
 
-    new_function = function.Function(pointer=square)
+
+def test_js_ocean_current():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_js = js.JS()
+    new_js.create_additional_attrs(search_space)
+
+    trend = new_js._ocean_current(search_space.agents, search_space.best_agent)
+
+    assert trend[0][0] == 5.125168500899496
+
+
+def test_js_motion_a():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_js = js.JS()
+    new_js.create_additional_attrs(search_space)
+
+    motion = new_js._motion_a(0, 1)
+
+    assert motion[0][0] == 0
+
+
+def test_js_motion_b():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_js = js.JS()
+    new_js.create_additional_attrs(search_space)
+
+    motion = new_js._motion_b(search_space.agents[0], search_space.agents[1])
+
+    assert motion[0][0] == 0.22909219328715777
+
+
+def test_js_motion_a():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_js = js.JS()
+    new_js.create_additional_attrs(search_space)
+
+    new_js.update(search_space, 1, 10)
+
+
+def test_nbjs_motion_a():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_nbjs = js.NBJS()
+    new_nbjs.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    motion = new_nbjs._motion_a(0, 1)
 
-    history = new_nbjs.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constant.TEST_EPSILON, 'The algorithm nbjs failed to converge.'
+    assert motion[0] == 0.03599780644783639
