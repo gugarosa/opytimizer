@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.evolutionary import iwo
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -133,8 +131,10 @@ def test_iwo_update():
         return np.sum(x**2)
 
     new_iwo = iwo.IWO()
+    new_iwo.min_seeds = 5
+    new_iwo.max_seeds = 20
 
     search_space = search.SearchSpace(n_agents=5, n_variables=2,
                 lower_bound=[1, 1], upper_bound=[10, 10])
 
-    new_iwo.update(search_space, function, 1, 10)
+    new_iwo.update(search_space, square, 1, 10)

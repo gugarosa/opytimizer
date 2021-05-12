@@ -7,6 +7,8 @@ from opytimizer.utils import constant
 def pointer(x):
     return x
 
+assert pointer(1) == 1
+
 
 def test_constrained_function_name():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])

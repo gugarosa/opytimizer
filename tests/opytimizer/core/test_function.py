@@ -7,6 +7,8 @@ from opytimizer.utils import constant
 def pointer(x):
     return x
 
+assert pointer(1) == 1
+
 
 def test_function_name():
     new_function = function.Function(pointer)

@@ -61,9 +61,6 @@ def test_fa_params_setter():
 
 
 def test_fa_update():
-    def square(x):
-        return np.sum(x**2)
-
     new_fa = fa.FA()
 
     search_space = search.SearchSpace(n_agents=10, n_variables=2,

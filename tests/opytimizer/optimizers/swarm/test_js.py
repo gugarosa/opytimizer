@@ -99,7 +99,7 @@ def test_js_motion_a():
 
     motion = new_js._motion_a(0, 1)
 
-    assert motion[0][0] == 0
+    assert motion[0] != 0
 
 
 def test_js_motion_b():
@@ -114,7 +114,7 @@ def test_js_motion_b():
     assert motion[0][0] != 0
 
 
-def test_js_motion_a():
+def test_js_update():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 

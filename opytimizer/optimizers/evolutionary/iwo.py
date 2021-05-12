@@ -3,7 +3,6 @@
 
 import copy
 
-
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as ex

@@ -2,8 +2,7 @@ import opytimizer
 from opytimizer.core import function
 from opytimizer.optimizers.swarm import pso
 from opytimizer.spaces import search
-from opytimizer.utils import callback
-from opytimizer.utils import history
+from opytimizer.utils import callback, history
 
 
 def test_opytimizer_space():

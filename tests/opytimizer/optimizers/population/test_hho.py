@@ -29,6 +29,8 @@ def test_hho_exploitation_phase():
     def square(x):
         return np.sum(x**2)
 
+    assert square(2) == 4
+
     new_hho = hho.HHO()
 
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
