@@ -4,13 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -28,19 +25,18 @@ class GP(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GP', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> GP.')
 
-        # Override its parent class with the receiving hyperparams
-        super(GP, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(GP, self).__init__()
 
         # Probability of reproduction
         self.p_reproduction = 0.25
@@ -54,8 +50,8 @@ class GP(Optimizer):
         # Nodes' prunning ratio
         self.prunning_ratio = 0
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -159,7 +155,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be reproducted
-        n_individuals = int(space.n_trees * self.p_reproduction)
+        n_individuals = int(space.n_agents * self.p_reproduction)
 
         # Gathers a list of selected individuals to be replaced
         selected = g.tournament_selection(fitness, n_individuals)
@@ -190,7 +186,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be mutated
-        n_individuals = int(space.n_trees * self.p_mutation)
+        n_individuals = int(space.n_agents * self.p_mutation)
 
         # Gathers a list of selected individuals to be replaced
         selected = g.tournament_selection(fitness, n_individuals)
@@ -229,7 +225,7 @@ class GP(Optimizer):
         # Deep copying a new mutated tree from initial tree
         mutated_tree = copy.deepcopy(tree)
 
-        # Calculating mutation point
+        # Calculates mutation point
         mutation_point = int(r.generate_uniform_random_number(2, max_nodes))
 
         # Finds the node at desired mutation point
@@ -238,7 +234,7 @@ class GP(Optimizer):
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
         # and find_node() stops at a terminal node whose father is a root
         if sub_tree:
-            # Creating a new random sub-tree
+            # Creates a new random sub-tree
             branch = space.grow(space.min_depth, space.max_depth)
 
             # Checks if sub-tree should be positioned in the left
@@ -281,7 +277,7 @@ class GP(Optimizer):
         fitness = [agent.fit for agent in space.agents]
 
         # Number of individuals to be crossovered
-        n_individuals = int(space.n_trees * self.p_crossover)
+        n_individuals = int(space.n_agents * self.p_crossover)
 
         # Checks if `n_individuals` is an odd number
         if n_individuals % 2 != 0:
@@ -321,19 +317,19 @@ class GP(Optimizer):
 
         """
 
-        # Copying father tree to the father's offspring structure
+        # Copiesing father tree to the father's offspring structure
         father_offspring = copy.deepcopy(father)
 
-        # Calculating father's crossover point
+        # Calculates father's crossover point
         father_point = int(r.generate_uniform_random_number(2, max_father))
 
         # Finds the node at desired crossover point
         sub_father, flag_father = father_offspring.find_node(father_point)
 
-        # Copying mother tree to the mother's offspring structure
+        # Copiesing mother tree to the mother's offspring structure
         mother_offspring = copy.deepcopy(mother)
 
-        # Calculating mother's crossover point
+        # Calculates mother's crossover point
         mother_point = int(r.generate_uniform_random_number(2, max_mother))
 
         # Finds the node at desired crossover point
@@ -408,25 +404,7 @@ class GP(Optimizer):
 
         return father, mother
 
-    def _update(self, space):
-        """Method that wraps reproduction, crossover and mutation operators over all trees.
-
-        Args:
-            space (TreeSpace): A TreeSpace object.
-
-        """
-
-        # Performs the reproduction
-        self._reproduction(space)
-
-        # Performs the crossover
-        self._crossover(space)
-
-        # Performs the mutation
-        self._mutation(space)
-
-    @d.pre_evaluate
-    def _evaluate(self, space, function):
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
@@ -441,7 +419,7 @@ class GP(Optimizer):
             agent.position = copy.deepcopy(tree.position)
 
             # Checks the agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Calculates the fitness value of the agent
             agent.fit = function(agent.position)
@@ -453,48 +431,19 @@ class GP(Optimizer):
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space):
+        """Wraps Genetic Programming over all trees and variables.
 
         Args:
-            space (TreeSpace): A TreeSpace object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            space (TreeSpace): TreeSpace containing agents and update-related information.
 
         """
 
-        # Initial tree space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
+        # Performs the reproduction
+        self._reproduction(space)
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+        # Performs the crossover
+        self._crossover(space)
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating trees with designed operators
-                self._update(space)
-
-                # After the update, we need to re-evaluate the tree space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents,
-                             best_agent=space.best_agent,
-                             best_tree=space.best_tree)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Performs the mutation
+        self._mutation(space)

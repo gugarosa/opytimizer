@@ -2,12 +2,10 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,19 +25,18 @@ class ASO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ASO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> ASO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(ASO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(ASO, self).__init__()
 
         # Depth weight
         self.alpha = 50.0
@@ -47,8 +44,8 @@ class ASO(Optimizer):
         # Multiplier weight
         self.beta = 0.2
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -84,8 +81,34 @@ class ASO(Optimizer):
 
         self._beta = beta
 
+    @property
+    def velocity(self):
+        """np.array: Array of velocities.
+
+        """
+
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, velocity):
+        if not isinstance(velocity, np.ndarray):
+            raise e.TypeError('`velocity` should be a numpy array')
+
+        self._velocity = velocity
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of velocities
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
     def _calculate_mass(self, agents):
-        """Calculates the atoms' masses (Eq. 17 and 18).
+        """Calculates the atoms' masses (eq. 17 and 18).
 
         Args:
             agents (list): List of agents.
@@ -106,7 +129,8 @@ class ASO(Optimizer):
         total_fit = np.sum([np.exp(-(agent.fit - best) / (worst - best + c.EPSILON)) for agent in agents])
 
         # Calculates the masses
-        mass = [np.exp(-(agent.fit - best) / (worst - best + c.EPSILON)) / total_fit for agent in agents]
+        mass = [np.exp(-(agent.fit - best) / (worst - best +
+                                              c.EPSILON)) / total_fit for agent in agents]
 
         return mass
 
@@ -117,7 +141,7 @@ class ASO(Optimizer):
             agent (Agent): Agent to have its potential calculated.
             K_agent (Agent): Neighbour agent.
             average (np.array): Array of average positions.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
@@ -166,7 +190,7 @@ class ASO(Optimizer):
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             mass (np.array): Array of masses.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -199,121 +223,34 @@ class ASO(Optimizer):
                 # Sums up the current potential to the total one
                 total_potential += self._calculate_potential(agent, K_agent, average, iteration, n_iterations)
 
-            # Finally, calculates the acceleration (Eq. 16)
+            # Finally, calculates the acceleration (eq. 16)
             acceleration[i] = G * self.alpha * total_potential + \
                 self.beta * (best_agent.position - agent.position) / mass[i]
 
         return acceleration
 
-    def _update_velocity(self, velocity, acceleration):
-        """Updates an atom's velocity (Eq. 21).
+    def update(self, space, iteration, n_iterations):
+        """Wraps Atom Search Optimization over all agents and variables.
 
         Args:
-            velocity (np.array): Agent's velocity.
-            acceleration (np.array): Agent's acceleration.
-
-        Returns:
-            An updated velocity.
-
-        """
-
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number()
-
-        # Calculates the new velocity
-        new_velocity = r1 * velocity + acceleration
-
-        return new_velocity
-
-    def _update_position(self, position, velocity):
-        """Updates an atom's position (Eq. 22).
-
-        Args:
-            position (np.array): Agent's position.
-            velocity (np.array): Agent's velocity.
-
-        Returns:
-            An updated position.
-
-        """
-
-        # Calculates the new position
-        new_position = position + velocity
-
-        return new_position
-
-    def _update(self, agents, best_agent, velocity, iteration, n_iterations):
-        """Method that wraps the Atom Search Optimization over all agents and variables.
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            velocity (np.array): Array of velocities.
-            iteration (int): Number of current iteration.
+            space (Space): Space containing agents and update-related information.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Calculates the masses (Eq. 17 and 18)
-        mass = self._calculate_mass(agents)
+        # Calculates the masses (eq. 17 and 18)
+        mass = self._calculate_mass(space.agents)
 
-        # Calculates the acceleration (Eq. 16)
-        acceleration = self._calculate_acceleration(agents, best_agent, mass, iteration, n_iterations)
+        # Calculates the acceleration (eq. 16)
+        acceleration = self._calculate_acceleration(space.agents, space.best_agent, mass,
+                                                    iteration, n_iterations)
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
-            # Updates current agent's velocity (Eq. 21)
-            velocity[i] = self._update_velocity(velocity[i], acceleration[i])
+        for i, agent in enumerate(space.agents):
+            # Updates current agent's velocity (eq. 21)
+            r1 = r.generate_uniform_random_number()
+            self.velocity[i] = r1 * self.velocity[i] + acceleration[i]
 
-            # Updates current agent's position (Eq. 22)
-            agent.position = self._update_position(agent.position, velocity[i])
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instantiates an array of velocities
-        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, velocity, t, space.n_iterations)
-
-                # Checking if agents meets the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            # Updates current agent's position (eq. 22)
+            agent.position += self.velocity[i]

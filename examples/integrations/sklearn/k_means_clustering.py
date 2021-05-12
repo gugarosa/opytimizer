@@ -4,62 +4,48 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import load_digits
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
 def k_means_clustering(opytimizer):
-    # Gathering hyperparams
+    # Gathers params
     n_clusters = int(opytimizer[0][0])
 
     # Instanciating an KMeans class
     kmeans = KMeans(n_clusters=n_clusters, random_state=1).fit(X)
 
-    # Gathering predicitions
+    # Gathers predicitions
     preds = kmeans.labels_
 
-    # Calculating adjusted rand index
+    # Calculates adjusted rand index
     ari = metrics.adjusted_rand_score(Y, preds)
 
     return 1 - ari
 
 
-# Creating Function's object
-f = Function(pointer=k_means_clustering)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 10
 n_variables = 1
-n_iterations = 100
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (1,)
-upper_bound = (100,)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [1]
+upper_bound = [100]
 
-# Creating the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(k_means_clustering)
 
-# Hyperparameters for the optimizer
-hyperparams = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=100)

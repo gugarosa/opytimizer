@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as ex
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,19 +25,18 @@ class BA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='BA', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> BA.')
 
-        # Override its parent class with the receiving hyperparams
-        super(BA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(BA, self).__init__()
 
         # Minimum frequency range
         self.f_min = 0
@@ -53,8 +50,8 @@ class BA(Optimizer):
         # Pulse rate
         self.r = 0.5
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -128,170 +125,129 @@ class BA(Optimizer):
 
         self._r = r
 
-    def _update_frequency(self, min_frequency, max_frequency):
-        """Updates an agent frequency (eq. 2).
-
-        Args:
-            min_frequency (float): Minimum frequency range.
-            max_frequency (float): Maximum frequency range.
-
-        Returns:
-            A new frequency.
+    @property
+    def frequency(self):
+        """np.array: Array of frequencies.
 
         """
 
-        # Generating beta random number
-        beta = rnd.generate_uniform_random_number()
+        return self._frequency
 
-        # Calculating new frequency
-        # Note that we have to apply (min - max) instead of (max - min) or it will not converge
-        new_frequency = min_frequency + (min_frequency - max_frequency) * beta
+    @frequency.setter
+    def frequency(self, frequency):
+        if not isinstance(frequency, np.ndarray):
+            raise ex.TypeError('`frequency` should be a numpy array')
 
-        return new_frequency
+        self._frequency = frequency
 
-    def _update_velocity(self, position, best_position, frequency, velocity):
-        """Updates an agent velocity (eq. 3).
-
-        Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            frequency (float): Agent's frequency.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new velocity.
+    @property
+    def velocity(self):
+        """np.array: Array of velocities.
 
         """
 
-        # Calculates new velocity
-        new_velocity = velocity + (position - best_position) * frequency
+        return self._velocity
 
-        return new_velocity
+    @velocity.setter
+    def velocity(self, velocity):
+        if not isinstance(velocity, np.ndarray):
+            raise ex.TypeError('`velocity` should be a numpy array')
 
-    def _update_position(self, position, velocity):
-        """Updates an agent position (eq. 4).
+        self._velocity = velocity
 
-        Args:
-            position (np.array): Agent's current position.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new position.
+    @property
+    def loudness(self):
+        """np.array: Array of loudnesses.
 
         """
 
-        # Calculates new position
-        new_position = position + velocity
+        return self._loudness
 
-        return new_position
+    @loudness.setter
+    def loudness(self, loudness):
+        if not isinstance(loudness, np.ndarray):
+            raise ex.TypeError('`loudness` should be a numpy array')
 
-    def _update(self, agents, best_agent, function, iteration, frequency, velocity, loudness, pulse_rate):
-        """Method that wraps Bat Algorithm over all agents and variables.
+        self._loudness = loudness
 
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
-            iteration (int): Current iteration value.
-            frequency (np.array): Array of frequencies.
-            velocity (np.array): Array of current velocities.
-            loudness (np.array): Array of loudnesses.
-            pulse_rate (np.array): Array of pulse rates.
+    @property
+    def pulse_rate(self):
+        """np.array: Array of pulse rates.
 
         """
 
-        # Declaring alpha constant
+        return self._pulse_rate
+
+    @pulse_rate.setter
+    def pulse_rate(self, pulse_rate):
+        if not isinstance(pulse_rate, np.ndarray):
+            raise ex.TypeError('`pulse_rate` should be a numpy array')
+
+        self._pulse_rate = pulse_rate
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of frequencies, velocities, loudnesses and pulse rates
+        self.frequency = rnd.generate_uniform_random_number(self.f_min, self.f_max, space.n_agents)
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
+        self.pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
+
+    def update(self, space, function, iteration):
+        """Wraps Bat Algorithm over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+            iteration (int): Current iteration.
+
+        """
+
+        # Declares alpha constant
         alpha = 0.9
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
-            # Updating frequency
-            frequency[i] = self._update_frequency(self.f_min, self.f_max)
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Updates frequency (eq. 2)
+            # Note that we have to apply (min - max) instead of (max - min) or it will not converge
+            beta = rnd.generate_uniform_random_number()
+            self.frequency[i] = self.f_min + (self.f_min - self.f_max) * beta
 
-            # Updating velocity
-            velocity[i] = self._update_velocity(agent.position, best_agent.position, frequency[i], velocity[i])
+            # Updates velocity (eq. 3)
+            self.velocity[i] += (agent.position - space.best_agent.position) * self.frequency[i]
 
-            # Updating agent's position
-            agent.position = self._update_position(agent.position, velocity[i])
+            # Updates agent's position (eq. 4)
+            agent.position += self.velocity[i]
 
-            # Generating a random probability
+            # Generates random uniform and gaussian numbers
             p = rnd.generate_uniform_random_number()
-
-            # Generating a random number
             e = rnd.generate_gaussian_random_number()
 
-            # Check if probability is bigger than current pulse rate
-            if p > pulse_rate[i]:
-                # Performing a local random walk (eq. 5)
+            # Checks if probability is bigger than current pulse rate
+            if p > self.pulse_rate[i]:
+                # Performs a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size
-                agent.position = best_agent.position + 0.001 * e * np.mean(loudness)
+                agent.position = space.best_agent.position + 0.001 * e * np.mean(self.loudness)
 
             # Checks agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Evaluates agent
             agent.fit = function(agent.position)
 
             # Checks if probability is smaller than loudness and if fit is better
-            if p < loudness[i] and agent.fit < best_agent.fit:
-                # Copying the new solution to space's best agent
-                best_agent = copy.deepcopy(agent)
+            if p < self.loudness[i] and agent.fit < space.best_agent.fit:
+                # Copies the new solution to space's best agent
+                space.best_agent = copy.deepcopy(agent)
 
-                # Increasing pulse rate (eq. 6)
-                pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
+                # Increasing pulse rate (eq. 6 - left)
+                self.pulse_rate[i] = self.r * (1 - np.exp(-alpha * iteration))
 
-                # Decreasing loudness (eq. 6)
-                loudness[i] = self.A * alpha
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instanciating array of frequencies, velocities, loudness and pulse rates
-        frequency = rnd.generate_uniform_random_number(self.f_min, self.f_max, space.n_agents)
-        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
-        pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function, t, frequency, velocity, loudness, pulse_rate)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                # Decreasing loudness (eq. 6 - right)
+                self.loudness[i] = self.A * alpha

@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -29,25 +27,24 @@ class ABC(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABC', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> ABC.')
 
-        # Override its parent class with the receiving hyperparams
-        super(ABC, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(ABC, self).__init__()
 
         # Number of trial limits
         self.n_trials = 10
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -68,17 +65,40 @@ class ABC(Optimizer):
 
         self._n_trials = n_trials
 
-    def _evaluate_location(self, agent, neighbour, function, trial):
+    @property
+    def trial(self):
+        """np.array: Array of trial.
+
+        """
+
+        return self._trial
+
+    @trial.setter
+    def trial(self, trial):
+        if not isinstance(trial, np.ndarray):
+            raise e.TypeError('`trial` should be a numpy array')
+
+        self._trial = trial
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of trials
+        self.trial = np.zeros(space.n_agents)
+
+    def _evaluate_location(self, agent, neighbour, function, index):
         """Evaluates a food source location and update its value if possible (eq. 2.2).
 
         Args:
             agent (Agent): An agent.
             neighbour (Agent): A neightbour agent.
             function (Function): A function object.
-            trial (int): A trial counter.
-
-        Returns:
-            The number of trials for the current food source.
+            index (int): Index of trial.
 
         """
 
@@ -91,8 +111,8 @@ class ABC(Optimizer):
         # Change its location according to equation 2.2
         a.position = agent.position + (agent.position - neighbour.position) * r1
 
-        # Check agent limits
-        a.clip_limits()
+        # Checks agent's limits
+        a.clip_by_bound()
 
         # Evaluating its fitness
         a.fit = function(a.position)
@@ -100,7 +120,7 @@ class ABC(Optimizer):
         # Check if fitness is improved
         if a.fit < agent.fit:
             # If yes, reset the number of trials for this particular food source
-            trial = 0
+            self.trial[index] = 0
 
             # Copies the new position and fitness
             agent.position = copy.deepcopy(a.position)
@@ -109,42 +129,38 @@ class ABC(Optimizer):
         # If not
         else:
             # We increse the trials counter
-            trial += 1
+            self.trial[index] += 1
 
-        return trial
-
-    def _send_employee(self, agents, function, trials):
+    def _send_employee(self, agents, function):
         """Sends employee bees onto food source to evaluate its nectar.
 
         Args:
             agents (list): List of agents.
             function (Function): A function object.
-            trials (np.array): Array of trials counter.
 
         """
 
         # Iterate through all food sources
         for i, agent in enumerate(agents):
-            # Gathering a random source to be used
+            # Gathers a random source to be used
             source = r.generate_integer_random_number(0, len(agents))
 
             # Measuring food source location
-            trials[i] = self._evaluate_location(agent, agents[source], function, trials[i])
+            self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_onlooker(self, agents, function, trials):
+    def _send_onlooker(self, agents, function):
         """Sends onlooker bees to select new food sources (eq. 2.1).
 
         Args:
             agents (list): List of agents.
             function (Function): A function object.
-            trials (np.array): Array of trials counter.
 
         """
 
-        # Calculating the fitness somatory
+        # Calculates the fitness somatory
         total = sum(agent.fit for agent in agents)
 
-        # Defining food sources' counter
+        # Defines food sources' counter
         k = 0
 
         # While counter is less than the amount of food sources
@@ -163,28 +179,27 @@ class ABC(Optimizer):
                     k += 1
 
                     # Gathers a random source to be used
-                    source = int(r.generate_uniform_random_number(0, len(agents)))
+                    source = r.generate_integer_random_number(0, len(agents))
 
                     # Evaluate its location
-                    trials[i] = self._evaluate_location(agent, agents[source], function, trials[i])
+                    self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_scout(self, agents, function, trials):
+    def _send_scout(self, agents, function):
         """Sends scout bees to scout for new possible food sources.
 
         Args:
             agents (list): List of agents.
             function (Function): A function object.
-            trials (np.array): Array of trials counter.
 
         """
 
-        # Calculating the maximum trial counter value and index
-        max_trial, max_index = np.max(trials), np.argmax(trials)
+        # Calculates the maximum trial counter value and index
+        max_trial, max_index = np.max(self.trial), np.argmax(self.trial)
 
         # If maximum trial is bigger than number of possible trials
         if max_trial > self.n_trials:
             # Resets the trial counter
-            trials[max_index] = 0
+            self.trial[max_index] = 0
 
             # Copies the current agent
             a = copy.deepcopy(agents[max_index])
@@ -192,8 +207,8 @@ class ABC(Optimizer):
             # Updates its position with a random shakeness
             a.position += r.generate_uniform_random_number(-1, 1)
 
-            # Check agent limits
-            a.clip_limits()
+            # Checks agent's limits
+            a.clip_by_bound()
 
             # Recalculates its fitness
             a.fit = function(a.position)
@@ -203,71 +218,20 @@ class ABC(Optimizer):
                 # We copy the temporary agent to the current one
                 agents[max_index] = copy.deepcopy(a)
 
-    def _update(self, agents, function, trials):
-        """Method that wraps the update pipeline over all agents and variables.
+    def update(self, space, function):
+        """Wraps Artificial Bee Colony over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
-            trials (np.array): Array of trials counter.
-
-        """
-
-        # Sending employee bees step
-        self._send_employee(agents, function, trials)
-
-        # Sending onlooker bees step
-        self._send_onlooker(agents, function, trials)
-
-        # Sending scout bees step
-        self._send_scout(agents, function, trials)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
 
         """
 
-        # Instanciating array of trials counter
-        trials = np.zeros(space.n_agents)
+        # Sends employee bees step
+        self._send_employee(space.agents, function)
 
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
+        # Sends onlooker bees step
+        self._send_onlooker(space.agents, function)
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function, trials)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Sends scout bees step
+        self._send_scout(space.agents, function)

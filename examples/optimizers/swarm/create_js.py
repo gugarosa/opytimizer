@@ -2,11 +2,11 @@ from opytimizer.optimizers.swarm.js import JS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'eta': 4.0,
     'beta': 3.0,
     'gamma': 0.1
 }
 
-# Creating a JS optimizer
-o = JS(hyperparams=hyperparams)
+# Creates a JS optimizer
+o = JS(params=params)

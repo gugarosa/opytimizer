@@ -4,13 +4,11 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -29,17 +27,16 @@ class GCO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='GCO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(GCO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(GCO, self).__init__()
 
         # Cross-ratio
         self.CR = 0.7
@@ -47,8 +44,8 @@ class GCO(Optimizer):
         # Mutation factor
         self.F = 1.25
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -86,6 +83,48 @@ class GCO(Optimizer):
 
         self._F = F
 
+    @property
+    def life(self):
+        """np.array: Array of lives.
+
+        """
+
+        return self._life
+
+    @life.setter
+    def life(self, life):
+        if not isinstance(life, np.ndarray):
+            raise e.TypeError('`life` should be a numpy array')
+
+        self._life = life
+
+    @property
+    def counter(self):
+        """np.array: Array of counters.
+
+        """
+
+        return self._counter
+
+    @counter.setter
+    def counter(self, counter):
+        if not isinstance(counter, np.ndarray):
+            raise e.TypeError('`counter` should be a numpy array')
+
+        self._counter = counter
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Array of lives and counters
+        self.life = r.generate_uniform_random_number(70, 70, space.n_agents)
+        self.counter = np.ones(space.n_agents)
+
     def _mutate_cell(self, agent, alpha, beta, gamma):
         """Mutates a new cell based on distinct cells (alg. 2).
 
@@ -115,59 +154,56 @@ class GCO(Optimizer):
 
         return a
 
-    def _dark_zone(self, agents, function, life, counter):
+    def _dark_zone(self, agents, function):
         """Performs the dark-zone update process (alg. 1).
 
         Args:
             agents (list): List of agents.
             function (Function): A Function object that will be used as the objective function.
-            life (np.array): An array holding each cell's current life.
-            counter (np.array): An array holding each cell's copy counter.
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Generates the first random number, between 0 and 100
             r1 = r.generate_uniform_random_number(0, 100)
 
             # If random number is smaller than cell's life
-            if r1 < life[i]:
+            if r1 < self.life[i]:
                 # Increases it counter by one
-                counter[i] += 1
+                self.counter[i] += 1
 
             # If it is not smaller
             else:
                 # Resets the counter to one
-                counter[i] = 1
+                self.counter[i] = 1
 
             # Generates the counting distribution and pick three cells
-            C = d.generate_choice_distribution(len(agents), counter / np.sum(counter), size=3)
+            C = d.generate_choice_distribution(len(agents), self.counter / np.sum(self.counter), size=3)
 
             # Mutates a new cell based on current and pre-picked cells
             a = self._mutate_cell(agent, agents[C[0]], agents[C[1]], agents[C[2]])
 
-            # Check agent limits
-            a.clip_limits()
+            # Checks agent's limits
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
                 # Increases the life of cell by ten
-                life[i] += 10
+                self.life[i] += 10
 
-    def _light_zone(self, agents, life):
+    def _light_zone(self, agents):
         """Performs the light-zone update process (alg. 1).
 
         Args:
             agents (list): List of agents.
-            life (np.array): An array holding each cell's current life.
 
         """
 
@@ -177,83 +213,28 @@ class GCO(Optimizer):
         # Calculates the minimum and maximum fitness
         min_fit, max_fit = np.min(fits), np.max(fits)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # Resets the cell life to 10
-            life[i] = 10
+            self.life[i] = 10
 
             # Calculates the current cell new life fitness
             life_fit = (agent.fit - max_fit) / (min_fit - max_fit + c.EPSILON)
 
             # Adds 10 * new life fitness to cell's life
-            life[i] += 10 * life_fit
+            self.life[i] += 10 * life_fit
 
-    def _update(self, agents, function, life, counter):
-        """Method that wraps dark- and light-zone updates over all agents and variables.
+    def update(self, space, function):
+        """Wraps Germinal Center Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            life (np.array): An array holding each cell's current life.
-            counter (np.array): An array holding each cell's copy counter.
 
         """
 
         # Performs the dark-zone update process
-        self._dark_zone(agents, function, life, counter)
+        self._dark_zone(space.agents, function)
 
         # Performs the light-zone update process
-        self._light_zone(agents, life)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instanciating array of lives
-        life = r.generate_uniform_random_number(70, 70, space.n_agents)
-
-        # Instanciating array of counters
-        counter = np.ones(space.n_agents)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function, life, counter)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        self._light_zone(space.agents)

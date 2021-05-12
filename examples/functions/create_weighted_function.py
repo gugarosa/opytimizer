@@ -1,24 +1,24 @@
-from opytimizer.functions.weighted import WeightedFunction
+from opytimizer.functions import WeightedFunction
 
 
-# One should declare a function of x, where it should return a value
-def test_function1(x):
-    return x + 2
+# Defines some test functions
+def test_function1(z):
+    return z + 2
 
 
-def test_function2(x):
-    return x + 5
+def test_function2(z):
+    return z + 5
 
 
-# Declaring x variable for further use
+# Declares `x`
 x = 0
 
-# Functions can be used if your objective
-# function is an internal python code
-g = WeightedFunction(functions=[test_function1, test_function2], weights=[0.5, 0.5])
+# Any type of internal python-coded function
+# can be used as a pointer
+h = WeightedFunction([test_function1, test_function2], [0.5, 0.5])
 
 # Testing out your new Function class
 print(f'x: {x}')
-print(f'f(x): {g.functions[0](x)}')
-print(f'g(x): {g.functions[1](x)}')
-print(f'z(x) = 0.5f(x) + 0.5g(x): {g(x)}')
+print(f'f(x): {h.functions[0](x)}')
+print(f'g(x): {h.functions[1](x)}')
+print(f'h(x) = 0.5f(x) + 0.5g(x): {h(x)}')

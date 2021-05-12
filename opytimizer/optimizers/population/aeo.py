@@ -4,10 +4,8 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,20 +25,19 @@ class AEO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='AEO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(AEO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(AEO, self).__init__()
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -50,7 +47,7 @@ class AEO(Optimizer):
         Args:
             agent (Agent): Current agent.
             best_agent (Agent): Best agent.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -114,8 +111,7 @@ class AEO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Updates its position
-        a.position += C * r2 * (a.position - producer.position) + \
-            (1 - r2) * (a.position - consumer.position)
+        a.position += C * r2 * (a.position - producer.position) + (1 - r2) * (a.position - consumer.position)
 
         return a
 
@@ -141,22 +137,22 @@ class AEO(Optimizer):
         return a
 
     def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps production and consumption updates over all
+        """Wraps production and consumption updates over all
         agents and variables (eq. 1-8).
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Sorting agents according to their energy
+        # Sorts agents according to their energy
         agents.sort(key=lambda x: x.fit, reverse=True)
 
-        # Iterate through all agents
+        # Iterates through all agents
         for i, agent in enumerate(agents):
             # If it is the first agent
             if i == 0:
@@ -196,20 +192,20 @@ class AEO(Optimizer):
                     # It will surely be a carnivore
                     a = self._carnivore_consumption(agent, agents[j], C)
 
-            # Check agent limits
-            a.clip_limits()
+            # Checks agent's limits
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
     def _update_decomposition(self, agents, best_agent, function):
-        """Method that wraps decomposition updates over all
+        """Wraps decomposition updates over all
         agents and variables (eq. 9).
 
         Args:
@@ -219,7 +215,7 @@ class AEO(Optimizer):
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
@@ -239,79 +235,31 @@ class AEO(Optimizer):
             # Updates the new agent position
             a.position = best_agent.position + D * (e * best_agent.position - _h * agent.position)
 
-            # Check agent limits
-            a.clip_limits()
+            # Checks agent's limits
+            a.clip_by_bound()
 
             # Calculates the fitness for the temporary position
             a.fit = function(a.position)
 
             # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copy its position and fitness to the agent
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
-    def _update(self, agents, best_agent, function, iteration, n_iterations):
-        """Method that wraps composition and decomposition.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Artificial Ecosystem-based Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Number of current iteration.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Updating agents within the composition step
-        self._update_composition(agents, best_agent, function, iteration, n_iterations)
+        # Updates agents within the composition step
+        self._update_composition(space.agents, space.best_agent, function, iteration, n_iterations)
 
-        # Updating agents within the decomposition step
-        self._update_decomposition(agents, best_agent, function)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function, t, space.n_iterations)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Updates agents within the decomposition step
+        self._update_decomposition(space.agents, space.best_agent, function)

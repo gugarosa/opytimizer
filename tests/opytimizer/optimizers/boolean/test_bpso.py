@@ -1,31 +1,27 @@
 import sys
 
 import numpy as np
-from opytimark.markers.boolean import Knapsack
 
 import opytimizer.math.random as r
 from opytimizer.core import function
 from opytimizer.optimizers.boolean import bpso
 from opytimizer.spaces import boolean
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_bpso_hyperparams():
-    hyperparams = {
+def test_bpso_params():
+    params = {
         'c1': r.generate_binary_random_number(size=(1, 1)),
         'c2': r.generate_binary_random_number(size=(1, 1))
     }
 
-    new_bpso = bpso.BPSO(hyperparams=hyperparams)
+    new_bpso = bpso.BPSO(params=params)
 
     assert new_bpso.c1 == 0 or new_bpso.c1 == 1
 
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
-def test_bpso_hyperparams_setter():
+def test_bpso_params_setter():
     new_bpso = bpso.BPSO()
 
     try:
@@ -43,27 +39,25 @@ def test_bpso_hyperparams_setter():
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
-def test_bpso_build():
+def test_bpso_create_additional_attrs():
+    boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
+    
     new_bpso = bpso.BPSO()
+    new_bpso.create_additional_attrs(boolean_space)
 
-    assert new_bpso.built == True
+    try:
+        new_bpso.local_position = 1
+    except:
+        new_bpso.local_position = np.array([1])
 
+    assert new_bpso.local_position == 1
 
-def test_bpso_update_velocity():
-    new_bpso = bpso.BPSO()
+    try:
+        new_bpso.velocity = 1
+    except:
+        new_bpso.velocity = np.array([1])
 
-    velocity = new_bpso._update_velocity(
-        np.array([1]), np.array([1]), np.array([1]))
-
-    assert velocity == 0 or velocity == 1
-
-
-def test_bpso_update_position():
-    new_bpso = bpso.BPSO()
-
-    position = new_bpso._update_position(1, 1)
-
-    assert position == 0 or position == 1
+    assert new_bpso.velocity == 1
 
 
 def test_bpso_evaluate():
@@ -72,35 +66,20 @@ def test_bpso_evaluate():
 
     new_function = function.Function(pointer=square)
 
-    boolean_space = boolean.BooleanSpace(
-        n_agents=2, n_iterations=10, n_variables=2)
+    boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
+    new_bpso.create_additional_attrs(boolean_space)
 
-    local_position = np.zeros((2, 2, 1))
-
-    new_bpso._evaluate(boolean_space, new_function, local_position)
+    new_bpso.evaluate(boolean_space, new_function)
 
     assert boolean_space.best_agent.fit < sys.float_info.max
 
 
-def test_bpso_run():
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=Knapsack(
-        values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100))
+def test_bpso_update():
+    boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
+    new_bpso.create_additional_attrs(boolean_space)
 
-    boolean_space = boolean.BooleanSpace(
-        n_agents=2, n_iterations=10, n_variables=5)
-
-    history = new_bpso.run(boolean_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-    assert len(history.local) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm bpso failed to converge.'
+    new_bpso.update(boolean_space)

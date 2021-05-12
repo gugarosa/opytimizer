@@ -4,13 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
-import opytimizer.utils.decorator as d
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -29,19 +26,18 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> PSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(PSO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(PSO, self).__init__()
 
         # Inertia weight
         self.w = 0.7
@@ -52,8 +48,8 @@ class PSO(Optimizer):
         # Social constant
         self.c2 = 1.7
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -108,74 +104,54 @@ class PSO(Optimizer):
 
         self._c2 = c2
 
-    def _update_velocity(self, position, best_position, local_position, velocity):
-        """Updates a particle velocity (p. 295).
-
-        Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            local_position (np.array): Agent's local best position.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new velocity.
+    @property
+    def local_position(self):
+        """np.array: Array of velocities.
 
         """
 
-        # Generating random numbers
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        return self._local_position
 
-        # Calculates new velocity
-        new_velocity = self.w * velocity + self.c1 * r1 * (local_position - position) + self.c2 * \
-            r2 * (best_position - position)
+    @local_position.setter
+    def local_position(self, local_position):
+        if not isinstance(local_position, np.ndarray):
+            raise e.TypeError('`local_position` should be a numpy array')
 
-        return new_velocity
+        self._local_position = local_position
 
-    def _update_position(self, position, velocity):
-        """Updates a particle position (p. 294).
-
-        Args:
-            position (np.array): Agent's current position.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new position.
+    @property
+    def velocity(self):
+        """np.array: Array of velocities.
 
         """
 
-        # Calculates new position
-        new_position = position + velocity
+        return self._velocity
 
-        return new_position
+    @velocity.setter
+    def velocity(self, velocity):
+        if not isinstance(velocity, np.ndarray):
+            raise e.TypeError('`velocity` should be a numpy array')
 
-    def _update(self, agents, best_agent, local_position, velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
+        self._velocity = velocity
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            local_position (np.array): Array of local best posisitons.
-            velocity (np.array): Array of current velocities.
+            space (Space): A Space object containing meta-information.
 
         """
 
-        # Iterates through all agents
-        for i, agent in enumerate(agents):
-            # Updates current agent velocity
-            velocity[i] = self._update_velocity(agent.position, best_agent.position, local_position[i], velocity[i])
+        # Arrays of local positions and velocities
+        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-            # Updates current agent position
-            agent.position = self._update_position(agent.position, velocity[i])
-
-    @d.pre_evaluate
-    def _evaluate(self, space, function, local_position):
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            local_position (np.array): Array of local best posisitons.
 
         """
 
@@ -190,66 +166,35 @@ class PSO(Optimizer):
                 agent.fit = fit
 
                 # Also updates the local best position to current's agent position
-                local_position[i] = copy.deepcopy(agent.position)
+                self.local_position[i] = copy.deepcopy(agent.position)
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
                 # Makes a deep copy of agent's local best position and fitness to the best agent
-                space.best_agent.position = copy.deepcopy(local_position[i])
+                space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space):
+        """Wraps Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            space (Space): Space containing agents and update-related information.
 
         """
 
-        # Instanciating array of local positions and velocities
-        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Generates random numbers
+            r1 = r.generate_uniform_random_number()
+            r2 = r.generate_uniform_random_number()
 
-        # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluate)
+            # Updates agent's velocity (p. 294)
+            self.velocity[i] = self.w * self.velocity[i] + \
+                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
+                               self.c2 * r2 * (space.best_agent.position - agent.position)
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, local_position, velocity)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents,
-                             local=local_position,
-                             best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            # Updates agent's position (p. 294)
+            agent.position += self.velocity[i]
 
 
 class AIWPSO(PSO):
@@ -265,12 +210,11 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='AIWPSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -282,8 +226,8 @@ class AIWPSO(PSO):
         # Maximum inertia weight
         self.w_max = 0.9
 
-        # Override its parent class with the receiving hyperparams
-        super(AIWPSO, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(AIWPSO, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -323,95 +267,75 @@ class AIWPSO(PSO):
 
         self._w_max = w_max
 
-    def _compute_success(self, agents, fitness):
+    @property
+    def fitness(self):
+        """list: List of fitnesses.
+
+        """
+
+        return self._fitness
+
+    @fitness.setter
+    def fitness(self, fitness):
+        if not isinstance(fitness, list):
+            raise e.TypeError('`fitness` should be a list')
+
+        self._fitness = fitness
+
+    def _compute_success(self, agents):
         """Computes the particles' success for updating inertia weight (eq. 16).
 
         Args:
             agents (list): List of agents.
-            fitness (np.array): Array of particles' best fitness.
 
         """
 
         # Initial counter
         p = 0
 
-        # Iterating through every agent
+        # Iterates through every agent
         for i, agent in enumerate(agents):
             # If current agent fitness is smaller than its best
-            if agent.fit < fitness[i]:
+            if agent.fit < self.fitness[i]:
                 # Increments the counter
                 p += 1
 
             # Replaces fitness with current agent's fitness
-            fitness[i] = agent.fit
+            self.fitness[i] = agent.fit
 
         # Update inertia weight value
         self.w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space, iteration):
+        """Wraps Adaptive Inertia Weight Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            space (Space): Space containing agents and update-related information.
+            iteration (int): Current iteration.
 
         """
 
-        # Instanciating array of local positions and velocities
-        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        # Checks if it is the first iteration
+        if iteration == 0:
+            # Creates a list of initial fitnesses
+            self.fitness = [agent.fit for agent in space.agents]
 
-        # And also an array of best particle's fitness
-        fitness = np.zeros(space.n_agents)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-        # Before starting the optimization process
-        # We need to copy fitness values to temporary array
+        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Copying fitness from agent's fitness
-            fitness[i] = agent.fit
+            # Generates random numbers
+            r1 = r.generate_uniform_random_number()
+            r2 = r.generate_uniform_random_number()
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+            # Updates agent's velocity
+            self.velocity[i] = self.w * self.velocity[i] + \
+                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
+                               self.c2 * r2 * (space.best_agent.position - agent.position)
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
+            # Updates agent's position
+            agent.position += self.velocity[i]
 
-                # Updating agents
-                self._update(space.agents, space.best_agent, local_position, velocity)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-                # Computing particle's success and updating inertia weight
-                self._compute_success(space.agents, fitness)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents,
-                             local=local_position,
-                             best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Computing particle's success and updating inertia weight
+        self._compute_success(space.agents)
 
 
 class RPSO(PSO):
@@ -427,128 +351,74 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='RPSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> RPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(RPSO, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(RPSO, self).__init__(params)
 
         logger.info('Class overrided.')
 
-    def _update_velocity(self, position, best_position, local_position, max_velocity, velocity, mass):
-        """Updates a single particle velocity over a single variable (eq. 11).
-
-        Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            local_position (np.array): Agent's local best position.
-            max_velocity (float): Maximum velocity of all agents.
-            velocity (np.array): Agent's current velocity.
-            mass (float): Agent's mass.
-
-        Returns:
-            A new velocity based on relativistic speed proposal.
+    @property
+    def mass(self):
+        """np.array: Array of masses.
 
         """
 
-        # Generating random numbers
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        return self._mass
 
-        # Calculating gamma parameter
-        gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / c.LIGHT_SPEED ** 2))
+    @mass.setter
+    def mass(self, mass):
+        if not isinstance(mass, np.ndarray):
+            raise e.TypeError('`mass` should be a numpy array')
 
-        # Calculates new velocity
-        new_velocity = mass * velocity * gamma + self.c1 * r1 * (local_position - position) + self.c2 * \
-            r2 * (best_position - position)
+        self._mass = mass
 
-        return new_velocity
-
-    def _update(self, agents, best_agent, local_position, velocity, mass):
-        """Method that wraps velocity and position updates over all agents and variables.
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            local_position (np.array): Array of local best posisitons.
-            velocity (np.array): Array of current velocities.
-            mass (np.array): Array of agents' masses.
+            space (Space): A Space object containing meta-information.
 
         """
 
-        # Calculating the maximum velocity
-        max_velocity = np.max(velocity)
+        # Arrays of local positions, velocities and masses
+        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.mass = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
-            # Updates current agent velocities
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, local_position[i], max_velocity, velocity[i], mass[i])
-
-            # Updates current agent positions
-            agent.position = self._update_position(agent.position, velocity[i])
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space):
+        """Wraps Relativistic Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            space (Space): Space containing agents and update-related information.
 
         """
 
-        # Instanciating array of local positions, velocities and masses
-        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
-        mass = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
+        # Calculates the maximum velocity
+        max_velocity = np.max(self.velocity)
 
-        # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluate)
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Generates rnadom number
+            r1 = r.generate_uniform_random_number()
+            r2 = r.generate_uniform_random_number()
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+            # Updates current agent velocity (eq. 11)
+            gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / c.LIGHT_SPEED ** 2))
+            self.velocity[i] = self.mass[i] * self.velocity[i] * gamma + \
+                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
+                               self.c2 * r2 * (space.best_agent.position - agent.position)
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, local_position, velocity, mass)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents,
-                             local=local_position,
-                             best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            # Updates current agent position
+            agent.position += self.velocity[i]
 
 
 class SAVPSO(PSO):
@@ -564,79 +434,53 @@ class SAVPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='SAVPSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> SAVPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(SAVPSO, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(SAVPSO, self).__init__(params)
 
         logger.info('Class overrided.')
 
-    def _update_velocity(self, position, best_position, local_position, selected_position, velocity):
-        """Updates a single particle velocity (eq. 8).
+    def update(self, space):
+        """Wraps Self-adaptive Velocity Particle Swarm Optimization over all agents and variables.
 
         Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            local_position (np.array): Agent's local best position.
-            selected_position (np.array): Selected agent's position.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new velocity based on self-adaptive proposal.
-
-        """
-
-        # Generating a random number
-        r1 = r.generate_uniform_random_number()
-
-        # Calculates new velocity
-        new_velocity = self.w * np.fabs(selected_position - local_position) * np.sign(velocity) + r1 * (
-            local_position - position) + (1 - r1) * (best_position - position)
-
-        return new_velocity
-
-    def _update(self, agents, best_agent, local_position, velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            local_position (np.array): Array of local best posisitons.
-            velocity (np.array): Array of current velocities.
+            space (Space): Space containing agents and update-related information.
 
         """
 
         # Creates an array of positions
-        positions = np.zeros((agents[0].position.shape[0], agents[0].position.shape[1]))
+        positions = np.zeros((space.agents[0].position.shape[0], space.agents[0].position.shape[1]))
 
         # For every agent
-        for agent in agents:
+        for agent in space.agents:
             # Sums up its position
             positions += agent.position
 
         # Divides by the number of agents
-        positions /= len(agents)
+        positions /= len(space.agents)
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
             # Generates a random index for selecting an agent
-            idx = r.generate_integer_random_number(0, len(agents))
+            idx = r.generate_integer_random_number(0, len(space.agents))
 
-            # Updates current agent's velocity
-            velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, local_position[i], local_position[idx], velocity[i])
+            # Updates current agent's velocity (eq. 8)
+            r1 = r.generate_uniform_random_number()
+            self.velocity[i] = self.w * np.fabs(self.local_position[idx] - self.local_position[i]) * \
+                               np.sign(self.velocity[i]) + r1 * (self.local_position[i] - agent.position) + \
+                               (1 - r1) * (space.best_agent.position - agent.position)
 
             # Updates current agent's position
-            agent.position = self._update_position(agent.position, velocity[i])
+            agent.position += self.velocity[i]
 
             # For every decision variable
             for j in range(agent.n_variables):
@@ -655,7 +499,7 @@ class SAVPSO(PSO):
 
 
 class VPSO(PSO):
-    """An VPSO class, inherited from Optimizer.
+    """A VPSO class, inherited from Optimizer.
 
     This is the designed class to define VPSO-related
     variables and methods.
@@ -666,143 +510,71 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, algorithm='VPSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: PSO -> VPSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(VPSO, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(VPSO, self).__init__(params)
 
         logger.info('Class overrided.')
 
-    def _update_velocity(self, position, best_position, local_position, velocity, v_velocity):
-        """Updates a single particle velocity (eq. 3-4).
-
-        Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            local_position (np.array): Agent's local best position.
-            velocity (np.array): Agent's current velocity.
-            v_velocity (np.array): Agent's current vertical velocity.
-
-        Returns:
-            A new velocity based on vertical proposal.
+    @property
+    def v_velocity(self):
+        """np.array: Array of vertical velocities.
 
         """
 
-        # Generating uniform random numbers
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        return self._v_velocity
 
-        # Calculates new velocity
-        new_velocity = self.w * velocity + self.c1 * r1 * (local_position - position) + self.c2 * \
-            r2 * (best_position - position)
+    @v_velocity.setter
+    def v_velocity(self, v_velocity):
+        if not isinstance(v_velocity, np.ndarray):
+            raise e.TypeError('`v_velocity` should be a numpy array')
 
-        # Calculates new vertical velocity
-        new_v_velocity = v_velocity - (np.dot(new_velocity.T, v_velocity) /
-                                       np.dot(new_velocity.T, new_velocity)) * new_velocity
+        self._v_velocity = v_velocity
 
-        return new_velocity, new_v_velocity
-
-    def _update_position(self, position, velocity, v_velocity):
-        """Updates a particle position (eq. 5).
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
-            position (np.array): Agent's current position.
-            velocity (np.array): Agent's current velocity.
-            v_velocity (np.array): Agent's current vertical velocity.
-
-        Returns:
-            A new position based on VPSO's paper position update equation.
+            space (Space): A Space object containing meta-information.
 
         """
 
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number()
+        # Arrays of local positions, velocities and vertical velocities
+        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.v_velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
 
-        # Calculates new position
-        new_position = position + r1 * velocity + (1 - r1) * v_velocity
-
-        return new_position
-
-    def _update(self, agents, best_agent, local_position, velocity, v_velocity):
-        """Method that wraps velocity and position updates over all agents and variables.
+    def update(self, space):
+        """Wraps Vertical Particle Swarm Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            local_position (np.array): Array of local best posisitons.
-            velocity (np.array): Array of current velocities.
-            v_velocity (np.array): Array of currentvertical velocities.
+            space (Space): Space containing agents and update-related information.
 
         """
 
-        # Iterate through all agents
-        for i, agent in enumerate(agents):
-            # Updates current agent velocity
-            velocity[i], v_velocity[i] = self._update_velocity(
-                agent.position, best_agent.position, local_position[i], velocity[i], v_velocity[i])
+        # Iterates through all agents
+        for i, agent in enumerate(space.agents):
+            # Generates uniform random numbers
+            r1 = r.generate_uniform_random_number()
+            r2 = r.generate_uniform_random_number()
 
-            # Updates current agent positions
-            agent.position = self._update_position(agent.position, velocity[i], v_velocity[i])
+            # Updates current agent velocity (eq. 3)
+            self.velocity[i] = self.w * self.velocity[i] + self.c1 * r1 * (self.local_position[i] - agent.position) + \
+                               self.c2 * r2 * (space.best_agent.position - agent.position)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+            # Updates current agent vertical velocity (eq. 4)
+            self.v_velocity[i] -= (np.dot(self.velocity[i].T, self.v_velocity[i]) /
+                                  (np.dot(self.velocity[i].T, self.velocity[i]) + c.EPSILON)) * self.velocity[i]
 
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instanciating array of local positions, velocities and vertical velocities
-        local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
-        v_velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, local_position, velocity, v_velocity)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, local_position, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents,
-                             local=local_position,
-                             best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            # Updates current agent position (eq. 5)
+            r1 = r.generate_uniform_random_number()
+            agent.position += r1 * self.velocity[i] + (1 - r1) * self.v_velocity[i]

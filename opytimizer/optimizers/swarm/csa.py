@@ -4,12 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.decorator as d
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -29,19 +26,18 @@ class CSA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CSA', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> CSA.')
 
-        # Override its parent class with the receiving hyperparams
-        super(CSA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(CSA, self).__init__()
 
         # Flight length
         self.fl = 2.0
@@ -49,8 +45,8 @@ class CSA(Optimizer):
         # Awareness probability
         self.AP = 0.1
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -86,14 +82,38 @@ class CSA(Optimizer):
 
         self._AP = AP
 
-    @d.pre_evaluate
-    def _evaluate(self, space, function, memory):
+    @property
+    def memory(self):
+        """np.array: Array of memories.
+
+        """
+
+        return self._memory
+
+    @memory.setter
+    def memory(self, memory):
+        if not isinstance(memory, np.ndarray):
+            raise e.TypeError('`memory` should be a numpy array')
+
+        self._memory = memory
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of memories
+        self.memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
+    def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
 
         Args:
             space (Space): A Space object that will be evaluated.
             function (Function): A Function object that will be used as the objective function.
-            memory (np.array): Array of memories.
 
         """
 
@@ -107,91 +127,38 @@ class CSA(Optimizer):
                 # Updates its current fitness to the newer one
                 agent.fit = fit
 
-                # Also updates the memory to current's agent position (Eq. 5)
-                memory[i] = copy.deepcopy(agent.position)
+                # Also updates the memory to current's agent position (eq. 5)
+                self.memory[i] = copy.deepcopy(agent.position)
 
             # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
                 # Makes a deep copy of agent's local best position and fitness to the best agent
-                space.best_agent.position = copy.deepcopy(memory[i])
+                space.best_agent.position = copy.deepcopy(self.memory[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-    def _update(self, agents, memory):
-        """Method that wraps the Crow Search Algorithm over all agents and variables.
+    def update(self, space):
+        """Wraps Crow Search Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            memory (np.array): Array of memories.
+            space (Space): Space containing agents and update-related information.
 
         """
 
         # Iterates through every agent
-        for agent in agents:
+        for agent in space.agents:
             # Generates uniform random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
             # Generates a random integer (e.g. selects the crow)
-            j = r.generate_integer_random_number(high=len(agents))
+            j = r.generate_integer_random_number(high=len(space.agents))
 
             # Checks if first random number is greater than awareness probability
             if r1 >= self.AP:
-                # Updates agent's position (Eq. 2)
-                agent.position += r2 * self.fl * (memory[j] - agent.position)
+                # Updates agent's position (eq. 2)
+                agent.position += r2 * self.fl * (self.memory[j] - agent.position)
 
             # If random number is smaller than probability
             else:
-                # Generate a random position
-                for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
-                    # For each decision variable, we generate uniform random numbers
-                    agent.position[j] = r.generate_uniform_random_number(lb, ub, size=agent.n_dimensions)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instanciates an array of memories
-        memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, memory, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, memory)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, memory, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                # Fills agent with new random positions
+                agent.fill_with_uniform()

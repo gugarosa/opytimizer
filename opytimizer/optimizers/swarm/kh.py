@@ -4,13 +4,11 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -29,17 +27,16 @@ class KH(Optimizer):
 
     """
 
-    def __init__(self, algorithm='KH', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(KH, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(KH, self).__init__()
 
         # Maximum induced speed
         self.N_max = 0.01
@@ -68,8 +65,8 @@ class KH(Optimizer):
         # Mutation probability
         self.Mu = 0.05
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -225,6 +222,48 @@ class KH(Optimizer):
 
         self._Mu = Mu
 
+    @property
+    def motion(self):
+        """np.array: Array of motions.
+
+        """
+
+        return self._motion
+
+    @motion.setter
+    def motion(self, motion):
+        if not isinstance(motion, np.ndarray):
+            raise e.TypeError('`motion` should be a numpy array')
+
+        self._motion = motion
+
+    @property
+    def foraging(self):
+        """np.array: Array of foragings.
+
+        """
+
+        return self._foraging
+
+    @foraging.setter
+    def foraging(self, foraging):
+        if not isinstance(foraging, np.ndarray):
+            raise e.TypeError('`foraging` should be a numpy array')
+
+        self._foraging = foraging
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of motions and foragings
+        self.motion = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.foraging = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
     def _food_location(self, agents, function):
         """Calculates the food location.
 
@@ -241,7 +280,8 @@ class KH(Optimizer):
         food = copy.deepcopy(agents[0])
 
         # Calculates the sum of inverse of agents' fitness * agents' position
-        sum_fitness_pos = np.sum([1 / (agent.fit + c.EPSILON) * agent.position for agent in agents], axis=0)
+        sum_fitness_pos = np.sum([1 / (agent.fit + c.EPSILON) * agent.position for agent in agents],
+                                 axis=0)
 
         # Calculates the sum of inverse of agents' fitness
         sum_fitness = np.sum([1 / (agent.fit + c.EPSILON) for agent in agents])
@@ -250,7 +290,7 @@ class KH(Optimizer):
         food.position = sum_fitness_pos / sum_fitness
 
         # Clips the food's position
-        food.clip_limits()
+        food.clip_by_bound()
 
         # Evaluates the food
         food.fit = function(food.position)
@@ -348,7 +388,8 @@ class KH(Optimizer):
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
         # Calculates a list of krills' position based on neighbours
-        position = (best.position - agent.position) / (g.euclidean_distance(best.position, agent.position) + c.EPSILON)
+        position = (best.position - agent.position) / \
+                   (g.euclidean_distance(best.position, agent.position) + c.EPSILON)
 
         # Calculates the target alpha
         alpha = C_best * fitness * position
@@ -361,7 +402,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             motion (np.array): Array of motions.
 
@@ -409,7 +450,8 @@ class KH(Optimizer):
         fitness = (agent.fit - food.fit) / (worst.fit - best.fit + c.EPSILON)
 
         # Calculates the positioning
-        position = (food.position - agent.position) / (g.euclidean_distance(food.position, agent.position) + c.EPSILON)
+        position = (food.position - agent.position) / \
+            (g.euclidean_distance(food.position, agent.position) + c.EPSILON)
 
         # Calculates the food attraction
         beta = C_food * fitness * position
@@ -433,7 +475,8 @@ class KH(Optimizer):
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
         # Calculates the positioning
-        position = (best.position - agent.position) / (g.euclidean_distance(best.position, agent.position) + c.EPSILON)
+        position = (best.position - agent.position) / \
+            (g.euclidean_distance(best.position, agent.position) + c.EPSILON)
 
         # Calculates the food attraction
         beta = fitness * position
@@ -446,7 +489,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             food (np.array): Food location.
             foraging (np.array): Array of foraging motions.
@@ -476,7 +519,7 @@ class KH(Optimizer):
         Args:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Number of dimensions.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         Returns:
@@ -498,7 +541,7 @@ class KH(Optimizer):
         Args:
             agents (list): List of agents.
             idx (int): Selected agent.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
             food (np.array): Food location.
             motion (np.array): Array of motions.
@@ -516,14 +559,15 @@ class KH(Optimizer):
         foraging_motion = self._foraging_motion(agents, idx, iteration, n_iterations, food, foraging)
 
         # Calculates the physical diffusion
-        physical_diffusion = self._physical_diffusion(
-            agents[idx].n_variables, agents[idx].n_dimensions, iteration, n_iterations)
+        physical_diffusion = self._physical_diffusion(agents[idx].n_variables, agents[idx].n_dimensions,
+                                                      iteration, n_iterations)
 
         # Calculates the delta (eq. 19)
         delta_t = self.C_t * np.sum(agents[idx].ub - agents[idx].lb)
 
         # Updates the current agent's position (eq. 18)
-        new_position = agents[idx].position + delta_t * (neighbour_motion + foraging_motion + physical_diffusion)
+        new_position = agents[idx].position + delta_t * \
+            (neighbour_motion + foraging_motion + physical_diffusion)
 
         return new_position
 
@@ -546,11 +590,12 @@ class KH(Optimizer):
         m = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
         # Calculates the current crossover probability
-        Cr = self.Cr * ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON))
+        Cr = self.Cr * ((agents[idx].fit - agents[0].fit) /
+                        (agents[-1].fit - agents[0].fit + c.EPSILON))
 
         # Iterates through all variables
         for j in range(a.n_variables):
-            # Generating a uniform random number
+            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
             # If sampled uniform number if smaller than crossover probability
@@ -580,16 +625,17 @@ class KH(Optimizer):
         q = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
         # Calculates the current mutation probability
-        Mu = self.Mu / ((agents[idx].fit - agents[0].fit) / (agents[-1].fit - agents[0].fit + c.EPSILON) + c.EPSILON)
+        Mu = self.Mu / ((agents[idx].fit - agents[0].fit) /
+                        (agents[-1].fit - agents[0].fit + c.EPSILON) + c.EPSILON)
 
         # Iterates through all variables
         for j in range(a.n_variables):
-            # Generating a uniform random number
+            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
             # If sampled uniform number if smaller than mutation probability
             if r1 < Mu:
-                # Generating another uniform random number
+                # Generates another uniform random number
                 r2 = r.generate_uniform_random_number()
 
                 # Mutates the current position
@@ -597,81 +643,29 @@ class KH(Optimizer):
 
         return a
 
-    def _update(self, agents, function, iteration, n_iterations, motion, foraging):
-        """Method that wraps motion and genetic updates over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps motion and genetic updates over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration value.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
-            motion (np.array): Array of motions.
-            foraging (np.array): Array of foraging motions.
 
         """
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the food location (eq. 12)
-        food = self._food_location(agents, function)
+        food = self._food_location(space.agents, function)
 
-        # Iterate through all agents
-        for i, _ in enumerate(agents):
+        # Iterates through all agents
+        for i, _ in enumerate(space.agents):
             # Updates current agent's position
-            agents[i].position = self._update_position(agents, i, iteration, n_iterations, food, motion[i], foraging[i])
+            space.agents[i].position = self._update_position(space.agents, i, iteration, n_iterations,
+                                                             food, self.motion[i], self.foraging[i])
 
             # Performs the crossover and mutation
-            agents[i] = self._crossover(agents, i)
-            agents[i] = self._mutation(agents, i)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instanciating array of motions and foraging motions
-        motion = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        foraging = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function, t, space.n_iterations, motion, foraging)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            space.agents[i] = self._crossover(space.agents, i)
+            space.agents[i] = self._mutation(space.agents, i)

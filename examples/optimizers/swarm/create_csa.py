@@ -2,10 +2,10 @@ from opytimizer.optimizers.swarm.csa import CSA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'fl': 2.0,
     'AP': 0.1
 }
 
-# Creating a CSA optimizer
-o = CSA(hyperparams=hyperparams)
+# Creates a CSA optimizer
+o = CSA(params=params)

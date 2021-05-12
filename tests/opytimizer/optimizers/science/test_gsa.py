@@ -1,24 +1,20 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import gsa
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_gsa_hyperparams():
-    hyperparams = {
+def test_gsa_params():
+    params = {
         'G': 2.467,
     }
 
-    new_gsa = gsa.GSA(hyperparams=hyperparams)
+    new_gsa = gsa.GSA(params=params)
 
     assert new_gsa.G == 2.467
 
 
-def test_gsa_hyperparams_setter():
+def test_gsa_params_setter():
     new_gsa = gsa.GSA()
 
     try:
@@ -34,18 +30,27 @@ def test_gsa_hyperparams_setter():
     assert new_gsa.G == 0.1
 
 
-def test_gsa_build():
-    new_gsa = gsa.GSA()
+def test_gsa_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    assert new_gsa.built == True
+    new_gsa = gsa.GSA()
+    new_gsa.create_additional_attrs(search_space)
+
+    try:
+        new_gsa.velocity = 1
+    except:
+        new_gsa.velocity = np.array([1])
+
+    assert new_gsa.velocity == np.array([1])
 
 
 def test_gsa_calculate_mass():
-    new_gsa = gsa.GSA()
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_gsa = gsa.GSA()
+    new_gsa.create_additional_attrs(search_space)
 
     search_space.agents[0].fit = 1
 
@@ -57,11 +62,11 @@ def test_gsa_calculate_mass():
 
 
 def test_gsa_calculate_force():
-    new_gsa = gsa.GSA()
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_gsa = gsa.GSA()
+    new_gsa.create_additional_attrs(search_space)
 
     search_space.agents[0].fit = 1
 
@@ -76,59 +81,11 @@ def test_gsa_calculate_force():
     assert force.shape[0] > 0
 
 
-def test_gsa_update_velocity():
+def test_gsa_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_gsa = gsa.GSA()
+    new_gsa.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    search_space.agents[0].fit = 1
-
-    search_space.agents.sort(key=lambda x: x.fit)
-
-    mass = new_gsa._calculate_mass(search_space.agents)
-
-    gravity = 1
-
-    force = new_gsa._calculate_force(search_space.agents, mass, gravity)
-
-    velocity = new_gsa._update_velocity(force[0], mass[0], 1)
-
-    assert velocity[0] != 0
-
-
-def test_gsa_update_position():
-    new_gsa = gsa.GSA()
-
-    position = new_gsa._update_position(1, 1)
-
-    assert position == 2
-
-
-def test_gsa_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
-
-    hyperparams = {
-        'G': 100
-    }
-
-    new_gsa = gsa.GSA(hyperparams=hyperparams)
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_gsa.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm gsa failed to converge.'
+    new_gsa.update(search_space, 1)

@@ -1,38 +1,70 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.social import qsa
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
+from opytimizer.utils import constant
 
 
-def test_qsa_build():
+def test_qsa_calculate_queue():
     new_qsa = qsa.QSA()
 
-    assert new_qsa.built == True
+    q_1, q_2, q_3 = new_qsa._calculate_queue(10, 1, 1, 1)
+
+    assert q_1 == 3
+    assert q_2 == 3
+    assert q_3 == 3
+
+    q_1, q_2, q_3 = new_qsa._calculate_queue(10, constant.EPSILON - 0.1, 1, 1)
+
+    assert q_1 == 3
+    assert q_2 == 3
+    assert q_3 == 3
 
 
-def test_qsa_run():
+def test_qsa_business_one():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=100, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_qsa = qsa.QSA()
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_qsa._business_one(search_space.agents, square, 0.1)
+    new_qsa._business_one(search_space.agents, square, 100)
 
-    history = new_qsa.run(search_space, new_function, pre_evaluate=hook)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+def test_qsa_business_two():
+    def square(x):
+        return np.sum(x**2)
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm qsa failed to converge.'
+    search_space = search.SearchSpace(n_agents=100, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_qsa = qsa.QSA()
+
+    new_qsa._business_two(search_space.agents, square)
+
+
+def test_qsa_business_three():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=100, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_qsa = qsa.QSA()
+
+    new_qsa._business_three(search_space.agents, square)
+
+
+def test_qsa_update():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=100, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_qsa = qsa.QSA()
+
+    new_qsa.update(search_space, square, 1, 10)

@@ -1,2 +1,2 @@
-"""A visualization package for all common opytimizer modules.
+"""Visualization package for all common opytimizer modules.
 """

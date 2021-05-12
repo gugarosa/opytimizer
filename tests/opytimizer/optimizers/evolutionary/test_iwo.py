@@ -1,15 +1,13 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.evolutionary import iwo
 from opytimizer.spaces import search
-from opytimizer.utils import constants
 
 np.random.seed(0)
 
 
-def test_iwo_hyperparams():
-    hyperparams = {
+def test_iwo_params():
+    params = {
         'min_seeds': 0,
         'max_seeds': 5,
         'e': 2,
@@ -17,7 +15,7 @@ def test_iwo_hyperparams():
         'init_sigma': 3
     }
 
-    new_iwo = iwo.IWO(hyperparams=hyperparams)
+    new_iwo = iwo.IWO(params=params)
 
     assert new_iwo.min_seeds == 0
 
@@ -30,7 +28,7 @@ def test_iwo_hyperparams():
     assert new_iwo.init_sigma == 3
 
 
-def test_iwo_hyperparams_setter():
+def test_iwo_params_setter():
     new_iwo = iwo.IWO()
 
     try:
@@ -98,51 +96,45 @@ def test_iwo_hyperparams_setter():
 
     assert new_iwo.init_sigma == 2.0
 
+    try:
+        new_iwo.sigma = 'f'
+    except:
+        new_iwo.sigma = 1
 
-def test_iwo_build():
+    assert new_iwo.sigma == 1
+
+
+def test_iwo_spatial_dispersal():
     new_iwo = iwo.IWO()
 
-    assert new_iwo.built == True
+    new_iwo._spatial_dispersal(1, 10)
+
+    assert new_iwo.sigma == 2.43019
+
+
+def test_iwo_produce_offspring():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=2, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_iwo = iwo.IWO()
+
+    agent = new_iwo._produce_offspring(search_space.agents[0], square)
+
+    assert type(agent).__name__ == 'Agent'
 
 
 def test_iwo_update():
     def square(x):
         return np.sum(x**2)
 
-    assert square(2) == 4
-
-    new_function = function.Function(pointer=square)
-
     new_iwo = iwo.IWO()
+    new_iwo.min_seeds = 5
+    new_iwo.max_seeds = 20
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
-                                      n_variables=2, lower_bound=[1, 1],
-                                      upper_bound=[10, 10])
+    search_space = search.SearchSpace(n_agents=5, n_variables=2,
+                lower_bound=[1, 1], upper_bound=[10, 10])
 
-    new_iwo._update(search_space.agents, search_space.n_agents, new_function)
-
-    assert search_space.agents[0].position[0] != 0
-
-
-def test_iwo_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
-
-    new_iwo = iwo.IWO()
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=30,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_iwo.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm iwo failed to converge.'
+    new_iwo.update(search_space, square, 1, 10)

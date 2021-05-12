@@ -1,27 +1,25 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.population import gco
 from opytimizer.spaces import search
-from opytimizer.utils import constants
 
 np.random.seed(0)
 
 
-def test_gco_hyperparams():
-    hyperparams = {
+def test_gco_params():
+    params = {
         'CR': 0.7,
         'F': 1.25
     }
 
-    new_gco = gco.GCO(hyperparams=hyperparams)
+    new_gco = gco.GCO(params=params)
 
     assert new_gco.CR == 0.7
 
     assert new_gco.F == 1.25
 
 
-def test_gco_hyperparams_setter():
+def test_gco_params_setter():
     new_gco = gco.GCO()
 
     try:
@@ -49,18 +47,34 @@ def test_gco_hyperparams_setter():
     assert new_gco.F == 1.5
 
 
-def test_gco_build():
-    new_gco = gco.GCO()
+def test_gco_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=4, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
 
-    assert new_gco.built == True
+    new_gco = gco.GCO()
+    new_gco.create_additional_attrs(search_space)
+
+    try:
+        new_gco.life = 1
+    except:
+        new_gco.life = np.array([1])
+
+    assert new_gco.life == np.array([1])
+
+    try:
+        new_gco.counter = 1
+    except:
+        new_gco.counter = np.array([1])
+
+    assert new_gco.counter == np.array([1])
 
 
 def test_gco_mutate_cell():
-    new_gco = gco.GCO()
+    search_space = search.SearchSpace(n_agents=4, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
 
-    search_space = search.SearchSpace(n_agents=4, n_iterations=10,
-                                      n_variables=2, lower_bound=[1, 1],
-                                      upper_bound=[10, 10])
+    new_gco = gco.GCO()
+    new_gco.create_additional_attrs(search_space)
 
     cell = new_gco._mutate_cell(
         search_space.agents[0], search_space.agents[1], search_space.agents[2], search_space.agents[3])
@@ -68,42 +82,39 @@ def test_gco_mutate_cell():
     assert cell.position[0][0] != 0
 
 
+def test_gco_dark_zone():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=4, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_gco = gco.GCO()
+    new_gco.create_additional_attrs(search_space)
+
+    new_gco._dark_zone(search_space.agents, square)
+
+
+def test_gco_light_zone():
+    search_space = search.SearchSpace(n_agents=4, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
+
+    new_gco = gco.GCO()
+    new_gco.create_additional_attrs(search_space)
+
+    new_gco._light_zone(search_space.agents)
+
+
 def test_gco_update():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=4, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
+    new_gco.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=4, n_iterations=10,
-                                      n_variables=2, lower_bound=[1, 1],
-                                      upper_bound=[10, 10])
-
-    new_gco._update(search_space.agents, new_function, np.array([70, 70, 70, 70]), np.array([1, 1, 1, 1]))
+    new_gco.update(search_space, square)
 
     assert search_space.agents[0].position[0] != 0
-
-
-def test_gco_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
-
-    new_gco = gco.GCO()
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=30,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_gco.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm gco failed to converge.'

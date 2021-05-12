@@ -6,56 +6,56 @@ from torch import optim
 from torch.autograd import Variable
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
-# Splitting the data
+# Splits the data
 X_train, X_val, Y_train, Y_val = train_test_split(
     X, Y, test_size=0.5, random_state=42)
 
-# Converting from numpy array to torch tensors
+# Converts from numpy array to torch tensors
 X_train = torch.from_numpy(X_train).float()
 X_val = torch.from_numpy(X_val).float()
 Y_train = torch.from_numpy(Y_train).long()
 
 
 def fit(model, loss, opt, x, y):
-    # Declaring initial variables
+    # Declares initial variables
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
-    # Resetting the gradient
+    # Resets the gradient
     opt.zero_grad()
 
-    # Performing the foward pass
+    # Performs the foward pass
     fw_x = model.forward(x)
     output = loss.forward(fw_x, y)
 
-    # Performing backward pass
+    # Performs backward pass
     output.backward()
 
-    # Updating parameters
+    # Updates parameters
     opt.step()
 
     return output.item()
 
 
 def predict(model, x_val):
-    # Declaring validation variable
+    # Declares validation variable
     x = Variable(x_val, requires_grad=False)
 
-    # Performing backward pass with this variable
+    # Performs backward pass with this variable
     output = model.forward(x)
 
-    # Getting the index of the prediction
+    # Gets the index of the prediction
     y_val = output.data.numpy().argmax(axis=1)
 
     return y_val
@@ -84,28 +84,28 @@ def neural_network(opytimizer):
     batch_size = 100
     epochs = 100
 
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
     momentum = opytimizer[1][0]
 
-    # Declaring the loss function
+    # Declares the loss function
     loss = torch.nn.CrossEntropyLoss(reduction='mean')
 
-    # Declaring the optimization algorithm
+    # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
-    # Performing training loop
+    # Performs training loop
     for _ in range(epochs):
         # Initial cost as 0.0
         cost = 0.0
 
-        # Calculating the number of batches
+        # Calculates the number of batches
         num_batches = len(X_train) // batch_size
 
         # For every batch
         for k in range(num_batches):
-            # Declaring initial and ending for each batch
+            # Declares initial and ending for each batch
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting
@@ -115,41 +115,27 @@ def neural_network(opytimizer):
     # Predicting samples from evaluating set
     preds = predict(model, X_val)
 
-    # Calculating accuracy
+    # Calculates accuracy
     acc = np.mean(preds == Y_val)
 
     return 1 - acc
 
 
-# Creating Function's object
-f = Function(pointer=neural_network)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 10
 n_variables = 2
-n_iterations = 100
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (0, 0)
-upper_bound = (1, 1)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [0, 0]
+upper_bound = [1, 1]
 
-# Creating the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(neural_network)
 
-# Hyperparameters for the optimizer
-hyperparams = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=100)

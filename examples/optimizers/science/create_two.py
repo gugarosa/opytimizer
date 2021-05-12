@@ -2,7 +2,7 @@ from opytimizer.optimizers.science.two import TWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'mu_s': 1,
     'mu_k': 1,
     'delta_t': 1,
@@ -10,5 +10,5 @@ hyperparams = {
     'beta': 0.05
 }
 
-# Creating a TWO optimizer
-o = TWO(hyperparams=hyperparams)
+# Creates a TWO optimizer
+o = TWO(params=params)

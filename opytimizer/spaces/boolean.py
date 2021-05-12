@@ -1,11 +1,12 @@
 """Boolean-based search space.
 """
 
+import copy
+
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.logging as l
-from opytimizer.core.space import Space
+from opytimizer.core import Space
 
 logger = l.get_logger(__name__)
 
@@ -16,50 +17,40 @@ class BooleanSpace(Space):
 
     """
 
-    def __init__(self, n_agents=1, n_variables=1, n_iterations=10):
+    def __init__(self, n_agents, n_variables):
         """Initialization method.
 
         Args:
             n_agents (int): Number of agents.
             n_variables (int): Number of decision variables.
-            n_iterations (int): Number of iterations.
 
         """
 
         logger.info('Overriding class: Space -> BooleanSpace.')
 
-        # Override its parent class with the receiving arguments
-        super(BooleanSpace, self).__init__(n_agents, n_variables, n_iterations=n_iterations)
-
-        # Defining the lower and upper bounds
+        # Defines missing override arguments
+        n_dimensions = 1
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 
-        # Now, we need to build this class up
-        self._build(lower_bound, upper_bound)
+        # Overrides its parent class with the receiving arguments
+        super(BooleanSpace, self).__init__(n_agents, n_variables, n_dimensions,
+                                           lower_bound, upper_bound)
 
-        # Initializing agents
-        self._initialize_agents()
+        # Builds the class
+        self.build()
 
-        # We will log some important information
         logger.info('Class overrided.')
 
     def _initialize_agents(self):
-        """Initialize agents' position array with boolean random numbers.
+        """Initializes agents with their positions and defines a best agent.
 
         """
 
-        logger.debug('Running private method: initialize_agents().')
-
         # Iterates through all agents
         for agent in self.agents:
-            # Iterates through all decision variables
-            for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-                # For each decision variable, we generate binary random numbers
-                agent.position[j] = r.generate_binary_random_number(size=agent.n_dimensions)
+            # Initializes the agent
+            agent.fill_with_binary()
 
-                # Applies the lower bound and upper bounds
-                agent.lb[j] = lb
-                agent.ub[j] = ub
-
-        logger.debug('Agents initialized.')
+        # Defines a best agent
+        self.best_agent = copy.deepcopy(self.agents[0])

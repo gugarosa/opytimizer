@@ -1,7 +1,7 @@
 # Opytimizer: A Nature-Inspired Python Optimizer
 
 [![Latest release](https://img.shields.io/github/release/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/releases)
-[![DOI](https://zenodo.org/badge/109152650.svg)](https://zenodo.org/badge/latestdoi/109152650)
+[![DOI](http://img.shields.io/badge/DOI-10.5281/zenodo.4594294-006DB9.svg)](https://doi.org/10.5281/zenodo.4594294)
 [![Build status](https://img.shields.io/travis/com/gugarosa/opytimizer/master.svg)](https://github.com/gugarosa/opytimizer/releases)
 [![Open issues](https://img.shields.io/github/issues/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/issues)
 [![License](https://img.shields.io/github/license/gugarosa/opytimizer.svg)](https://github.com/gugarosa/opytimizer/blob/master/LICENSE)
@@ -65,6 +65,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - optimizer
         - space
     - functions
+        - constrained
         - weighted
     - math
         - distribution
@@ -86,8 +87,8 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - search
         - tree
     - utils
-        - constants
-        - decorator
+        - callback
+        - constant
         - exception
         - history
         - logging
@@ -106,11 +107,11 @@ Instead of using raw and straightforward functions, why not try this module? Com
 
 ### Math
 
-Just because we are computing stuff, it does not means that we do not need math. Math is the mathematical package, containing low-level math implementations. From random numbers to distributions generation, you can find your needs on this module.
+Just because we are computing stuff does not means that we do not need math. Math is the mathematical package containing low-level math implementations. From random numbers to distribution generation, you can find your needs on this module.
 
 ### Optimizers
 
-This is why we are called Opytimizer. This is the heart of the heuristics, where you can find a large number of meta-heuristics, optimization techniques, anything that can be called as an optimizer. Please take a look on the [available optimizers](https://github.com/gugarosa/opytimizer/wiki/Types-of-Optimizers).
+This is why we are called Opytimizer. This is the heart of heuristics, where you can find a large number of meta-heuristics, optimization techniques, anything that can be called an optimizer. Please take a look at the [available optimizers](https://github.com/gugarosa/opytimizer/wiki/Types-of-Optimizers).
 
 ### Spaces
 
@@ -118,7 +119,7 @@ One can see the space as the place that agents will update their positions and e
 
 ### Utils
 
-This is a utility package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing over and over again.
+This is a utility package. Common things shared across the application should be implemented here. It is better to implement once and use as you wish than re-implementing the same thing repeatedly.
 
 ### Visualization
 
@@ -128,7 +129,7 @@ Everyone needs images and plots to help visualize what is happening, correct? Th
 
 ## Installation
 
-We believe that everything has to be easy. Not tricky or daunting, Opytimizer will be the one-to-go package that you will need, from the very first installation to the daily-tasks implementing needs. If you may just run the following under your most preferred Python environment (raw, conda, virtualenv, whatever):
+We believe that everything has to be easy. Not tricky or daunting, Opytimizer will be the one-to-go package that you will need, from the first installation to the daily tasks implementing needs. If you may just run the following under your most preferred Python environment (raw, conda, virtualenv, whatever):
 
 ```bash
 pip install opytimizer
@@ -148,15 +149,15 @@ Note that sometimes, there is a need for additional implementation. If needed, f
 
 ### Ubuntu
 
-No specific additional commands needed.
+No specific additional commands are needed.
 
 ### Windows
 
-No specific additional commands needed.
+No specific additional commands are needed.
 
 ### MacOS
 
-No specific additional commands needed.
+No specific additional commands are needed.
 
 ---
 
@@ -168,25 +169,24 @@ Take a look at a quick working example of Opytimizer. Note that we are not passi
 import numpy as np
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
 def sphere(x):
   return np.sum(x ** 2)
 
 n_agents = 20
 n_variables = 2
-n_iterations = 1000
-lower_bound = (-10, -10)
-upper_bound = (10, 10)
+lower_bound = [-10, -10]
+upper_bound = [10, 10]
 
-s = SearchSpace(n_agents, n_iterations, n_variables, lower_bound, upper_bound)
-p = PSO()
-f = Function(sphere)
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(sphere)
 
-o = Opytimizer(s, p, f)
-o.start()
+opt = Opytimizer(space, optimizer, function)
+opt.start(n_iterations=1000)
 ```
 
 ---

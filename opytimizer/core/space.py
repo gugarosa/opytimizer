@@ -1,13 +1,11 @@
-"""Standard search space.
+"""Search space.
 """
-
-import copy
 
 import numpy as np
 
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
-from opytimizer.core.agent import Agent
+from opytimizer.core import Agent
 
 logger = l.get_logger(__name__)
 
@@ -18,14 +16,15 @@ class Space:
 
     """
 
-    def __init__(self, n_agents=1, n_variables=1, n_dimensions=1, n_iterations=10):
+    def __init__(self, n_agents=1, n_variables=1, n_dimensions=1, lower_bound=0.0, upper_bound=1.0):
         """Initialization method.
 
         Args:
             n_agents (int): Number of agents.
             n_variables (int): Number of decision variables.
             n_dimensions (int): Dimension of search space.
-            n_iterations (int): Number of iterations.
+            lower_bound (float, list, tuple, np.array): Minimum possible values.
+            upper_bound (float, list, tuple, np.array): Maximum possible values.
 
         """
 
@@ -38,20 +37,17 @@ class Space:
         # Number of dimensions
         self.n_dimensions = n_dimensions
 
-        # Number of iterations
-        self.n_iterations = n_iterations
-
-        # List of agents
-        self.agents = []
-
-        # Best agent object
-        self.best_agent = Agent()
-
         # Lower bounds
-        self.lb = np.zeros(n_variables)
+        self.lb = np.asarray(lower_bound)
 
         # Upper bounds
-        self.ub = np.ones(n_variables)
+        self.ub = np.asarray(upper_bound)
+
+        # Agents
+        self.agents = []
+
+        # Best agent
+        self.best_agent = Agent(n_variables, n_dimensions, lower_bound, upper_bound)
 
         # Indicates whether the space is built or not
         self.built = False
@@ -92,7 +88,7 @@ class Space:
 
     @property
     def n_dimensions(self):
-        """int: Dimension of search space.
+        """int: Number of search space dimensions.
 
         """
 
@@ -108,25 +104,46 @@ class Space:
         self._n_dimensions = n_dimensions
 
     @property
-    def n_iterations(self):
-        """int: Number of iterations.
+    def lb(self):
+        """np.array: Minimum possible values.
 
         """
 
-        return self._n_iterations
+        return self._lb
 
-    @n_iterations.setter
-    def n_iterations(self, n_iterations):
-        if not isinstance(n_iterations, int):
-            raise e.TypeError('`n_iterations` should be an integer')
-        if n_iterations <= 0:
-            raise e.ValueError('`n_iterations` should be > 0')
+    @lb.setter
+    def lb(self, lb):
+        if not isinstance(lb, np.ndarray):
+            raise e.TypeError('`lb` should be a numpy array')
+        if not lb.shape:
+            lb = np.expand_dims(lb, -1)
+        if lb.shape[0] != self.n_variables:
+            raise e.SizeError('`lb` should be the same size as `n_variables`')
 
-        self._n_iterations = n_iterations
+        self._lb = lb
+
+    @property
+    def ub(self):
+        """np.array: Maximum possible values.
+
+        """
+
+        return self._ub
+
+    @ub.setter
+    def ub(self, ub):
+        if not isinstance(ub, np.ndarray):
+            raise e.TypeError('`ub` should be a numpy array')
+        if not ub.shape:
+            ub = np.expand_dims(ub, -1)
+        if not ub.shape or ub.shape[0] != self.n_variables:
+            raise e.SizeError('`ub` should be the same size as `n_variables`')
+
+        self._ub = ub
 
     @property
     def agents(self):
-        """list: List of agents that belongs to Space.
+        """list: Agents that belongs to the space.
 
         """
 
@@ -141,7 +158,7 @@ class Space:
 
     @property
     def best_agent(self):
-        """Agent: A best agent object from Agent class.
+        """Agent: Best agent.
 
         """
 
@@ -155,42 +172,8 @@ class Space:
         self._best_agent = best_agent
 
     @property
-    def lb(self):
-        """np.array: Lower bound array with the minimum possible values.
-
-        """
-
-        return self._lb
-
-    @lb.setter
-    def lb(self, lb):
-        if not isinstance(lb, np.ndarray):
-            raise e.TypeError('`lb` should be a numpy array')
-        if lb.shape[0] != self.n_variables:
-            raise e.SizeError('`lb` should be the same size as `n_variables`')
-
-        self._lb = lb
-
-    @property
-    def ub(self):
-        """np.array: Upper bound array with the maximum possible values.
-
-        """
-
-        return self._ub
-
-    @ub.setter
-    def ub(self, ub):
-        if not isinstance(ub, np.ndarray):
-            raise e.TypeError('`ub` should be a numpy array')
-        if ub.shape[0] != self.n_variables:
-            raise e.SizeError('`ub` should be the same size as `n_variables`')
-
-        self._ub = ub
-
-    @property
     def built(self):
-        """bool: A boolean to indicate whether the space is built.
+        """bool: Indicates whether the space is built.
 
         """
 
@@ -198,72 +181,56 @@ class Space:
 
     @built.setter
     def built(self, built):
+        if not isinstance(built, bool):
+            raise e.TypeError('`built` should be a boolean')
+
         self._built = built
 
-    def _build(self, lower_bound, upper_bound):
-        """This method serves as the object building process.
-
-        One can define several commands here that does not necessarily
-        needs to be on its initialization.
-
-        Args:
-            lower_bound (tuple): Lower bound array with the minimum possible values.
-            upper_bound (tuple): Upper bound array with the maximum possible values.
-
-        """
-
-        logger.debug('Running private method: build().')
-
-        # Creating lower and upper bound arrays
-        self.lb = np.asarray(lower_bound)
-        self.ub = np.asarray(upper_bound)
-
-        # Creating agents
-        self._create_agents()
-
-        # If no errors were shown, we can declare the Space as built
-        self.built = True
-
-        # Logging attributes
-        logger.debug('Agents: %d | Size: (%d, %d) | Iterations: %d | '
-                     'Lower Bound: %s | Upper Bound: %s | Built: %s.',
-                     self.n_agents, self.n_variables, self.n_dimensions, self.n_iterations,
-                     self.lb, self.ub, self.built)
-
     def _create_agents(self):
-        """Creates a list of agents and the best agent.
-
-        Also defines a random best agent, only for initialization purposes.
+        """Creates a list of agents.
 
         """
 
-        logger.debug('Running private method: create_agents().')
-
-        # Creating a list of agents
-        self.agents = [Agent(self.n_variables, self.n_dimensions) for _ in range(self.n_agents)]
-
-        # Apply the first agent as the best one
-        self.best_agent = copy.deepcopy(self.agents[0])
+        # List of agents
+        self.agents = [Agent(self.n_variables, self.n_dimensions,
+                             self.lb, self.ub) for _ in range(self.n_agents)]
 
     def _initialize_agents(self):
-        """Initialize agents' position array.
+        """Initializes agents with their positions and defines a best agent.
 
-        As each space child can have a different procedure of initializing agents,
-        you will need to implement it directly on the child's class.
-
-        Raises:
-            NotImplementedError.
+        As each child has a different procedure of initialization,
+        you will need to implement it directly on its class.
 
         """
 
-        raise NotImplementedError
+        pass
 
-    def clip_limits(self):
-        """Clips the space agents' position to the bounds limits.
+    def build(self):
+        """Builds the object by creating and initializing the agents.
+
+        """
+
+        # Creates the agents
+        self._create_agents()
+
+        # Initializes the agents
+        self._initialize_agents()
+
+        # If no errors were shown, we can declare the space as `built`
+        self.built = True
+
+        # Logs the properties
+        logger.debug('Agents: %d | Size: (%d, %d) | '
+                     'Lower Bound: %s | Upper Bound: %s | Built: %s.',
+                     self.n_agents, self.n_variables, self.n_dimensions,
+                     self.lb, self.ub, self.built)
+
+    def clip_by_bound(self):
+        """Clips the agents' decision variables to the bounds limits.
 
         """
 
         # Iterates through all agents
         for agent in self.agents:
-            # Clips the agent's limits
-            agent.clip_limits()
+            # Clips its limits
+            agent.clip_by_bound()

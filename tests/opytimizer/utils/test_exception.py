@@ -1,7 +1,7 @@
 from opytimizer.utils import exception
 
 
-def test_error():
+def test_exception_error():
     new_exception = exception.Error('Error', 'error')
 
     try:
@@ -10,7 +10,7 @@ def test_error():
         pass
 
 
-def test_argument_error():
+def test_exception_argument_error():
     new_exception = exception.ArgumentError('error')
 
     try:
@@ -19,7 +19,7 @@ def test_argument_error():
         pass
 
 
-def test_build_error():
+def test_exception_build_error():
     new_exception = exception.BuildError('error')
 
     try:
@@ -28,7 +28,7 @@ def test_build_error():
         pass
 
 
-def test_size_error():
+def test_exception_size_error():
     new_exception = exception.SizeError('error')
 
     try:
@@ -37,7 +37,7 @@ def test_size_error():
         pass
 
 
-def test_type_error():
+def test_exception_type_error():
     new_exception = exception.TypeError('error')
 
     try:
@@ -46,7 +46,7 @@ def test_type_error():
         pass
 
 
-def test_value_error():
+def test_exception_value_error():
     new_exception = exception.ValueError('error')
 
     try:

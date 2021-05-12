@@ -1,10 +1,16 @@
-"""Opytimizer entry point.
+"""Optimization entry point.
 """
 
+import pickle
 import time
+from inspect import signature
+
+from tqdm import tqdm
 
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
+from opytimizer.utils.callback import CallbackVessel
+from opytimizer.utils.history import History
 
 logger = l.get_logger(__name__)
 
@@ -15,39 +21,46 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space=None, optimizer=None, function=None):
+    def __init__(self, space, optimizer, function, save_agents=False):
         """Initialization method.
 
         Args:
-            space (Space): A Space's object,
-                where it has to be a child (e.g., SearchSpace, HyperComplexSpace, etc).
-            optimizer (Optimizer): An Optimizer's object,
-                where it has to be a child (e.g., PSO, BA, etc).
-            function (Function): A Function's object,
-                where it can be a child (e.g., WeightedFunction).
+            space (Space): Space-child instance.
+            optimizer (Optimizer): Optimizer-child instance.
+            function (Function): Function or Function-child instance.
+            save_agents (bool): Saves all agents in the search space.
 
         """
 
         logger.info('Creating class: Opytimizer.')
 
-        # Attaches the space to Opytimizer
+        # Space
         self.space = space
 
-        # Attaches the optimizer
+        # Optimizer (and its additional variables)
         self.optimizer = optimizer
+        self.optimizer.create_additional_attrs(space)
 
-        # Lastly, attaches the function
+        # Function
         self.function = function
 
-        # We will log some important information
+        # Optimization history
+        self.history = History(save_agents)
+
+        # Current iteration
+        self.iteration = 0
+
+        # Total number of iterations
+        self.total_iterations = 0
+
+        # Logs the properties
         logger.debug('Space: %s | Optimizer: %s| Function: %s.',
                      self.space, self.optimizer, self.function)
-
         logger.info('Class created.')
 
     @property
     def space(self):
-        """Space: A Space's object, where it has to be a child (SearchSpace, HyperComplexSpace, etc).
+        """Space: Space-child instance (SearchSpace, HyperComplexSpace, etc).
 
         """
 
@@ -62,7 +75,7 @@ class Opytimizer:
 
     @property
     def optimizer(self):
-        """Optimizer: An Optimizer's object, where it has to be a child (PSO, BA, etc).
+        """Optimizer: Optimizer-child instance (PSO, BA, etc).
 
         """
 
@@ -77,7 +90,7 @@ class Opytimizer:
 
     @property
     def function(self):
-        """Function: A Function's object, where it can be a child (WeightedFunction).
+        """Function: Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc).
 
         """
 
@@ -90,39 +103,205 @@ class Opytimizer:
 
         self._function = function
 
-    def start(self, store_best_only=False, pre_evaluate=None):
+    @property
+    def history(self):
+        """History: Optimization history.
+
+        """
+
+        return self._history
+
+    @history.setter
+    def history(self, history):
+        if not isinstance(history, History):
+            raise e.TypeError('`history` should be a History')
+
+        self._history = history
+
+    @property
+    def iteration(self):
+        """int: Current iteration.
+
+        """
+
+        return self._iteration
+
+    @iteration.setter
+    def iteration(self, iteration):
+        if not isinstance(iteration, int):
+            raise e.TypeError('`iteration` should be an integer')
+        if iteration < 0:
+            raise e.ValueError('`iteration` should be >= 0')
+
+        self._iteration = iteration
+
+    @property
+    def total_iterations(self):
+        """int: Total number of iterations.
+
+        """
+
+        return self._total_iterations
+
+    @total_iterations.setter
+    def total_iterations(self, total_iterations):
+        if not isinstance(total_iterations, int):
+            raise e.TypeError('`total_iterations` should be an integer')
+        if total_iterations < 0:
+            raise e.ValueError('`total_iterations` should be >= 0')
+
+        self._total_iterations = total_iterations
+
+    @property
+    def evaluate_args(self):
+        """Converts the optimizer `evaluate` arguments into real variables.
+
+        """
+
+        # Inspects the `evaluate` and retrieves its parameters
+        args = signature(self.optimizer.evaluate).parameters
+
+        return [getattr(self, v) for v in args]
+
+    @property
+    def update_args(self):
+        """Converts the optimizer `update` arguments into real variables.
+
+        """
+
+        # Inspects the `update` and retrieves its parameters
+        args = signature(self.optimizer.update).parameters
+
+        return [getattr(self, v) for v in args]
+
+    def evaluate(self, callbacks):
+        """Wraps the `evaluate` pipeline with its corresponding callbacks.
+
+        Args:
+            callback (list): List of callbacks.
+
+        """
+
+        # Invokes the `on_evaluate_before` callback
+        callbacks.on_evaluate_before(*self.evaluate_args)
+
+        # Performs an evaluation over the search space
+        self.optimizer.evaluate(*self.evaluate_args)
+
+        # Invokes the `on_evaluate_after` callback
+        callbacks.on_evaluate_after(*self.evaluate_args)
+
+    def update(self, callbacks):
+        """Wraps the `update` pipeline with its corresponding callbacks.
+
+        Args:
+            callback (list): List of callbacks.
+
+        """
+
+        # Invokes the `on_update_before` callback
+        callbacks.on_update_before(*self.update_args)
+
+        # Performs an update over the search space
+        self.optimizer.update(*self.update_args)
+
+        # Invokes the `on_update_after` callback
+        callbacks.on_update_after(*self.update_args)
+
+        # Regardless of callbacks or not, every update on the search space
+        # must meet the bounds limits
+        self.space.clip_by_bound()
+
+    def start(self, n_iterations=1, callbacks=None):
         """Starts the optimization task.
 
         Args
-            store_best_only (bool): If True, only the best agent
-                of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed
-                before evaluating the function being optimized.
-
-        Returns:
-            A History object describing the agents position and best fitness values
-                at each iteration throughout the optimization process.
+            n_iterations (int): Maximum number of iterations.
+            callback (list): List of callbacks.
 
         """
 
         logger.info('Starting optimization task.')
 
-        # Starting timer to count optimization task
+        # Additional properties
+        self.n_iterations = n_iterations
+        callbacks = CallbackVessel(callbacks)
+
+        # Triggers starting time
         start = time.time()
 
-        # Starting optimizer
-        history = self.optimizer.run(self.space, self.function, store_best_only, pre_evaluate)
+        # Evaluates the search space
+        self.evaluate(callbacks)
 
-        # Ending timer
+        # Initializes a progress bar
+        with tqdm(total=n_iterations) as b:
+            # Loops through all iterations
+            for t in range(n_iterations):
+                logger.to_file(f'Iteration {t+1}/{n_iterations}')
+
+                # Saves the number of total iterations and current iteration
+                self.total_iterations += 1
+                self.iteration = t
+
+                # Invokes the `on_iteration_begin` callback
+                callbacks.on_iteration_begin(self.total_iterations, self)
+
+                # Updates the search space
+                self.update(callbacks)
+
+                # Re-evaluates the search space
+                self.evaluate(callbacks)
+
+                # Updates the progress bar status
+                b.set_postfix(fitness=self.space.best_agent.fit)
+                b.update()
+
+                # Dumps keyword arguments to model's history
+                self.history.dump(agents=self.space.agents,
+                                  best_agent=self.space.best_agent)
+
+                # Invokes the `on_iteration_end` callback
+                callbacks.on_iteration_end(self.total_iterations, self)
+
+                logger.to_file(f'Fitness: {self.space.best_agent.fit}')
+                logger.to_file(f'Position: {self.space.best_agent.position}')
+
+        # Stops the timer and calculates the optimization time
         end = time.time()
-
-        # Calculating optimization task time
         opt_time = end - start
 
-        # Dumping the elapsed time to optimization history
-        history.dump(time=opt_time)
+        # Dumps the elapsed time to model's history
+        self.history.dump(time=opt_time)
 
         logger.info('Optimization task ended.')
         logger.info('It took %s seconds.', opt_time)
 
-        return history
+    def save(self, file_path):
+        """Saves the optimization model to a pickle file.
+
+        Args:
+            file_path (str): Path of file to be saved.
+
+        """
+
+        # Opens an output file
+        with open(file_path, 'wb') as output_file:
+            # Dumps object to file
+            pickle.dump(self, output_file)
+
+    @classmethod
+    def load(cls, file_path):
+        """Loads the optimization model from a pickle file without needing
+        to instantiate the class.
+
+        Args:
+            file_path (str): Path of file to be loaded.
+
+        """
+
+        # Opens an input file
+        with open(file_path, "rb") as input_file:
+            # Loads object from file
+            opt_model = pickle.load(input_file)
+
+            return opt_model

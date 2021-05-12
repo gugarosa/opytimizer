@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,19 +25,18 @@ class ABO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ABO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> ABO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(ABO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(ABO, self).__init__()
 
         # Ratio of sunspot butterflies
         self.sunspot_ratio = 0.9
@@ -47,8 +44,8 @@ class ABO(Optimizer):
         # Free flight constant
         self.a = 2.0
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -113,7 +110,7 @@ class ABO(Optimizer):
         temp.position[j] = agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
 
         # Clips its limits
-        temp.clip_limits()
+        temp.clip_by_bound()
 
         # Re-calculates its fitness
         temp.fit = function(temp.position)
@@ -126,49 +123,49 @@ class ABO(Optimizer):
         # Return current agent as well as a false variable
         return agent.position, agent.fit, False
 
-    def _update(self, agents, function, iteration, n_iterations):
-        """Method that wraps Artificial Butterfly Optimization over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Artificial Butterfly Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the number of sunspot butterflies
-        n_sunspots = int(self.sunspot_ratio * len(agents))
+        n_sunspots = int(self.sunspot_ratio * len(space.agents))
 
         # Iterates through all sunspot butterflies
-        for agent in agents[:n_sunspots]:
+        for agent in space.agents[:n_sunspots]:
             # Generates the index for a random sunspot butterfly
-            k = r.generate_integer_random_number(0, len(agents))
+            k = r.generate_integer_random_number(0, len(space.agents))
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
-            agent.position, agent.fit, _ = self._flight_mode(agent, agents[k], function)
+            agent.position, agent.fit, _ = self._flight_mode(agent, space.agents[k], function)
 
         # Iterates through all canopy butterflies
-        for agent in agents[n_sunspots:]:
+        for agent in space.agents[n_sunspots:]:
             # Generates the index for a random canopy butterfly
-            k = r.generate_integer_random_number(0, len(agents) - n_sunspots)
+            k = r.generate_integer_random_number(0, len(space.agents) - n_sunspots)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
-            agent.position, agent.fit, is_better = self._flight_mode(agent, agents[k], function)
+            agent.position, agent.fit, is_better = self._flight_mode(agent, space.agents[k], function)
 
             # If there was not fitness replacement
             if not is_better:
                 # Generates the index for a random butterfly
-                k = r.generate_integer_random_number(0, len(agents))
+                k = r.generate_integer_random_number(0, len(space.agents))
 
                 # Generates random uniform number
                 r1 = r.generate_uniform_random_number()
 
                 # Calculates `D` (eq. 4)
-                D = np.fabs(2 * r1 * agents[k].position - agent.position)
+                D = np.fabs(2 * r1 * space.agents[k].position - agent.position)
 
                 # Generates another random uniform number
                 r2 = r.generate_uniform_random_number()
@@ -177,57 +174,10 @@ class ABO(Optimizer):
                 a = (self.a - self.a * (iteration / n_iterations))
 
                 # Updates the agent's position (eq. 3)
-                agent.position = agents[k].position - 2 * a * r2 - a * D
+                agent.position = space.agents[k].position - 2 * a * r2 - a * D
 
                 # Clips its limits
-                agent.clip_limits()
+                agent.clip_by_bound()
 
                 # Re-calculates its fitness
                 agent.fit = function(agent.position)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function, t, space.n_iterations)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

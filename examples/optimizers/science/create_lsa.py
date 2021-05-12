@@ -2,9 +2,9 @@ from opytimizer.optimizers.science.lsa import LSA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 
 }
 
-# Creating an LSA optimizer
-o = LSA(hyperparams=hyperparams)
+# Creates an LSA optimizer
+o = LSA(params=params)

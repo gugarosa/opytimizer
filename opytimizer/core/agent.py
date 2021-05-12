@@ -1,9 +1,10 @@
-"""Agent structure.
+"""Agent.
 """
 
 import numpy as np
 
-import opytimizer.utils.constants as c
+import opytimizer.math.random as r
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 
@@ -15,32 +16,34 @@ class Agent:
 
     """
 
-    def __init__(self, n_variables=1, n_dimensions=1):
+    def __init__(self, n_variables, n_dimensions, lower_bound, upper_bound):
         """Initialization method.
 
         Args:
             n_variables (int): Number of decision variables.
             n_dimensions (int): Number of dimensions.
+            lower_bound (list, tuple, np.array): Minimum possible values.
+            upper_bound (list, tuple, np.array): Maximum possible values.
 
         """
 
-        # Initially, an agent needs its number of variables
+        # Number of decision variables
         self.n_variables = n_variables
 
-        # And also, its number of dimensions
+        # Number of dimensions
         self.n_dimensions = n_dimensions
 
-        # Create the position vector based on the number of variables and dimensions
+        # N-dimensional array of positions
         self.position = np.zeros((n_variables, n_dimensions))
 
-        # Fitness value is initialized with float's largest number
+        # Fitness value (largest float number)
         self.fit = c.FLOAT_MAX
 
-        # Lower bounds are initialized as zeros
-        self.lb = np.zeros(n_variables)
+        # Lower bounds
+        self.lb = np.asarray(lower_bound)
 
-        # Upper bounds are initialized as ones
-        self.ub = np.ones(n_variables)
+        # Upper bounds
+        self.ub = np.asarray(upper_bound)
 
     @property
     def n_variables(self):
@@ -78,7 +81,7 @@ class Agent:
 
     @property
     def position(self):
-        """np.array: N-dimensional array of values.
+        """np.array: N-dimensional array of positions.
 
         """
 
@@ -118,6 +121,10 @@ class Agent:
     def lb(self, lb):
         if not isinstance(lb, np.ndarray):
             raise e.TypeError('`lb` should be a numpy array')
+        if not lb.shape:
+            lb = np.expand_dims(lb, -1)
+        if lb.shape[0] != self.n_variables:
+            raise e.SizeError('`lb` should be the same size as `n_variables`')
 
         self._lb = lb
 
@@ -133,15 +140,62 @@ class Agent:
     def ub(self, ub):
         if not isinstance(ub, np.ndarray):
             raise e.TypeError('`ub` should be a numpy array')
+        if not ub.shape:
+            ub = np.expand_dims(ub, -1)
+        if ub.shape[0] != self.n_variables:
+            raise e.SizeError('`ub` should be the same size as `n_variables`')
 
         self._ub = ub
 
-    def clip_limits(self):
+    def clip_by_bound(self):
         """Clips the agent's decision variables to the bounds limits.
 
         """
 
         # Iterates through all the decision variables
         for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-            # Clips the array based on variables' lower and upper bounds
+            # Clips the array based on variable's lower and upper bounds
             self.position[j] = np.clip(self.position[j], lb, ub)
+
+    def fill_with_binary(self):
+        """Fills the agent's decision variables with a binary distribution.
+
+        """
+
+        # Iterates through all the decision variables
+        for j in range(self.n_variables):
+            # Fills the array based on a binary distribution
+            self.position[j] = r.generate_binary_random_number(self.n_dimensions)
+
+    def fill_with_static(self, values):
+        """Fills the agent's decision variables with static values. Note that this
+        method ignore the agent's bounds, so use it carefully.
+
+        Args:
+            values (list, tuple, np.array): Values to be filled.
+
+        """
+
+        # Makes sure that `values` is a numpy array
+        # and has the same size of `n_variables`
+        values = np.asarray(values)
+        if not values.shape:
+            values = np.expand_dims(values, -1)
+        if values.shape[0] != self.n_variables:
+            raise e.SizeError('`values` should be the same size as `n_variables`')
+
+        # Iterates through all the decision variables
+        for j, value in enumerate(values):
+            # Fills the array based on a static value
+            self.position[j] = value
+
+    def fill_with_uniform(self):
+        """Fills the agent's decision variables with a uniform distribution
+        based on bounds limits.
+
+        """
+
+        # Iterates through all the decision variables
+        for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
+            # Fills the array based on a uniform distribution
+            self.position[j] = r.generate_uniform_random_number(lb, ub, self.n_dimensions)

@@ -1,11 +1,8 @@
 """History-based object that helps in saving the optimization history.
 """
 
-import pickle
-
 import numpy as np
 
-import opytimizer.utils.constants as c
 import opytimizer.utils.exception as e
 
 
@@ -17,169 +14,124 @@ class History:
 
     """
 
-    def __init__(self, store_best_only=False):
+    def __init__(self, save_agents=False):
         """Initialization method.
 
         Args:
-            store_best_only (bool): If True, only the best agent of each iteration
-                is stored in History.
+            save_agents (bool): Saves all agents in the search space.
 
         """
 
-        # Whether only the best agent should be stored or not
-        self.store_best_only = store_best_only
+        # Stores only the best agent
+        self.save_agents = save_agents
 
     @property
-    def store_best_only(self):
-        """bool: Whether only the best agent should be stored in the class or not.
+    def save_agents(self):
+        """bool: Saves all agents in the search space.
 
         """
 
-        return self._store_best_only
+        return self._save_agents
 
-    @store_best_only.setter
-    def store_best_only(self, store_best_only):
-        if not isinstance(store_best_only, bool):
-            raise e.TypeError('`store_best_only` should be a boolean')
+    @save_agents.setter
+    def save_agents(self, save_agents):
+        if not isinstance(save_agents, bool):
+            raise e.TypeError('`save_agents` should be a boolean')
 
-        self._store_best_only = store_best_only
-
-    def __str__(self):
-        """Prints in a formatted way the history of best agents throughout the
-        optimization task.
-
-        """
-
-        # For every iteration
-        for i, best in enumerate(self.best_agent):
-            print(f'\nIteration {i+1}/{len(self.best_agent)}')
-            print(f'\nPosition: {best[0]} | Fitness: {best[1]}')
-
-        return ''
+        self._save_agents = save_agents
 
     def _parse(self, key, value):
-        """Parses a value according to the key's requirement.
+        """Parses incoming values with specified formats.
 
         Args:
-            key (str): Key's identifier.
-            value (any): Any possible value.
+            key (str): Key.
+            value (any): Value.
 
         Returns:
-            The parsed (formatted) value according to the key.
+            Parsed value according to the specified format.
 
         """
 
         # Checks if the key is `agents`
         if key == 'agents':
-            # Returns a list of agents' tuples (position, fit)
+            # Returns a list of tuples (position, fit)
             return [(v.position.tolist(), v.fit) for v in value]
 
         # Checks if the key is `best_agent`
         if key == 'best_agent':
-            # Returns the best agent's tuple (position, fit)
+            # Returns a tuple (position, fit)
             return (value.position.tolist(), value.fit)
 
-        # Checks if the key is `local`
-        if key == 'local':
+        # Checks if the key is `local_position`
+        if key == 'local_position':
             # Returns a list of local positions
             return [v.tolist() for v in value]
 
     def dump(self, **kwargs):
-        """Dumps key-value pairs into lists attributes.
-
-        Note that if an attribute already exists, it will be appended
-        in the list.
+        """Dumps keyword pairs into self-class attributes.
 
         """
 
-        # For every key-value pair
+        # Iterates through all keyword arguments
         for (key, value) in kwargs.items():
-            # Checks if it is supposed to only store the best agent
-            if self.store_best_only:
-                # Checks if key is different from `best_agent` or `time`
-                if key not in ['best_agent', 'time']:
-                    # Breaks the current loop
-                    continue
+            # If current `key` is `agents` and they should not be saved,
+            # we skip this loop iteration
+            if key == 'agents' and not self.save_agents:
+                continue
 
-            # Checks if current key has a specific rule
-            if key in c.HISTORY_KEYS:
-                # Parses information using specific rules, if defined
-                out = self._parse(key, value)
+            # If current `key` has a specific parsing rule,
+            # we need to parse it accordingly
+            if key in ['agents', 'best_agent', 'local_position']:
+                output = self._parse(key, value)
             else:
-                # Just applies the information
-                out = value
+                output = value
 
-            # If there is no attribute
+            # If class still does not have a `key` property,
+            # we need to set its initial value as a list
             if not hasattr(self, key):
-                # Sets its initial value as a list
-                setattr(self, key, [out])
-
-            # If there is already an attribute
+                setattr(self, key, [output])
             else:
-                # Appends the new value to the attribute
-                getattr(self, key).append(out)
+                getattr(self, key).append(output)
 
-    def get(self, key, index):
-        """Gets the desired key based on the input index.
+    def get_convergence(self, key, index=0):
+        """Gets the convergence list of a specified key.
 
         Args:
-            key (str): Key's name to be retrieved.
-            index (tuple): A tuple indicating which indexes should be retrieved.
+            key (str): Key to be retrieved.
+            index (tuple): Index to be retrieved.
 
         Returns:
-            All key's values based on the input index.
-            Note that this method returns all records, i.e., all values from the `t` iterations.
+            Values based on key and index.
 
         """
-
-        # Checks if index is a tuple
-        if not isinstance(index, tuple):
-            raise e.TypeError('`index` should be a tuple')
 
         # Gathers the numpy array from the attribute
         attr = np.asarray(getattr(self, key), dtype=list)
 
-        # Checks if attribute's dimensions are equal to the length of input index
-        # We use `- 1` as the method retrieves values from all iterations
-        if attr.ndim - 1 != len(index):
-            raise e.SizeError(
-                f'`index` = {len(index)} should have one less dimension than `key` = {attr.ndim}')
+        # Checks if the key is `agents`
+        if key in ['agents']:
+            # Gathers positions and fitnesses
+            attr_pos = np.hstack(attr[(slice(None), index, 0)])
+            attr_fit = np.hstack(attr[(slice(None), index, 1)])
 
-        # Slices the array based on the input index
-        # Again, slice(None) will retrieve values from all iterations
-        attr = attr[(slice(None),) + index]
+            return attr_pos, attr_fit
 
-        # We use hstack to horizontally concatenate the axis,
-        # allowing an easier input to the visualization package
-        attr = np.hstack(attr)
+        # Checks if the key is `best_agent`
+        if key in ['best_agent']:
+            # Gathers positions and fitnesses
+            attr_pos = np.hstack(attr[(slice(None), 0)])
+            attr_fit = np.hstack(attr[(slice(None), 1)])
+
+            return attr_pos, attr_fit
+
+        # Checks if the key is `local_position`
+        if key in ['local_position']:
+            # Gathers positions
+            attr_pos = np.hstack(attr[(slice(None), index)])
+
+            return attr_pos
+
+        # Gathers the attribute
+        attr = np.hstack(attr[(slice(None))])
 
         return attr
-
-    def save(self, file_name):
-        """Saves the object to a pickle encoding.
-
-        Args:
-            file_name (str): File's name to be saved.
-
-        """
-
-        # Opening a destination file
-        with open(file_name, 'wb') as dest_file:
-            # Dumping History to file
-            pickle.dump(self, dest_file)
-
-    def load(self, file_name):
-        """Loads the object from a pickle encoding.
-
-        Args:
-            file_name (str): Pickle's file path to be loaded.
-
-        """
-
-        # Trying to open the file
-        with open(file_name, "rb") as input_file:
-            # Loading History from file
-            history = pickle.load(input_file)
-
-            # Updating all values
-            self.__dict__.update(history.__dict__)

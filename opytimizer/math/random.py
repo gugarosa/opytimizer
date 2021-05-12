@@ -11,7 +11,7 @@ def generate_binary_random_number(size=1):
         size (int): Size of array.
 
     Returns:
-        An binary random number or array.
+        A binary random number or array.
 
     """
 
@@ -71,7 +71,7 @@ def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None)
 
 
 def generate_uniform_random_number(low=0.0, high=1.0, size=1):
-    """Generates a random number or array based on an uniform distribution.
+    """Generates a random number or array based on a uniform distribution.
 
     Args:
         low (float): Lower interval.
@@ -79,7 +79,7 @@ def generate_uniform_random_number(low=0.0, high=1.0, size=1):
         size (int): Size of array.
 
     Returns:
-        An uniform random number or array.
+        A uniform random number or array.
 
     """
 

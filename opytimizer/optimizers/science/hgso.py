@@ -2,12 +2,10 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -26,19 +24,18 @@ class HGSO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HGSO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> HGSO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(HGSO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(HGSO, self).__init__()
 
         # Number of clusters
         self.n_clusters = 2
@@ -61,8 +58,8 @@ class HGSO(Optimizer):
         # Solubility constant
         self.K = 1.0
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -185,6 +182,67 @@ class HGSO(Optimizer):
 
         self._K = K
 
+    @property
+    def coefficient(self):
+        """np.array: Array of coefficients.
+
+        """
+
+        return self._coefficient
+
+    @coefficient.setter
+    def coefficient(self, coefficient):
+        if not isinstance(coefficient, np.ndarray):
+            raise e.TypeError('`coefficient` should be a numpy array')
+
+        self._coefficient = coefficient
+
+    @property
+    def pressure(self):
+        """np.array: Array of pressures.
+
+        """
+
+        return self._pressure
+
+    @pressure.setter
+    def pressure(self, pressure):
+        if not isinstance(pressure, np.ndarray):
+            raise e.TypeError('`pressure` should be a numpy array')
+
+        self._pressure = pressure
+
+    @property
+    def constant(self):
+        """np.array: Array of constants.
+
+        """
+
+        return self._constant
+
+    @constant.setter
+    def constant(self, constant):
+        if not isinstance(constant, np.ndarray):
+            raise e.TypeError('`constant` should be a numpy array')
+
+        self._constant = constant
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Number of agents per cluster
+        n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
+
+        # Arrays of coefficients, pressures and constants
+        self.coefficient = self.l1 * r.generate_uniform_random_number(size=self.n_clusters)
+        self.pressure = self.l2 * r.generate_uniform_random_number(size=(self.n_clusters, n_agents_per_cluster))
+        self.constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
+
     def _update_position(self, agent, cluster_agent, best_agent, solubility):
         """Updates the position of a single gas (eq. 10).
 
@@ -215,23 +273,19 @@ class HGSO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, function, coefficient, pressure, constant, iteration, n_iterations):
-        """Method that wraps Henry Gas Solubility Optimization over all agents and variables.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Henry Gas Solubility Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            coefficient (np.array): Henry's coefficient array.
-            pressure (np.array): Partial pressure array.
-            constant (np.array): Constants array.
             iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
         # Creates n-wise clusters
-        clusters = g.n_wise(agents, pressure.shape[1])
+        clusters = g.n_wise(space.agents, self.pressure.shape[1])
 
         # Iterates through all clusters
         for i, cluster in enumerate(clusters):
@@ -239,7 +293,7 @@ class HGSO(Optimizer):
             T = np.exp(-iteration / n_iterations)
 
             # Updates Henry's coefficient (eq. 8)
-            coefficient[i] *= np.exp(-constant[i] * (1 / T - 1 / 298.15))
+            self.coefficient[i] *= np.exp(-self.constant[i] * (1 / T - 1 / 298.15))
 
             # Transforms the cluster into a list and sorts it
             cluster = list(cluster)
@@ -248,86 +302,30 @@ class HGSO(Optimizer):
             # Iterates through all agents in cluster
             for j, agent in enumerate(cluster):
                 # Calculates agent's solubility (eq. 9)
-                solubility = self.K * coefficient[i] * pressure[i][j]
+                solubility = self.K * self.coefficient[i] * self.pressure[i][j]
 
                 # Updates agent's position (eq. 10)
-                agent.position = self._update_position(agent, cluster[0], best_agent, solubility)
+                agent.position = self._update_position(agent, cluster[0], space.best_agent, solubility)
 
                 # Clips agent's limits
-                agent.clip_limits()
+                agent.clip_by_bound()
 
                 # Re-calculates its fitness
                 agent.fit = function(agent.position)
 
         # Re-sorts the whole space
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
         # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
         # Calculates the number of worst agents (eq. 11)
-        N = int(len(agents) * (r1 * (0.2 - 0.1) + 0.1))
+        N = int(len(space.agents) * (r1 * (0.2 - 0.1) + 0.1))
 
         # Iterates through every bad agent
-        for agent in agents[-N:]:
+        for agent in space.agents[-N:]:
             # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
 
             # Updates bad agent's position (eq. 12)
             agent.position = agent.lb + r2 * (agent.ub - agent.lb)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Calculates the number of agents per cluster
-        n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
-
-        # Instantiates a coefficients', pressures' and constants' array
-        coefficient = self.l1 * r.generate_uniform_random_number(size=self.n_clusters)
-        pressure = self.l2 * r.generate_uniform_random_number(size=(self.n_clusters, n_agents_per_cluster))
-        constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function,
-                             coefficient, pressure, constant, t, space.n_iterations)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

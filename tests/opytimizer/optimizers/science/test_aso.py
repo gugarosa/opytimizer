@@ -1,27 +1,23 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import aso
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_aso_hyperparams():
-    hyperparams = {
+def test_aso_params():
+    params = {
         'alpha': 50.0,
         'beta': 0.2
     }
 
-    new_aso = aso.ASO(hyperparams=hyperparams)
+    new_aso = aso.ASO(params=params)
 
     assert new_aso.alpha == 50.0
 
     assert new_aso.beta == 0.2
 
 
-def test_aso_hyperparams_setter():
+def test_aso_params_setter():
     new_aso = aso.ASO()
 
     try:
@@ -42,31 +38,61 @@ def test_aso_hyperparams_setter():
     assert new_aso.beta == 0.2
 
 
-def test_aso_build():
-    new_aso = aso.ASO()
-
-    assert new_aso.built == True
-
-
-def test_aso_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+def test_aso_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
+    new_aso.create_additional_attrs(search_space)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    try:
+        new_aso.velocity = 1
+    except:
+        new_aso.velocity = np.array([1])
 
-    history = new_aso.run(search_space, new_function, pre_evaluate=hook)
+    assert new_aso.velocity == np.array([1])
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm aso failed to converge.'
+def test_aso_calculate_mass():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_aso = aso.ASO()
+    new_aso.create_additional_attrs(search_space)
+
+    mass = new_aso._calculate_mass(search_space.agents)
+
+    assert mass[0] == 0.1
+
+
+def test_aso_calculate_potential():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_aso = aso.ASO()
+    new_aso.create_additional_attrs(search_space)
+
+    new_aso._calculate_potential(
+        search_space.agents[0], search_space.agents[1], np.array([1]), 1, 10)
+
+
+def test_aso_calculate_acceleration():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_aso = aso.ASO()
+    new_aso.create_additional_attrs(search_space)
+
+    mass = new_aso._calculate_mass(search_space.agents)
+    new_aso._calculate_acceleration(
+        search_space.agents, search_space.best_agent, mass, 1, 10)
+
+
+def test_aso_update():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_aso = aso.ASO()
+    new_aso.create_additional_attrs(search_space)
+
+    new_aso.update(search_space, 1, 10)

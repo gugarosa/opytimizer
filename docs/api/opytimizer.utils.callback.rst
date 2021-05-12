@@ -1,7 +1,7 @@
-opytimizer.utils.decorator
+opytimizer.utils.callback
 ===========================
 
-.. automodule:: opytimizer.utils.decorator
+.. automodule:: opytimizer.utils.callback
     :members:
     :private-members:
     :special-members:

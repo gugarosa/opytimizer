@@ -1,20 +1,12 @@
 import opytimizer.visualization.convergence as c
-from opytimizer.utils.history import History
 
-# Creating the history object
-history = History()
+# Defines agent's position and fitness
+agent_pos = [[0.5, 0.4, 0.3], [0.5, 0.4, 0.3]]
+agent_fit = [0.5, 0.32, 0.18]
 
-# Loading saved optimization task
-history.load('')
-
-# Gathering desired keys from the object
-# In this case, we will the first agent's position and fitness
-agent_pos = history.get(key='agents', index=(0, 0))
-agent_fit = history.get(key='agents', index=(0, 1))
-
-# We will also gather the best agent's position and fitness
-best_agent_pos = history.get(key='best_agent', index=(0,))
-best_agent_fit = history.get(key='best_agent', index=(1,))
+# Defines best agent's position and fitness
+best_agent_pos = [[0.01, 0.005, 0.0001], [0.01, 0.005, 0.0001]]
+best_agent_fit = [0.0002, 0.00005, 0.00002]
 
 # Plotting the convergence of agent's positions
 c.plot(agent_pos[0], agent_pos[1], labels=['$x_0$', '$x_1$'],

@@ -1,7 +1,7 @@
-"""This is opytimizer main library. Note that this library consists
+"""Opytimizer main library. Note that it consists
 of several modules and sub-modules.
 """
 
 from opytimizer.opytimizer import Opytimizer
 
-__version__ = '2.1.4'
+__version__ = '3.0.0'

@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -25,17 +23,16 @@ class CEM(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CEM', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(CEM, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(CEM, self).__init__()
 
         # Amount of positions to employ in mean and std updates
         self.n_updates = 5
@@ -43,8 +40,8 @@ class CEM(Optimizer):
         # Learning rate
         self.alpha = 0.7
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -82,36 +79,81 @@ class CEM(Optimizer):
 
         self._alpha = alpha
 
-    def _create_new_samples(self, agents, function, mean, std):
+    @property
+    def mean(self):
+        """np.array: Array of means.
+
+        """
+
+        return self._mean
+
+    @mean.setter
+    def mean(self, mean):
+        if not isinstance(mean, np.ndarray):
+            raise e.TypeError('`mean` should be a numpy array')
+
+        self._mean = mean
+
+    @property
+    def std(self):
+        """np.array: Array of standard deviations.
+
+        """
+
+        return self._std
+
+    @std.setter
+    def std(self, std):
+        if not isinstance(std, np.ndarray):
+            raise e.TypeError('`std` should be a numpy array')
+
+        self._std = std
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of means and standard deviations
+        self.mean = np.zeros(space.n_variables)
+        self.std = np.zeros(space.n_variables)
+
+        # Iterates through all decision variables
+        for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
+            # Calculates the initial mean and standard deviation
+            self.mean[j] = r.generate_uniform_random_number(lb, ub)
+            self.std[j] = ub - lb
+
+    def _create_new_samples(self, agents, function):
         """Creates new agents based on current mean and standard deviation.
 
         Args:
             agents (list): List of agents.
             function (Function): A Function object that will be used as the objective function.
-            mean (np.array): An array of means.
-            std (np.array): An array of standard deviations.
 
         """
 
-        # Iterate through all agents
+        # Iterates through all agents
         for agent in agents:
             # Iterate through all decision variables
-            for j, (m, s) in enumerate(zip(mean, std)):
+            for j, (m, s) in enumerate(zip(self.mean, self.std)):
                 # For each decision variable, we generate gaussian numbers based on mean and std
                 agent.position[j] = r.generate_gaussian_random_number(m, s, agent.n_dimensions)
 
             # Clips the agent limits
-            agent.clip_limits()
+            agent.clip_by_bound()
 
             # Calculates its new fitness
             agent.fit = function(agent.position)
 
-    def _update_mean(self, updates, mean):
+    def _update_mean(self, updates):
         """Calculates and updates mean.
 
         Args:
             updates (np.array): An array of updates' positions.
-            mean (np.array): An array of means.
 
         Returns:
             The new mean values.
@@ -119,17 +161,15 @@ class CEM(Optimizer):
         """
 
         # Calculates the new mean based on update formula
-        new_mean = self.alpha * mean + (1 - self.alpha) * np.mean(updates)
+        new_mean = self.alpha * self.mean + (1 - self.alpha) * np.mean(updates)
 
         return new_mean
 
-    def _update_std(self, updates, mean, std):
+    def _update_std(self, updates):
         """Calculates and updates standard deviation.
 
         Args:
             updates (np.array): An array of updates' positions.
-            mean (np.array): An array of means.
-            std (np.array): An array of standard deviations.
 
         Returns:
             The new standard deviation values.
@@ -137,89 +177,28 @@ class CEM(Optimizer):
         """
 
         # Calculates the new standard deviation based on update formula
-        new_std = self.alpha * std + (1 - self.alpha) * np.sqrt(np.mean((updates - mean) ** 2))
+        new_std = self.alpha * self.std + (1 - self.alpha) * np.sqrt(np.mean((updates - self.mean) ** 2))
 
         return new_std
 
-    def _update(self, agents, function, mean, std):
-        """Method that wraps sampling, mean, and standard deviation updates over all agents and variables.
+    def update(self, space, function):
+        """Wraps Cross-Entropy Method over all agents and variables.
 
         Args:
-            agents (list): List of agents.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            mean (np.array): An array of means.
-            std (np.array): An array of standard deviations.
 
         """
 
         # Creates new agents based on current mean and standard deviation
-        self._create_new_samples(agents, function, mean, std)
+        self._create_new_samples(space.agents, function)
 
         # Sorts the agents
-        agents.sort(key=lambda x: x.fit)
+        space.agents.sort(key=lambda x: x.fit)
 
-        # Gathering the update positions
-        update_position = np.array([agent.position for agent in agents[:self.n_updates]])
+        # Gathers the update positions
+        update_position = np.array([agent.position for agent in space.agents[:self.n_updates]])
 
-        # For every decision variable
-        for j in range(mean.shape[0]):
-            # Update its mean and standard deviation
-            mean[j] = self._update_mean(update_position[:, j, :], mean[j])
-            std[j] = self._update_std(update_position[:, j, :], mean[j], std[j])
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instantiating an array of means and standard deviations
-        mean = np.zeros(space.n_variables)
-        std = np.zeros(space.n_variables)
-
-        # Iterates through all decision variables
-        for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-            # Calculates the initial mean and standard deviation
-            mean[j] = r.generate_uniform_random_number(lb, ub)
-            std[j] = ub - lb
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function, mean, std)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Updates its mean and standard deviation
+        self.mean = self._update_mean(update_position)
+        self.std = self._update_std(update_position)

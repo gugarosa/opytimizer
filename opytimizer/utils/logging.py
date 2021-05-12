@@ -12,12 +12,13 @@ LOG_LEVEL = logging.DEBUG
 
 
 class Logger(logging.Logger):
-    """A customized Logger file that enables the possibility of only logging to file.
+    """Customized Logger class that enables the possibility
+    of directly logging to files.
 
     """
 
     def to_file(self, msg, *args, **kwargs):
-        """Logs the message only to the logging file.
+        """Logs the message directly to the logging file.
 
         Args:
             msg (str): Message to be logged.
@@ -35,10 +36,10 @@ class Logger(logging.Logger):
 
 
 def get_console_handler():
-    """Gets a console handler to handle logging into console.
+    """Gets a console handler to handle console logging.
 
     Returns:
-        A handler to output information into console.
+        Handler to output information into console.
 
     """
 
@@ -50,10 +51,10 @@ def get_console_handler():
 
 
 def get_timed_file_handler():
-    """Gets a timed file handler to handle logging into files.
+    """Gets a timed file handler to handle timed-files logging.
 
     Returns:
-        A handler to output information into timed files.
+        Handler to output information into timed-files.
 
     """
 
@@ -65,17 +66,17 @@ def get_timed_file_handler():
 
 
 def get_logger(logger_name):
-    """Gets a log and make it avaliable for further use.
+    """Gets a log and makes it avaliable for further use.
 
     Args:
         logger_name (str): The name of the logger.
 
     Returns:
-        A handler to output information into console's.
+        Handler to output information into console.
 
     """
 
-    # Defining a customized logger in order to have the possibility
+    # Defines a customized logger in order to have the possibility
     # of only logging to file when desired
     logging.setLoggerClass(Logger)
 
@@ -89,7 +90,7 @@ def get_logger(logger_name):
     logger.addHandler(get_console_handler())
     logger.addHandler(get_timed_file_handler())
 
-    # True or False for propagating logs
+    # Do not propagate any log
     logger.propagate = False
 
     return logger

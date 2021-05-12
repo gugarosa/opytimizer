@@ -2,12 +2,10 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -28,17 +26,16 @@ class SBO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='SBO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the mp_mutation-heuristics.
+            params (dict): Contains key-value parameters to the mp_mutation-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(SBO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(SBO, self).__init__()
 
         # Step size
         self.alpha = 0.9
@@ -49,8 +46,8 @@ class SBO(Optimizer):
         # Percentage of width between lower and upper bounds
         self.z = 0.02
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -105,19 +102,44 @@ class SBO(Optimizer):
 
         self._z = z
 
-    def _update(self, agents, best_agent, function, sigma):
-        """Method that wraps updates over all agents and variables (eq. 1-7).
+    @property
+    def sigma(self):
+        """list: List of widths.
+
+        """
+
+        return self._sigma
+
+    @sigma.setter
+    def sigma(self, sigma):
+        if not isinstance(sigma, list):
+            raise e.TypeError('`sigma` should be a list')
+
+        self._sigma = sigma
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # List of widths
+        self.sigma = [self.z * (ub - lb) for lb, ub in zip(space.lb, space.ub)]
+
+    def update(self, space, function):
+        """Wraps Satin Bowerbird Optimizer over all agents and variables (eq. 1-7).
+
+        Args:
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            sigma (list): Width between lower and upper bounds.
 
         """
 
         # Calculates a list of fitness per agent
-        fitness = [1 / (1 + agent.fit) if agent.fit >= 0 else 1 + np.abs(agent.fit) for agent in agents]
+        fitness = [1 / (1 + agent.fit) if agent.fit >= 0 else 1 +
+                   np.abs(agent.fit) for agent in space.agents]
 
         # Calculates the total fitness
         total_fitness = np.sum(fitness)
@@ -125,18 +147,19 @@ class SBO(Optimizer):
         # Calculates the probability of each agent's fitness
         probs = [fit / total_fitness for fit in fitness]
 
-        # Iterate through all agents
-        for agent in agents:
+        # Iterates through all agents
+        for agent in space.agents:
             # For every decision variable
             for j in range(agent.n_variables):
                 # Selects a random individual based on its probability
-                s = d.generate_choice_distribution(len(agents), probs, 1)[0]
+                s = d.generate_choice_distribution(len(space.agents), probs, 1)[0]
 
                 # Calculates the lambda factor
                 lambda_k = self.alpha / (1 + probs[s])
 
                 # Updates the decision variable position
-                agent.position[j] += lambda_k * ((agents[s].position[j] + best_agent.position[j]) / 2 - agent.position[j])
+                agent.position[j] += lambda_k * ((space.agents[s].position[j] + space.best_agent.position[j]) / \
+                                     2 - agent.position[j])
 
                 # Generates an uniform random number
                 r1 = r.generate_uniform_random_number()
@@ -144,60 +167,10 @@ class SBO(Optimizer):
                 # If random number is smaller than probability of mutation
                 if r1 < self.p_mutation:
                     # Mutates the decision variable position
-                    agent.position[j] += sigma[j] * r.generate_gaussian_random_number()
+                    agent.position[j] += self.sigma[j] * r.generate_gaussian_random_number()
 
-            # Check agent limits
-            agent.clip_limits()
+            # Checks agent's limits
+            agent.clip_by_bound()
 
             # Calculates its fitness
             agent.fit = function(agent.position)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Calculates the width between lower and upper bounds
-        sigma = [self.z * (ub - lb) for lb, ub in zip(space.lb, space.ub)]
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function, sigma)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history

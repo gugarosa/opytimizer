@@ -4,11 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,23 +25,22 @@ class ES(Optimizer):
 
     """
 
-    def __init__(self, algorithm='ES', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
-        # Override its parent class with the receiving hyperparams
-        super(ES, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(ES, self).__init__()
 
         # Ratio of children in the population
         self.child_ratio = 0.5
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -64,13 +61,65 @@ class ES(Optimizer):
 
         self._child_ratio = child_ratio
 
-    def _mutate_parent(self, agent, function, strategy):
+    @property
+    def n_children(self):
+        """int: Number of children.
+
+        """
+
+        return self._n_children
+
+    @n_children.setter
+    def n_children(self, n_children):
+        if not isinstance(n_children, int):
+            raise e.TypeError('`n_children` should be an integer')
+        if n_children < 0:
+            raise e.ValueError('`n_children` should be >= 0')
+
+        self._n_children = n_children
+
+    @property
+    def strategy(self):
+        """np.array: Array of strategies.
+
+        """
+
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy):
+        if not isinstance(strategy, np.ndarray):
+            raise e.TypeError('`strategy` should be a numpy array')
+
+        self._strategy = strategy
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Number of children and array of strategies
+        self.n_children = int(space.n_agents * self.child_ratio)
+        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+
+        # Iterates through all agents
+        for i in range(self.n_children):
+            # For every decision variable
+            for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
+                # Initializes the strategy array with the proposed EP distance
+                self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
+                    0, ub - lb, size=space.agents[i].n_dimensions)
+
+    def _mutate_parent(self, agent, index, function):
         """Mutates a parent into a new child (eq. 2).
 
         Args:
             agent (Agent): An agent instance to be reproduced.
+            index (int): Index of current agent.
             function (Function): A Function object that will be used as the objective function.
-            strategy (np.array): An array holding the strategies that conduct the searching process.
 
         Returns:
             A mutated child.
@@ -84,21 +133,21 @@ class ES(Optimizer):
         r1 = r.generate_gaussian_random_number()
 
         # Updates its position
-        a.position += strategy * r1
+        a.position += self.strategy[index] * r1
 
         # Clips its limits
-        a.clip_limits()
+        a.clip_by_bound()
 
         # Calculates its fitness
         a.fit = function(a.position)
 
         return a
 
-    def _update_strategy(self, strategy):
+    def _update_strategy(self, index):
         """Updates the strategy (eq. 5-10).
 
         Args:
-            strategy (np.array): An strategy array to be updated.
+            index (int): Index of current agent.
 
         Returns:
             The updated strategy.
@@ -106,7 +155,7 @@ class ES(Optimizer):
         """
 
         # Calculates the number of variables and dimensions
-        n_variables, n_dimensions = strategy.shape[0], strategy.shape[1]
+        n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
         # Calculates the mutation strength and its complementary
         tau = 1 / np.sqrt(2 * n_variables)
@@ -117,101 +166,35 @@ class ES(Optimizer):
         r2 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
         # Calculates the new strategy
-        new_strategy = strategy * np.exp(tau_p * r1 + tau * r2)
+        self.strategy[index] *= np.exp(tau_p * r1 + tau * r2)
 
-        return new_strategy
-
-    def _update(self, agents, n_agents, function, n_children, strategy):
-        """Method that wraps evolution over all agents and variables.
+    def update(self, space, function):
+        """Wraps Evolution Strategies over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            n_agents (int): Number of possible agents in the space.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            n_children (int): Number of possible children in the space.
-            strategy (np.array): An strategy array.
 
         """
 
-        # Creating a list for the produced children
+        # Calculates the number of agents
+        n_agents = len(space.agents)
+
+        # Creates a list for the produced children
         children = []
 
         # Iterate through all children
-        for i in range(n_children):
+        for i in range(self.n_children):
             # Mutates a parent and generates a new child
-            a = self._mutate_parent(agents[i], function, strategy[i])
+            a = self._mutate_parent(space.agents[i], i, function)
 
             # Updates the strategy
-            strategy[i] = self._update_strategy(strategy[i])
+            self._update_strategy(i)
 
             # Appends the mutated agent to the children
             children.append(a)
 
-        # Joins both populations
-        agents += children
-
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
-
-        return agents[:n_agents]
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Calculates the number of possible children
-        n_children = int(space.n_agents * self.child_ratio)
-
-        # Instantiate an array of strategies
-        strategy = np.zeros((n_children, space.n_variables, space.n_dimensions))
-
-        # Iterate through all possible children
-        for i in range(n_children):
-            # For every decision variable
-            for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                # Initializes the strategy array with the proposed ES distance
-                strategy[i][j] = 0.05 * r.generate_uniform_random_number(
-                    0, ub - lb, size=space.agents[i].n_dimensions)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                space.agents = self._update(space.agents, space.n_agents, function, n_children, strategy)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Joins both populations, sorts agents and gathers best `n_agents`
+        space.agents += children
+        space.agents.sort(key=lambda x: x.fit)
+        space.agents = space.agents[:n_agents]

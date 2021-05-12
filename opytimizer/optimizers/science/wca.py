@@ -2,11 +2,9 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,28 +25,27 @@ class WCA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WCA', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> WCA.')
 
-        # Override its parent class with the receiving hyperparams
-        super(WCA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(WCA, self).__init__()
 
-        # Number of rivers + sea
+        # Number of sea + rivers
         self.nsr = 2
 
         # Maximum evaporation condition
         self.d_max = 0.1
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -86,37 +83,50 @@ class WCA(Optimizer):
 
         self._d_max = d_max
 
+    @property
+    def flows(self):
+        """np.array: Array of flows.
+
+        """
+
+        return self._flows
+
+    @flows.setter
+    def flows(self, flows):
+        if not isinstance(flows, np.ndarray):
+            raise e.TypeError('`flows` should be a numpy array')
+
+        self._flows = flows
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Array of flows
+        self.flows = np.zeros(self.nsr, dtype=int)
+
     def _flow_intensity(self, agents):
         """Calculates the intensity of each possible flow (eq. 6).
 
         Args:
             agents (list): List of agents.
 
-        Returns:
-            It returns an array of flows' intensity.
-
         """
 
-        # Our initial cost will be 0
-        cost = 0
+        # Calculates the cost
+        cost = np.sum([agents[i].fit for i in range(self.nsr)])
 
-        # Creates an empty integer array of number of rivers + sea
-        flows = np.zeros(self.nsr, dtype=int)
-
-        # For every river + sea
-        for i in range(self.nsr):
-            # We accumulates its fitness
-            cost += agents[i].fit
-
-        # Iterating again over rivers + sea
+        # Iterates again over sea + rivers
         for i in range(self.nsr):
             # Calculates its particular flow intensity
-            flows[i] = round(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
-
-        return flows
+            self.flows[i] = np.floor(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
 
     def _raining_process(self, agents, best_agent):
-        """Performs the raining process (eq. 12).
+        """Performs the raining process (eq. 11-12).
 
         Args:
             agents (list): List of agents.
@@ -124,132 +134,114 @@ class WCA(Optimizer):
 
         """
 
-        # Iterate through every raindrop
-        for k in range(self.nsr, len(agents)):
-            # Calculate the euclidean distance between sea and raindrop / strream
-            distance = (np.linalg.norm(best_agent.position - agents[k].position))
+        # Iterates through all sea + rivers
+        for i in range(0, self.nsr):
+            # Iterates through all raindrops that belongs to specific sea or river
+            for j in range(self.nsr, self.flows[i] + self.nsr):
+                # Calculates the euclidean distance between sea and raindrop / stream
+                distance = (np.linalg.norm(best_agent.position - agents[j].position))
 
-            # If distance if smaller than evaporation condition
-            if distance > self.d_max:
-                # Generates a new random gaussian number
-                r1 = r.generate_gaussian_random_number(1, agents[k].n_variables)
+                # If distance if smaller than evaporation condition
+                if distance < self.d_max:
+                    # If it is supposed to replace the sea streams' position
+                    if i == 0:
+                        # Updates position (eq. 12)
+                        r1 = r.generate_gaussian_random_number(1, agents[j].n_variables)
+                        agents[j].position = best_agent.position + np.sqrt(0.1) * r1
 
-                # Changes the stream position
-                agents[k].position = best_agent.position + np.sqrt(0.1) * r1
+                    # If it is supposed to replace the river streams' position
+                    else:
+                        # Updates position (eq. 11)
+                        agents[j].fill_with_uniform()
 
-    def _update_stream(self, agents, flows):
+    def _update_stream(self, agents, function):
         """Updates every stream position (eq. 8).
 
         Args:
             agents (list): List of agents.
-            flows (np.array): Array of flows' intensity.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
-        # Defining a counter to the summation of flows
+        # Defines a counter to the summation of flows
         n_flows = 0
 
         # For every river, ignoring the sea
-        for k in range(1, self.nsr):
-            # Accumulate the number of flows
-            n_flows += flows[k]
+        for i in range(0, self.nsr):
+            # Accumulates the number of flows
+            n_flows += self.flows[i]
 
-            # Iterate through every possible flow
-            for i in range((n_flows - flows[k]), n_flows):
-                # Calculates a random uniform number between 0 and 1
+            # Iterates through every possible flow
+            for j in range((self.nsr + n_flows - self.flows[i]), self.nsr + n_flows):
+                # Calculates a random uniform number
                 r1 = r.generate_uniform_random_number()
 
-                # Updates stream position
-                agents[i].position += r1 * 2 * (agents[i].position - agents[k].position)
+                # Updates river position
+                agents[j].position += r1 * 2 * (agents[i].position - agents[j].position)
 
-    def _update_river(self, agents, best_agent):
+                # Clips its limits and recalculates its fitness
+                agents[j].clip_by_bound()
+                agents[j].fit = function(agents[j].position)
+
+    def _update_river(self, agents, best_agent, function):
         """Updates every river position (eq. 9).
 
         Args:
             agents (list): List of agents.
             best_agent (Agent): Global best agent.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # For every river, ignoring the sea
-        for k in range(1, self.nsr):
-            # Calculates a random uniform number between 0 and 1
+        for i in range(1, self.nsr):
+            # Calculates a random uniform
             r1 = r.generate_uniform_random_number()
 
             # Updates river position
-            agents[k].position += r1 * 2 * (best_agent.position - agents[k].position)
+            agents[i].position += r1 * 2 * (best_agent.position - agents[i].position)
 
-    def _update(self, agents, best_agent, flows):
-        """Updates the agents position.
+            # Clips its limits and recalculates its fitness
+            agents[i].clip_by_bound()
+            agents[i].fit = function(agents[i].position)
+
+    def update(self, space, function, n_iterations):
+        """Wraps Water Cycle Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            flows (np.array): Array of flows' intensity.
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+            n_iterations (int): Maximum number of iterations.
 
         """
+
+        # Calculates the flow intensity
+        self._flow_intensity(space.agents)
 
         # Updates every stream position
-        self._update_stream(agents, flows)
+        self._update_stream(space.agents, function)
 
         # Updates every river position
-        self._update_river(agents, best_agent)
+        self._update_river(space.agents, space.best_agent, function)
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+        # Iterates through all rivers
+        for i in range(1, self.nsr):
+            # Iterates through all raindrops
+            for j in range(self.nsr, len(space.agents)):
+                # If raindrop position is better than river's
+                if space.agents[j].fit < space.agents[i].fit:
+                    # Exchanges their positions
+                    space.agents[i], space.agents[j] = space.agents[j], space.agents[i]
 
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
+        # Iterates through all rivers:
+        for i in range(1, self.nsr):
+            # If river position is better than seá's
+            if space.agents[i].fit < space.agents[0].fit:
+                # Exchanges their positions
+                space.agents[i], space.agents[0] = space.agents[0], space.agents[i]
 
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+        # Performs the raining process (eq. 12)
+        self._raining_process(space.agents, space.best_agent)
 
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # Calculating the flow's intensity (eq. 6)
-        flows = self._flow_intensity(space.agents)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, flows)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Sorting agents
-                space.agents.sort(key=lambda x: x.fit)
-
-                # Performs the raining process (eq. 12)
-                self._raining_process(space.agents, space.best_agent)
-
-                # Updates the evaporation condition
-                self.d_max -= (self.d_max / space.n_iterations)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Updates the evaporation condition
+        self.d_max -= (self.d_max / n_iterations)

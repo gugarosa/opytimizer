@@ -1,27 +1,23 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import wca
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_wca_hyperparams():
-    hyperparams = {
+def test_wca_params():
+    params = {
         'nsr': 5,
         'd_max': 0.25
     }
 
-    new_wca = wca.WCA(hyperparams=hyperparams)
+    new_wca = wca.WCA(params=params)
 
     assert new_wca.nsr == 5
 
     assert new_wca.d_max == 0.25
 
 
-def test_wca_hyperparams_setter():
+def test_wca_params_setter():
     new_wca = wca.WCA()
 
     try:
@@ -49,97 +45,78 @@ def test_wca_hyperparams_setter():
     assert new_wca.d_max == 0.1
 
 
-def test_wca_build():
-    new_wca = wca.WCA()
+def test_wca_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    assert new_wca.built == True
+    new_wca = wca.WCA()
+    new_wca.create_additional_attrs(search_space)
+
+    try:
+        new_wca.flows = 1
+    except:
+        new_wca.flows = np.array([1])
+
+    assert new_wca.flows == np.array([1])
 
 
 def test_wca_flow_intensity():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_wca = wca.WCA()
-
-    search_space = search.SearchSpace(n_agents=2, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    flows = new_wca._flow_intensity(search_space.agents)
-
-    assert flows.shape[0] == new_wca.nsr
+    new_wca.create_additional_attrs(search_space)
 
 
 def test_wca_raining_process():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_wca = wca.WCA()
+    new_wca.create_additional_attrs(search_space)
+    new_wca.flows[0] = 5
 
-    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    flows = new_wca._flow_intensity(search_space.agents)
-
+    new_wca.d_max = 100
     new_wca._raining_process(search_space.agents, search_space.best_agent)
-
-    assert search_space.agents[-1].position[0] != 0
 
 
 def test_wca_update_stream():
-    new_wca = wca.WCA()
-
-    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    flows = new_wca._flow_intensity(search_space.agents)
-
-    new_wca._update_stream(search_space.agents, flows)
-
-    assert search_space.agents[-1].position[0] != 0
-
-
-def test_wca_update_river():
-    new_wca = wca.WCA()
-
-    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    new_wca._update_river(search_space.agents, search_space.best_agent)
-
-    assert search_space.agents[1].position[0] != 0
-
-
-def test_wca_update():
-    new_wca = wca.WCA()
-
-    search_space = search.SearchSpace(n_agents=20, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    flows = new_wca._flow_intensity(search_space.agents)
-
-    new_wca._update(search_space.agents, search_space.best_agent, flows)
-
-    assert search_space.agents[0].position[0] != 0
-
-
-def test_wca_run():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
+    new_wca.create_additional_attrs(search_space)
+    new_wca.flows[0] = 5
 
-    search_space = search.SearchSpace(n_agents=20, n_iterations=10,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    new_wca._update_stream(search_space.agents, square)
 
-    history = new_wca.run(search_space, new_function, pre_evaluate=hook)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+def test_wca_update_river():
+    def square(x):
+        return np.sum(x**2)
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm wca failed to converge.'
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wca = wca.WCA()
+    new_wca.create_additional_attrs(search_space)
+
+    new_wca._update_river(search_space.agents, search_space.best_agent, square)
+
+    assert search_space.agents[1].position[0][0] != 0
+
+
+def test_wca_update():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wca = wca.WCA()
+    new_wca.create_additional_attrs(search_space)
+
+    new_wca.update(search_space, square, 1)

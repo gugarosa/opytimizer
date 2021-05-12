@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as log
 from opytimizer.core.optimizer import Optimizer
 
@@ -28,19 +26,18 @@ class CS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='CS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> CS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(CS, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(CS, self).__init__()
 
         # Step size
         self.alpha = 1
@@ -51,8 +48,8 @@ class CS(Optimizer):
         # Probability of replacing worst nests
         self.p = 0.2
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -124,13 +121,13 @@ class CS(Optimizer):
 
         # Then, we iterate for every agent
         for new_agent in new_agents:
-            # Calculating the Lévy distribution
+            # Calculates the Lévy distribution
             step = d.generate_levy_distribution(self.beta, new_agent.n_variables)
 
             # Expanding its dimension to perform entrywise multiplication
             step = np.expand_dims(step, axis=1)
 
-            # Calculating the difference vector between local and best positions
+            # Calculates the difference vector between local and best positions
             # Alpha controls the intensity of the step size
             step_size = self.alpha * step * (new_agent.position - best_agent.position)
 
@@ -164,7 +161,7 @@ class CS(Optimizer):
         # It will be used to replace or not a certain nest
         b = d.generate_bernoulli_distribution(1 - prob, len(agents))
 
-        # Iterating through every new agent
+        # Iterates through every new agent
         for j, new_agent in enumerate(new_agents):
             # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
@@ -173,7 +170,7 @@ class CS(Optimizer):
             k = r.generate_integer_random_number(0, len(agents)-1)
             l = r.generate_integer_random_number(0, len(agents)-1, exclude_value=k)
 
-            # Calculating the random walk between these two nests
+            # Calculates the random walk between these two nests
             step_size = r1 * (agents[k].position - agents[l].position)
 
             # Finally, we replace the old nest
@@ -192,10 +189,10 @@ class CS(Optimizer):
 
         """
 
-        # Iterating through each agent and new agent
+        # Iterates through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
-            # Check agent limits
-            new_agent.clip_limits()
+            # Checks agent's limits
+            new_agent.clip_by_bound()
 
             # Calculates the new agent fitness
             new_agent.fit = function(new_agent.position)
@@ -206,71 +203,23 @@ class CS(Optimizer):
                 agent.position = copy.deepcopy(new_agent.position)
                 agent.fit = copy.deepcopy(new_agent.fit)
 
-    def _update(self, agents, best_agent, function):
-        """Method that wraps Cuckoo Search algorithm over all agents and variables.
+    def update(self, space, function):
+        """Wraps Cuckoo Search over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Generate new nests
-        new_agents = self._generate_new_nests(agents, best_agent)
+        new_agents = self._generate_new_nests(space.agents, space.best_agent)
 
         # Evaluate new generated nests
-        self._evaluate_nests(agents, new_agents, function)
+        self._evaluate_nests(space.agents, new_agents, function)
 
         # Generate new nests to be replaced
-        new_agents = self._generate_abandoned_nests(agents, self.p)
+        new_agents = self._generate_abandoned_nests(space.agents, self.p)
 
         # Evaluate new generated nests for further replacement
-        self._evaluate_nests(agents, new_agents, function)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        self._evaluate_nests(space.agents, new_agents, function)

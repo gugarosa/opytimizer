@@ -2,9 +2,9 @@ from opytimizer.optimizers.science.weo import WEO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
 
 }
 
-# Creating a WEO optimizer
-o = WEO(hyperparams=hyperparams)
+# Creates a WEO optimizer
+o = WEO(params=params)

@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -28,19 +26,18 @@ class WWO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='WWO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> WWO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(WWO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(WWO, self).__init__()
 
         # Maximum wave height
         self.h_max = 5
@@ -54,8 +51,8 @@ class WWO(Optimizer):
         # Maximum number of breakings
         self.k_max = 1
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -127,12 +124,54 @@ class WWO(Optimizer):
 
         self._k_max = k_max
 
-    def _propagate_wave(self, agent, function, length):
+    @property
+    def height(self):
+        """np.array: Array of heights.
+
+        """
+
+        return self._height
+
+    @height.setter
+    def height(self, height):
+        if not isinstance(height, np.ndarray):
+            raise e.TypeError('`height` should be a numpy array')
+
+        self._height = height
+
+    @property
+    def length(self):
+        """np.array: Array of lengths.
+
+        """
+
+        return self._length
+
+    @length.setter
+    def length(self, length):
+        if not isinstance(length, np.ndarray):
+            raise e.TypeError('`length` should be a numpy array')
+
+        self._length = length
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Arrays of heights and lengths
+        self.height = r.generate_uniform_random_number(self.h_max, self.h_max, space.n_agents)
+        self.length = r.generate_uniform_random_number(0.5, 0.5, space.n_agents)
+
+    def _propagate_wave(self, agent, function, index):
         """Propagates wave into a new position (eq. 6).
 
         Args:
             function (Function): A function object.
-            length (np.array): Array of wave lengths.
+            index (int): Index of wave length.
 
         Returns:
             Propagated wave.
@@ -148,24 +187,24 @@ class WWO(Optimizer):
             r1 = r.generate_uniform_random_number(-1, 1)
 
             # Updates the wave's position
-            wave.position[j] += r1 * length * (j + 1)
+            wave.position[j] += r1 * self.length[index] * (j + 1)
 
         # Clips its limits
-        wave.clip_limits()
+        wave.clip_by_bound()
 
         # Re-calculates its fitness
         wave.fit = function(wave.position)
 
         return wave
 
-    def _refract_wave(self, agent, best_agent, function, length):
+    def _refract_wave(self, agent, best_agent, function, index):
         """Refract wave into a new position (eq. 8-9).
 
         Args:
             agent (Agent): Agent to be refracted.
             best_agent (Agent): Global best agent.
             function (Function): A function object.
-            length (np.array): Array of wave lengths.
+            index (int): Index of wave length.
 
         Returns:
             New height and length values.
@@ -183,11 +222,11 @@ class WWO(Optimizer):
             # Calculates the standard deviation
             std = np.fabs(best_agent.position[j] - agent.position[j]) / 2
 
-            # Generates a new position (Eq. 8)
+            # Generates a new position (eq. 8)
             agent.position[j] = r.generate_gaussian_random_number(mean, std)
 
         # Clips its limits
-        agent.clip_limits()
+        agent.clip_by_bound()
 
         # Re-calculates its fitness
         agent.fit = function(agent.position)
@@ -195,8 +234,8 @@ class WWO(Optimizer):
         # Updates the new height to maximum height value
         new_height = self.h_max
 
-        # Re-calculates the new length (Eq. 9)
-        new_length = length * (current_fit / (agent.fit + c.EPSILON))
+        # Re-calculates the new length (eq. 9)
+        new_length = self.length[index] * (current_fit / (agent.fit + c.EPSILON))
 
         return new_height, new_length
 
@@ -223,19 +262,18 @@ class WWO(Optimizer):
         broken_wave.position[j] += r1 * self.beta * (j + 1)
 
         # Clips its limits
-        broken_wave.clip_limits()
+        broken_wave.clip_by_bound()
 
         # Re-calculates its fitness
         broken_wave.fit = function(broken_wave.position)
 
         return broken_wave
 
-    def _update_wave_length(self, agents, length):
+    def _update_wave_length(self, agents):
         """Updates the wave length of current population.
 
         Args:
             agents (list): List of agents.
-            length (np.array): Array of wave lengths.
 
         """
 
@@ -245,117 +283,61 @@ class WWO(Optimizer):
         # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates its length
-            length[i] *= self.alpha ** -((agent.fit - agents[-1].fit + c.EPSILON) / (
-                agents[0].fit - agents[-1].fit + c.EPSILON))
+            self.length[i] *= self.alpha ** -((agent.fit - agents[-1].fit + c.EPSILON) / \
+                              (agents[0].fit - agents[-1].fit + c.EPSILON))
 
-    def _update(self, agents, best_agent, function, height, length):
-        """Method that wraps Water Wave Optimization over all agents and variables.
+    def update(self, space, function):
+        """Wraps Water Wave Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            space (Space): Space containing agents and update-related information.
             function (Function): A function object.
-            height (np.array): Array of wave heights.
-            length (np.array): Array of wave lengths.
 
         """
 
         # Iterates through all agents
-        for i, agent in enumerate(agents):
-            # Propagates a wave into a new temporary one (Eq. 6)
-            wave = self._propagate_wave(agent, function, length[i])
+        for i, agent in enumerate(space.agents):
+            # Propagates a wave into a new temporary one (eq. 6)
+            wave = self._propagate_wave(agent, function, i)
 
             # Checks if propagated wave is better than current one
             if wave.fit < agent.fit:
                 # Also checks if propagated wave is better than global one
-                if wave.fit < best_agent.fit:
+                if wave.fit < space.best_agent.fit:
                     # Replaces the best agent with propagated wave
-                    best_agent.position = copy.deepcopy(wave.position)
-                    best_agent.fit = copy.deepcopy(wave.fit)
+                    space.best_agent.position = copy.deepcopy(wave.position)
+                    space.best_agent.fit = copy.deepcopy(wave.fit)
 
                     # Generates a `k` number of breaks
                     k = r.generate_integer_random_number(1, self.k_max + 1)
 
                     # Iterates through every possible break
                     for j in range(k):
-                        # Breaks the propagated wave (Eq. 10)
+                        # Breaks the propagated wave (eq. 10)
                         broken_wave = self._break_wave(wave, function, j)
 
                         # Checks if broken wave is better than global one
-                        if broken_wave.fit < best_agent.fit:
+                        if broken_wave.fit < space.best_agent.fit:
                             # Replaces the best agent with broken wave
-                            best_agent.position = copy.deepcopy(broken_wave.position)
-                            best_agent.fit = copy.deepcopy(broken_wave.fit)
+                            space.best_agent.position = copy.deepcopy(broken_wave.position)
+                            space.best_agent.fit = copy.deepcopy(broken_wave.fit)
 
                 # Replaces current agent's with propagated wave
                 agent.position = copy.deepcopy(wave.position)
                 agent.fit = copy.deepcopy(wave.fit)
 
                 # Sets its height to maximum height
-                height[i] = self.h_max
+                self.height[i] = self.h_max
 
             # If propagated wave is not better than current agent
             else:
                 # Decreases its height by one
-                height[i] -= 1
+                self.height[i] -= 1
 
                 # If its height reaches zero
-                if height[i] == 0:
-                    # Refracts the wave and generates a new height and wave length (Eq. 8-9)
-                    height[i], length[i] = self._refract_wave(agent, best_agent, function, length[i])
+                if self.height[i] == 0:
+                    # Refracts the wave and generates a new height and wave length (eq. 8-9)
+                    self.height[i], self.length[i] = self._refract_wave(agent, space.best_agent, function, i)
 
-        # Updates the wave length for all agents (Eq. 7)
-        self._update_wave_length(agents, length)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Creates a height vector with `h_max` values
-        height = r.generate_uniform_random_number(self.h_max, self.h_max, space.n_agents)
-
-        # Creates a length vector with 0.5 values
-        length = r.generate_uniform_random_number(0.5, 0.5, space.n_agents)
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, function, height, length)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Updates the wave length for all agents (eq. 7)
+        self._update_wave_length(space.agents)

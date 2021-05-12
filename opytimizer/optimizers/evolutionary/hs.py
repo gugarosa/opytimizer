@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -28,19 +26,18 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, algorithm='HS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> HS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(HS, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(HS, self).__init__()
 
         # Harmony memory considering rate
         self.HMCR = 0.7
@@ -51,8 +48,8 @@ class HS(Optimizer):
         # Bandwidth parameter
         self.bw = 1.0
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -152,79 +149,32 @@ class HS(Optimizer):
 
         return a
 
-    def _update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+    def update(self, space, function):
+        """Wraps Harmony Search over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Generates a new harmony
-        agent = self._generate_new_harmony(agents)
+        agent = self._generate_new_harmony(space.agents)
 
-        # Checking agent limits
-        agent.clip_limits()
+        # Checks agent limits
+        agent.clip_by_bound()
 
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # If newly generated agent fitness is better
-        if agent.fit < agents[-1].fit:
+        if agent.fit < space.agents[-1].fit:
             # Updates the corresponding agent's position and fitness
-            agents[-1].position = copy.deepcopy(agent.position)
-            agents[-1].fit = copy.deepcopy(agent.fit)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, function)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+            space.agents[-1].position = copy.deepcopy(agent.position)
+            space.agents[-1].fit = copy.deepcopy(agent.fit)
 
 
 class IHS(HS):
@@ -240,12 +190,11 @@ class IHS(HS):
 
     """
 
-    def __init__(self, algorithm='IHS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -263,8 +212,8 @@ class IHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving hyperparams
-        super(IHS, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(IHS, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -340,61 +289,40 @@ class IHS(HS):
 
         self._bw_max = bw_max
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Improved Harmony Search over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
+        # Updates pitch adjusting rate
+        self.PAR = self.PAR_min + (((self.PAR_max - self.PAR_min) / n_iterations) * iteration)
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+        # Updates bandwidth parameter
+        self.bw = self.bw_max * np.exp((np.log(self.bw_min / self.bw_max) / n_iterations) * iteration)
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
+        # Generates a new harmony
+        agent = self._generate_new_harmony(space.agents)
 
-                # Updating pitch adjusting rate
-                self.PAR = self.PAR_min + \
-                    (((self.PAR_max - self.PAR_min) / space.n_iterations) * t)
+        # Checks agent limits
+        agent.clip_by_bound()
 
-                # Updating bandwidth parameter
-                self.bw = self.bw_max * \
-                    np.exp((np.log(self.bw_min / self.bw_max) /
-                            space.n_iterations) * t)
+        # Calculates the new harmony fitness
+        agent.fit = function(agent.position)
 
-                # Updating agents
-                self._update(space.agents, function)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # If newly generated agent fitness is better
+        if agent.fit < space.agents[-1].fit:
+            # Updates the corresponding agent's position and fitness
+            space.agents[-1].position = copy.deepcopy(agent.position)
+            space.agents[-1].fit = copy.deepcopy(agent.fit)
 
 
 class GHS(IHS):
@@ -409,19 +337,18 @@ class GHS(IHS):
 
     """
 
-    def __init__(self, algorithm='GHS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: IHS -> GHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(GHS, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(GHS, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -484,12 +411,11 @@ class SGHS(HS):
 
     """
 
-    def __init__(self, algorithm='SGHS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -510,8 +436,8 @@ class SGHS(HS):
         # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Override its parent class with the receiving hyperparams
-        super(SGHS, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(SGHS, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -564,7 +490,7 @@ class SGHS(HS):
 
     @property
     def HMCRm(self):
-        """float: Mean harmony memory considering rate
+        """float: Mean harmony memory considering rate.
 
         """
 
@@ -632,6 +558,68 @@ class SGHS(HS):
 
         self._bw_max = bw_max
 
+    @property
+    def lp(self):
+        """int: Current learning period.
+
+        """
+
+        return self._lp
+
+    @lp.setter
+    def lp(self, lp):
+        if not isinstance(lp, int):
+            raise e.TypeError('`lp` should be a integer')
+        if lp <= 0:
+            raise e.ValueError('`lp` should be > 0')
+
+        self._lp = lp
+
+    @property
+    def HMCR_history(self):
+        """list: Historical harmony memory considering rates.
+
+        """
+
+        return self._HMCR_history
+
+    @HMCR_history.setter
+    def HMCR_history(self, HMCR_history):
+        if not isinstance(HMCR_history, list):
+            raise e.TypeError('`HMCR_history` should be a list')
+
+        self._HMCR_history = HMCR_history
+
+    @property
+    def PAR_history(self):
+        """list: Historical pitch adjusting rates.
+
+        """
+
+        return self._PAR_history
+
+    @PAR_history.setter
+    def PAR_history(self, PAR_history):
+        if not isinstance(PAR_history, list):
+            raise e.TypeError('`PAR_history` should be a list')
+
+        self._PAR_history = PAR_history
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Current learning period
+        self.lp = 1
+
+        # Historical HMCRs and PARs
+        self.HMCR_history = []
+        self.PAR_history = []
+
     def _generate_new_harmony(self, agents):
         """It generates a new harmony.
 
@@ -674,94 +662,60 @@ class SGHS(HS):
 
         return a
 
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Self-Adaptive Global-Best Harmony Search over all agents and variables.
 
         Args:
-            space (Space): A Space object that will be evaluated.
+            space (Space): Space containing agents and update-related information.
             function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
+        # Updates harmony memory considering and pitch adjusting rates
+        self.HMCR = r.generate_gaussian_random_number(self.HMCRm, 0.01)[0]
+        self.PAR = r.generate_gaussian_random_number(self.PARm, 0.05)[0]
 
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
+        # Stores updates values to lists
+        self.HMCR_history.append(self.HMCR)
+        self.PAR_history.append(self.PAR)
 
-        # Initializing lists of HMCR and PAR
-        HMCR, PAR = [], []
+        # If current iteration is smaller than half
+        if iteration < n_iterations // 2:
+            # Updates the bandwidth parameter
+            self.bw = self.bw_max - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
+        else:
+            # Replaces by the minimum bandwidth
+            self.bw = self.bw_min
 
-        # Initializing the learning period
-        lp = 1
+        # Generates a new harmony
+        agent = self._generate_new_harmony(space.agents)
 
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
+        # Checks agent limits
+        agent.clip_by_bound()
 
-                # Updating harmony memory considering rate
-                self.HMCR = r.generate_gaussian_random_number(self.HMCRm, 0.01)[0]
+        # Calculates the new harmony fitness
+        agent.fit = function(agent.position)
 
-                # Updating pitch adjusting rate
-                self.PAR = r.generate_gaussian_random_number(self.PARm, 0.05)[0]
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
-                # Storing both values
-                HMCR.append(self.HMCR)
-                PAR.append(self.PAR)
+        # If newly generated agent fitness is better
+        if agent.fit < space.agents[-1].fit:
+            # Updates the corresponding agent's position and fitness
+            space.agents[-1].position = copy.deepcopy(agent.position)
+            space.agents[-1].fit = copy.deepcopy(agent.fit)
 
-                # If current iteration is smaller than half
-                if t < space.n_iterations // 2:
-                    # Updates the bandwidth parameter
-                    self.bw = self.bw_max - ((self.bw_max - self.bw_min) / space.n_iterations) * 2 * t
-
-                # If is bigger than half
-                else:
-                    # Replaces by the minimum bandwidth
-                    self.bw = self.bw_min
-
-                # Updating agents
-                self._update(space.agents, function)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Checks if learning period has reached its maximum
-                if lp == self.LP:
-                    # Re-calculates the mean HMCR
-                    self.HMCRm = np.mean(HMCR)
-
-                    # Re-calculates the mean PAR
-                    self.PARm = np.mean(PAR)
-
-                    # Resets the learning period to one
-                    lp = 1
-
-                # If has not reached
-                else:
-                    # Increase it by one
-                    lp += 1
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+        # Checks if learning period has reached its maximum
+        if self.lp == self.LP:
+            # Re-calculates the mean HMCR and PAR, and resets learning period
+            self.HMCRm = np.mean(self.HMCR_history)
+            self.PARm = np.mean(self.PAR_history)
+            self.lp = 1
+        else:
+            # Increases learning period
+            self.lp += 1
 
 
 class NGHS(HS):
@@ -777,12 +731,11 @@ class NGHS(HS):
 
     """
 
-    def __init__(self, algorithm='NGHS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -791,8 +744,8 @@ class NGHS(HS):
         # Mutation probability
         self.pm = 0.1
 
-        # Override its parent class with the receiving hyperparams
-        super(NGHS, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(NGHS, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -852,30 +805,30 @@ class NGHS(HS):
 
         return a
 
-    def _update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+    def update(self, space, function):
+        """Wraps Novel Global Harmony Search over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Generates a new harmony
-        agent = self._generate_new_harmony(agents[0], agents[-1])
+        agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
 
-        # Checking agent limits
-        agent.clip_limits()
+        # Checks agent limits
+        agent.clip_by_bound()
 
         # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # Updates the worst agent's position and fitness
-        agents[-1].position = copy.deepcopy(agent.position)
-        agents[-1].fit = copy.deepcopy(agent.fit)
+        space.agents[-1].position = copy.deepcopy(agent.position)
+        space.agents[-1].fit = copy.deepcopy(agent.fit)
 
 
 class GOGHS(NGHS):
@@ -891,19 +844,18 @@ class GOGHS(NGHS):
 
     """
 
-    def __init__(self, algorithm='GOGHS', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: NGHS -> GOGHS.')
 
-        # Override its parent class with the receiving hyperparams
-        super(GOGHS, self).__init__(algorithm, hyperparams)
+        # Overrides its parent class with the receiving params
+        super(GOGHS, self).__init__(params)
 
         logger.info('Class overrided.')
 
@@ -922,7 +874,7 @@ class GOGHS(NGHS):
         # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # Creating pseudo-harmonies
+        # Creates pseudo-harmonies
         A = np.zeros((a.n_variables))
         B = np.zeros((a.n_variables))
 
@@ -951,37 +903,37 @@ class GOGHS(NGHS):
 
         return a
 
-    def _update(self, agents, function):
-        """Method that wraps the update pipeline over all agents and variables.
+    def update(self, space, function):
+        """Wraps Generalized Opposition Global-Best Harmony Search over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
 
         """
 
         # Generates new harmonies
-        agent = self._generate_new_harmony(agents[0], agents[-1])
-        opp_agent = self._generate_opposition_harmony(agent, agents)
+        agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
+        opp_agent = self._generate_opposition_harmony(agent, space.agents)
 
-        # Checking agents limits
-        agent.clip_limits()
-        opp_agent.clip_limits()
+        # Checks agents limits
+        agent.clip_by_bound()
+        opp_agent.clip_by_bound()
 
         # Calculates harmonies fitness
         agent.fit = function(agent.position)
         opp_agent.fit = function(opp_agent.position)
 
-        # Checking if oppisition-based is better than agent
+        # Checks if oppisition-based is better than agent
         if opp_agent.fit < agent.fit:
             # Copies the agent
             agent = copy.deepcopy(opp_agent)
 
-        # Sorting agents
-        agents.sort(key=lambda x: x.fit)
+        # Sorts agents
+        space.agents.sort(key=lambda x: x.fit)
 
         # If generated agent fitness is better
-        if agent.fit < agents[-1].fit:
+        if agent.fit < space.agents[-1].fit:
             # Updates the corresponding agent's position and fitness
-            agents[-1].position = copy.deepcopy(agent.position)
-            agents[-1].fit = copy.deepcopy(agent.fit)
+            space.agents[-1].position = copy.deepcopy(agent.position)
+            space.agents[-1].fit = copy.deepcopy(agent.fit)

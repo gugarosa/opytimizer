@@ -2,7 +2,7 @@ from opytimizer.optimizers.swarm.pso import AIWPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'w': 0.7,
     'w_min': 0.1,
     'w_max': 0.9,
@@ -10,5 +10,5 @@ hyperparams = {
     'c2': 2
 }
 
-# Creating an AIWPSO optimizer
-o = AIWPSO(hyperparams=hyperparams)
+# Creates an AIWPSO optimizer
+o = AIWPSO(params=params)

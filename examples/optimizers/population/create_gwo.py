@@ -1,4 +1,4 @@
 from opytimizer.optimizers.population.gwo import GWO
 
-# Creating a GWO optimizer
+# Creates a GWO optimizer
 o = GWO()

@@ -2,12 +2,10 @@
 """
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -27,19 +25,18 @@ class PIO(Optimizer):
 
     """
 
-    def __init__(self, algorithm='PIO', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> PIO.')
 
-        # Override its parent class with the receiving hyperparams
-        super(PIO, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(PIO, self).__init__()
 
         # Number of mapping iterations
         self.n_c1 = 150
@@ -50,8 +47,8 @@ class PIO(Optimizer):
         # Map and compass factor
         self.R = 0.2
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -106,44 +103,51 @@ class PIO(Optimizer):
 
         self._R = R
 
-    def _update_velocity(self, position, best_position, velocity, iteration):
-        """Updates a particle velocity (eq. 5).
-
-        Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
-            velocity (np.array): Agent's current velocity.
-            iteration (int): Current iteration.
-
-        Returns:
-            A new velocity.
+    @property
+    def n_p(self):
+        """int: Number of pigeons.
 
         """
 
-        # Generating random number
-        r1 = r.generate_uniform_random_number()
+        return self._n_p
 
-        # Calculates new velocity
-        new_velocity = velocity * np.exp(-self.R * (iteration + 1)) + r1 * (best_position - position)
+    @n_p.setter
+    def n_p(self, n_p):
+        if not isinstance(n_p, int):
+            raise e.TypeError('`n_p` should be an integer')
+        if n_p <= 0:
+            raise e.ValueError('`n_p` should be > 0')
 
-        return new_velocity
+        self._n_p = n_p
 
-    def _update_position(self, position, velocity):
-        """Updates a pigeon position (eq. 6).
-
-        Args:
-            position (np.array): Agent's current position.
-            velocity (np.array): Agent's current velocity.
-
-        Returns:
-            A new position.
+    @property
+    def velocity(self):
+        """np.array: Array of pulse rates.
 
         """
 
-        # Calculates new position
-        new_position = position + velocity
+        return self._velocity
 
-        return new_position
+    @velocity.setter
+    def velocity(self, velocity):
+        if not isinstance(velocity, np.ndarray):
+            raise e.TypeError('`velocity` should be a numpy array')
+
+        self._velocity = velocity
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Number of pigeons
+        self.n_p = space.n_agents
+
+        # Array of velocities
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
     def _calculate_center(self, agents):
         """Calculates the center position (eq. 8).
@@ -187,7 +191,7 @@ class PIO(Optimizer):
 
         """
 
-        # Generating random number
+        # Generates random number
         r1 = r.generate_uniform_random_number()
 
         # Calculates new position based on center
@@ -195,13 +199,11 @@ class PIO(Optimizer):
 
         return new_position
 
-    def _update(self, agents, best_agent, velocity, iteration):
-        """Method that wraps velocity and position updates over all agents and variables.
+    def update(self, space, iteration):
+        """Wraps Pigeon-Inspired Optimization over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            velocity (np.array): Array of current velocities.
+            space (Space): Space containing agents and update-related information.
             iteration (int): Current iteration.
 
         """
@@ -209,12 +211,14 @@ class PIO(Optimizer):
         # Checks if current iteration is smaller than mapping operator
         if iteration < self.n_c1:
             # Iterates through all agents
-            for i, agent in enumerate(agents):
-                # Updates current agent velocity
-                velocity[i] = self._update_velocity(agent.position, best_agent.position, velocity[i], iteration)
+            for i, agent in enumerate(space.agents):
+                # Updates current agent velocity (eq. 5)
+                r1 = r.generate_uniform_random_number()
+                self.velocity[i] = self.velocity[i] * np.exp(-self.R * (iteration + 1)) + \
+                                   r1 * (space.best_agent.position - agent.position)
 
-                # Updates current agent position
-                agent.position = self._update_position(agent.position, velocity[i])
+                # Updates current agent position (eq. 6)
+                agent.position += self.velocity[i]
 
         # Checks if current iteration is smaller than landmark operator
         elif iteration < self.n_c2:
@@ -222,65 +226,12 @@ class PIO(Optimizer):
             self.n_p = int(self.n_p / 2) + 1
 
             # Sorts agents according to their fitness
-            agents.sort(key=lambda x: x.fit)
+            space.agents.sort(key=lambda x: x.fit)
 
             # Calculates the center position
-            center = self._calculate_center(agents[:self.n_p])
+            center = self._calculate_center(space.agents[:self.n_p])
 
             # Iterates through all agents
-            for agent in agents:
+            for agent in space.agents:
                 # Updates current agent position
-                agent.position = self._update_center_position( agent.position, center)
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Instantiating number of total pigeons
-        self.n_p = space.n_agents
-
-        # Instanciating array velocities
-        velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, velocity, t)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents, local positions and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                agent.position = self._update_center_position(agent.position, center)

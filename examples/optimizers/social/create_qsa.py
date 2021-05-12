@@ -1,4 +1,4 @@
 from opytimizer.optimizers.social.qsa import QSA
 
-# Creating an QSA optimizer
+# Creates an QSA optimizer
 o = QSA()

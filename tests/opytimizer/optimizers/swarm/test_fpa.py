@@ -1,21 +1,17 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.swarm import fpa
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_fpa_hyperparams():
-    hyperparams = {
+def test_fpa_params():
+    params = {
         'beta': 1.0,
         'eta': 0.5,
         'p': 0.5
     }
 
-    new_fpa = fpa.FPA(hyperparams=hyperparams)
+    new_fpa = fpa.FPA(params=params)
 
     assert new_fpa.beta == 1.0
 
@@ -24,7 +20,7 @@ def test_fpa_hyperparams():
     assert new_fpa.p == 0.5
 
 
-def test_fpa_hyperparams_setter():
+def test_fpa_params_setter():
     new_fpa = fpa.FPA()
 
     try:
@@ -64,12 +60,6 @@ def test_fpa_hyperparams_setter():
     assert new_fpa.p == 0.25
 
 
-def test_fpa_build():
-    new_fpa = fpa.FPA()
-
-    assert new_fpa.built == True
-
-
 def test_fpa_global_pollination():
     new_fpa = fpa.FPA()
 
@@ -90,38 +80,12 @@ def test_fpa_update():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
-
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(n_agents=2, n_iterations=10,
-                                      n_variables=2, lower_bound=[1, 1],
-                                      upper_bound=[10, 10])
+    search_space = search.SearchSpace(n_agents=2, n_variables=2,
+                                      lower_bound=[1, 1], upper_bound=[10, 10])
 
-    new_fpa._update(search_space.agents, search_space.best_agent, new_function)
+    new_fpa.update(search_space, square)
 
-    assert search_space.agents[0].position[0] != 0
-
-
-def test_fpa_run():
-    def square(x):
-        return np.sum(x**2)
-
-    def hook(optimizer, space, function):
-        return
-
-    new_function = function.Function(pointer=square)
-
-    new_fpa = fpa.FPA()
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=30,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_fpa.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm fpa failed to converge.'
+    new_fpa.p = 0.01
+    new_fpa.update(search_space, square)

@@ -21,3 +21,16 @@ def test_span():
     span_array = hyper.span(array, lb, ub)
 
     assert span_array > 0
+
+
+def test_span_to_hyper_value():
+    lb = np.full(1, 10)
+    ub = np.full(1, 20)
+
+    @hyper.span_to_hyper_value(lb, ub)
+    def call(x):
+        return np.sum(x)
+
+    y = call(np.array([[0.5], [0.5]]))
+
+    assert y == 30

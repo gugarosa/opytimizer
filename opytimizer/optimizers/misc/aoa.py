@@ -1,12 +1,9 @@
 """Arithmetic Optimization Algorithm.
 """
 
-from tqdm import tqdm
-
 import opytimizer.math.random as r
-import opytimizer.utils.constants as c
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -25,19 +22,18 @@ class AOA(Optimizer):
 
     """
 
-    def __init__(self, algorithm='AOA', hyperparams=None):
+    def __init__(self, params=None):
         """Initialization method.
 
         Args:
-            algorithm (str): Indicates the algorithm name.
-            hyperparams (dict): Contains key-value parameters to the meta-heuristics.
+            params (dict): Contains key-value parameters to the meta-heuristics.
 
         """
 
         logger.info('Overriding class: Optimizer -> AOA.')
 
-        # Override its parent class with the receiving hyperparams
-        super(AOA, self).__init__(algorithm)
+        # Overrides its parent class with the receiving params
+        super(AOA, self).__init__()
 
         # Minimum accelerated function
         self.a_min = 0.2
@@ -51,8 +47,8 @@ class AOA(Optimizer):
         # Control parameter
         self.mu = 0.499
 
-        # Now, we need to build this class up
-        self._build(hyperparams)
+        # Builds the class
+        self.build(params)
 
         logger.info('Class overrided.')
 
@@ -126,28 +122,27 @@ class AOA(Optimizer):
 
         self._mu = mu
 
-    def _update(self, agents, best_agent, iteration, n_iterations):
-        """Method that wraps Arithmetic Optimization Algorithm over all agents and variables.
+    def update(self, space, iteration, n_iterations):
+        """Wraps Arithmetic Optimization Algorithm over all agents and variables.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            iteration (int): Current iteration value.
+            space (Space): Space containing agents and update-related information.
+            iteration (int): Current iteration.
             n_iterations (int): Maximum number of iterations.
 
         """
 
-        # Calculating math optimizer accelarated coefficient (Eq. 2)
+        # Calculates math optimizer accelarated coefficient (eq. 2)
         MOA = self.a_min + iteration * ((self.a_max - self.a_min) / n_iterations)
 
-        # Calculating math optimizer probability (Eq. 4)
+        # Calculates math optimizer probability (eq. 4)
         MOP = 1 - (iteration ** (1 / self.alpha) / n_iterations ** (1 / self.alpha))
 
         # Iterates through all agents
-        for agent in agents:
+        for agent in space.agents:
             # Iterates through all variables
             for j in range(agent.n_variables):
-                # Generating random probability
+                # Generates random probability
                 r1 = r.generate_uniform_random_number()
 
                 # Calculates the search partition
@@ -160,13 +155,13 @@ class AOA(Optimizer):
 
                     # If probability is bigger than 0.5
                     if r2 > 0.5:
-                        # Updates position with (Eq. 3 - top)
-                        agent.position[j] = best_agent.position[j] / (MOP + c.EPSILON) * search_partition
+                        # Updates position with (eq. 3 - top)
+                        agent.position[j] = space.best_agent.position[j] / (MOP + c.EPSILON) * search_partition
 
                     # If probability is smaller than 0.5
                     else:
-                        # Updates position with (Eq. 3 - bottom)
-                        agent.position[j] = best_agent.position[j] * MOP * search_partition
+                        # Updates position with (eq. 3 - bottom)
+                        agent.position[j] = space.best_agent.position[j] * MOP * search_partition
 
                 # If probability is smaller than MOA
                 else:
@@ -175,57 +170,10 @@ class AOA(Optimizer):
 
                     # If probability is bigger than 0.5
                     if r3 > 0.5:
-                        # Updates position with (Eq. 5 - top)
-                        agent.position[j] = best_agent.position[j] - MOP * search_partition
+                        # Updates position with (eq. 5 - top)
+                        agent.position[j] = space.best_agent.position[j] - MOP * search_partition
 
                     # If probability is smaller than 0.5
                     else:
-                        # Updates position with (Eq. 5 - bottom)
-                        agent.position[j] = best_agent.position[j] + MOP * search_partition
-
-    def run(self, space, function, store_best_only=False, pre_evaluate=None):
-        """Runs the optimization pipeline.
-
-        Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
-            store_best_only (bool): If True, only the best agent of each iteration is stored in History.
-            pre_evaluate (callable): This function is executed before evaluating the function being optimized.
-
-        Returns:
-            A History object holding all agents' positions and fitness achieved during the task.
-
-        """
-
-        # Initial search space evaluation
-        self._evaluate(space, function, hook=pre_evaluate)
-
-        # We will define a History object for further dumping
-        history = h.History(store_best_only)
-
-        # Initializing a progress bar
-        with tqdm(total=space.n_iterations) as b:
-            # These are the number of iterations to converge
-            for t in range(space.n_iterations):
-                logger.to_file(f'Iteration {t+1}/{space.n_iterations}')
-
-                # Updating agents
-                self._update(space.agents, space.best_agent, t, space.n_iterations)
-
-                # Checking if agents meet the bounds limits
-                space.clip_limits()
-
-                # After the update, we need to re-evaluate the search space
-                self._evaluate(space, function, hook=pre_evaluate)
-
-                # Every iteration, we need to dump agents and best agent
-                history.dump(agents=space.agents, best_agent=space.best_agent)
-
-                # Updates the `tqdm` status
-                b.set_postfix(fitness=space.best_agent.fit)
-                b.update()
-
-                logger.to_file(f'Fitness: {space.best_agent.fit}')
-                logger.to_file(f'Position: {space.best_agent.position}')
-
-        return history
+                        # Updates position with (eq. 5 - bottom)
+                        agent.position[j] = space.best_agent.position[j] + MOP * search_partition

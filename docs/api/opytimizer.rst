@@ -1,5 +1,5 @@
 opytimizer
-=========================
+===========
 
 .. autoclass:: opytimizer.Opytimizer
    :members:

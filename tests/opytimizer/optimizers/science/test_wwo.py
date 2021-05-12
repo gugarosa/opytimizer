@@ -1,22 +1,20 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import wwo
 from opytimizer.spaces import search
-from opytimizer.utils import constants
 
 np.random.seed(0)
 
 
-def test_wwo_hyperparams():
-    hyperparams = {
+def test_wwo_params():
+    params = {
         'h_max': 5,
         'alpha': 1.001,
         'beta': 0.001,
         'k_max': 1
     }
 
-    new_wwo = wwo.WWO(hyperparams=hyperparams)
+    new_wwo = wwo.WWO(params=params)
 
     assert new_wwo.h_max == 5
 
@@ -27,7 +25,7 @@ def test_wwo_hyperparams():
     assert new_wwo.k_max == 1
 
 
-def test_wwo_hyperparams_setter():
+def test_wwo_params_setter():
     new_wwo = wwo.WWO()
 
     try:
@@ -79,31 +77,94 @@ def test_wwo_hyperparams_setter():
     assert new_wwo.k_max == 1
 
 
-def test_wwo_build():
+def test_wwo_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
 
-    assert new_wwo.built == True
+    try:
+        new_wwo.height = 1
+    except:
+        new_wwo.height = np.array([1])
+
+    assert new_wwo.height == np.array([1])
+
+    try:
+        new_wwo.length = 1
+    except:
+        new_wwo.length = np.array([1])
+
+    assert new_wwo.length == np.array([1])
 
 
-def test_wwo_run():
+def test_wwo_propagate_wave():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    new_function = function.Function(pointer=square)
+    new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
 
-    new_wwo = wwo.WWO({'k_max': 20})
+    wave = new_wwo._propagate_wave(search_space.agents[0], square, 0)
 
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    assert type(wave).__name__ == 'Agent'
 
-    history = new_wwo.run(search_space, new_function, pre_evaluate=hook)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+def test_wwo_refract_wave():
+    def square(x):
+        return np.sum(x**2)
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm wwo failed to converge.'
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
+
+    height, length = new_wwo._refract_wave(
+        search_space.agents[0], search_space.best_agent, square, 0)
+
+    assert height == 5
+    assert length != 0
+
+
+def test_wwo_break_wave():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
+
+    broken_wave = new_wwo._break_wave(search_space.agents[0], square, 0)
+
+    assert type(broken_wave).__name__ == 'Agent'
+
+
+def test_wwo_update_wave_length():
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
+
+    new_wwo._update_wave_length(search_space.agents)
+
+
+def test_wwo_update():
+    def square(x):
+        return np.sum(x**2)
+
+    search_space = search.SearchSpace(n_agents=50, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_wwo = wwo.WWO()
+    new_wwo.create_additional_attrs(search_space)
+
+    new_wwo.update(search_space, square)
+    new_wwo.update(search_space, square)

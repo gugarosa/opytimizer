@@ -1,15 +1,11 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import wdo
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
 
 
-def test_wdo_hyperparams():
-    hyperparams = {
+def test_wdo_params():
+    params = {
         'v_max': 0.3,
         'alpha': 0.8,
         'g': 0.6,
@@ -17,7 +13,7 @@ def test_wdo_hyperparams():
         'RT': 1.5
     }
 
-    new_wdo = wdo.WDO(hyperparams=hyperparams)
+    new_wdo = wdo.WDO(params=params)
 
     assert new_wdo.v_max == 0.3
 
@@ -30,7 +26,7 @@ def test_wdo_hyperparams():
     assert new_wdo.RT == 1.5
 
 
-def test_wdo_hyperparams_setter():
+def test_wdo_params_setter():
     new_wdo = wdo.WDO()
 
     try:
@@ -94,55 +90,29 @@ def test_wdo_hyperparams_setter():
     assert new_wdo.RT == 0.5
 
 
-def test_wdo_build():
+def test_wdo_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
     new_wdo = wdo.WDO()
+    new_wdo.create_additional_attrs(search_space)
 
-    assert new_wdo.built == True
+    try:
+        new_wdo.velocity = 1
+    except:
+        new_wdo.velocity = np.array([1])
 
-
-def test_wdo_update_velocity():
-    new_wdo = wdo.WDO()
-
-    velocity = new_wdo._update_velocity(1, 1, 1, 1, 1)
-
-    assert velocity != 0
+    assert new_wdo.velocity == np.array([1])
 
 
-def test_wdo_update_position():
-    new_wdo = wdo.WDO()
-
-    position = new_wdo._update_position(1, 1)
-
-    assert position == 2
-
-
-def test_wdo_run():
+def test_wdo_update():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    new_function = function.Function(pointer=square)
+    new_wdo = wdo.WDO()
+    new_wdo.create_additional_attrs(search_space)
 
-    hyperparams = {
-        'v_max': 0.3,
-        'alpha': 0.8,
-        'g': 0.6,
-        'c': 1.0,
-        'RT': 1.5
-    }
-
-    new_wdo = wdo.WDO(hyperparams=hyperparams)
-
-    search_space = search.SearchSpace(n_agents=10, n_iterations=100,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
-
-    history = new_wdo.run(search_space, new_function, pre_evaluate=hook)
-
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
-
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm wdo failed to converge.'
+    new_wdo.update(search_space, square)

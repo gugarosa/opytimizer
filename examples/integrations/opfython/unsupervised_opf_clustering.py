@@ -4,27 +4,27 @@ from opfython.models.unsupervised import UnsupervisedOPF
 from sklearn.datasets import load_digits
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.optimizers.swarm.pso import PSO
-from opytimizer.spaces.search import SearchSpace
+from opytimizer.core import Function
+from opytimizer.optimizers.swarm import PSO
+from opytimizer.spaces import SearchSpace
 
-# Loading digits dataset
+# Loads digits dataset
 digits = load_digits()
 
-# Gathering samples and targets
+# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
 # Adding 1 to labels, i.e., OPF should have labels from 1+
 Y += 1
 
-# Splitting data into training and testing sets
+# Splits data into training and testing sets
 X_train, X_test, Y_train, Y_test = s.split(
     X, Y, percentage=0.5, random_state=1)
 
 
 def unsupervised_opf_clustering(opytimizer):
-    # Gathering parameters from Opytimizer
+    # Gathers parameters from Opytimizer
     # Pay extremely attention to their order when declaring due to their bounds
     max_k = int(opytimizer[0][0])
 
@@ -41,41 +41,27 @@ def unsupervised_opf_clustering(opytimizer):
     # Predicts new data
     preds, _ = opf.predict(X_test)
 
-    # Calculating accuracy
+    # Calculates accuracy
     acc = g.opf_accuracy(Y_test, preds)
 
     return 1 - acc
 
 
-# Creating Function's object
-f = Function(pointer=unsupervised_opf_clustering)
-
-# Number of agents, decision variables and iterations
+# Number of agents and decision variables
 n_agents = 5
 n_variables = 1
-n_iterations = 3
 
-# Lower and upper bounds (has to be the same size as n_variables)
-lower_bound = (1,)
-upper_bound = (15,)
+# Lower and upper bounds (has to be the same size as `n_variables`)
+lower_bound = [1]
+upper_bound = [15]
 
-# Creating the SearchSpace class
-s = SearchSpace(n_agents=n_agents, n_iterations=n_iterations,
-                n_variables=n_variables, lower_bound=lower_bound,
-                upper_bound=upper_bound)
+# Creates the space, optimizer and function
+space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
+optimizer = PSO()
+function = Function(unsupervised_opf_clustering)
 
-# Hyperparameters for the optimizer
-hyperparams = {
-    'w': 0.7,
-    'c1': 1.7,
-    'c2': 1.7
-}
+# Bundles every piece into Opytimizer class
+opt = Opytimizer(space, optimizer, function)
 
-# Creating PSO's optimizer
-p = PSO(hyperparams=hyperparams)
-
-# Finally, we can create an Opytimizer class
-o = Opytimizer(space=s, optimizer=p, function=f)
-
-# Running the optimization task
-history = o.start()
+# Runs the optimization task
+opt.start(n_iterations=3)

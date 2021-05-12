@@ -2,7 +2,7 @@ from opytimizer.optimizers.evolutionary.hs import GHS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
-hyperparams = {
+params = {
     'HMCR': 0.7,
     'PAR_min': 0.0,
     'PAR_max': 1.0,
@@ -10,5 +10,5 @@ hyperparams = {
     'bw_max': 10.0
 }
 
-# Creating an GHS optimizer
-o = GHS(hyperparams=hyperparams)
+# Creates an GHS optimizer
+o = GHS(params=params)

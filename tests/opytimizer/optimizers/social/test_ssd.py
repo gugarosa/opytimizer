@@ -1,27 +1,24 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.social import ssd
 from opytimizer.spaces import search
-from opytimizer.utils import constants
-
-np.random.seed(0)
+from opytimizer.utils import constant
 
 
-def test_ssd_hyperparams():
-    hyperparams = {
+def test_ssd_params():
+    params = {
         'c': 2.0,
         'decay': 0.99
     }
 
-    new_ssd = ssd.SSD(hyperparams=hyperparams)
+    new_ssd = ssd.SSD(params=params)
 
     assert new_ssd.c == 2.0
 
     assert new_ssd.decay == 0.99
 
 
-def test_ssd_hyperparams_setter():
+def test_ssd_params_setter():
     new_ssd = ssd.SSD()
 
     try:
@@ -49,10 +46,26 @@ def test_ssd_hyperparams_setter():
     assert new_ssd.decay == 0.99
 
 
-def test_ssd_build():
-    new_ssd = ssd.SSD()
+def test_ssd_create_additional_attrs():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    assert new_ssd.built == True
+    new_ssd = ssd.SSD()
+    new_ssd.create_additional_attrs(search_space)
+
+    try:
+        new_ssd.local_position = 1
+    except:
+        new_ssd.local_position = np.array([1])
+
+    assert new_ssd.local_position == 1
+
+    try:
+        new_ssd.velocity = 1
+    except:
+        new_ssd.velocity = np.array([1])
+
+    assert new_ssd.velocity == 1
 
 
 def test_ssd_mean_global_solution():
@@ -63,46 +76,53 @@ def test_ssd_mean_global_solution():
     assert mean != 0
 
 
-def test_ssd_update_velocity():
-    new_ssd = ssd.SSD()
+def test_ssd_update_position():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    velocity = new_ssd._update_velocity(0.5, 10, 25)
+    new_ssd = ssd.SSD()
+    new_ssd.create_additional_attrs(search_space)
+
+    position = new_ssd._update_position(1, 1)
+
+    assert position[0][0] != 0
+
+
+def test_ssd_update_velocity():
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_ssd = ssd.SSD()
+    new_ssd.create_additional_attrs(search_space)
+
+    velocity = new_ssd._update_velocity(0.5, 10, 1)
 
     assert velocity[0] != 0
 
 
-def test_ssd_update_position():
-    new_ssd = ssd.SSD()
-
-    position = new_ssd._update_position(1, 1)
-
-    assert position == 2
-
-
-def test_ssd_run():
+def test_ssd_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    def hook(optimizer, space, function):
-        return
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    new_function = function.Function(pointer=square)
+    new_ssd = ssd.SSD()
+    new_ssd.create_additional_attrs(search_space)
 
-    hyperparams = {
-        'c': 2.0,
-        'decay': 0.3
-    }
+    new_ssd.evaluate(search_space, square)
 
-    new_ssd = ssd.SSD(hyperparams=hyperparams)
+    assert search_space.best_agent.fit != constant.FLOAT_MAX
 
-    search_space = search.SearchSpace(n_agents=50, n_iterations=350,
-                                      n_variables=2, lower_bound=[-100, -100],
-                                      upper_bound=[100, 100])
 
-    history = new_ssd.run(search_space, new_function, pre_evaluate=hook)
+def test_ssd_update():
+    def square(x):
+        return np.sum(x**2)
 
-    assert len(history.agents) > 0
-    assert len(history.best_agent) > 0
+    search_space = search.SearchSpace(n_agents=10, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
 
-    best_fitness = history.best_agent[-1][1]
-    assert best_fitness <= constants.TEST_EPSILON, 'The algorithm ssd failed to converge.'
+    new_ssd = ssd.SSD()
+    new_ssd.create_additional_attrs(search_space)
+
+    new_ssd.update(search_space, square)
