@@ -21,6 +21,24 @@ def generate_binary_random_number(size=1):
     return binary_array
 
 
+def generate_exponential_random_number(scale=1.0, size=1):
+    """Generates a random number or array based on an exponential distribution.
+
+    Args:
+        scale (float): Scaling of the distribution.
+        size (int): Size of array.
+
+    Returns:
+        An exponential random number or array.
+
+    """
+
+    # Generates a random exponential number or array
+    exponential_array = np.random.exponential(scale, size)
+
+    return exponential_array
+
+
 def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
     """Generates an Erlang distribution based on gamma values.
 

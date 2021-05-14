@@ -57,11 +57,8 @@ class LSA(Optimizer):
 
     def create_additional_attrs(self, space):
         self.time = 0
-        self.direction = np.sign(r.generate_uniform_random_number(-1, 1, space.n_variables))
-
-        # print(self.direction)
-
-
+        self.direction = np.sign(
+            r.generate_uniform_random_number(-1, 1, space.n_variables))
 
     def update(self, space, function, iteration, n_iterations):
         """Wraps Lightning Search Algorithm over all agents and variables.
@@ -84,10 +81,12 @@ class LSA(Optimizer):
 
         best = space.agents[0].fit
 
-        energy = self.init_energy - 2 * np.exp(-5 * (n_iterations - iteration) / n_iterations)
+        energy = self.init_energy - 2 * \
+            np.exp(-5 * (n_iterations - iteration) / n_iterations)
 
         for j in range(space.n_variables):
-            direction = space.agents[0].position[j] + self.direction[j] * 0.005 * (space.ub[j] - space.lb[j])
+            direction = space.agents[0].position[j] + \
+                self.direction[j] * 0.005 * (space.ub[j] - space.lb[j])
             direction_fit = function(direction)
             if direction_fit > best:
                 self.direction[j] *= -1
@@ -100,9 +99,9 @@ class LSA(Optimizer):
                     temp.position[j] += self.direction[j] * np.fabs(r.generate_gaussian_random_number(0, energy))
                 else:
                     if distance[j] < 0:
-                        temp.position[j] += np.fabs(distance[j])
+                        temp.position[j] += r.generate_exponential_random_number(np.fabs(distance[j]))
                     else:
-                        temp.position[j] -= distance[j]
+                        temp.position[j] -= r.generate_exponential_random_number(distance[j])
 
             temp.clip_by_bound()
 
@@ -117,9 +116,10 @@ class LSA(Optimizer):
                 if r1 < self.p_fork:
                     temp = copy.deepcopy(agent)
                     for j in range(agent.n_variables):
-                        temp.position[j] = temp.ub[j] + temp.lb[j] - temp.position[j]
+                        temp.position[j] = temp.ub[j] + \
+                            temp.lb[j] - temp.position[j]
                     temp.fit = function(temp.position)
-        
+
                     if temp.fit < agent.fit:
                         agent.position = copy.deepcopy(temp.position)
                         agent.fit = copy.deepcopy(temp.fit)

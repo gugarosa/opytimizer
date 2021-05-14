@@ -11,6 +11,12 @@ def test_generate_binary_random_number():
     assert binary_array.shape == (5, )
 
 
+def test_generate_exponential_random_number():
+    exponential_array = random.generate_exponential_random_number(1, 5)
+
+    assert exponential_array.shape == (5, )
+
+
 def test_generate_gamma_random_number():
     gamma_array = random.generate_gamma_random_number(1, 1, 5)
 
