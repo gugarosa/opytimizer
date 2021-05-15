@@ -1,10 +1,4 @@
-from opytimizer.optimizers.swarm.ffoa import FFOA
-
-# One should declare a hyperparameters object based
-# on the desired algorithm that will be used
-params = {
-
-}
+from opytimizer.optimizers.swarm import FFOA
 
 # Creates a FFOA optimizer
-o = FFOA(params=params)
+o = FFOA()

@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -45,3 +43,83 @@ class FFOA(Optimizer):
         self.build(params)
 
         logger.info('Class overrided.')
+
+    @property
+    def x_axis(self):
+        """list: `x` axis.
+
+        """
+
+        return self._x_axis
+
+    @x_axis.setter
+    def x_axis(self, x_axis):
+        if not isinstance(x_axis, list):
+            raise e.TypeError('`x_axis` should be a list')
+
+        self._x_axis = x_axis
+
+    @property
+    def y_axis(self):
+        """list: `y` axis.
+
+        """
+
+        return self._y_axis
+
+    @y_axis.setter
+    def y_axis(self, y_axis):
+        if not isinstance(y_axis, list):
+            raise e.TypeError('`y_axis` should be a list')
+
+        self._y_axis = y_axis
+
+    def create_additional_attrs(self, space):
+        """Creates additional attributes that are used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Lists of `x` and `y` axis (eq. 1)
+        self.x_axis = copy.deepcopy(space.agents)
+        self.y_axis = copy.deepcopy(space.agents)
+
+    def update(self, space, function):
+        """Wraps Fruit-Fly Optimization Algorithm over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Iterates through all agents and their axis
+        for a, x_axis, y_axis in zip(space.agents, self.x_axis, self.y_axis):
+            # Generates random numbers
+            r1 = r.generate_uniform_random_number()
+            r2 = r.generate_uniform_random_number()
+
+            # Shakes the `x` and `y` axis positions (eq. 2)
+            x = x_axis.position + r1
+            y = y_axis.position + r2
+
+            # Calculates the distance between axis (eq. 3 - top)
+            distance = np.sqrt(x ** 2 + y ** 2)
+
+            # Calculates the smell's position (eq. 3 - bottom)
+            s = 1 / (distance + c.EPSILON)
+
+            # Evaluates the smell's position (eq. 4)
+            smell = function(s)
+
+            # If smell's fitness is better than agent's fitness
+            if smell < a.fit:
+                # Updates its corresponding `axis` positions (eq. 6)
+                x_axis.position = copy.deepcopy(x)
+                y_axis.position = copy.deepcopy(y)
+
+                # Updates the agent's position and fitness
+                a.position = copy.deepcopy(s)
+                a.fit = copy.deepcopy(smell)
