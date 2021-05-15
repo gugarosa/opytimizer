@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.hgso import HGSO
+from opytimizer.optimizers.science import HGSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

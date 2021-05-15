@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.pso import SAVPSO
+from opytimizer.optimizers.swarm import SAVPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

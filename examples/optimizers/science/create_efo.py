@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.efo import EFO
+from opytimizer.optimizers.science import EFO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

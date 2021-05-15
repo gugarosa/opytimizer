@@ -1,4 +1,4 @@
-from opytimizer.optimizers.social.mvpa import MVPA
+from opytimizer.optimizers.social import MVPA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

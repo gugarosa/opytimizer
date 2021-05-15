@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.js import NBJS
+from opytimizer.optimizers.swarm import NBJS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

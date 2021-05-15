@@ -1,4 +1,4 @@
-from opytimizer.optimizers.social.isa import ISA
+from opytimizer.optimizers.social import ISA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

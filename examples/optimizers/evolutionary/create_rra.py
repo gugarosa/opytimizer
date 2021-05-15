@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.rra import RRA
+from opytimizer.optimizers.evolutionary import RRA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

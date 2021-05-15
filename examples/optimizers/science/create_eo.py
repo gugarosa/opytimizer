@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.eo import EO
+from opytimizer.optimizers.science import EO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.stoa import STOA
+from opytimizer.optimizers.swarm import STOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

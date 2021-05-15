@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.epo import EPO
+from opytimizer.optimizers.population import EPO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

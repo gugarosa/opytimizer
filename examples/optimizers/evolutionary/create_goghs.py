@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.hs import GOGHS
+from opytimizer.optimizers.evolutionary import GOGHS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

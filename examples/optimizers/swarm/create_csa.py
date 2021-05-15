@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.csa import CSA
+from opytimizer.optimizers.swarm import CSA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

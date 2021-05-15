@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.aeo import AEO
+from opytimizer.optimizers.population import AEO
 
 # Creates an AEO optimizer
 o = AEO()

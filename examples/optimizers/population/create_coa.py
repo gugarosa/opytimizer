@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.coa import COA
+from opytimizer.optimizers.population import COA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

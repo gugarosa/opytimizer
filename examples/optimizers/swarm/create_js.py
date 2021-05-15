@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.js import JS
+from opytimizer.optimizers.swarm import JS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

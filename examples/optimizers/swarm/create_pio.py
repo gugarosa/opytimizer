@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.pio import PIO
+from opytimizer.optimizers.swarm import PIO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

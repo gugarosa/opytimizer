@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.boa import BOA
+from opytimizer.optimizers.swarm import BOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

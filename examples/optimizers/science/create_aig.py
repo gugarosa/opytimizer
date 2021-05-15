@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.aig import AIG
+from opytimizer.optimizers.science import AIG
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

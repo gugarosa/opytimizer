@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.sos import SOS
+from opytimizer.optimizers.swarm import SOS
 
 # Creates an SOS optimizer
 o = SOS()

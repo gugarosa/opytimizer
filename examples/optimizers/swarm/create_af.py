@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.af import AF
+from opytimizer.optimizers.swarm import AF
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

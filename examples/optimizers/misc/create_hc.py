@@ -1,4 +1,4 @@
-from opytimizer.optimizers.misc.hc import HC
+from opytimizer.optimizers.misc import HC
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

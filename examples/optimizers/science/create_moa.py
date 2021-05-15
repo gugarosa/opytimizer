@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.moa import MOA
+from opytimizer.optimizers.science import MOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.hs import SGHS
+from opytimizer.optimizers.evolutionary import SGHS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

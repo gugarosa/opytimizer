@@ -1,4 +1,4 @@
-from opytimizer.optimizers.misc.cem import CEM
+from opytimizer.optimizers.misc import CEM
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.social.bso import BSO
+from opytimizer.optimizers.social import BSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.ao import AO
+from opytimizer.optimizers.population import AO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

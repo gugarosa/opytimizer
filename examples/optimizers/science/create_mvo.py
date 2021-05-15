@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.mvo import MVO
+from opytimizer.optimizers.science import MVO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

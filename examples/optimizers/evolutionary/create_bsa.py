@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.bsa import BSA
+from opytimizer.optimizers.evolutionary import BSA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

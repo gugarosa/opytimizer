@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.wwo import WWO
+from opytimizer.optimizers.science import WWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

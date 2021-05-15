@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.abo import ABO
+from opytimizer.optimizers.swarm import ABO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

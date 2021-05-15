@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.de import DE
+from opytimizer.optimizers.evolutionary import DE
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.boolean.umda import UMDA
+from opytimizer.optimizers.boolean import UMDA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

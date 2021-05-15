@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.lpoa import LPOA
+from opytimizer.optimizers.population import LPOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

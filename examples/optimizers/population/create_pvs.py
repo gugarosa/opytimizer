@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.pvs import PVS
+from opytimizer.optimizers.population import PVS
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

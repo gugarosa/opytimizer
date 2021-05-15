@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.ssa import SSA
+from opytimizer.optimizers.swarm import SSA
 
 # Creates a SSA optimizer
 o = SSA()

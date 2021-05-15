@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.eho import EHO
+from opytimizer.optimizers.swarm import EHO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

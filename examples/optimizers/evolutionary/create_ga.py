@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.ga import GA
+from opytimizer.optimizers.evolutionary import GA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

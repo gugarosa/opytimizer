@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.wca import WCA
+from opytimizer.optimizers.science import WCA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.social.ssd import SSD
+from opytimizer.optimizers.social import SSD
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.bwo import BWO
+from opytimizer.optimizers.swarm import BWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

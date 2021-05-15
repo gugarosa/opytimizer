@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.kh import KH
+from opytimizer.optimizers.swarm import KH
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

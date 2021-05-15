@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.woa import WOA
+from opytimizer.optimizers.swarm import WOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

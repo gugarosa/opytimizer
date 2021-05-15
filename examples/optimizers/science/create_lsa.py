@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.lsa import LSA
+from opytimizer.optimizers.science import LSA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

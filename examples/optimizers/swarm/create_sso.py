@@ -1,4 +1,4 @@
-from opytimizer.optimizers.swarm.sso import SSO
+from opytimizer.optimizers.swarm import SSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

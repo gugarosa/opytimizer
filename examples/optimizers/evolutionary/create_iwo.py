@@ -1,4 +1,4 @@
-from opytimizer.optimizers.evolutionary.iwo import IWO
+from opytimizer.optimizers.evolutionary import IWO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

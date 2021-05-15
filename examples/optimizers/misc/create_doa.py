@@ -1,4 +1,4 @@
-from opytimizer.optimizers.misc.doa import DOA
+from opytimizer.optimizers.misc import DOA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

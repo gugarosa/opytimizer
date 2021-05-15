@@ -1,4 +1,4 @@
-from opytimizer.optimizers.science.esa import ESA
+from opytimizer.optimizers.science import ESA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

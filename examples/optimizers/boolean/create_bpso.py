@@ -1,6 +1,6 @@
 import numpy as np
 
-from opytimizer.optimizers.boolean.bpso import BPSO
+from opytimizer.optimizers.boolean import BPSO
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used

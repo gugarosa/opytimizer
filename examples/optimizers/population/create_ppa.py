@@ -1,4 +1,4 @@
-from opytimizer.optimizers.population.ppa import PPA
+from opytimizer.optimizers.population import PPA
 
 # One should declare a hyperparameters object based
 # on the desired algorithm that will be used
