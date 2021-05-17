@@ -358,7 +358,7 @@ def test_sghs_generate_new_harmony():
     assert agent.fit > 0
 
 
-def test_sghs_run():
+def test_sghs_update():
     def square(x):
         return np.sum(x**2)
 

@@ -1,8 +1,6 @@
 """Magnetic Optimization Algorithm.
 """
 
-import copy
-
 import numpy as np
 
 import opytimizer.math.general as g
@@ -41,10 +39,10 @@ class MOA(Optimizer):
         super(MOA, self).__init__()
 
         # Particle moviment first constant
-        self.alpha = 1
+        self.alpha = 1.0
 
         # Particle moviment second constant
-        self.rho = 2
+        self.rho = 2.0
 
         # Builds the class
         self.build(params)

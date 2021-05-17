@@ -88,7 +88,7 @@ def test_bsa_crossover():
     new_bsa._crossover(search_space.agents, trial_agents)
 
 
-def test_bsa_run():
+def test_bsa_update():
     def square(x):
         return np.sum(x**2)
 

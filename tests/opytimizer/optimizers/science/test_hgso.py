@@ -164,7 +164,7 @@ def test_hgso_update_position():
     assert position[0][0] != 0
 
 
-def test_hgso_run():
+def test_hgso_update():
     def square(x):
         return np.sum(x**2)
 

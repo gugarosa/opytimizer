@@ -57,7 +57,7 @@ def test_de_mutate_agent():
     assert agent.position[0][0] != 0
 
 
-def test_de_run():
+def test_de_update():
     def square(x):
         return np.sum(x**2)
 

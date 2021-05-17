@@ -103,7 +103,7 @@ def test_two_constraint_handle():
         search_space.agents, search_space.best_agent, square, 1)
 
 
-def test_two_run():
+def test_two_update():
     def square(x):
         return np.sum(x**2)
 
