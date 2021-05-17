@@ -1,6 +1,8 @@
 """Magnetic Optimization Algorithm.
 """
 
+import copy
+
 import numpy as np
 
 import opytimizer.math.general as g
@@ -83,21 +85,6 @@ class MOA(Optimizer):
 
         self._rho = rho
 
-    @property
-    def velocity(self):
-        """np.array: Array of velocities.
-
-        """
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity):
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
-
-        self._velocity = velocity
-
     def create_additional_attrs(self, space):
         """Creates additional attributes that are used by this optimizer.
 
@@ -110,15 +97,11 @@ class MOA(Optimizer):
         if not np.sqrt(space.n_agents).is_integer():
             raise e.SizeError('`n_agents` should have a perfect square')
 
-        # Array of velocities
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-
     def update(self, space):
         """Wraps Magnetic Optimization Algorithm over all agents and variables.
 
         Args:
             space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
 
         """
 
@@ -149,18 +132,21 @@ class MOA(Optimizer):
             # Iterates through all neighbours
             for n in neighbours:
                 # Calculates the distance between current agent and neighbour (eq. 7)
-                distance = g.euclidean_distance(
-                    agent.position, space.agents[n].position)
+                distance = g.euclidean_distance(agent.position, space.agents[n].position)
 
                 # Calculates the force between agents (eq. 5)
                 force += (space.agents[n].position - agent.position) * fitness[n] / (distance + c.EPSILON)
 
-            # Calculates the acceleration (eq. 11)
-            r1 = r.generate_uniform_random_number(size=(space.n_variables, space.n_dimensions))
-            acceleration = (force / mass[i]) * r1
+            # Calculates the force's mean
+            # This increases the performance of algorithm by eliminating addition biases
+            force = np.mean(force)
 
-            # Updates the agent's velocity(eq. 12 - top)
-            self.velocity[i] += acceleration
+            # Updates the agent's velocity(eq. 9)
+            r1 = r.generate_uniform_random_number()
+            velocity = force / mass[i] * r1
 
-            # Updates the agent's position (eq. 12 - bottom)
-            agent.position += self.velocity[i]
+            # Updates the agent's position (eq. 10)
+            agent.position += velocity
+
+            # Clips the agent's limits
+            agent.clip_by_bound()
