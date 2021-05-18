@@ -64,12 +64,12 @@ def test_lsa_params_setter():
     assert new_lsa.p_fork == 0.01
 
 
-def test_lsa_create_additional_attrs():
+def test_lsa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_lsa = lsa.LSA()
-    new_lsa.create_additional_attrs(search_space)
+    new_lsa.compile(search_space)
 
     try:
         new_lsa.time = 'a'
@@ -101,7 +101,7 @@ def test_lsa_update_direction():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_lsa = lsa.LSA()
-    new_lsa.create_additional_attrs(search_space)
+    new_lsa.compile(search_space)
 
     new_lsa._update_direction(search_space.agents[0], square)
 
@@ -114,7 +114,7 @@ def test_lsa_update_position():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_lsa = lsa.LSA()
-    new_lsa.create_additional_attrs(search_space)
+    new_lsa.compile(search_space)
 
     new_lsa._update_position(
         search_space.agents[0], search_space.agents[0], square, 0.5)
@@ -128,7 +128,7 @@ def test_lsa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_lsa = lsa.LSA()
-    new_lsa.create_additional_attrs(search_space)
+    new_lsa.compile(search_space)
 
     new_lsa.p_fork = 1
     new_lsa.update(search_space, square, 1, 10)

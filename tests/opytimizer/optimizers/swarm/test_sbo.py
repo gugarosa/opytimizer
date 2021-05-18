@@ -60,12 +60,12 @@ def test_sbo_params_setter():
     assert new_sbo.z == 0.02
 
 
-def test_sbo_create_additional_attrs():
+def test_sbo_compile():
     search_space = search.SearchSpace(n_agents=2, n_variables=2,
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_sbo = sbo.SBO()
-    new_sbo.create_additional_attrs(search_space)
+    new_sbo.compile(search_space)
 
     try:
         new_sbo.sigma = 1
@@ -83,7 +83,7 @@ def test_sbo_update():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_sbo = sbo.SBO()
-    new_sbo.create_additional_attrs(search_space)
+    new_sbo.compile(search_space)
     new_sbo.p_mutation = 1
 
     new_sbo.update(search_space, square)

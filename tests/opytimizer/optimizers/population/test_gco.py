@@ -47,12 +47,12 @@ def test_gco_params_setter():
     assert new_gco.F == 1.5
 
 
-def test_gco_create_additional_attrs():
+def test_gco_compile():
     search_space = search.SearchSpace(n_agents=4, n_variables=2,
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
-    new_gco.create_additional_attrs(search_space)
+    new_gco.compile(search_space)
 
     try:
         new_gco.life = 1
@@ -74,7 +74,7 @@ def test_gco_mutate_cell():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
-    new_gco.create_additional_attrs(search_space)
+    new_gco.compile(search_space)
 
     cell = new_gco._mutate_cell(
         search_space.agents[0], search_space.agents[1], search_space.agents[2], search_space.agents[3])
@@ -90,7 +90,7 @@ def test_gco_dark_zone():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
-    new_gco.create_additional_attrs(search_space)
+    new_gco.compile(search_space)
 
     new_gco._dark_zone(search_space.agents, square)
 
@@ -100,7 +100,7 @@ def test_gco_light_zone():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
-    new_gco.create_additional_attrs(search_space)
+    new_gco.compile(search_space)
 
     new_gco._light_zone(search_space.agents)
 
@@ -113,7 +113,7 @@ def test_gco_update():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
-    new_gco.create_additional_attrs(search_space)
+    new_gco.compile(search_space)
 
     new_gco.update(search_space, square)
 

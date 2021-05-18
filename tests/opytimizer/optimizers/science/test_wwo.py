@@ -77,12 +77,12 @@ def test_wwo_params_setter():
     assert new_wwo.k_max == 1
 
 
-def test_wwo_create_additional_attrs():
+def test_wwo_compile():
     search_space = search.SearchSpace(n_agents=50, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     try:
         new_wwo.height = 1
@@ -107,7 +107,7 @@ def test_wwo_propagate_wave():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     wave = new_wwo._propagate_wave(search_space.agents[0], square, 0)
 
@@ -122,7 +122,7 @@ def test_wwo_refract_wave():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     height, length = new_wwo._refract_wave(
         search_space.agents[0], search_space.best_agent, square, 0)
@@ -139,7 +139,7 @@ def test_wwo_break_wave():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     broken_wave = new_wwo._break_wave(search_space.agents[0], square, 0)
 
@@ -151,7 +151,7 @@ def test_wwo_update_wave_length():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     new_wwo._update_wave_length(search_space.agents)
 
@@ -164,7 +164,7 @@ def test_wwo_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
-    new_wwo.create_additional_attrs(search_space)
+    new_wwo.compile(search_space)
 
     new_wwo.update(search_space, square)
     new_wwo.update(search_space, square)

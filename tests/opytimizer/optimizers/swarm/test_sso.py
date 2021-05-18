@@ -60,12 +60,12 @@ def test_sso_params_setter():
     assert new_sso.C_g == 0.9
 
 
-def test_sso_create_additional_attrs():
+def test_sso_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sso = sso.SSO()
-    new_sso.create_additional_attrs(search_space)
+    new_sso.compile(search_space)
 
     try:
         new_sso.local_position = 1
@@ -83,7 +83,7 @@ def test_sso_evaluate():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sso = sso.SSO()
-    new_sso.create_additional_attrs(search_space)
+    new_sso.compile(search_space)
 
     new_sso.evaluate(search_space, square)
 
@@ -93,6 +93,6 @@ def test_sso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sso = sso.SSO()
-    new_sso.create_additional_attrs(search_space)
+    new_sso.compile(search_space)
 
     new_sso.update(search_space)

@@ -46,12 +46,12 @@ def test_ssd_params_setter():
     assert new_ssd.decay == 0.99
 
 
-def test_ssd_create_additional_attrs():
+def test_ssd_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ssd = ssd.SSD()
-    new_ssd.create_additional_attrs(search_space)
+    new_ssd.compile(search_space)
 
     try:
         new_ssd.local_position = 1
@@ -81,7 +81,7 @@ def test_ssd_update_position():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ssd = ssd.SSD()
-    new_ssd.create_additional_attrs(search_space)
+    new_ssd.compile(search_space)
 
     position = new_ssd._update_position(1, 1)
 
@@ -93,7 +93,7 @@ def test_ssd_update_velocity():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ssd = ssd.SSD()
-    new_ssd.create_additional_attrs(search_space)
+    new_ssd.compile(search_space)
 
     velocity = new_ssd._update_velocity(0.5, 10, 1)
 
@@ -108,7 +108,7 @@ def test_ssd_evaluate():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ssd = ssd.SSD()
-    new_ssd.create_additional_attrs(search_space)
+    new_ssd.compile(search_space)
 
     new_ssd.evaluate(search_space, square)
 
@@ -123,6 +123,6 @@ def test_ssd_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ssd = ssd.SSD()
-    new_ssd.create_additional_attrs(search_space)
+    new_ssd.compile(search_space)
 
     new_ssd.update(search_space, square)

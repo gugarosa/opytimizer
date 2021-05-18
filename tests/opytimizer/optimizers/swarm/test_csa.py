@@ -38,12 +38,12 @@ def test_csa_params_setter():
     assert new_csa.AP == 0.1
 
 
-def test_csa_create_additional_attrs():
+def test_csa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_csa = csa.CSA()
-    new_csa.create_additional_attrs(search_space)
+    new_csa.compile(search_space)
 
     try:
         new_csa.memory = 1
@@ -61,7 +61,7 @@ def test_csa_evaluate():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_csa = csa.CSA()
-    new_csa.create_additional_attrs(search_space)
+    new_csa.compile(search_space)
 
     new_csa.evaluate(search_space, square)
 
@@ -71,7 +71,7 @@ def test_csa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_csa = csa.CSA()
-    new_csa.create_additional_attrs(search_space)
+    new_csa.compile(search_space)
 
     new_csa.update(search_space)
 

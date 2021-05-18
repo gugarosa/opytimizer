@@ -46,12 +46,12 @@ def test_cem_params_setter():
     assert new_cem.alpha == 0.5
 
 
-def test_cem_create_additional_attrs():
+def test_cem_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cem = cem.CEM()
-    new_cem.create_additional_attrs(search_space)
+    new_cem.compile(search_space)
 
     try:
         new_cem.mean = 1
@@ -76,7 +76,7 @@ def test_cem_create_new_samples():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cem = cem.CEM()
-    new_cem.create_additional_attrs(search_space)
+    new_cem.compile(search_space)
 
     new_cem._create_new_samples(search_space.agents, square)
 
@@ -86,7 +86,7 @@ def test_cem_update_mean():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cem = cem.CEM()
-    new_cem.create_additional_attrs(search_space)
+    new_cem.compile(search_space)
 
     new_cem._update_mean(np.array([1, 1]))
 
@@ -98,7 +98,7 @@ def test_cem_update_std():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cem = cem.CEM()
-    new_cem.create_additional_attrs(search_space)
+    new_cem.compile(search_space)
 
     new_cem._update_std(np.array([1, 1]))
 
@@ -115,6 +115,6 @@ def test_cem_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cem = cem.CEM()
-    new_cem.create_additional_attrs(search_space)
+    new_cem.compile(search_space)
 
     new_cem.update(search_space, new_function)

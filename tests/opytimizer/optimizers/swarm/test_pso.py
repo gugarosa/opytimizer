@@ -60,12 +60,12 @@ def test_pso_params_setter():
     assert new_pso.c2 == 1.5
 
 
-def test_pso_create_additional_attrs():
+def test_pso_compile():
     search_space = search.SearchSpace(n_agents=2, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pso = pso.PSO()
-    new_pso.create_additional_attrs(search_space)
+    new_pso.compile(search_space)
 
     try:
         new_pso.local_position = 1
@@ -90,7 +90,7 @@ def test_pso_evaluate():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pso = pso.PSO()
-    new_pso.create_additional_attrs(search_space)
+    new_pso.compile(search_space)
 
     new_pso.evaluate(search_space, square)
 
@@ -100,7 +100,7 @@ def test_pso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pso = pso.PSO()
-    new_pso.create_additional_attrs(search_space)
+    new_pso.compile(search_space)
 
     new_pso.update(search_space)
 
@@ -110,7 +110,7 @@ def test_aiwpso_compute_success():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aiwpso = pso.AIWPSO()
-    new_aiwpso.create_additional_attrs(search_space)
+    new_aiwpso.compile(search_space)
 
     new_aiwpso.fitness = [1, 1]
     new_aiwpso._compute_success(search_space.agents)
@@ -121,17 +121,17 @@ def test_aiwpso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aiwpso = pso.AIWPSO()
-    new_aiwpso.create_additional_attrs(search_space)
+    new_aiwpso.compile(search_space)
 
     new_aiwpso.update(search_space, 0)
 
 
-def test_rpso_create_additional_attrs():
+def test_rpso_compile():
     search_space = search.SearchSpace(n_agents=2, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_rpso = pso.RPSO()
-    new_rpso.create_additional_attrs(search_space)
+    new_rpso.compile(search_space)
 
     try:
         new_rpso.local_position = 1
@@ -160,7 +160,7 @@ def test_rpso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_rpso = pso.RPSO()
-    new_rpso.create_additional_attrs(search_space)
+    new_rpso.compile(search_space)
 
     new_rpso.update(search_space)
 
@@ -170,17 +170,17 @@ def test_savpso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_savpso = pso.SAVPSO()
-    new_savpso.create_additional_attrs(search_space)
+    new_savpso.compile(search_space)
 
     new_savpso.update(search_space)
 
 
-def test_vpso_create_additional_attrs():
+def test_vpso_compile():
     search_space = search.SearchSpace(n_agents=2, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_vpso = pso.VPSO()
-    new_vpso.create_additional_attrs(search_space)
+    new_vpso.compile(search_space)
 
     try:
         new_vpso.local_position = 1
@@ -209,6 +209,6 @@ def test_vpso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_vpso = pso.VPSO()
-    new_vpso.create_additional_attrs(search_space)
+    new_vpso.compile(search_space)
 
     new_vpso.update(search_space)

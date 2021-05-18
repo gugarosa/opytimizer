@@ -97,8 +97,8 @@ class CSA(Optimizer):
 
         self._memory = memory
 
-    def create_additional_attrs(self, space):
-        """Creates additional attributes that are used by this optimizer.
+    def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
 
         Args:
             space (Space): A Space object containing meta-information.

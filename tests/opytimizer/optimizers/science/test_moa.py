@@ -47,19 +47,19 @@ def test_moa_params_setter():
     assert new_moa.rho == 2.0
 
 
-def test_moa_create_additional_attrs():
+def test_moa_compile():
     try:
         search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                           lower_bound=[0, 0], upper_bound=[10, 10])
 
         new_moa = moa.MOA()
-        new_moa.create_additional_attrs(search_space)
+        new_moa.compile(search_space)
     except:
         search_space = search.SearchSpace(n_agents=9, n_variables=2,
                                           lower_bound=[0, 0], upper_bound=[10, 10])
 
         new_moa = moa.MOA()
-        new_moa.create_additional_attrs(search_space)
+        new_moa.compile(search_space)
 
 
 def test_moa_update():
@@ -67,6 +67,6 @@ def test_moa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_moa = moa.MOA()
-    new_moa.create_additional_attrs(search_space)
+    new_moa.compile(search_space)
 
     new_moa.update(search_space)

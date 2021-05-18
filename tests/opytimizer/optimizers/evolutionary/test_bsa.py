@@ -40,12 +40,12 @@ def test_bsa_params_setter():
     assert new_bsa.mix_rate == 1
 
 
-def test_bsa_create_additional_attrs():
+def test_bsa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
-    new_bsa.create_additional_attrs(search_space)
+    new_bsa.compile(search_space)
 
     try:
         new_bsa.old_agents = 1
@@ -60,7 +60,7 @@ def test_bsa_permute():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
-    new_bsa.create_additional_attrs(search_space)
+    new_bsa.compile(search_space)
 
     new_bsa._permute(search_space.agents)
 
@@ -70,7 +70,7 @@ def test_bsa_mutate():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
-    new_bsa.create_additional_attrs(search_space)
+    new_bsa.compile(search_space)
 
     trial_agents = new_bsa._mutate(search_space.agents)
 
@@ -82,7 +82,7 @@ def test_bsa_crossover():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
-    new_bsa.create_additional_attrs(search_space)
+    new_bsa.compile(search_space)
 
     trial_agents = new_bsa._mutate(search_space.agents)
     new_bsa._crossover(search_space.agents, trial_agents)
@@ -96,6 +96,6 @@ def test_bsa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
-    new_bsa.create_additional_attrs(search_space)
+    new_bsa.compile(search_space)
 
     new_bsa.update(search_space, square)

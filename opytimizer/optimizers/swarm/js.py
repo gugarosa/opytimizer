@@ -125,8 +125,8 @@ class JS(Optimizer):
                     # Calculates its position using logistic chaotic map (eq. 18)
                     agent.position[j] = self.eta * agents[i-1].position[j] * (1 - agents[i-1].position[j])
 
-    def create_additional_attrs(self, space):
-        """Creates additional attributes that are used by this optimizer.
+    def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
 
         Args:
             space (Space): A Space object containing meta-information.

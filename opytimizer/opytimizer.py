@@ -39,7 +39,7 @@ class Opytimizer:
 
         # Optimizer (and its additional variables)
         self.optimizer = optimizer
-        self.optimizer.create_additional_attrs(space)
+        self.optimizer.compile(space)
 
         # Function
         self.function = function

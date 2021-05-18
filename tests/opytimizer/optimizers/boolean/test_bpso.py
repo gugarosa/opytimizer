@@ -39,11 +39,11 @@ def test_bpso_params_setter():
     assert new_bpso.c2 == 0 or new_bpso.c2 == 1
 
 
-def test_bpso_create_additional_attrs():
+def test_bpso_compile():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
     
     new_bpso = bpso.BPSO()
-    new_bpso.create_additional_attrs(boolean_space)
+    new_bpso.compile(boolean_space)
 
     try:
         new_bpso.local_position = 1
@@ -69,7 +69,7 @@ def test_bpso_evaluate():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
-    new_bpso.create_additional_attrs(boolean_space)
+    new_bpso.compile(boolean_space)
 
     new_bpso.evaluate(boolean_space, new_function)
 
@@ -80,6 +80,6 @@ def test_bpso_update():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
 
     new_bpso = bpso.BPSO()
-    new_bpso.create_additional_attrs(boolean_space)
+    new_bpso.compile(boolean_space)
 
     new_bpso.update(boolean_space)

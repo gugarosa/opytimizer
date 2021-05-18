@@ -62,12 +62,12 @@ def test_sfo_params_setter():
     assert new_sfo.e == 0.001
 
 
-def test_sfo_create_additional_attrs():
+def test_sfo_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=3,
                                       lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
-    new_sfo.create_additional_attrs(search_space)
+    new_sfo.compile(search_space)
 
     try:
         new_sfo.sardines = 1
@@ -82,7 +82,7 @@ def test_sfo_generate_random_agent():
                                       lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
-    new_sfo.create_additional_attrs(search_space)
+    new_sfo.compile(search_space)
 
     agent = new_sfo._generate_random_agent(search_space.agents[0])
 
@@ -94,7 +94,7 @@ def test_sfo_calculate_lambda_i():
                                       lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
-    new_sfo.create_additional_attrs(search_space)
+    new_sfo.compile(search_space)
 
     lambda_i = new_sfo._calculate_lambda_i(10, 10)
 
@@ -106,7 +106,7 @@ def test_sfo_update_sailfish():
                                       lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
-    new_sfo.create_additional_attrs(search_space)
+    new_sfo.compile(search_space)
 
     position = new_sfo._update_sailfish(
         search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5)
@@ -122,7 +122,7 @@ def test_sfo_update():
                                       lower_bound=[0, 0, 0, 0, 0], upper_bound=[10, 10, 10, 10, 10])
 
     new_sfo = sfo.SFO()
-    new_sfo.create_additional_attrs(search_space)
+    new_sfo.compile(search_space)
 
     new_sfo.update(search_space, square, 1)
 

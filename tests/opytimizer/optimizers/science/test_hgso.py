@@ -122,12 +122,12 @@ def test_hgso_params_setter():
     assert new_hgso.K == 1.0
 
 
-def test_hgso_create_additional_attrs():
+def test_hgso_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
-    new_hgso.create_additional_attrs(search_space)
+    new_hgso.compile(search_space)
 
     try:
         new_hgso.coefficient = 1
@@ -156,7 +156,7 @@ def test_hgso_update_position():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
-    new_hgso.create_additional_attrs(search_space)
+    new_hgso.compile(search_space)
 
     position = new_hgso._update_position(
         search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5)
@@ -172,6 +172,6 @@ def test_hgso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
-    new_hgso.create_additional_attrs(search_space)
+    new_hgso.compile(search_space)
 
     new_hgso.update(search_space, square, 1, 10)

@@ -90,12 +90,12 @@ def test_wdo_params_setter():
     assert new_wdo.RT == 0.5
 
 
-def test_wdo_create_additional_attrs():
+def test_wdo_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wdo = wdo.WDO()
-    new_wdo.create_additional_attrs(search_space)
+    new_wdo.compile(search_space)
 
     try:
         new_wdo.velocity = 1
@@ -113,6 +113,6 @@ def test_wdo_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wdo = wdo.WDO()
-    new_wdo.create_additional_attrs(search_space)
+    new_wdo.compile(search_space)
 
     new_wdo.update(search_space, square)

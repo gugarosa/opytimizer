@@ -75,12 +75,12 @@ def test_eo_params_setter():
     assert new_eo.V == 1.0
 
 
-def test_eo_create_additional_attrs():
+def test_eo_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_eo = eo.EO()
-    new_eo.create_additional_attrs(search_space)
+    new_eo.compile(search_space)
 
     try:
         new_eo.C = 1
@@ -95,7 +95,7 @@ def test_eo_calculate_equilibrium():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_eo = eo.EO()
-    new_eo.create_additional_attrs(search_space)
+    new_eo.compile(search_space)
 
     new_eo._calculate_equilibrium(search_space.agents)
 
@@ -108,7 +108,7 @@ def test_eo_average_concentration():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_eo = eo.EO()
-    new_eo.create_additional_attrs(search_space)
+    new_eo.compile(search_space)
 
     C_avg = new_eo._average_concentration(square)
 
@@ -123,6 +123,6 @@ def test_eo_update():
                                       lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_eo = eo.EO()
-    new_eo.create_additional_attrs(search_space)
+    new_eo.compile(search_space)
 
     new_eo.update(search_space, square, 1, 10)

@@ -30,12 +30,12 @@ def test_es_params_setter():
     assert new_es.child_ratio == 0.5
 
 
-def test_es_create_additional_attrs():
+def test_es_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_es = es.ES()
-    new_es.create_additional_attrs(search_space)
+    new_es.compile(search_space)
 
     try:
         new_es.n_children = 'a'
@@ -67,7 +67,7 @@ def test_es_mutate_parent():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_es = es.ES()
-    new_es.create_additional_attrs(search_space)
+    new_es.compile(search_space)
 
     agent = new_es._mutate_parent(search_space.agents[0], 0, square)
 
@@ -79,7 +79,7 @@ def test_es_update_strategy():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_es = es.ES()
-    new_es.create_additional_attrs(search_space)
+    new_es.compile(search_space)
 
     new_es._update_strategy(0)
 
@@ -94,6 +94,6 @@ def test_es_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_es = es.ES()
-    new_es.create_additional_attrs(search_space)
+    new_es.compile(search_space)
 
     new_es.update(search_space, square)

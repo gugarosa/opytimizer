@@ -304,12 +304,12 @@ def test_sghs_params_setter():
     assert new_sghs.bw_max == 10.0
 
 
-def test_sghs_create_additional_attrs():
+def test_sghs_compile():
     search_space = search.SearchSpace(n_agents=2, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sghs = hs.SGHS()
-    new_sghs.create_additional_attrs(search_space)
+    new_sghs.compile(search_space)
 
     try:
         new_sghs.lp = 'a'
@@ -345,7 +345,7 @@ def test_sghs_generate_new_harmony():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sghs = hs.SGHS()
-    new_sghs.create_additional_attrs(search_space)
+    new_sghs.compile(search_space)
 
     agent = new_sghs._generate_new_harmony(search_space.agents)
 
@@ -366,7 +366,7 @@ def test_sghs_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sghs = hs.SGHS()
-    new_sghs.create_additional_attrs(search_space)
+    new_sghs.compile(search_space)
 
     new_sghs.update(search_space, square, 1, 10)
     new_sghs.update(search_space, square, 6, 10)

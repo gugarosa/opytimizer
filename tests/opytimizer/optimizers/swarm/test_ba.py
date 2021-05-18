@@ -80,12 +80,12 @@ def test_ba_params_setter():
     assert new_ba.r == 0.5
 
 
-def test_ba_create_additional_attrs():
+def test_ba_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ba = ba.BA()
-    new_ba.create_additional_attrs(search_space)
+    new_ba.compile(search_space)
 
     try:
         new_ba.frequency = 1
@@ -124,6 +124,6 @@ def test_ba_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ba = ba.BA()
-    new_ba.create_additional_attrs(search_space)
+    new_ba.compile(search_space)
 
     new_ba.update(search_space, square, 1)

@@ -4,12 +4,12 @@ from opytimizer.optimizers.swarm import ffoa
 from opytimizer.spaces import search
 
 
-def test_ffoa_create_additional_attrs():
+def test_ffoa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ffoa = ffoa.FFOA()
-    new_ffoa.create_additional_attrs(search_space)
+    new_ffoa.compile(search_space)
 
     try:
         new_ffoa.x_axis = 1
@@ -34,6 +34,6 @@ def test_ffoa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ffoa = ffoa.FFOA()
-    new_ffoa.create_additional_attrs(search_space)
+    new_ffoa.compile(search_space)
 
     new_ffoa.update(search_space, square)

@@ -38,12 +38,12 @@ def test_aso_params_setter():
     assert new_aso.beta == 0.2
 
 
-def test_aso_create_additional_attrs():
+def test_aso_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
-    new_aso.create_additional_attrs(search_space)
+    new_aso.compile(search_space)
 
     try:
         new_aso.velocity = 1
@@ -58,7 +58,7 @@ def test_aso_calculate_mass():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
-    new_aso.create_additional_attrs(search_space)
+    new_aso.compile(search_space)
 
     mass = new_aso._calculate_mass(search_space.agents)
 
@@ -70,7 +70,7 @@ def test_aso_calculate_potential():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
-    new_aso.create_additional_attrs(search_space)
+    new_aso.compile(search_space)
 
     new_aso._calculate_potential(
         search_space.agents[0], search_space.agents[1], np.array([1]), 1, 10)
@@ -81,7 +81,7 @@ def test_aso_calculate_acceleration():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
-    new_aso.create_additional_attrs(search_space)
+    new_aso.compile(search_space)
 
     mass = new_aso._calculate_mass(search_space.agents)
     new_aso._calculate_acceleration(
@@ -93,6 +93,6 @@ def test_aso_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_aso = aso.ASO()
-    new_aso.create_additional_attrs(search_space)
+    new_aso.compile(search_space)
 
     new_aso.update(search_space, 1, 10)

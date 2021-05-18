@@ -60,12 +60,12 @@ def test_boa_params_setter():
     assert new_boa.p == 0.8
 
 
-def test_boa_create_additional_attrs():
+def test_boa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
-    new_boa.create_additional_attrs(search_space)
+    new_boa.compile(search_space)
 
     try:
         new_boa.fragrance = 1
@@ -80,7 +80,7 @@ def test_boa_best_movement():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
-    new_boa.create_additional_attrs(search_space)
+    new_boa.compile(search_space)
 
     new_boa._best_movement(
         search_space.agents[0].position, search_space.best_agent.position, new_boa.fragrance[0], 0.5)
@@ -91,7 +91,7 @@ def test_boa_local_movement():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
-    new_boa.create_additional_attrs(search_space)
+    new_boa.compile(search_space)
 
     new_boa._local_movement(search_space.agents[0].position, search_space.agents[1].position,
                             search_space.agents[2].position, new_boa.fragrance[0], 0.5)
@@ -102,6 +102,6 @@ def test_boa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
-    new_boa.create_additional_attrs(search_space)
+    new_boa.compile(search_space)
 
     new_boa.update(search_space)

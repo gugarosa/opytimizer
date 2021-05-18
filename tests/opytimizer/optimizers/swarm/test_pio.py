@@ -60,12 +60,12 @@ def test_pio_params_setter():
     assert new_pio.R == 0.2
 
 
-def test_pio_create_additional_attrs():
+def test_pio_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
-    new_pio.create_additional_attrs(search_space)
+    new_pio.compile(search_space)
 
     try:
         new_pio.n_p = 'a'
@@ -94,7 +94,7 @@ def test_pio_calculate_center():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
-    new_pio.create_additional_attrs(search_space)
+    new_pio.compile(search_space)
 
     center = new_pio._calculate_center(search_space.agents)
 
@@ -104,7 +104,7 @@ def test_pio_update_center_position():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
-    new_pio.create_additional_attrs(search_space)
+    new_pio.compile(search_space)
 
     center = new_pio._calculate_center(search_space.agents)
     position = new_pio._update_center_position(
@@ -116,7 +116,7 @@ def test_pio_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
-    new_pio.create_additional_attrs(search_space)
+    new_pio.compile(search_space)
 
     new_pio.update(search_space, 1)
     new_pio.update(search_space, 175)

@@ -42,22 +42,26 @@ class ISA(Optimizer):
         # Overrides its parent class with the receiving params
         super(ISA, self).__init__()
 
+        # Inertia weight
         self.w = 0.7
+
+        # Tendency factor
+        self.tau = 0.3
 
         # Builds the class
         self.build(params)
 
         logger.info('Class overrided.')
 
-    def create_additional_attrs(self, space):
-        """Creates additional attributes that are used by this optimizer.
+    def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
 
         Args:
             space (Space): A Space object containing meta-information.
 
         """
 
-        # Arrays of local positions, velocities and masses
+        # Arrays of local positions and velocities
         self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
         self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
@@ -79,10 +83,10 @@ class ISA(Optimizer):
         w_fit = function(w_position)
 
         for i, agent in enumerate(space.agents):
-            tendency = r.generate_uniform_random_number()
+            r1 = r.generate_uniform_random_number()
             idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
-            if tendency >= 0.3:
+            if r1 >= self.tau:
                 phi3 = r.generate_uniform_random_number()
                 phi2 = 2 * r.generate_uniform_random_number()
                 phi1 = -(phi2 + phi3) * r.generate_uniform_random_number()

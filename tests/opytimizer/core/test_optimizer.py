@@ -65,10 +65,10 @@ def test_optimizer_build():
     new_optimizer.build({'w': 1.5})
 
 
-def test_optimizer_create_additional_attrs():
+def test_optimizer_compile():
     new_optimizer = optimizer.Optimizer()
 
-    new_optimizer.create_additional_attrs(None)
+    new_optimizer.compile(None)
 
 
 def test_optimizer_update():

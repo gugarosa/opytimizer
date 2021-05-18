@@ -30,12 +30,12 @@ def test_gsa_params_setter():
     assert new_gsa.G == 0.1
 
 
-def test_gsa_create_additional_attrs():
+def test_gsa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_gsa = gsa.GSA()
-    new_gsa.create_additional_attrs(search_space)
+    new_gsa.compile(search_space)
 
     try:
         new_gsa.velocity = 1
@@ -50,7 +50,7 @@ def test_gsa_calculate_mass():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_gsa = gsa.GSA()
-    new_gsa.create_additional_attrs(search_space)
+    new_gsa.compile(search_space)
 
     search_space.agents[0].fit = 1
 
@@ -66,7 +66,7 @@ def test_gsa_calculate_force():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_gsa = gsa.GSA()
-    new_gsa.create_additional_attrs(search_space)
+    new_gsa.compile(search_space)
 
     search_space.agents[0].fit = 1
 
@@ -86,6 +86,6 @@ def test_gsa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_gsa = gsa.GSA()
-    new_gsa.create_additional_attrs(search_space)
+    new_gsa.compile(search_space)
 
     new_gsa.update(search_space, 1)

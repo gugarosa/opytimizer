@@ -45,12 +45,12 @@ def test_wca_params_setter():
     assert new_wca.d_max == 0.1
 
 
-def test_wca_create_additional_attrs():
+def test_wca_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
 
     try:
         new_wca.flows = 1
@@ -65,7 +65,7 @@ def test_wca_flow_intensity():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
 
 
 def test_wca_raining_process():
@@ -73,7 +73,7 @@ def test_wca_raining_process():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
     new_wca.flows[0] = 5
 
     new_wca.d_max = 100
@@ -88,7 +88,7 @@ def test_wca_update_stream():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
     new_wca.flows[0] = 5
 
     new_wca._update_stream(search_space.agents, square)
@@ -102,7 +102,7 @@ def test_wca_update_river():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
 
     new_wca._update_river(search_space.agents, search_space.best_agent, square)
 
@@ -117,6 +117,6 @@ def test_wca_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wca = wca.WCA()
-    new_wca.create_additional_attrs(search_space)
+    new_wca.compile(search_space)
 
     new_wca.update(search_space, square, 1)

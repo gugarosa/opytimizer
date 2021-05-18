@@ -30,12 +30,12 @@ def test_doa_params_setter():
     assert new_doa.r == 1.0
 
 
-def test_doa_create_additional_attrs():
+def test_doa_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_doa = doa.DOA()
-    new_doa.create_additional_attrs(search_space)
+    new_doa.compile(search_space)
 
     try:
         new_doa.chaotic_map = 1
@@ -58,6 +58,6 @@ def test_doa_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_doa = doa.DOA()
-    new_doa.create_additional_attrs(search_space)
+    new_doa.compile(search_space)
 
     new_doa.update(search_space)

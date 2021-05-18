@@ -162,12 +162,12 @@ def test_kh_params_setter():
     assert new_kh.Mu == 0.05
 
 
-def test_kh_create_additional_attrs():
+def test_kh_compile():
     search_space = search.SearchSpace(n_agents=5, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     try:
         new_kh.motion = 1
@@ -192,7 +192,7 @@ def test_kh_food_location():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     food = new_kh._food_location(search_space.agents, square)
 
@@ -204,7 +204,7 @@ def test_kh_sensing_distance():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     distance, eucl_distance = new_kh._sensing_distance(search_space.agents, 0)
 
@@ -217,7 +217,7 @@ def test_kh_get_neighbours():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     distance, eucl_distance = new_kh._sensing_distance(search_space.agents, 0)
 
@@ -232,7 +232,7 @@ def test_kh_local_alpha():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     distance, eucl_distance = new_kh._sensing_distance(search_space.agents, 0)
 
@@ -250,7 +250,7 @@ def test_kh_target_alpha():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     alpha = new_kh._target_alpha(
         search_space.agents[0], search_space.agents[-1], search_space.agents[0], 1)
@@ -263,7 +263,7 @@ def test_kh_neighbour_motion():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     motion = np.zeros((5, 2, 1))
 
@@ -278,7 +278,7 @@ def test_kh_food_beta():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     beta = new_kh._food_beta(
         search_space.agents[0], search_space.agents[-1], search_space.agents[0], search_space.agents[0], 1)
@@ -291,7 +291,7 @@ def test_kh_best_beta():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     beta = new_kh._best_beta(
         search_space.agents[0], search_space.agents[-1], search_space.agents[0])
@@ -304,7 +304,7 @@ def test_kh_foraging_motion():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     foraging = np.zeros((5, 2, 1))
 
@@ -319,7 +319,7 @@ def test_kh_physical_diffusion():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     new_physical = new_kh._physical_diffusion(1, 1, 1, 20)
 
@@ -331,7 +331,7 @@ def test_kh_update_position():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     motion = np.zeros((2, 1))
 
@@ -348,7 +348,7 @@ def test_kh_crossover():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     crossover = new_kh._crossover(search_space.agents, 0)
 
@@ -360,7 +360,7 @@ def test_kh_mutation():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     mutation = new_kh._mutation(search_space.agents, 0)
 
@@ -375,6 +375,6 @@ def test_kh_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_kh = kh.KH()
-    new_kh.create_additional_attrs(search_space)
+    new_kh.compile(search_space)
 
     new_kh.update(search_space, square, 1, 10)

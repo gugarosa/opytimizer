@@ -45,12 +45,12 @@ def test_ep_params_setter():
     assert new_ep.clip_ratio == 0.5
 
 
-def test_ep_create_additional_attrs():
+def test_ep_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ep = ep.EP()
-    new_ep.create_additional_attrs(search_space)
+    new_ep.compile(search_space)
 
     try:
         new_ep.strategy = 1
@@ -68,7 +68,7 @@ def test_ep_mutate_parent():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ep = ep.EP()
-    new_ep.create_additional_attrs(search_space)
+    new_ep.compile(search_space)
 
     agent = new_ep._mutate_parent(search_space.agents[0], 0, square)
 
@@ -80,7 +80,7 @@ def test_ep_update_strategy():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ep = ep.EP()
-    new_ep.create_additional_attrs(search_space)
+    new_ep.compile(search_space)
 
     new_ep._update_strategy(0, [1], [2])
 
@@ -95,6 +95,6 @@ def test_ep_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_ep = ep.EP()
-    new_ep.create_additional_attrs(search_space)
+    new_ep.compile(search_space)
 
     new_ep.update(search_space, square)

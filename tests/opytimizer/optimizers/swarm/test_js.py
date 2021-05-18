@@ -70,12 +70,12 @@ def test_js_initialize_chaotic_map():
     new_js._initialize_chaotic_map(search_space.agents)
 
 
-def test_js_create_additional_attrs():
+def test_js_compile():
     search_space = search.SearchSpace(n_agents=10, n_variables=2,
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-    new_js.create_additional_attrs(search_space)
+    new_js.compile(search_space)
 
 
 def test_js_ocean_current():
@@ -83,7 +83,7 @@ def test_js_ocean_current():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-    new_js.create_additional_attrs(search_space)
+    new_js.compile(search_space)
 
     trend = new_js._ocean_current(search_space.agents, search_space.best_agent)
 
@@ -95,7 +95,7 @@ def test_js_motion_a():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-    new_js.create_additional_attrs(search_space)
+    new_js.compile(search_space)
 
     motion = new_js._motion_a(0, 1)
 
@@ -107,7 +107,7 @@ def test_js_motion_b():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-    new_js.create_additional_attrs(search_space)
+    new_js.compile(search_space)
 
     motion = new_js._motion_b(search_space.agents[0], search_space.agents[1])
 
@@ -119,7 +119,7 @@ def test_js_update():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_js = js.JS()
-    new_js.create_additional_attrs(search_space)
+    new_js.compile(search_space)
 
     new_js.update(search_space, 1, 10)
 
@@ -129,7 +129,7 @@ def test_nbjs_motion_a():
                                       lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_nbjs = js.NBJS()
-    new_nbjs.create_additional_attrs(search_space)
+    new_nbjs.compile(search_space)
 
     motion = new_nbjs._motion_a(0, 1)
 

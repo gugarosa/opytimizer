@@ -99,8 +99,8 @@ class Optimizer:
         logger.debug('Algorithm: %s | Custom Parameters: %s | Built: %s.',
                      self.algorithm, str(params), self.built)
 
-    def create_additional_attrs(self, space):
-        """Creates additional attributes that are used by this optimizer.
+    def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
 
         This method is called before the optimization procedure and makes sure
         that the additional variable is available as a property.
