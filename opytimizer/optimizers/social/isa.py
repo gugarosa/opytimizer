@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -173,11 +171,12 @@ class ISA(Optimizer):
         best, worst = space.agents[0], space.agents[-1]
 
         # Calculates the coefficient and weighted coefficient and weighted particle (eq. 1.2)
-        coef = [(best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON) for agent in space.agents]
-        w_coef = [c / np.sum(coef) for c in coef]
+        coef = [(best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON)
+                for agent in space.agents]
+        w_coef = [cf / (np.sum(coef) + c.EPSILON) for cf in coef]
 
         # Calculates weighted particle position and fitness (eq. 1.1)
-        w_position = np.sum([c * agent.position for c, agent in zip(w_coef, space.agents)], axis=0)
+        w_position = np.sum([cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0)
         w_fit = function(w_position)
 
         # Iterates through all agents
@@ -192,12 +191,12 @@ class ISA(Optimizer):
                 phi3 = r.generate_uniform_random_number()
                 phi2 = 2 * r.generate_uniform_random_number()
                 phi1 = -(phi2 + phi3) * r.generate_uniform_random_number()
-                
+
                 # Updates the agent's velocity (eq. 6.1)
                 self.velocity[i] = self.w * self.velocity[i] + \
-                                   phi1 * (self.local_position[idx] - agent.position) + \
-                                   phi2 * (space.best_agent.position - self.local_position[idx]) + \
-                                   phi3 * (w_position - self.local_position[idx])
+                    phi1 * (self.local_position[idx] - agent.position) + \
+                    phi2 * (space.best_agent.position - self.local_position[idx]) + \
+                    phi3 * (w_position - self.local_position[idx])
 
             # If random number is smaller than tendency factor
             else:
@@ -208,7 +207,7 @@ class ISA(Optimizer):
                 if agent.fit < space.agents[idx].fit:
                     # Updates agent's velocity (eq. 6.2 - top)
                     self.velocity[i] = r2 * (agent.position - space.agents[idx].position)
-                
+
                 # If current agent's fitness is bigger than selected agent
                 else:
                     # Updates agent's velocity (eq. 6.2 - bottom)
@@ -221,11 +220,14 @@ class ISA(Optimizer):
             agent.fit = function(agent.position)
             local_fit = function(self.local_position[i])
 
-            if w_fit < local_fit:
-                self.local_position[i] = w_position
-
-            if agent.fit < w_fit:
-                self.local_position[i] = agent.position
-
-
-
+            # Checks whether `w_fit` is smaller than agent's fitness
+            if np.sign(w_fit - agent.fit) == -1:
+                # If weighted fitness is better than local fitness
+                if w_fit < local_fit:
+                    # Replaces local position with weighted position
+                    self.local_position[i] = copy.deepcopy(w_position)
+            else:
+                # If current agent's fitness is better than weighted fitness
+                if agent.fit < local_fit:
+                    # Replaces local position with agent's position
+                    self.local_position[i] = copy.deepcopy(agent.position)
