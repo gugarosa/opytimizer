@@ -213,15 +213,16 @@ class ISA(Optimizer):
                     # Updates agent's velocity (eq. 6.2 - bottom)
                     self.velocity[i] = r2 * (space.agents[idx].position - agent.position)
 
-            # Updates agent's position (eq. 6.3)
+            # Updates agent's position and clip its bounds (eq. 6.3)
             agent.position += self.velocity[i]
+            agent.clip_by_bound()
 
             # Evaluates agent's and local's fitnesses
             agent.fit = function(agent.position)
             local_fit = function(self.local_position[i])
 
             # Checks whether `w_fit` is smaller than agent's fitness
-            if np.sign(w_fit - agent.fit) == -1:
+            if w_fit < agent.fit:
                 # If weighted fitness is better than local fitness
                 if w_fit < local_fit:
                     # Replaces local position with weighted position
