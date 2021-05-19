@@ -1,17 +1,12 @@
 """Parasitism-Predation Algorithm.
 """
 
-import copy
-
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 
@@ -43,122 +38,178 @@ class PPA(Optimizer):
         # Overrides its parent class with the receiving params
         super(PPA, self).__init__()
 
-        #
-        self.r1 = 1
-
-        #
-        self.r2 = 0.1
-
-        #
-        self.r3 = 0.1
-
-        #
-        self.alpha1 = 0.2
-
-        #
-        self.alpha2 = 0.25
-
-        #
-        self.beta1 = 0.1
-
-        #
-        self.beta2 = 0.1
-
-        #
-        self.c1 = 0.1
-
-        #
-        self.c2 = 0.1
-
-        #
-        self.d1 = 0.01
-
-        #
-        self.d2 = 0.01
-
         # Builds the class
         self.build(params)
 
         logger.info('Class overrided.')
 
+    @property
+    def velocity(self):
+        """np.array: Array of velocities.
+
+        """
+
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, velocity):
+        if not isinstance(velocity, np.ndarray):
+            raise e.TypeError('`velocity` should be a numpy array')
+
+        self._velocity = velocity
+
     def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Array of velocities
         self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-    def _growth_rate(self, n_agents, iteration, n_iterations):
-        """
+    def _calculate_population(self, n_agents, iteration, n_iterations):
+        """Calculates the number of crows, cats and cuckoos.
+
+        Args:
+            n_agents (int): Number of agents.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
+
+        Returns:
+            The number of crows, cats and cuckoos.
+
         """
 
-        #
+        # Calculates the number of crows
         n_crows = np.round(n_agents * (2/3 - iteration * ((2/3 - 1/2) / n_iterations)))
 
-        #
+        # Calculates the number of cats
         n_cats = np.round(n_agents * (0.01 + iteration * ((1/3 - 0.01) / n_iterations)))
 
-        #
+        # Calculates the number of cuckoos
         n_cuckoos = n_agents - n_crows - n_cats
 
         return int(n_crows), int(n_cats), int(n_cuckoos)
 
-    def update(self, space, iteration, n_iterations):
-        #
-        n_crows, n_cats, n_cuckoos = self._growth_rate(space.n_agents, iteration, n_iterations)
+    def _nesting_phase(self, space, n_crows):
+        """Performs the nesting phase using the current number of crows.
 
-        # print(n_crows, n_cats, n_cuckoos)
+        Args:
+            space (Space): Space containing agents and update-related information.
+            n_crows (int): Number of crows.
 
-        #
-        for i, agent in enumerate(space.agents[:n_crows]):
-            #
+        """
+
+        # Gathers the crows
+        crows = space.agents[:n_crows]
+
+        # Iterates through all crows
+        for i, crow in enumerate(crows):
+            # Generates a random index
             idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
-            # (eq. 7)
-            step = d.generate_levy_distribution(size=agent.n_variables)
+            # Calculates the step from Lévy distribution (eq. 7)
+            step = d.generate_levy_distribution(size=crow.n_variables)
             step = np.expand_dims(step, axis=1)
 
-            # (eq. 6 and 8)
-            agent.position = 0.01 * step * (space.agents[idx].position - agent.position)
+            # Updates the crow's position and clips its bounds (eq. 6 and 8)
+            crow.position = 0.01 * step * (space.agents[idx].position - crow.position)
+            crow.clip_by_bound()
 
-            #
-            agent.clip_by_bound()
+    def _parasitism_phase(self, space, n_crows, n_cuckoos, iteration, n_iterations):
+        """Performs the parasitism phase using the current number of cuckoos.
 
-        #
+        Args:
+            space (Space): Space containing agents and update-related information.
+            n_crows (int): Number of crows.
+            n_cuckoos (int): Number of cuckoos.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
+
+        """
+
+        # Gathers the cuckoos
+        cuckoos = space.agents[n_crows:n_crows+n_cuckoos]
+
+        # Calculates a list of cuckoos' fitness
+        fitness = [cuckoo.fit for cuckoo in cuckoos]
+
+        # Calculates the probability of selection
         p = iteration / n_iterations
 
-        # Calculates a list of current trees' fitness
-        fitness = [agent.fit for agent in space.agents[n_crows:n_crows+n_cuckoos]]
-
-        #
-        for agent in space.agents[n_crows:n_crows+n_cuckoos]:
-            #
+        # Iterates through all cuckoos
+        for cuckoo in cuckoos:
+            # Selects a cuckoo through tournament selection
             s = g.tournament_selection(fitness, 1)[0]
 
-            #
-            i = r.generate_integer_random_number(0, space.n_agents)
-            j = r.generate_integer_random_number(0, space.n_agents, exclude_value=i)
+            # Selects two random agents from the space
+            i = r.generate_integer_random_number(high=space.n_agents)
+            j = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
-            # (eq. 12)
-            k = r.generate_uniform_random_number(size=agent.n_variables) > p
+            # Creates a bernoulli distribution to preserve or not variables (eq. 12)
+            k = d.generate_bernoulli_distribution(1 - p, cuckoo.n_variables)
             k = np.expand_dims(k, -1)
 
-            # (eq. 11)
+            # Calculates the gaussian-based step distribution (eq. 11)
             rand = r.generate_uniform_random_number()
             S_g = (space.agents[i].position - space.agents[j].position) * rand
 
-            # (eq. 10)
-            agent.position = space.agents[s].position + S_g * k
+            # Updates the cuckoo's position and clips its limits (eq. 10)
+            cuckoo.position = space.agents[s].position + S_g * k
+            cuckoo.clip_by_bound()
 
-            agent.clip_by_bound()
-            
+    def _predation_phase(self, space, n_crows, n_cuckoos, n_cats, iteration, n_iterations):
+        """Performs the predation phase using the current number of cats.
 
-        #
-        _c = 2 - iteration / n_iterations
+        Args:
+            space (Space): Space containing agents and update-related information.
+            n_crows (int): Number of crows.
+            n_cuckoos (int): Number of cuckoos.
+            n_cats (int): Number of cats.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
 
-        #
-        for i, agent in enumerate(space.agents[n_crows+n_cuckoos:]):
-            idx = i + n_crows + n_cuckoos
+        """
+
+        # Gathers the cats
+        cats = space.agents[n_crows+n_cuckoos:]
+
+        # Calculates the constant
+        constant = 2 - iteration / n_iterations
+
+        # Iterates through all cats
+        for i, cat in enumerate(cats):
+            # Gets the corresponding cat's index
+            idx = space.n_agents - n_cats + i
+
+            # Updates the cat's velocity (eq. 13)
             r1 = r.generate_uniform_random_number()
-            self.velocity[idx] += r1 * _c * (space.best_agent.position - agent.position)
+            self.velocity[idx] += r1 * constant * (space.best_agent.position - cat.position)
 
-            agent.position += self.velocity[idx]
+            # Updates the cat's position and clips its limits (eq. 14)
+            cat.position += self.velocity[idx]
+            cat.clip_by_bound()
 
-            agent.clip_by_bound()
+    def update(self, space, iteration, n_iterations):
+        """Wraps Parasitism-Predation Algorithm over all agents and variables.
 
+        Args:
+            space (Space): Space containing agents and update-related information.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
+
+        """
+
+        # Calculates the number of crows, cats and cuckoos
+        n_crows, n_cats, n_cuckoos = self._calculate_population(space.n_agents, iteration, n_iterations)
+
+        # Performs the nesting phase
+        self._nesting_phase(space, n_crows)
+
+        # Performs the parasitism phase
+        self._parasitism_phase(space, n_crows, n_cuckoos, iteration, n_iterations)
+
+        # Performs the predation phase
+        self._predation_phase(space, n_crows, n_cuckoos, n_cats, iteration, n_iterations)
