@@ -5,7 +5,7 @@ from opytimizer.optimizers.science import TEO
 params = {
     'c1': True,
     'c2': True,
-    'pro': 0.15,
+    'pro': 0.05,
     'n_TM': 4
 }
 
