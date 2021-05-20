@@ -264,7 +264,7 @@ class LSA(Optimizer):
 
         # If channel has reached maximum allowed time
         if self.time >= self.max_time:
-            # Sorts the agents
+            # Sorts agents
             space.agents.sort(key=lambda x: x.fit)
 
             # Replaces the worst channel with the best one

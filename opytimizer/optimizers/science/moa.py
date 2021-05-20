@@ -103,7 +103,7 @@ class MOA(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the best and worst agents and calculates a list of normalized fitness (eq. 2)

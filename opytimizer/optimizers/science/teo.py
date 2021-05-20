@@ -173,7 +173,7 @@ class TEO(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Updates the thermal memory and cuts it to maximum allowed size

@@ -89,7 +89,7 @@ class QSA(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
@@ -205,7 +205,7 @@ class QSA(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
@@ -288,7 +288,7 @@ class QSA(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Calculates the probability of handling the business

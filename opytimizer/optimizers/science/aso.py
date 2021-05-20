@@ -118,7 +118,7 @@ class ASO(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Defines worst and best fitness
@@ -207,7 +207,7 @@ class ASO(Optimizer):
         # Calculates the number of best agents
         K = int(len(agents) - (len(agents) - 2) * np.sqrt(iteration / n_iterations))
 
-        # Sorts the agents according to their masses
+        # Sorts agents according to their masses
         K_agents, _ = map(list, zip(*sorted(zip(agents, mass), key=lambda x: x[1], reverse=True)[:K]))
 
         # Calculates the average position

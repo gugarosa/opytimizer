@@ -193,7 +193,7 @@ class CEM(Optimizer):
         # Creates new agents based on current mean and standard deviation
         self._create_new_samples(space.agents, function)
 
-        # Sorts the agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the update positions

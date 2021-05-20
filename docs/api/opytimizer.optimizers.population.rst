@@ -11,6 +11,7 @@ opytimizer.optimizers.population
     opytimizer.optimizers.population.hho
     opytimizer.optimizers.population.loa
     opytimizer.optimizers.population.lpoa
+    opytimizer.optimizers.population.osa
     opytimizer.optimizers.population.ppa
     opytimizer.optimizers.population.pvs
 

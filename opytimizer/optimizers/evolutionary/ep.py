@@ -219,7 +219,7 @@ class EP(Optimizer):
                     # Increases its winning by one
                     wins[i] += 1
 
-        # Sorts the agents list based on its winnings
+        # Sorts agents list based on its winnings
         space.agents = [agents for _, agents in sorted(
             zip(wins, space.agents), key=lambda pair: pair[0], reverse=True)]
 

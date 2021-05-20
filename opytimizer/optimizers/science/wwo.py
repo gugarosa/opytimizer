@@ -277,7 +277,7 @@ class WWO(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
         # Iterates through all agents

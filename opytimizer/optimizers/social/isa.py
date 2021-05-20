@@ -164,7 +164,7 @@ class ISA(Optimizer):
 
         """
 
-        # Sorts the agents
+        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers best and worst agents
