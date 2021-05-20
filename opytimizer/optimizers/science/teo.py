@@ -123,6 +123,21 @@ class TEO(Optimizer):
         self._n_TM = n_TM
 
     @property
+    def TM(self):
+        """list: Thermal memory.
+
+        """
+
+        return self._TM
+
+    @TM.setter
+    def TM(self, TM):
+        if not isinstance(TM, list):
+            raise e.TypeError('`TM` should be a list')
+
+        self._TM = TM
+
+    @property
     def environment(self):
         """list: Environmental population.
 
