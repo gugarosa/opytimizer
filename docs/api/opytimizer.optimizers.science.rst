@@ -14,6 +14,7 @@ opytimizer.optimizers.science
     opytimizer.optimizers.science.moa
     opytimizer.optimizers.science.mvo
     opytimizer.optimizers.science.sa
+    opytimizer.optimizers.science.teo
     opytimizer.optimizers.science.two
     opytimizer.optimizers.science.wca
     opytimizer.optimizers.science.wdo
