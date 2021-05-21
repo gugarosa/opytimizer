@@ -52,7 +52,7 @@ class RRA(Optimizer):
         self.tol = 0.01
 
         # Maximum number of stalls
-        self.max_stall = 10
+        self.max_stall = 1000
 
         # Current number of stalls
         self.n_stall = 0
@@ -167,12 +167,13 @@ class RRA(Optimizer):
 
         self._last_best_fit = last_best_fit
 
-    def _stalling_large_search(self, daughters, function):
-        """Performs the stalling random large search (eq. 4).
+    def _stalling_search(self, daughters, function, is_large=True):
+        """Performs the stalling random larrge or small search (eq. 4 and 5).
 
         Args:
             daughters (list): Daughters.
             function (Function): A Function object that will be used as the objective function.
+            is_large (bool): Whether to perform the large or small search.
 
         """
 
@@ -182,44 +183,19 @@ class RRA(Optimizer):
             temp_daughter = copy.deepcopy(daughters[0])
 
             # Generates gaussian random number and variable's index
-            r1 = r.generate_gaussian_random_number()
             j = r.generate_integer_random_number(high=temp_daughter.n_variables)
 
-            # Disturbs a selected temporary daughter's position (eq. 4)
-            # and clips the temporary daughter's position
-            temp_daughter.position[j] += self.d_runner * r1
-            temp_daughter.clip_by_bound()
+            # Checks whether to perform the large search
+            if is_large:
+                # Disturbs a selected temporary daughter's position (eq. 4)
+                r1 = r.generate_gaussian_random_number()
+                temp_daughter.position[j] += self.d_runner * r1
+            else:
+                # Disturbs a selected temporary daughter's position (eq. 5)
+                r1 = r.generate_uniform_random_number(-0.5, 0.5)
+                temp_daughter.position[j] += self.d_root * r1
 
-            # Re-evaluates its fitness
-            temp_daughter.fit = function(temp_daughter.position)
-
-            # If temporary daughter's position is better than best's
-            if temp_daughter.fit < daughters[0].fit:
-                # Replaces the best daughter
-                daughters[0].position = copy.deepcopy(temp_daughter.position)
-                daughters[0].fit = copy.deepcopy(temp_daughter.fit)
-
-    def _stalling_small_search(self, daughters, function):
-        """Performs the stalling random small search (eq. 5).
-
-        Args:
-            daughters (list): Daughters.
-            function (Function): A Function object that will be used as the objective function.
-
-        """
-
-        # Iterates through number of daughters minus 1
-        for _ in range(len(daughters) - 1):
-            # Makes a deep copy of best daughter
-            temp_daughter = copy.deepcopy(daughters[0])
-
-            # Generates gaussian random number and variable's index
-            r1 = r.generate_uniform_random_number(-0.5, 0.5)
-            j = r.generate_integer_random_number(high=temp_daughter.n_variables)
-
-            # Disturbs a selected temporary daughter's position (eq. 5)
-            # and clips the temporary daughter's position
-            temp_daughter.position[j] += self.d_root * r1
+            # Clips the temporary daughter's position
             temp_daughter.clip_by_bound()
 
             # Re-evaluates its fitness
@@ -299,10 +275,10 @@ class RRA(Optimizer):
         # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:
             # Performs the stalling large search (eq. 4)
-            self._stalling_large_search(daughters, function)
+            self._stalling_search(daughters, function, is_large=True)
 
             # Performs the stalling small search (eq. 5)
-            self._stalling_small_search(daughters, function)
+            self._stalling_search(daughters, function, is_large=False)
 
         # Performs the elite selection (eq. 6)
         space.agents[0] = copy.deepcopy(daughters[0])
