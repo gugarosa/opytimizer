@@ -3,7 +3,7 @@ from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.core import Function
-from opytimizer.optimizers.evolutionary import FOA
+from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
 # Random seed for experimental consistency
@@ -19,7 +19,7 @@ upper_bound = [10, 10]
 
 # Creates the space, optimizer and function
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
-optimizer = FOA()
+optimizer = PSO()
 function = Function(Sphere())
 
 # Bundles every piece into Opytimizer class
