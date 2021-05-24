@@ -6,7 +6,6 @@ from itertools import islice
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 
 
 def euclidean_distance(x, y):
@@ -45,12 +44,13 @@ def n_wise(x, size=2):
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
-def tournament_selection(fitness, n):
+def tournament_selection(fitness, n, size=2):
     """Selects n-individuals based on a tournament selection.
 
     Args:
         fitness (list): List of individuals fitness.
         n (int): Number of individuals to be selected.
+        size (int): Tournament size.
 
     Returns:
         Indexes of selected individuals.
@@ -62,8 +62,8 @@ def tournament_selection(fitness, n):
 
     # For every n-individual to be selected
     for _ in range(n):
-        # For every tournament round, we select `TOURNAMENT_SIZE` individuals
-        step = [np.random.choice(fitness) for _ in range(c.TOURNAMENT_SIZE)]
+        # For every tournament round, we select `size` individuals
+        step = [np.random.choice(fitness) for _ in range(size)]
 
         # Selects the individual with the minimum fitness
         selected.append(np.where(min(step) == fitness)[0][0])

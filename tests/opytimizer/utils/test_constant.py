@@ -24,5 +24,3 @@ def test_constant_constants():
     }
 
     assert constant.TEST_EPSILON == 100
-
-    assert constant.TOURNAMENT_SIZE == 2

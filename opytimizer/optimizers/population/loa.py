@@ -6,14 +6,32 @@ import copy
 import numpy as np
 from tqdm import tqdm
 
+import opytimizer.math.distribution as d
+import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Agent
 
 logger = l.get_logger(__name__)
+
+
+class Lion(Agent):
+    def __init__(self, n_variables, n_dimensions, lower_bound, upper_bound, position, fit):
+        super(Lion, self).__init__(n_variables, n_dimensions, lower_bound, upper_bound)
+
+        self.position = copy.deepcopy(position)
+        self.best_position = copy.deepcopy(position)
+        self.fit = copy.deepcopy(fit)
+        self.p_fit = copy.deepcopy(fit)
+
+        self.nomad = False
+        self.female = False
+        self.pride = 0
+        self.group = 0
 
 
 class LOA(Optimizer):
@@ -56,31 +74,119 @@ class LOA(Optimizer):
         logger.info('Class overrided.')
 
     def compile(self, space):
-        self.n_nomad = int(self.N * space.n_agents)
-        self.n_pride = (space.n_agents - self.n_nomad) // self.P
+        space.agents = [Lion(agent.n_variables, agent.n_dimensions, agent.lb, agent.ub, agent.position, agent.fit) for agent in space.agents]
 
-        self.gender = [1] * space.n_agents
+        for agent in space.agents:
+            is_nomad = r.generate_uniform_random_number()
+            if is_nomad < self.N:
+                agent.nomad = True
+                is_female = r.generate_uniform_random_number()
+                if is_female < (1 - self.S):
+                    agent.female = True
+            else:
+                agent.nomad = False
+                agent.pride = r.generate_integer_random_number(high=self.P)
+                is_female = r.generate_uniform_random_number()
+                if is_female < self.S:
+                    agent.female = True
+        # self.n_nomad = int(self.N * space.n_agents)
+        # self.n_pride = (space.n_agents - self.n_nomad) // self.P
+
+        # self.gender = [1] * space.n_agents
 
     def _get_nomad_lions(self, agents):
-        return agents[:self.n_nomad], self.gender[:self.n_nomad]
+        return [agent for agent in agents if agent.nomad is True]
 
     def _get_pride_lions(self, agents):
-        prides, genders = [], []
-        for i in range(self.P):
-            start, end = i * self.n_pride, (i + 1) * self.n_pride
-            prides.append(agents[start:end])
-            genders.append(self.gender[start:end])
-        return prides, genders
+        agents = [agent for agent in agents if agent.nomad is False]
+        return [[agent for agent in agents if agent.pride == i] for i in range(self.P)]
 
-    def _hunting(self, prides, genders):
-        for pride, gender in zip(prides, genders):
-            for p, g in zip(pride, gender):
-                if g == 0:
-                    pass
+    # def _get_pride_lions(self, agents):
+    #     prides, genders = [], []
+    #     for i in range(self.P):
+    #         start, end = i * self.n_pride, (i + 1) * self.n_pride
+    #         prides.append(agents[start:end])
+    #         genders.append(self.gender[start:end])
+    #     return prides, genders
 
+    def _hunting(self, prides, function):
+        for pride in prides:
+            for agent in pride:
+                if agent.female:
+                    agent.group = r.generate_integer_random_number(high=4)
+                else:
+                    agent.group = 0
 
-    def update(self, space):
-        p, g = self._get_pride_lions(space.agents)
+            first_group = np.sum([agent.fit for agent in pride if agent.group == 1])
+            second_group = np.sum([agent.fit for agent in pride if agent.group == 2])
+            third_group = np.sum([agent.fit for agent in pride if agent.group == 3])
 
-        self._hunting(p, g)
+            prey = np.mean([agent.position for agent in pride if agent.group == 0], axis=0)
+
+            fits = [first_group, second_group, third_group]
+            idx = np.argsort(fits)
+
+            center = idx[0] + 1
+            left = idx[1] + 1
+            right = idx[2] + 1
+
+            # print(first_group, second_group, third_group)
+            # print(prey)
+
+            # print(center, left, right)
+
+            for agent in pride:
+                if agent.group == center:
+                    for j in range(agent.n_variables):
+                        if agent.position[j] < prey[j]:
+                            agent.position[j] = r.generate_uniform_random_number(agent.position[j], prey[j])
+                        else:
+                            agent.position[j] = r.generate_uniform_random_number(prey[j], agent.position[j])
+
+                if agent.group in [left, right]:
+                    for j in range(agent.n_variables):
+                        if 2 * prey[j] - agent.position[j] < prey[j]:
+                            agent.position[j] = r.generate_uniform_random_number(2 * prey[j] - agent.position[j], prey[j])
+                        else:
+                            agent.position[j] = r.generate_uniform_random_number(prey[j], 2 * prey[j] - agent.position[j])
+
+                agent.clip_by_bound()
+
+                agent.p_fit = copy.deepcopy(agent.fit)
+                agent.fit = function(agent.position)
+
+                if agent.fit < agent.p_fit:
+                    p_improvement = agent.fit / agent.fit
+                    agent.best_position = copy.deepcopy(agent.position)
+                    r1 = r.generate_uniform_random_number()
+                    prey += r1 * p_improvement * (prey - agent.position)
+
+    def _moving_safe_place(self, prides):
+        for pride in prides:
+            n_improved = np.sum([1 for agent in pride if agent.fit < agent.p_fit])
+            fits = [agent.fit for agent in pride]
+            tournament_size = np.maximum(2, int(np.ceil(n_improved / 2)))
+            
+            for agent in pride:
+                if agent.group == 0 and agent.female is True:
+                    winner = g.tournament_selection(fits, 1, tournament_size)[0]
+                    distance = g.euclidean_distance(agent.position, pride[winner].position)
+                    r1 = r.generate_uniform_random_number()
+                    u = r.generate_uniform_random_number(-1, 1)
+                    theta = np.random.uniform(-np.pi/6, np.pi/6)
+                    R1 = pride[winner].position - agent.position
+                    R2 = np.random.randn(*R1.T.shape)
+                    R2 = R2.T - R2.dot(R1) * R1 / (np.linalg.norm(R1) ** 2 + c.EPSILON)
+                    agent.position += 2 * distance * r1 * R1 + u * np.tan(theta) * R2 * distance
+
+    def update(self, space, function):
+        # print(self._get_nomad_lions(space.agents))
+        prides = self._get_pride_lions(space.agents)
+
+        self._hunting(prides, function)
+
+        self._moving_safe_place(prides)
+
+        # for agent in space.agents:
+        #     print(agent.group)
 
