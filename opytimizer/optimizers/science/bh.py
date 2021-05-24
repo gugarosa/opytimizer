@@ -5,7 +5,7 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
-from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Optimizer
 from opytimizer.utils import constant
 
 logger = l.get_logger(__name__)

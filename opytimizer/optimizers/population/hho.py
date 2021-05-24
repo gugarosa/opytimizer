@@ -6,7 +6,7 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
-from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Optimizer
 
 logger = l.get_logger(__name__)
 

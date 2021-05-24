@@ -13,7 +13,7 @@ import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
-from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Optimizer
 from opytimizer.core import Agent
 
 logger = l.get_logger(__name__)
@@ -70,6 +70,12 @@ class LOA(Optimizer):
 
         #
         self.R = 0.2
+
+        #
+        self.Ma = 0.3
+
+        #
+        self.Mu = 0.2
 
         # Builds the class
         self.build(params)
@@ -203,26 +209,52 @@ class LOA(Optimizer):
                         if agent.fit < agent.p_fit:
                             agent.best_position = copy.deepcopy(agent.position)
 
-    # def evaluate(self, space, function):
-    #     # Iterates through all agents
-    #     for i, agent in enumerate(space.agents):
-    #         # Calculates the fitness value of current agent
-    #         fit = function(agent.best_position)
 
-    #         # If fitness is better than agent's best fit
-    #         if fit < agent.fit:
-    #             # Updates its current fitness to the newer one
-    #             agent.fit = fit
+    def _mating(self, prides, function):
+        offspring = []
+        for pride in prides:
+            offspring_p = []
+            for agent in pride:
+                if agent.female:
+                    r1 = r.generate_uniform_random_number()
+                    if r1 < self.Ma:
+                        males = [agent for agent in pride if agent.female is not True and r.generate_uniform_random_number() < 0.5]
+                        
+                        beta = r.generate_gaussian_random_number(0.5, 0.1)
 
-    #             # Also updates the local best position to current's agent position
-    #             # agent.best_position[i] = copy.deepcopy(agent.position)
+                        males_avg = np.mean([male.position for male in males], axis=0)
 
-    #         # If agent's fitness is better than global fitness
-    #         if agent.fit < space.best_agent.fit:
-    #             # Makes a deep copy of agent's local best position and fitness to the best agent
-    #             space.best_agent.position = copy.deepcopy(agent.best_position)
-    #             space.best_agent.fit = copy.deepcopy(agent.fit)
-    
+                        a1 = copy.deepcopy(agent)
+                        a2 = copy.deepcopy(agent)
+
+                        a1.position = beta * a1.position + (1 - beta) * males_avg
+                        a1.position = (1 - beta) * a1.position + beta * males_avg
+
+                        for j in range(agent.n_variables):
+                            r2 = r.generate_uniform_random_number()
+                            r3 = r.generate_uniform_random_number()
+
+                            if r2 < self.Mu:
+                                a1.position[j] = r.generate_uniform_random_number(a1.lb[j], a1.ub[j])
+
+                            if r3 < self.Mu:
+                                a2.position[j] = r.generate_uniform_random_number(a2.lb[j], a2.ub[j])
+
+                        a1.clip_by_bound()
+                        a2.clip_by_bound()
+
+                        a1.best_position = copy.deepcopy(a1.position)
+                        a1.female = (beta >= 0.5)
+                        a1.fit = function(a1.position)
+                        a2.best_position = copy.deepcopy(a2.position)
+                        a2.female = (beta >= 0.5)
+                        a2.fit = function(a2.position)
+
+                        offspring_p.append(a1)
+                        offspring_p.append(a2)
+            offspring.append(offspring_p)
+
+        return offspring
 
 
     def update(self, space, function):
@@ -234,6 +266,10 @@ class LOA(Optimizer):
         self._moving_safe_place(prides)
 
         self._roaming(prides, function)
+
+        offspring = self._mating(prides, function)
+
+        
 
         # for agent in space.agents:
         #     print(agent.group)

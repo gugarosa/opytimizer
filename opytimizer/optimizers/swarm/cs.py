@@ -9,7 +9,7 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as log
-from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Optimizer
 
 logger = log.get_logger(__name__)
 

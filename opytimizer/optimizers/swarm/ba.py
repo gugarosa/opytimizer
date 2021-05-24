@@ -8,7 +8,7 @@ import numpy as np
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as ex
 import opytimizer.utils.logging as l
-from opytimizer.core.optimizer import Optimizer
+from opytimizer.core import Optimizer
 
 logger = l.get_logger(__name__)
 
