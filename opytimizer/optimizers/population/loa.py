@@ -20,17 +20,47 @@ logger = l.get_logger(__name__)
 
 
 class Lion(Agent):
+    """A Lion class complements its inherited parent with additional information neeeded by
+    the Lion Optimization Algorithm.
+
+    """
+    
     def __init__(self, n_variables, n_dimensions, lower_bound, upper_bound, position, fit):
+        """Initialization method.
+
+        Args:
+            n_variables (int): Number of decision variables.
+            n_dimensions (int): Number of dimensions.
+            lower_bound (list, tuple, np.array): Minimum possible values.
+            upper_bound (list, tuple, np.array): Maximum possible values.
+            position (np.array): Position array.
+            fit (float): Fitness value.
+
+        """
+
+        # Overrides its parent class with the receiving params
         super(Lion, self).__init__(n_variables, n_dimensions, lower_bound, upper_bound)
 
+        # Copies the current position and fitness to overrided object
         self.position = copy.deepcopy(position)
-        self.best_position = copy.deepcopy(position)
         self.fit = copy.deepcopy(fit)
+
+        # Best position
+        self.best_position = copy.deepcopy(position)
+        
+        # Previous fitness
         self.p_fit = copy.deepcopy(fit)
 
+        # Whether lion is nomad or not
         self.nomad = False
+
+        # Whether lion is female or not
         self.female = False
+
+        # Index of pride
         self.pride = 0
+
+        # Index of hynting group
         self.group = 0
 
 
