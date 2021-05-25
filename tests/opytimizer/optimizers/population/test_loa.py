@@ -341,7 +341,7 @@ def test_loa_defense():
 
     new_nomads, new_prides = new_loa._defense(nomads, prides, cubs)
 
-    assert len(new_nomads) == 36
+    assert len(new_nomads) == 32
     assert len(new_prides) == 4
 
 
@@ -374,7 +374,7 @@ def test_loa_nomad_mating():
 
     new_nomads = new_loa._nomad_mating(nomads, square)
 
-    assert len(new_nomads) == 22
+    assert len(new_nomads) == 28
 
 
 def test_loa_nomad_attack():
@@ -405,7 +405,7 @@ def test_loa_migrating():
 
     new_nomads, new_prides = new_loa._migrating(nomads, prides)
 
-    assert len(new_nomads) == 46
+    assert len(new_nomads) == 47
     assert len(new_prides) == 4
 
 
@@ -423,15 +423,6 @@ def test_loa_equilibrium():
     new_nomads, new_prides = new_loa._equilibrium(nomads, prides, 100)
 
     assert len(new_nomads) == 20
-    assert len(new_prides) == 4
-
-    nomads = new_loa._get_nomad_lions(search_space.agents)
-    prides = new_loa._get_pride_lions(search_space.agents)
-    del prides[0][-1]
-
-    new_nomads, new_prides = new_loa._equilibrium(nomads, prides, 100)
-
-    assert len(new_nomads) == 19
     assert len(new_prides) == 4
 
 
