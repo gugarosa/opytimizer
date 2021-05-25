@@ -731,7 +731,7 @@ class LOA(Optimizer):
             best_fit = nomads[0].fit
 
             # Calculates the roaming probability (eq. 12)
-            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) (best_fit + c.EPSILON))
+            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON))
 
             # Generates a random number
             r1 = r.generate_uniform_random_number()
@@ -887,7 +887,7 @@ class LOA(Optimizer):
 
         # Splits the nomad's population into females and males
         nomad_female = [agent for agent in nomads if agent.female]
-        nomad_male = [agent for agent in nomads if agent.female]
+        nomad_male = [agent for agent in nomads if not agent.female]
 
         # Sorts both female and male nomads
         nomad_female.sort(key=lambda x: x.fit)
