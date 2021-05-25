@@ -1,6 +1,7 @@
 """Lion Optimization Algorithm.
 """
 
+import itertools
 import copy
 
 import numpy as np
@@ -193,6 +194,9 @@ class LOA(Optimizer):
         # Percentage of roaming lions
         self.R = 0.2
 
+        # Immigrate rate
+        self.I = 0.4
+
         # Mating probability
         self.Ma = 0.3
 
@@ -271,6 +275,23 @@ class LOA(Optimizer):
             raise e.ValueError('`R` should be between 0 and 1')
 
         self._R = R
+
+    @property
+    def I(self):
+        """float: Immigrate rate.
+
+        """
+
+        return self._I
+
+    @I.setter
+    def I(self, I):
+        if not isinstance(I, (float, int)):
+            raise e.TypeError('`I` should be a float or integer')
+        if I < 0 or I > 1:
+            raise e.ValueError('`I` should be between 0 and 1')
+
+        self._I = I
 
     @property
     def Ma(self):
@@ -408,6 +429,13 @@ class LOA(Optimizer):
             prey = np.mean(
                 [agent.position for agent in pride if agent.group == 0], axis=0)
 
+            # if np.isnan(prey):
+                # print('hey')
+
+            prey = np.nan_to_num(prey)
+
+            print(prey.shape)
+
             # Calculates the group indexes and their corresponding
             # positions: center, left and right
             groups_idx = np.argsort(
@@ -462,7 +490,7 @@ class LOA(Optimizer):
                     agent.best_position = copy.deepcopy(agent.position)
 
                     # Calculates the probability of improvement
-                    p_improvement = agent.fit / agent.fit
+                    p_improvement = agent.fit / agent.p_fit
 
                     # Updates the prey's position
                     r1 = r.generate_uniform_random_number()
@@ -567,12 +595,81 @@ class LOA(Optimizer):
                             # Updates its best position
                             agent.best_position = copy.deepcopy(agent.position)
 
+    def _mating_operator(self, agent, males, function):
+        """Wraps the mating operator.
+
+        Args:
+            agent (Agent): Current agent.
+            males (list): List of males that will be breed.
+            function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            A pair of offsprings that resulted from mating.
+
+        """
+
+        # Calculates the males average position
+        males_average = np.mean([male.position for male in males], axis=0)
+
+        males_average = np.nan_to_num(males_average)
+
+        # Generates a gaussian random number
+        beta = r.generate_gaussian_random_number(0.5, 0.1)
+
+        # Copies current agent into two offsprings
+        a1, a2 = copy.deepcopy(agent), copy.deepcopy(agent)
+
+        # Updates first offspring position (eq. 13)
+        a1.position = beta * a1.position + \
+            (1 - beta) * males_average
+
+        # Updates second offspring position (eq. 14)
+        a2.position = (1 - beta) * \
+            a2.position + beta * males_average
+
+        # Iterates though all decision variables
+        for j in range(agent.n_variables):
+            # Generates random numbers
+            r2 = r.generate_uniform_random_number()
+            r3 = r.generate_uniform_random_number()
+
+            # If first random number is smaller tha mutation probability
+            if r2 < self.Mu:
+                # Mutates the first offspring
+                a1.position[j] = r.generate_uniform_random_number(
+                    a1.lb[j], a1.ub[j])
+
+            # If second random number is smaller tha mutation probability
+            if r3 < self.Mu:
+                # Mutates the second offspring
+                a2.position[j] = r.generate_uniform_random_number(
+                    a2.lb[j], a2.ub[j])
+
+        # Clips both offspring bounds
+        a1.clip_by_bound()
+        a2.clip_by_bound()
+
+        # Updates first offspring properties
+        a1.best_position = copy.deepcopy(a1.position)
+        a1.female = bool(beta >= 0.5)
+        a1.fit = function(a1.position)
+
+        # Updates second offspring properties
+        a2.best_position = copy.deepcopy(a2.position)
+        a2.female = bool(beta >= 0.5)
+        a2.fit = function(a2.position)
+
+        return a1, a2
+
     def _mating(self, prides, function):
         """Generates offsprings from mating (s. 2.2.5).
 
         Args:
             prides (list): List of prides holding their corresponding lions.
             function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            Cubs generated from the mating procedure.
 
         """
 
@@ -588,62 +685,16 @@ class LOA(Optimizer):
             for agent in pride:
                 # If agent is female
                 if agent.female:
-                    # Genrates a random number
+                    # Generates a random number
                     r1 = r.generate_uniform_random_number()
 
                     # If random number is smaller than mating probability
                     if r1 < self.Ma:
                         # Gathers a list of male lions that belongs to current pride
-                        # and calculates their average position
                         males = [agent for agent in pride if not agent.female]
-                        males_average = np.mean(
-                            [male.position for male in males], axis=0)
 
-                        # Generates a gaussian random number
-                        beta = r.generate_gaussian_random_number(0.5, 0.1)
-
-                        # Copies current agent into two offsprings
-                        a1, a2 = copy.deepcopy(agent), copy.deepcopy(agent)
-
-                        # Updates first offspring position (eq. 13)
-                        a1.position = beta * a1.position + \
-                            (1 - beta) * males_average
-
-                        # Updates second offspring position (eq. 14)
-                        a2.position = (1 - beta) * \
-                            a2.position + beta * males_average
-
-                        # Iterates though all decision variables
-                        for j in range(agent.n_variables):
-                            # Generates random numbers
-                            r2 = r.generate_uniform_random_number()
-                            r3 = r.generate_uniform_random_number()
-
-                            # If first random number is smaller tha mutation probability
-                            if r2 < self.Mu:
-                                # Mutates the first offspring
-                                a1.position[j] = r.generate_uniform_random_number(
-                                    a1.lb[j], a1.ub[j])
-
-                            # If second random number is smaller tha mutation probability
-                            if r3 < self.Mu:
-                                # Mutates the second offspring
-                                a2.position[j] = r.generate_uniform_random_number(
-                                    a2.lb[j], a2.ub[j])
-
-                        # Clips both offspring bounds
-                        a1.clip_by_bound()
-                        a2.clip_by_bound()
-
-                        # Updates first offspring properties
-                        a1.best_position = copy.deepcopy(a1.position)
-                        a1.female = bool(beta >= 0.5)
-                        a1.fit = function(a1.position)
-
-                        # Updates second offspring properties
-                        a2.best_position = copy.deepcopy(a2.position)
-                        a2.female = bool(beta >= 0.5)
-                        a2.fit = function(a2.position)
+                        # Performs the mating
+                        a1, a2 = self._mating_operator(agent, males, function)
 
                         # Merges current pride offsprings
                         cubs += [a1, a2]
@@ -653,17 +704,21 @@ class LOA(Optimizer):
 
         return prides_cubs
 
-    def _defense(self, prides, cubs):
+    def _defense(self, nomads, prides, cubs):
         """Performs the defense procedure (s. 2.2.6).
 
         Args:
+            nomads (list): Nomad lions.
             prides (list): List of prides holding their corresponding lions.
             cubs (Function): List of cubs holding their corresponding lions.
 
+        Returns:
+            Both updated nomad and pride lions.
+
         """
 
-        # Instantiate lists of new nomads and prides lions
-        new_nomads, new_prides = [], []
+        # Instantiate lists of new nprides lions
+        new_prides = []
 
         for pride, cub in zip(prides, cubs):
             # Gathers the females and males from current pride
@@ -684,9 +739,9 @@ class LOA(Optimizer):
             new_prides.append(new_pride)
 
             # Gathers the new nomads
-            new_nomads += pride_male[-len(cub_male):]
+            nomads += pride_male[-len(cub_male):]
 
-        return new_nomads, new_prides
+        return nomads, new_prides
 
     def _nomad_roaming(self, nomads, function):
         """Performs the roaming procedure for nomad lions (s. 2.2.4).
@@ -706,7 +761,7 @@ class LOA(Optimizer):
             best_fit = nomads[0].fit
 
             # Calculates the roaming probability (eq. 12)
-            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) / best_fit)
+            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON))
 
             # Generates a random number
             r1 = r.generate_uniform_random_number()
@@ -731,6 +786,99 @@ class LOA(Optimizer):
                 # Updates its best position
                 agent.best_position = copy.deepcopy(agent.position)
 
+    def _nomad_mating(self, nomads, function):
+        """Generates offsprings from nomad lions mating (s. 2.2.5).
+
+        Args:
+            nomads (list): Nomad lions.
+            function (Function): A Function object that will be used as the objective function.
+
+        Returns:
+            Updated nomad lions.
+
+        """
+
+        # Creates a list of offsprings
+        cubs = []
+
+        # Iterates through all nomad agents
+        for agent in nomads:
+            # If agent is female
+            if agent.female:
+                # Generates a random number
+                r1 = r.generate_uniform_random_number()
+
+                # If random number is smaller than mating probability
+                if r1 < self.Ma:
+                    # Gathers a list of male lions that belongs to current pride
+                    # and samples a random integer
+                    males = [agent for agent in nomads if not agent.female]
+                    if len(males) > 0:
+                        idx = r.generate_integer_random_number(high=len(males))
+
+                        # Performs the mating
+                        a1, a2 = self._mating_operator(
+                            agent, [males[idx]], function)
+
+                        # Merges current pride offsprings
+                        cubs += [a1, a2]
+
+        # Merges both initial nomads and cubs
+        nomads += cubs
+
+        return nomads
+
+    def _nomad_attack(self, nomads, prides):
+        """Performs the nomad's attacking procedure (s. 2.2.6).
+
+        Args:
+            nomads (list): Nomad lions.
+            prides (list): List of prides holding their corresponding lions.
+
+        Returns:
+            Both updated nomad and pride lions.     
+
+        """
+
+        for agent in nomads:
+            if agent.female:
+                attack_prides = r.generate_binary_random_number(self.P)
+
+                for i, pride in enumerate(prides):
+                    if attack_prides[i]:
+                        males = [agent for agent in pride if not agent.female]
+
+                        if len(males) > 0:
+
+                            if agent.fit < males[0].fit:
+                                agent, males[0] = copy.deepcopy(
+                                    males[0]), copy.deepcopy(agent)
+
+        return nomads, prides
+
+    def _migrating(self, nomads, prides):
+        new_prides = []
+
+        for pride in prides:
+            # Calculates the number of females to be migrated
+            n_migrating = int(len(pride) * self.I)
+
+            # Selects `n_migrating` lions
+            selected = r.generate_integer_random_number(
+                high=len(pride), size=n_migrating)
+
+            # Iterates through selected pride lions
+            for s in selected:
+                if pride[s].female:
+                    new_nomad = copy.deepcopy(pride[s])
+                    new_nomad.nomad = True
+                    nomads.append(new_nomad)
+
+            
+            new_prides.append([agent for i, agent in enumerate(pride) if i not in selected])
+
+        return nomads, new_prides
+
     def update(self, space, function):
         """Wraps Lion Optimization Algorithm over all agents and variables.
 
@@ -740,27 +888,56 @@ class LOA(Optimizer):
 
         """
 
-        # Gets non-nomad (pride) lions
+        # Gets nomad and non-nomad (pride) lions
+        nomads = self._get_nomad_lions(space.agents)
         prides = self._get_pride_lions(space.agents)
 
-        # Performs the hunting procedure
+        # Performs the hunting procedure, moving, roaming,
+        # mating and defending for pride lions (step 3)
         self._hunting(prides, function)
-
-        # Move prides to safe locations
         self._moving_safe_place(prides)
-
-        # Performs the roaming procedure
         self._roaming(prides, function)
+        pride_cubs = self._mating(prides, function)
+        nomads, prides = self._defense(nomads, prides, pride_cubs)
 
-        # Generates offsprings from mating
-        cubs = self._mating(prides, function)
-
-        # Performs the defense procedure
-        new_nomads, new_prides = self._defense(prides, cubs)
-
-        # Merges old and new nomads into a single list
-        nomads = self._get_nomad_lions(space.agents)
-        nomads += new_nomads
-
-        # Performs the nomad's roaming procedure
+        # Performs roaming, mating and attacking
+        # for nomad lions (step 4)
         self._nomad_roaming(nomads, function)
+        nomads = self._nomad_mating(nomads, function)
+        nomads, prides = self._nomad_attack(nomads, prides)
+
+        # Migrates females lions from prides (step 5)
+        nomads, prides = self._migrating(nomads, prides)
+
+        #
+        nomad_female = [agent for agent in nomads if agent.female]
+        nomad_male = [agent for agent in nomads if agent.female]
+
+        #
+        nomad_female.sort(key=lambda x: x.fit)
+        nomad_male.sort(key=lambda x: x.fit)
+
+        #
+        correct_nomad_size = int(self.N * space.n_agents)
+        correct_pride_size = int((1 - self.N) * space.n_agents / self.P)
+
+        #
+        for i in range(self.P):
+            while len(prides[i]) > correct_pride_size:
+                del prides[i][-1]
+            while len(prides[i]) < correct_pride_size:
+                nomad_female[0].pride = i
+                nomad_female[0].nomad = False
+                prides[i].append(copy.deepcopy(nomad_female[0]))
+                del nomad_female[0]
+
+        #
+        nomads = nomad_female + nomad_male
+        nomads.sort(key=lambda x: x.fit)
+
+        #
+        space.agents[:correct_nomad_size] = copy.deepcopy(nomads[:correct_nomad_size])
+        flatten = itertools.chain.from_iterable
+        space.agents[correct_nomad_size:] = copy.deepcopy(list(flatten(prides)))
+
+        # print([agent.position for agent in space.agents])

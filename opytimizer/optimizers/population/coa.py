@@ -136,7 +136,7 @@ class COA(Optimizer):
             i = self.n_c * p1 + c1
             j = self.n_c * p2 + c2
 
-            # Performs a swap betweeh them
+            # Performs a swap between them
             agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
     def update(self, space, function):
