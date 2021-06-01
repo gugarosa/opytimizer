@@ -41,16 +41,16 @@ class AF(Optimizer):
         # Overrides its parent class with the receiving params
         super(AF, self).__init__()
 
-        #
+        # First learning coefficient
         self.c1 = 0.75
 
-        #
+        # Second learning coefficient
         self.c2 = 1.25
 
         # Amount of branches
         self.m = 10
 
-        #
+        # Selective probability
         self.Q = 0.75
 
         # Builds the class
@@ -105,13 +105,13 @@ class AF(Optimizer):
                 #
                 r3 = r.generate_uniform_random_number()
 
-                if p < r3:
+                if r3 < p:
                     new_agents.append(a)
 
             #
             self.g_distance[i] = self.p_distance[i]
             self.p_distance[i] = np.sqrt(
-                np.sum((agent.position - a.position) ** 2) / space.n_agents)
+                np.sum((agent.position - a.position) ** 2) / agent.n_variables)
 
             print(self.g_distance[i], self.p_distance[i])
 
