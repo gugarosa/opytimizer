@@ -5,8 +5,8 @@ import copy
 
 import numpy as np
 
+import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
@@ -146,7 +146,7 @@ class AF(Optimizer):
             function (Function): A Function object that will be used as the objective function.
 
         """
-        
+
         # Sorts the agents
         space.agents.sort(key=lambda x: x.fit)
 
@@ -163,42 +163,36 @@ class AF(Optimizer):
                 # Generates random numbers
                 r1 = r.generate_uniform_random_number()
                 r2 = r.generate_uniform_random_number()
+                r3 = r.generate_uniform_random_number()
 
-                #
+                # Calculates the new distance (eq. 1)
                 distance = self.g_distance[i] * r1 * \
                     self.c1 + self.p_distance[i] * r2 * self.c2
 
-                # print(distance)
+                # Generates a random gaussian number
+                D = r.generate_gaussian_random_number(0, distance, (space.n_variables, space.n_dimensions))
 
-                #
-                D = r.generate_gaussian_random_number(variance=distance)
-
+                # Updates offspring's position (eq. 5)
                 a.position += D
+
+                # Clips its limits
                 a.clip_by_bound()
 
-                #
+                # Evaluates its fitness
                 a.fit = function(a.position)
 
-                # print(a.fit)
-
-                # print(D)
-
-                #
+                # Calculates the probability of selection (eq. 6)
                 p = np.fabs(np.sqrt(a.fit / space.agents[-1].fit)) * self.Q
 
-                #
-                r3 = r.generate_uniform_random_number()
-
+                # If random number is smaller than probability of selection
                 if r3 < p:
+                    # Appends the offsprings
                     new_agents.append(a)
 
-            #
+            # Updates both grandparent and parent distances (eq. 2 and 3)
             self.g_distance[i] = self.p_distance[i]
-            self.p_distance[i] = np.sqrt(
-                np.sum((agent.position - a.position) ** 2) / agent.n_variables)
+            self.p_distance[i] = np.std(agent.position - a.position)
 
-            print(self.g_distance[i], self.p_distance[i])
-
-        space.agents += new_agents
-        space.agents.sort(key=lambda x: x.fit)
-        space.agents = space.agents[:space.n_agents]
+        # Randomly selects the agents
+        idx = d.generate_choice_distribution(len(new_agents), None, space.n_agents)
+        space.agents = [new_agents[i] for i in idx]
