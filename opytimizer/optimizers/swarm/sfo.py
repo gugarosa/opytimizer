@@ -146,7 +146,7 @@ class SFO(Optimizer):
 
         """
 
-        # Makes a deepcopy of agent
+        # Makes a deep copy of agent
         a = copy.deepcopy(agent)
 
         # Fills agent with new random positions

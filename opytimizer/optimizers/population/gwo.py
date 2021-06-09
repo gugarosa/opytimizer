@@ -87,7 +87,7 @@ class GWO(Optimizer):
 
         # Iterates through all agents
         for agent in space.agents:
-            # Makes a deepcopy of current agent
+            # Makes a deep copy of current agent
             X = copy.deepcopy(agent)
 
             # Calculates all coefficients

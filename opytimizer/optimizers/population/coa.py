@@ -161,7 +161,7 @@ class COA(Optimizer):
 
             # Iterates through all coyotes in the pack
             for agent in pack_agents:
-                # Makes a deepcopy of current coyote
+                # Makes a deep copy of current coyote
                 a = copy.deepcopy(agent)
 
                 # Generates two random integers

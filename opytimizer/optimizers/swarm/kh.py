@@ -583,7 +583,7 @@ class KH(Optimizer):
 
         """
 
-        # Makes a deepcopy of an agent
+        # Makes a deep copy of an agent
         a = copy.deepcopy(agents[idx])
 
         # Samples a random integer
@@ -617,7 +617,7 @@ class KH(Optimizer):
 
         """
 
-        # Makes a deepcopy of agent
+        # Makes a deep copy of agent
         a = copy.deepcopy(agents[idx])
 
         # Samples random integers

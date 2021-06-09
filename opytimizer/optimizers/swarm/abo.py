@@ -103,7 +103,7 @@ class ABO(Optimizer):
         # Generates a uniform random number
         r1 = r.generate_uniform_random_number(-1, 1)
 
-        # Makes a deepcopy of current agent
+        # Makes a deep copy of current agent
         temp = copy.deepcopy(agent)
 
         # Updates temporary agent's position (eq. 1)

@@ -160,7 +160,7 @@ class AO(Optimizer):
 
         # Iterates through all agents
         for agent in space.agents:
-            # Makes a deepcopy of current agent
+            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
             # Generates a random number

@@ -190,7 +190,7 @@ class EO(Optimizer):
 
         """
 
-        # Makes a deepcopy to withhold the future update
+        # Makes a deep copy to withhold the future update
         C_avg = copy.deepcopy(self.C[0])
 
         # Update the position with concentrations' averager

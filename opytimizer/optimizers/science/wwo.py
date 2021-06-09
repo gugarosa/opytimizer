@@ -178,7 +178,7 @@ class WWO(Optimizer):
 
         """
 
-        # Makes a deepcopy of current agent
+        # Makes a deep copy of current agent
         wave = copy.deepcopy(agent)
 
         # Iterates through all variables
@@ -252,7 +252,7 @@ class WWO(Optimizer):
 
         """
 
-        # Makes a deepcopy of current wave
+        # Makes a deep copy of current wave
         broken_wave = copy.deepcopy(wave)
 
         # Generates a gaussian random number

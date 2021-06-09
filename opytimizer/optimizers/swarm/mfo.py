@@ -73,7 +73,7 @@ class MFO(Optimizer):
 
         """
 
-        # Makes a deepcopy of current population
+        # Makes a deep copy of current population
         flames = copy.deepcopy(space.agents)
 
         # Sorts the flames
