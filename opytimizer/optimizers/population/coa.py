@@ -106,6 +106,10 @@ class COA(Optimizer):
         # Defines the starting and ending points
         start, end = index * self.n_c, (index + 1) * self.n_c
 
+        # If it is the last index, there is no need to return an ending point
+        if (index + 1) == self.n_p:
+            return sorted(agents[start:], key=lambda x: x.fit)
+
         return sorted(agents[start:end], key=lambda x: x.fit)
 
     def _transition_packs(self, agents):

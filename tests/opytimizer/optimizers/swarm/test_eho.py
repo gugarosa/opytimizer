@@ -93,6 +93,10 @@ def test_eho_get_agents_from_clan():
 
     assert len(agents) == 2
 
+    agents = new_eho._get_agents_from_clan(search_space.agents, 9)
+
+    assert len(agents) == 2
+
 
 def test_eho_updating_operator():
     def square(x):

@@ -67,6 +67,10 @@ def test_coa_get_agents_from_pack():
 
     assert len(agents) == 5
 
+    agents = new_coa._get_agents_from_pack(search_space.agents, 1)
+
+    assert len(agents) == 5
+
 
 def test_coa_transition_packs():
     search_space = search.SearchSpace(n_agents=200, n_variables=2,
