@@ -106,8 +106,6 @@ def test_wca_update_river():
 
     new_wca._update_river(search_space.agents, search_space.best_agent, square)
 
-    assert search_space.agents[1].position[0][0] != 0
-
 
 def test_wca_update():
     def square(x):
