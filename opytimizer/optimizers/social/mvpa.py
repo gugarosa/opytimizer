@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
 
@@ -126,29 +124,54 @@ class MVPA(Optimizer):
 
         # Iterates through every team
         for i in range(self.n_teams):
-            # Gets the agents for the specified team and its franchise agent
-            team_agents = self._get_agents_from_team(space.agents, i)
-            franchise_agent = copy.deepcopy(team_agents[0])
+            # Gets the agents for the specified team, its franchise agent and the mean fitness
+            team_i = self._get_agents_from_team(space.agents, i)
+            franchise_i = copy.deepcopy(team_i[0])
+            fitness_i = np.mean([agent.fit for agent in team_i])
 
-            # Gets the opposite team
+            # Gets the agents for the opposite team, its franchise agent and the mean fitness
             j = r.generate_integer_random_number(0, self.n_teams, i)
-            opp_agents = self._get_agents_from_team(space.agents, j)
+            team_j = self._get_agents_from_team(space.agents, j)
+            franchise_j = copy.deepcopy(team_j[0])
+            fitness_j = np.mean([agent.fit for agent in team_j])
 
-            # Iterates through all agents in team
-            for agent in team_agents:
-                # Updates the agent's position (eq. 9)
+            # Iterates through all agents in current team
+            for agent in team_i:
+                # Makes a deep copy of current agent
+                a = copy.deepcopy(agent)
+
+                # Generates uniform random numbers
                 r1 = r.generate_uniform_random_number()
-                agent.position += r1 * (franchise_agent.position - agent.position) + 2 * r1 * (space.best_agent.position - agent.position)
-
-                #
                 r2 = r.generate_uniform_random_number()
+                r3 = r.generate_uniform_random_number()
 
-                if r2 < 0.5:
-                    r3 = r.generate_uniform_random_number()
-                    agent.position += r3 * (agent.position - opp_agents[0].position)
+                # Updates temporary agent's position (eq. 9)
+                a.position += r1 * (franchise_i.position - a.position) + \
+                    2 * r1 * (space.best_agent.position - a.position)
+
+                # Calculates the probability of team `i` beating team `j`
+                Pr = 1 - fitness_i / (fitness_i + fitness_j + c.EPSILON)
+
+                # If random number is smaller than probability
+                if r2 < Pr:
+                    # Updates temporary agent's position (eq. 17)
+                    a.position += r3 * \
+                        (a.position - franchise_j.position)
+
+                # If random number is bigger than probability
                 else:
-                    r3 = r.generate_uniform_random_number()
-                    agent.position += r3 * (opp_agents[0].position - agent.position)
+                    # Updates temporary agent's position (eq. 18)
+                    a.position += r3 * \
+                        (franchise_j.position - a.position)
 
-                #
-                agent.clip_by_bound()
+                # Clips the temporary agent
+                a.clip_by_bound()
+
+                # Re-evaluates its fitness
+                a.fit = function(a.position)
+
+                # If temporary agent is better than old one
+                if a.fit < agent.fit:
+                    # Copies its position and fitness to the agent
+                    agent.position = copy.deepcopy(a.position)
+                    agent.fit = copy.deepcopy(a.fit)
