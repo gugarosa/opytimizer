@@ -149,20 +149,18 @@ class MVPA(Optimizer):
                 a.position += r1 * (franchise_i.position - a.position) + \
                     2 * r1 * (space.best_agent.position - a.position)
 
-                # Calculates the probability of team `i` beating team `j`
+                # Calculates the probability of team `i` beating team `j` (eq. 16)
                 Pr = 1 - fitness_i / (fitness_i + fitness_j + c.EPSILON)
 
                 # If random number is smaller than probability
                 if r2 < Pr:
                     # Updates temporary agent's position (eq. 17)
-                    a.position += r3 * \
-                        (a.position - franchise_j.position)
+                    a.position += r3 * (a.position - franchise_j.position)
 
                 # If random number is bigger than probability
                 else:
                     # Updates temporary agent's position (eq. 18)
-                    a.position += r3 * \
-                        (franchise_j.position - a.position)
+                    a.position += r3 * (franchise_j.position - a.position)
 
                 # Clips the temporary agent
                 a.clip_by_bound()
