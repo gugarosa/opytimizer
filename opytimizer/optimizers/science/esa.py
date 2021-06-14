@@ -4,12 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
 
@@ -41,7 +38,7 @@ class ESA(Optimizer):
         # Overrides its parent class with the receiving params
         super(ESA, self).__init__()
 
-        #
+        # Number of electrons per atom
         self.n_electrons = 5
 
         # Builds the class
@@ -49,44 +46,105 @@ class ESA(Optimizer):
 
         logger.info('Class overrided.')
 
-    def compile(self, space):
-        """
+    @property
+    def n_electrons(self):
+        """int: Number of electrons per atom.
+
         """
 
-        self.electron = np.zeros((space.n_agents, self.n_electrons, space.n_variables, space.n_dimensions))
+        return self._n_electrons
+
+    @n_electrons.setter
+    def n_electrons(self, n_electrons):
+        if not isinstance(n_electrons, int):
+            raise e.TypeError('`n_electrons` should be an integer')
+        if n_electrons <= 0:
+            raise e.ValueError('`n_electrons` should be > 0')
+
+        self._n_electrons = n_electrons
+
+    @property
+    def D(self):
+        """np.array: Orbital radius.
+
+        """
+
+        return self._D
+
+    @D.setter
+    def D(self, D):
+        if not isinstance(D, np.ndarray):
+            raise e.TypeError('`D` should be a numpy array')
+
+        self._D = D
+
+    def compile(self, space):
+        """Compiles additional information that is used by this optimizer.
+
+        Args:
+            space (Space): A Space object containing meta-information.
+
+        """
+
+        # Orbital radius
+        self.D = r.generate_uniform_random_number(
+            size=(space.n_agents, space.n_variables, space.n_dimensions))
 
     def update(self, space, function):
-        """
+        """Wraps EElectro-Search Algorithm over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+
         """
 
-        D = r.generate_uniform_random_number()
-
+        # Iterates through all agents
         for i, agent in enumerate(space.agents):
+            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
+
+            # Creates a list of electrons
             electrons = [copy.deepcopy(agent) for _ in range(self.n_electrons)]
 
+            # Iterates through all electrons
             for electron in electrons:
-                #
+                # Generates a random number and the energy level
                 r1 = r.generate_uniform_random_number()
                 n = r.generate_integer_random_number(2, 6)
 
-                # (eq. 3)
-                electron.position += (2 * r1 - 1) * (1 - 1 / n ** 2) / D
+                # Updates the electron's position (eq. 3)
+                electron.position += (2 * r1 - 1) * (1 - 1 / n ** 2) / self.D[i]
 
-                #
+                # Clips its bounds
                 electron.clip_by_bound()
 
-                #
+                # Re-evaluates the new position
                 electron.fit = function(electron.position)
 
+            # Sorts the electrons
             electrons.sort(key=lambda x: x.fit)
 
-            D = (electrons[0].position - space.best_agent.position) + 0.5 * (1 / space.best_agent.position ** 2 - 1 / a.position ** 2)
-            a.position += 0.5 * D
+            # Generates both Rydberg constant and acceleration coefficient
+            # Original implementation is missing up an informative description
+            Re = r.generate_uniform_random_number()
+            Ac = r.generate_uniform_random_number()
+
+            # Updates the Orbital radius (eq. 4)
+            self.D[i] = (electrons[0].position - space.best_agent.position) + \
+                Re * (1 / space.best_agent.position ** 2 - 1 / a.position ** 2)
+
+            # Updates the temporary agent's position (eq. 5)
+            a.position += Ac * self.D[i]
+
+            # Checks agent's limits
             a.clip_by_bound()
+
+            # Calculates the fitness for the temporary position
             a.fit = function(a.position)
 
+            # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
+                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
-            
