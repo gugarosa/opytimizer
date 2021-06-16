@@ -14,3 +14,4 @@ from opytimizer.optimizers.population.lpoa import LPOA
 from opytimizer.optimizers.population.osa import OSA
 from opytimizer.optimizers.population.ppa import PPA
 from opytimizer.optimizers.population.pvs import PVS
+from opytimizer.optimizers.population.rfo import RFO

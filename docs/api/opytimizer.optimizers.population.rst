@@ -14,6 +14,7 @@ opytimizer.optimizers.population
     opytimizer.optimizers.population.osa
     opytimizer.optimizers.population.ppa
     opytimizer.optimizers.population.pvs
+    opytimizer.optimizers.population.rfo
 
 .. automodule:: opytimizer.optimizers.population
    :members:
