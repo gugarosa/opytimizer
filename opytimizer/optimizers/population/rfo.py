@@ -4,12 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
-import opytimizer.math.random as r
 import opytimizer.math.general as g
+import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
 
@@ -24,7 +22,7 @@ class RFO(Optimizer):
 
     References:
         D. Polap and M. Woźniak. Red fox optimization algorithm.
-        Expert Systems With Applications (2021).
+        Expert Systems with Applications (2021).
 
     """
 
@@ -41,18 +39,60 @@ class RFO(Optimizer):
         # Overrides its parent class with the receiving params
         super(RFO, self).__init__()
 
-        # Fox observation angle
-        self.phi = r.generate_uniform_random_number(0, 2*np.pi)
+        # Observation angle
+        self.phi = r.generate_uniform_random_number(0, 2*np.pi)[0]
 
-        # Weather conditions
-        self.theta = r.generate_uniform_random_number()
+        # Weather condition
+        self.theta = r.generate_uniform_random_number()[0]
 
         # Builds the class
         self.build(params)
 
         logger.info('Class overrided.')
 
+    @property
+    def phi(self):
+        """float: Observation angle.
+
+        """
+
+        return self._phi
+
+    @phi.setter
+    def phi(self, phi):
+        if not isinstance(phi, (float, int)):
+            raise e.TypeError('`phi` should be a float or integer')
+        if phi < 0 or phi > 2*np.pi:
+            raise e.ValueError('`phi` should be between 0 and 2PI')
+
+        self._phi = phi
+
+    @property
+    def theta(self):
+        """float: Weather condition.
+
+        """
+
+        return self._theta
+
+    @theta.setter
+    def theta(self, theta):
+        if not isinstance(theta, (float, int)):
+            raise e.TypeError('`theta` should be a float or integer')
+        if theta < 0 or theta > 1:
+            raise e.ValueError('`theta` should be between 0 and 1')
+
+        self._theta = theta
+
     def update(self, space, function):
+        """Wraps Red Fox Optimization over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
         # Define noticing the hunting fox
         mu = r.generate_uniform_random_number()
 

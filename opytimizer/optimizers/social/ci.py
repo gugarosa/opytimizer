@@ -5,8 +5,8 @@ import copy
 
 import numpy as np
 
-import opytimizer.math.random as rnd
 import opytimizer.math.general as g
+import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer

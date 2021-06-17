@@ -1,4 +1,5 @@
 from types import new_class
+
 import numpy as np
 
 from opytimizer.optimizers.population import loa
