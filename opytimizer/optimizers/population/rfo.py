@@ -84,6 +84,86 @@ class RFO(Optimizer):
 
         self._theta = theta
 
+    def _rellocation(self, agent, best_agent, function):
+        """Performs the fox rellocation procedure.
+
+        Args:
+            agent (Agent): Current agent.
+            best_agent (Agent): Best agent.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Creates a temporary agent
+        temp = copy.deepcopy(agent)
+
+        # Calculates the square root of euclidean distance between agent and best agent (eq. 1)
+        distance = np.sqrt(g.euclidean_distance(
+            temp.position, best_agent.position))
+
+        # Randomly selects the scaling hyperparameter
+        alpha = r.generate_uniform_random_number(0, distance)
+
+        # Calculates individual reallocation (eq. 2)
+        temp.position += alpha * np.sign(best_agent.position - temp.position)
+
+        # Checks agent's limits
+        temp.clip_by_bound()
+
+        # Calculates the fitness for the temporary position
+        temp.fit = function(temp.position)
+
+        # If new fitness is better than agent's fitness
+        if temp.fit < agent.fit:
+            # Copies its position and fitness to the agent
+            agent.position = copy.deepcopy(temp.position)
+            agent.fit = copy.deepcopy(temp.fit)
+
+    def _noticing(self, agent, best_agent, function, alpha):
+        """Performs the fox noticing procedure.
+
+        Args:
+            agent (Agent): Current agent.
+            best_agent (Agent): Best agent.
+            function (Function): A Function object that will be used as the objective function.
+            alpha (float): Scaling parameter.
+
+        """
+
+        # Defines the noticing parameter
+        mu = r.generate_uniform_random_number()
+
+        # If noticing is higher than 0.75
+        if mu > 0.75:
+            # If observation angle is different than zero
+            if self.phi != 0:
+                # Calculates fox observation radius (eq. 4 - top)
+                radius = alpha * np.sin(self.phi) / self.phi
+
+            # If observation angle equals to zero
+            else:
+                # Calculates fox observation radius (eq. 4 - bottom)
+                radius = self.theta
+
+            phi = r.generate_uniform_random_number(
+                0, 2 * np.pi, agent.n_variables)
+
+            # Calculate reallocation according to Eq. (5)
+            for j in range(agent.n_variables):
+
+                if j == 0:
+                    agent.position[j] = alpha * radius * \
+                        np.cos(phi[j]) + agent.position[j]
+                else:
+
+                    summation = 0
+
+                    for i in range(j):
+                        summation += np.sin(phi[i])
+
+                    agent.position[j] = alpha * radius * summation + \
+                        alpha * radius * np.cos(phi[j]) + agent.position[j]
+
     def update(self, space, function):
         """Wraps Red Fox Optimization over all agents and variables.
 
@@ -93,68 +173,16 @@ class RFO(Optimizer):
 
         """
 
-        # Define noticing the hunting fox
-        mu = r.generate_uniform_random_number()
+        # Defines the scaling parameter
+        alpha = r.generate_uniform_random_number(0, 0.2)
 
-        # Scaling parameter
-        a = r.generate_uniform_random_number(0, 0.2)
-
+        # Iterates through all agents
         for agent in space.agents:
+            # Performs the fox rellocation procedure
+            self._rellocation(agent, space.best_agent, function)
 
-            # Creates a temporary agent
-            temp = copy.deepcopy(agent)
-
-            # Distance is calculated by the square of the euclidean distance
-            distance = np.sqrt(g.euclidean_distance(
-                temp.position, space.best_agent.position))
-
-            # Randomly selected scaling hyperparameter
-            alpha = r.generate_uniform_random_number(0, distance)
-
-            # Calculate reallocation of individuals according to Eq. (2)
-            temp.position += alpha * \
-                np.sign(space.best_agent.position - temp.position)
-
-            # Checks agent's limits
-            temp.clip_by_bound()
-
-            # Calculates the fitness for the temporary position
-            temp.fit = function(temp.position)
-
-            # If new fitness is better than agent's fitness
-            if temp.fit < agent.fit:
-                # Copies its position and fitness to the agent
-                agent.position = copy.deepcopy(temp.position)
-                agent.fit = copy.deepcopy(temp.fit)
-
-            # Creates a temporary agent
-            temp = copy.deepcopy(agent)
-
-            # Move closer
-            if mu > 0.75:
-
-                # Calculate fox observation radius r according to Eq. (4)
-                radius = self.theta if self.phi == 0 else a * \
-                    (np.sin(self.phi)/self.phi)
-
-                phi = r.generate_uniform_random_number(
-                    0, 2 * np.pi, space.n_variables)
-
-                # Calculate reallocation according to Eq. (5)
-                for j in range(space.n_variables):
-
-                    if j == 0:
-                        temp.position[j] = a * radius * \
-                            np.cos(phi[j]) + temp.position[j]
-                    else:
-
-                        summation = 0
-
-                        for i in range(j):
-                            summation += np.sin(phi[i])
-
-                        temp.position[j] = a * radius * summation + \
-                            a * radius * np.cos(phi[j]) + temp.position[j]
+            # Performs the fox noticing procedure
+            # self._noticing(agent, space.best_agent, function, alpha)
 
         # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
