@@ -116,8 +116,8 @@ class RFO(Optimizer):
     def n_replacement(self, n_replacement):
         if not isinstance(n_replacement, int):
             raise e.TypeError('`n_replacement` should be an integer')
-        if n_replacement <= 0:
-            raise e.ValueError('`n_replacement` should be > 0')
+        if n_replacement < 0:
+            raise e.ValueError('`n_replacement` should be >= 0')
 
         self._n_replacement = n_replacement
 
