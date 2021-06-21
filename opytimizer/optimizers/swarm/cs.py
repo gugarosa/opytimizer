@@ -82,8 +82,8 @@ class CS(Optimizer):
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
             raise e.TypeError('`beta` should be a float or integer')
-        if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+        if beta <= 0 or beta > 2:
+            raise e.ValueError('`beta` should be between 0 and 2')
 
         self._beta = beta
 

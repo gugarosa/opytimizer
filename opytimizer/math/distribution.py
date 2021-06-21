@@ -75,7 +75,7 @@ def generate_levy_distribution(beta=0.1, size=1):
     sigma = (num / den) ** (1 / beta)
 
     # Calculates 'u' and `v` distributions
-    u = r.generate_gaussian_random_number(size=size) * sigma
+    u = r.generate_gaussian_random_number(0, sigma ** 2, size=size)
     v = r.generate_gaussian_random_number(size=size)
 
     # Calculates the Lévy distribution
