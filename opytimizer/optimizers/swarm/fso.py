@@ -4,13 +4,10 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
 
@@ -44,7 +41,7 @@ class FSO(Optimizer):
         super(FSO, self).__init__()
 
         # Lévy distribution parameter
-        self.beta = 1.5
+        self.beta = 0.5
 
         # Builds the class
         self.build(params)
@@ -68,17 +65,50 @@ class FSO(Optimizer):
 
         self._beta = beta
 
-    def update(self, space, iteration, n_iterations):
-        # Calculates the Sigma Reduction Factor of current iteration (eq. 5)
-        SRF = np.sqrt((-np.log(1 - (1 / np.sqrt(iteration + 2)))) ** 2)
+    def update(self, space, function, iteration, n_iterations):
+        """Wraps Flying Squirrel Optimizer over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+            iteration (int): Current iteration.
+            n_iterations (int): Maximum number of iterations.
+
+        """
+
+        # Calculates the mean position of the population
+        mean_position = np.mean([agent.position for agent in space.agents], axis=0)
+
+        # Calculates the Sigma Reduction Factor (eq. 5)
+        SRF = (-np.log(1 - (1 / np.sqrt(iteration + 2)))) ** 2
 
         # Calculates the Beta Expansion Factor
-        beta = self.beta + (2 - self.beta) * ((iteration + 1) / n_iterations)
+        BEF = self.beta + (2 - self.beta) * ((iteration + 1) / n_iterations)
 
         # Iterates through all agents
         for agent in space.agents:
-            # Updates the agent's position with a random walk (eq. 2 and 3)
-            agent.position += SRF * r.generate_gaussian_random_number()
+            # Makes a deep copy of current agent
+            a = copy.deepcopy(agent)
 
-            # Updates the agent's position with a Lévy flight (eq. 6 to 18)
-            agent.position += d.generate_levy_distribution(beta)
+            # Iterates through all variables
+            for j in range(agent.n_variables):
+                # Calculates the random walk (eq. 2 and 3)
+                random_step = r.generate_gaussian_random_number(mean_position[j], SRF)
+
+                # Calculates the Lévy flight (eq. 6 to 18)
+                levy_step = d.generate_levy_distribution(BEF)
+
+                # Updates the agent's position
+                a.position[j] += random_step * levy_step * (agent.position[j] - space.best_agent.position[j])
+
+            # Checks agent's limits
+            a.clip_by_bound()
+
+            # Re-evaluates the temporary agent
+            a.fit = function(a.position)
+
+            # If temporary agent's fitness is better than agent's fitness
+            if a.fit < agent.fit:
+                # Replace its position and fitness
+                agent.position = copy.deepcopy(a.position)
+                agent.fit = copy.deepcopy(a.fit)
