@@ -14,7 +14,9 @@ def test_cs_params():
     new_cs = cs.CS(params=params)
 
     assert new_cs.alpha == 1.0
+
     assert new_cs.beta == 1.5
+    
     assert new_cs.p == 0.2
 
 
