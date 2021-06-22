@@ -4,12 +4,9 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
 
 import opytimizer.math.random as r
-import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.history as h
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
 
@@ -42,10 +39,10 @@ class AIG(Optimizer):
         # Overrides its parent class with the receiving params
         super(AIG, self).__init__()
 
-        # First correction angle
+        # First maximum correction angle
         self.alpha = np.pi
 
-        # Second correction angle
+        # Second maximum correction angle
         self.beta = np.pi
 
         # Builds the class
@@ -53,8 +50,50 @@ class AIG(Optimizer):
 
         logger.info('Class overrided.')
 
+    @property
+    def alpha(self):
+        """float: First maximum correction angle.
+
+        """
+
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        if not isinstance(alpha, (float, int)):
+            raise e.TypeError('`alpha` should be a float or integer')
+        if alpha < 0 or alpha > np.pi*2:
+            raise e.ValueError('`alpha` should be between 0 and 2PI')
+
+        self._alpha = alpha
+
+    @property
+    def beta(self):
+        """float: Second maximum correction angle.
+
+        """
+
+        return self._beta
+
+    @beta.setter
+    def beta(self, beta):
+        if not isinstance(beta, (float, int)):
+            raise e.TypeError('`beta` should be a float or integer')
+        if beta < 0 or beta > np.pi*2:
+            raise e.ValueError('`beta` should be between 0 and 2PI')
+
+        self._beta = beta
+
     def update(self, space, function):
-        # Calculating the maximum correction angles (eq. 18)
+        """Wraps Algorithm of the Innovative Gunner over all agents and variables.
+
+        Args:
+            space (Space): Space containing agents and update-related information.
+            function (Function): A Function object that will be used as the objective function.
+
+        """
+
+        # Calculates the maximum correction angles (eq. 18)
         a = r.generate_uniform_random_number()
         alpha_max = self.alpha * a
         beta_max = self.beta * a
@@ -64,15 +103,15 @@ class AIG(Optimizer):
             # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Sampling correction angles
+            # Samples correction angles
             alpha = r.generate_gaussian_random_number(0, alpha_max/3, (agent.n_variables, agent.n_dimensions))
             beta = r.generate_gaussian_random_number(0, beta_max/3, (agent.n_variables, agent.n_dimensions))
 
-            # Calculating correction functions (eq. 16 and 17)
+            # Calculates correction functions (eq. 16 and 17)
             g_alpha = np.where(alpha < 0, np.cos(alpha), 1 / np.cos(alpha))
             g_beta = np.where(beta < 0, np.cos(beta), 1 / np.cos(beta))
 
-            # Updating temporary agent's position
+            # Updates temporary agent's position (eq. 15)
             a.position *= g_alpha * g_beta
 
             # Checks agent's limits
