@@ -6,6 +6,7 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
+import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
@@ -162,7 +163,7 @@ class WEO(Optimizer):
             if int(iteration <= n_iterations / 2):
                 # Calculates the substrate energy (eq. 5)
                 E_sub = ((self.E_max - self.E_min) * (a.fit - best.fit)) / \
-                        (worst.fit - best.fit) + self.E_min
+                        (worst.fit - best.fit + c.EPSILON) + self.E_min
 
                 # Calculates the Monolayer Evaporation Probability matrix (eq. 6)
                 r1 = r.generate_uniform_random_number(size=(agent.n_variables, agent.n_dimensions))
@@ -181,7 +182,7 @@ class WEO(Optimizer):
             else:
                 # Calculates the contact angle (eq. 8)
                 theta = ((self.theta_max - self.theta_min) * (a.fit - best.fit)) / \
-                        (worst.fit - best.fit) + self.theta_min
+                        (worst.fit - best.fit + c.EPSILON) + self.theta_min
 
                 # Calculates the Droplet Evaporation Probability matrix (eq. 9)
                 r1 = r.generate_uniform_random_number(size=(a.n_variables, a.n_dimensions))
