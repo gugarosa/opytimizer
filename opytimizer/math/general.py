@@ -4,7 +4,6 @@
 from itertools import islice
 
 import numpy as np
-from numpy.linalg.linalg import _eigvalsh_dispatcher
 
 import opytimizer.math.random as r
 
