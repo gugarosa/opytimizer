@@ -4,6 +4,7 @@
 from itertools import islice
 
 import numpy as np
+from numpy.linalg.linalg import _eigvalsh_dispatcher
 
 import opytimizer.math.random as r
 
@@ -26,13 +27,14 @@ def euclidean_distance(x, y):
     return distance
 
 
-def kmeans(x, n_clusters=1, max_iterations=100):
+def kmeans(x, n_clusters=1, max_iterations=100, tol=1e-4):
     """Performs the K-Means clustering over the input data.
 
     Args:
         x (np.array): Input array with a shape equal to (n_samples, n_variables, n_dimensions).
         n_clusters (int): Number of clusters.
         max_iterations (int): Maximum number of clustering iterations.
+        tol (float): Tolerance value to stop the clustering.
 
     Returns:
         An array holding the assigned cluster per input sample.
@@ -54,27 +56,32 @@ def kmeans(x, n_clusters=1, max_iterations=100):
 
     # Iterates till the maximum amount of possible iterations
     for _ in range(max_iterations):
-        #
-        dists = np.array(
-            [np.linalg.norm(x - c, axis=1) for c in centroids])
+        # Calculates the euclidean distance between samples and each centroid
+        dists = np.squeeze(np.array([np.linalg.norm(x - c, axis=1) for c in centroids]))
 
+        # Gathers the minimum distance as the cluster that conquers the sample
+        updated_labels = np.squeeze(np.array(np.argmin(dists, axis=0)))
 
-        print(dists.shape)
+        # Calculates the difference ratio between old and new labels
+        ratio = np.sum(labels != updated_labels) / n_samples
 
-
-        #
-        _labels = np.array(np.argmin(dists, axis=0))
-        _labels = np.squeeze(_labels)
-
-        # print(_labels)
-
-        if (labels == _labels).all():
+        # If ratio is smaller than tolerance
+        if ratio <= tol:
+            # Breaks the loop
             break
-        else:
-            labels = _labels
-            for i in range(n_clusters):
-                if len(x[labels==i]) > 0:
-                    centroids[i] = np.mean(x[labels == i], axis=0)
+
+        # Updates the old labels with the new ones
+        labels = updated_labels
+
+        # Iterates through all centroids
+        for i in range(n_clusters):
+            # Gathers the samples that belongs to current centroid
+            centroid_samples = x[labels == i]
+
+            # If there are samples that belongs to the centroid
+            if centroid_samples.shape[0] > 0:
+                # Updates the centroid position
+                centroids[i] = np.mean(centroid_samples, axis=0)
 
     return labels
 
