@@ -6,6 +6,7 @@ import copy
 import numpy as np
 from tqdm import tqdm
 
+import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
@@ -45,3 +46,9 @@ class BSO(Optimizer):
         self.build(params)
 
         logger.info('Class overrided.')
+
+    def update(self, space):
+        
+        positions = np.array([agent.position for agent in space.agents])
+
+        g.kmeans(positions, n_clusters=3)

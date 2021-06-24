@@ -26,6 +26,52 @@ def euclidean_distance(x, y):
     return distance
 
 
+def kmeans(x, n_clusters=1, max_iterations=100):
+    """
+    """
+
+    #
+    n_samples, n_variables, n_dimensions = x.shape[0], x.shape[1], x.shape[2]
+
+    #
+    centroids = np.zeros((n_clusters, n_variables, n_dimensions))
+    labels = np.zeros(n_samples)
+
+    #
+    for i in range(n_clusters):
+        #
+        idx = r.generate_integer_random_number(0, n_samples)
+        centroids[i] = x[idx]
+
+    # print(centroids)
+
+    #
+    for _ in range(max_iterations):
+        #
+        dists = np.array(
+            [np.linalg.norm(x - c, axis=1) for c in centroids])
+
+        # print(dists)
+
+        #
+        _labels = np.array(np.argmin(dists, axis=0))
+        _labels = np.squeeze(_labels)
+
+        # print(_labels)
+
+        if (labels == _labels).all():
+            break
+        else:
+            labels = _labels
+            for i in range(n_clusters):
+                if len(x[labels==i]) > 0:
+                    centroids[i] = np.mean(x[labels == i], axis=0)
+
+            # print(centroids)
+
+
+
+
 def n_wise(x, size=2):
     """Iterates over an iterator and returns n-wise samples from it.
 
