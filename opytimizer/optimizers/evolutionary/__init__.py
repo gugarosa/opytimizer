@@ -3,7 +3,6 @@ It contains implementations of evolutionary-based optimizers.
 """
 
 from opytimizer.optimizers.evolutionary.bsa import BSA
-from opytimizer.optimizers.evolutionary.cro import CRO
 from opytimizer.optimizers.evolutionary.de import DE
 from opytimizer.optimizers.evolutionary.ep import EP
 from opytimizer.optimizers.evolutionary.es import ES

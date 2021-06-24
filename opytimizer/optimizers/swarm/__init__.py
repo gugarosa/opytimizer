@@ -6,7 +6,6 @@ from opytimizer.optimizers.swarm.abc import ABC
 from opytimizer.optimizers.swarm.abo import ABO
 from opytimizer.optimizers.swarm.af import AF
 from opytimizer.optimizers.swarm.ba import BA
-from opytimizer.optimizers.swarm.bfo import BFO
 from opytimizer.optimizers.swarm.boa import BOA
 from opytimizer.optimizers.swarm.bwo import BWO
 from opytimizer.optimizers.swarm.cs import CS

@@ -6,7 +6,6 @@ opytimizer.optimizers.swarm
     opytimizer.optimizers.swarm.abo
     opytimizer.optimizers.swarm.af
     opytimizer.optimizers.swarm.ba
-    opytimizer.optimizers.swarm.bfo
     opytimizer.optimizers.swarm.boa
     opytimizer.optimizers.swarm.bwo
     opytimizer.optimizers.swarm.cs
