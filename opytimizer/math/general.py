@@ -21,37 +21,46 @@ def euclidean_distance(x, y):
     """
 
     # Calculates the Euclidean distance
-    distance = np.linalg.norm(x - y) ** 2
+    distance = np.linalg.norm(x - y)
 
     return distance
 
 
 def kmeans(x, n_clusters=1, max_iterations=100):
-    """
+    """Performs the K-Means clustering over the input data.
+
+    Args:
+        x (np.array): Input array with a shape equal to (n_samples, n_variables, n_dimensions).
+        n_clusters (int): Number of clusters.
+        max_iterations (int): Maximum number of clustering iterations.
+
+    Returns:
+        An array holding the assigned cluster per input sample.
+
     """
 
-    #
+    # Gathers the corresponding dimensions
     n_samples, n_variables, n_dimensions = x.shape[0], x.shape[1], x.shape[2]
 
-    #
+    # Creates an array of centroids and labels
     centroids = np.zeros((n_clusters, n_variables, n_dimensions))
     labels = np.zeros(n_samples)
 
-    #
+    # Iterates through all possible clusters
     for i in range(n_clusters):
-        #
+        # Chooses a random sample to compose the centroid
         idx = r.generate_integer_random_number(0, n_samples)
         centroids[i] = x[idx]
 
-    # print(centroids)
-
-    #
+    # Iterates till the maximum amount of possible iterations
     for _ in range(max_iterations):
         #
         dists = np.array(
             [np.linalg.norm(x - c, axis=1) for c in centroids])
 
-        # print(dists)
+
+        print(dists.shape)
+
 
         #
         _labels = np.array(np.argmin(dists, axis=0))
@@ -67,9 +76,7 @@ def kmeans(x, n_clusters=1, max_iterations=100):
                 if len(x[labels==i]) > 0:
                     centroids[i] = np.mean(x[labels == i], axis=0)
 
-            # print(centroids)
-
-
+    return labels
 
 
 def n_wise(x, size=2):
