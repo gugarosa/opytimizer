@@ -46,7 +46,7 @@ class BSO(Optimizer):
         self.p_one_cluster = 0.3
 
         # Probability of selecting an idea from a single cluster
-        self.p_one_center = 0.3
+        self.p_one_center = 0.4
 
         # Probability of selecting an idea from a pair of clusters
         self.p_two_centers = 0.3
@@ -148,9 +148,10 @@ class BSO(Optimizer):
                 ideas_idx_per_cluster.append(ideas_idx)
             else:
                 ideas_idx_per_cluster.append([])
-            
+
             #
-            ideas_per_cluster = [(agents[j], j) for j in ideas_idx_per_cluster[i]]
+            ideas_per_cluster = [(agents[j], j)
+                                 for j in ideas_idx_per_cluster[i]]
             ideas_per_cluster.sort(key=lambda x: x[0].fit)
 
             if len(ideas_per_cluster) > 0:
@@ -158,7 +159,7 @@ class BSO(Optimizer):
                 best_idx_per_cluster.append(ideas_per_cluster[0][1])
             else:
                 best_idx_per_cluster.append(-1)
-            
+
         return ideas_idx_per_cluster, best_idx_per_cluster
 
     def update(self, space, function, iteration, n_iterations):
@@ -172,7 +173,8 @@ class BSO(Optimizer):
         """
 
         #
-        ideas_idx_per_cluster, best_idx_per_cluster = self._clusterize(space.agents)
+        ideas_idx_per_cluster, best_idx_per_cluster = self._clusterize(
+            space.agents)
 
         # Iterates through all agents
         for agent in space.agents:
@@ -186,7 +188,7 @@ class BSO(Optimizer):
             if self.p_one_cluster > r1:
                 # Selects a cluster and generates another random number
                 c = r.generate_integer_random_number(0, self.k)
-                
+
                 #
                 if len(ideas_idx_per_cluster[c]) > 0:
                     #
@@ -195,10 +197,13 @@ class BSO(Optimizer):
                     #
                     if self.p_one_center > r2:
                         #
-                        a.position = copy.deepcopy(space.agents[best_idx_per_cluster[c]].position)
+                        a.position = copy.deepcopy(
+                            space.agents[best_idx_per_cluster[c]].position)
                     else:
-                        j = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c]))
-                        a.position = copy.deepcopy(space.agents[ideas_idx_per_cluster[c][j]].position)
+                        j = r.generate_integer_random_number(
+                            0, len(ideas_idx_per_cluster[c]))
+                        a.position = copy.deepcopy(
+                            space.agents[ideas_idx_per_cluster[c][j]].position)
             else:
                 if self.k > 1:
                     c1 = r.generate_integer_random_number(0, self.k)
@@ -210,16 +215,20 @@ class BSO(Optimizer):
                         r4 = r.generate_uniform_random_number()
 
                         if self.p_two_centers > r3:
-                            a.position = r4 * space.agents[best_idx_per_cluster[c1]].position + (1 - r4) * space.agents[best_idx_per_cluster[c2]].position
+                            a.position = r4 * space.agents[best_idx_per_cluster[c1]].position + (
+                                1 - r4) * space.agents[best_idx_per_cluster[c2]].position
                         else:
-                            u = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c1]))
-                            v = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c2]))
-                            a.position = r4 * space.agents[ideas_idx_per_cluster[c1][u]].position + (1 - r4) * space.agents[ideas_idx_per_cluster[c2][v]].position
-        
+                            u = r.generate_integer_random_number(
+                                0, len(ideas_idx_per_cluster[c1]))
+                            v = r.generate_integer_random_number(
+                                0, len(ideas_idx_per_cluster[c2]))
+                            a.position = r4 * space.agents[ideas_idx_per_cluster[c1][u]].position + (
+                                1 - r4) * space.agents[ideas_idx_per_cluster[c2][v]].position
+
             noise = (0.5 * n_iterations - iteration) / agent.n_variables
             r5 = r.generate_uniform_random_number() * (1 / (1 + np.exp(-noise)))
 
-            a.position += r5 * r.generate_uniform_random_number()
+            a.position += r5 * r.generate_gaussian_random_number()
 
             # Checks agent's limits
             a.clip_by_bound()
