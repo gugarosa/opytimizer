@@ -5,8 +5,8 @@ from opytimizer.optimizers.social import BSO
 params = {
     'k': 5,
     'p_single_cluster': 0.3,
-    'p_single_idea': 0.4,
-    'p_double_idea': 0.3
+    'p_single_best': 0.4,
+    'p_double_best': 0.3
 }
 
 # Creates an BSO optimizer

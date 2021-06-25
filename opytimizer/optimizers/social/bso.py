@@ -45,11 +45,11 @@ class BSO(Optimizer):
         # Probability of selecting a single cluster
         self.p_single_cluster = 0.3
 
-        # Probability of selecting an idea from a single cluster
-        self.p_single_idea = 0.4
+        # Probability of selecting the best idea from a single cluster
+        self.p_single_best = 0.4
 
-        # Probability of selecting an idea from a pair of clusters
-        self.p_double_idea = 0.3
+        # Probability of selecting the best idea from a pair of clusters
+        self.p_double_best = 0.3
 
         # Builds the class
         self.build(params)
@@ -91,38 +91,38 @@ class BSO(Optimizer):
         self._p_single_cluster = p_single_cluster
 
     @property
-    def p_single_idea(self):
-        """float: Probability of selecting an idea from a single cluster.
+    def p_single_best(self):
+        """float: Probability of selecting the best idea from a single cluster.
 
         """
 
-        return self._p_single_idea
+        return self._p_single_best
 
-    @p_single_idea.setter
-    def p_single_idea(self, p_single_idea):
-        if not isinstance(p_single_idea, (float, int)):
-            raise e.TypeError('`p_single_idea` should be a float or integer')
-        if p_single_idea < 0 or p_single_idea > 1:
-            raise e.ValueError('`p_single_idea` should be between 0 and 1')
+    @p_single_best.setter
+    def p_single_best(self, p_single_best):
+        if not isinstance(p_single_best, (float, int)):
+            raise e.TypeError('`p_single_best` should be a float or integer')
+        if p_single_best < 0 or p_single_best > 1:
+            raise e.ValueError('`p_single_best` should be between 0 and 1')
 
-        self._p_single_idea = p_single_idea
+        self._p_single_best = p_single_best
 
     @property
-    def p_double_idea(self):
-        """float: Probability of selecting an idea from a pair of clusters.
+    def p_double_best(self):
+        """float: Probability of selecting the best idea from a pair of clusters.
 
         """
 
-        return self._p_double_idea
+        return self._p_double_best
 
-    @p_double_idea.setter
-    def p_double_idea(self, p_double_idea):
-        if not isinstance(p_double_idea, (float, int)):
-            raise e.TypeError('`p_double_idea` should be a float or integer')
-        if p_double_idea < 0 or p_double_idea > 1:
-            raise e.ValueError('`p_double_idea` should be between 0 and 1')
+    @p_double_best.setter
+    def p_double_best(self, p_double_best):
+        if not isinstance(p_double_best, (float, int)):
+            raise e.TypeError('`p_double_best` should be a float or integer')
+        if p_double_best < 0 or p_double_best > 1:
+            raise e.ValueError('`p_double_best` should be between 0 and 1')
 
-        self._p_double_idea = p_double_idea
+        self._p_double_best = p_double_best
 
     def _clusterize(self, agents):
         """Performs the clusterization over the agents' positions.
@@ -132,7 +132,7 @@ class BSO(Optimizer):
 
         Returns:
             Agents indexes and best agent index per cluster.
-            
+
         """
 
         # Gathers current agents' positions (ideas)
@@ -141,30 +141,36 @@ class BSO(Optimizer):
         # Performs the K-means clustering
         labels = g.kmeans(ideas, self.k)
 
-        #
-        ideas_idx_per_cluster = []
-        best_idx_per_cluster = []
+        # Creates lists to ideas and best idea indexes per cluster
+        ideas_idx_per_cluster, best_idx_per_cluster = [], []
 
-        #
+        # Iterates through all possible clusters
         for i in range(self.k):
-            #
+            # Gathers ideas that belongs to current cluster
             ideas_idx = np.where(labels == i)[0]
 
+            # If there are any ideas
             if len(ideas_idx) > 0:
-                #
+                # Appends them to the corresponding list
                 ideas_idx_per_cluster.append(ideas_idx)
+
+            # If not
             else:
+                # Just appends an empty list for compatibility purposes
                 ideas_idx_per_cluster.append([])
 
-            #
-            ideas_per_cluster = [(agents[j], j)
-                                 for j in ideas_idx_per_cluster[i]]
+            # Gathers a tuple of sorted agents and their index for the current cluster
+            ideas_per_cluster = [(agents[j], j) for j in ideas_idx_per_cluster[i]]
             ideas_per_cluster.sort(key=lambda x: x[0].fit)
 
+            # If there are any ideas
             if len(ideas_per_cluster) > 0:
-                #
+                # Appends the best index to the corresponding list
                 best_idx_per_cluster.append(ideas_per_cluster[0][1])
+
+            # If not
             else:
+                # Just appends a `-1` for compatibility purposes
                 best_idx_per_cluster.append(-1)
 
         return ideas_idx_per_cluster, best_idx_per_cluster
@@ -190,8 +196,8 @@ class BSO(Optimizer):
             # Generates a random number
             r1 = r.generate_uniform_random_number()
 
-            # If probability of selecting a cluster is bigger than random number
-            if self.p_single_cluster > r1:
+            # If probability of selecting a single cluster is smaller than random number
+            if self.p_single_cluster < r1:
                 # Randomly selects a cluster
                 c = r.generate_integer_random_number(0, self.k)
 
@@ -201,41 +207,53 @@ class BSO(Optimizer):
                     r2 = r.generate_uniform_random_number()
 
                     # If selection should come from best cluster
-                    if self.p_single_idea > r2:
-                        # Updates the temporary agent's position with cluster's position
-                        a.position = copy.deepcopy(
-                            space.agents[best_idx_per_cluster[c]].position)
+                    if self.p_single_best < r2:
+                        # Updates the temporary agent's position
+                        a.position = copy.deepcopy(space.agents[best_idx_per_cluster[c]].position)
 
                     # If selection should come from a random agent in cluster
                     else:
-                        j = r.generate_integer_random_number(
-                            0, len(ideas_idx_per_cluster[c]))
-                        a.position = copy.deepcopy(
-                            space.agents[ideas_idx_per_cluster[c][j]].position)
+                        # Gathers an index from agent in cluster
+                        j = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c]))
+
+                        # Updates the temporary agent's position
+                        a.position = copy.deepcopy(space.agents[ideas_idx_per_cluster[c][j]].position)
+
+            # If probability of selecting a single cluster is bigger than random number
             else:
+                # Checks if there are 2+ available clusters
                 if self.k > 1:
+                    # Selects two different clusters
                     c1 = r.generate_integer_random_number(0, self.k)
                     c2 = r.generate_integer_random_number(0, self.k, c1)
 
+                    # If both clusters have at least one idea
                     if len(ideas_idx_per_cluster[c1]) > 0 and len(ideas_idx_per_cluster[c2]) > 0:
-
+                        # Generates a new set of random numbers
                         r3 = r.generate_uniform_random_number()
                         r4 = r.generate_uniform_random_number()
 
-                        if self.p_double_idea > r3:
-                            a.position = r4 * space.agents[best_idx_per_cluster[c1]].position + (
-                                1 - r4) * space.agents[best_idx_per_cluster[c2]].position
-                        else:
-                            u = r.generate_integer_random_number(
-                                0, len(ideas_idx_per_cluster[c1]))
-                            v = r.generate_integer_random_number(
-                                0, len(ideas_idx_per_cluster[c2]))
-                            a.position = r4 * space.agents[ideas_idx_per_cluster[c1][u]].position + (
-                                1 - r4) * space.agents[ideas_idx_per_cluster[c2][v]].position
+                        ## If selection should come from best clusters
+                        if self.p_double_best < r3:
+                            # Updates the temporary agent's position
+                            a.position = r4 * space.agents[best_idx_per_cluster[c1]].position + \
+                                         (1 - r4) * space.agents[best_idx_per_cluster[c2]].position
 
+                        # If selection should come from random agents in clusters
+                        else:
+                            # Gathers indexes from agents in clusters
+                            u = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c1]))
+                            v = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c2]))
+
+                            # Updates the temporary agent's position
+                            a.position = r4 * space.agents[ideas_idx_per_cluster[c1][u]].position + \
+                                         (1 - r4) * space.agents[ideas_idx_per_cluster[c2][v]].position
+
+            # Generates a random noise and activates it with a sigmoid function
             noise = (0.5 * n_iterations - iteration) / agent.n_variables
             r5 = r.generate_uniform_random_number() * (1 / (1 + np.exp(-noise)))
 
+            # Updates the temporary agent's position
             a.position += r5 * r.generate_gaussian_random_number()
 
             # Checks agent's limits
