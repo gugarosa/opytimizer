@@ -193,7 +193,7 @@ class GA(Optimizer):
             # If random number is smaller than probability of mutation
             if r1 < self.p_mutation:
                 # Mutates the offspring
-                alpha.position[j] *= r.generate_gaussian_random_number()
+                alpha.position[j] += r.generate_gaussian_random_number()
 
             # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
@@ -201,7 +201,7 @@ class GA(Optimizer):
             # If random number is smaller than probability of mutation
             if r2 < self.p_mutation:
                 # Mutates the offspring
-                beta.position[j] *= r.generate_gaussian_random_number()
+                beta.position[j] += r.generate_gaussian_random_number()
 
         return alpha, beta
 
