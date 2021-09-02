@@ -36,7 +36,6 @@ class Function:
         # If no errors were shown, we can declare the function as `built`
         self.built = True
 
-        # Logs the attributes
         logger.debug('Function: %s | Built: %s.',
                      self.name, self.built)
         logger.info('Class created.')

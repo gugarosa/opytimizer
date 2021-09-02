@@ -39,7 +39,6 @@ class TreeSpace(Space):
         # Defines missing override arguments
         n_dimensions = 1
 
-        # Override its parent class with the receiving arguments
         super(TreeSpace, self).__init__(n_agents, n_variables, n_dimensions,
                                         lower_bound, upper_bound)
 
@@ -58,11 +57,9 @@ class TreeSpace(Space):
         else:
             self.functions = functions
 
-        # Creates terminals and trees
         self._create_terminals()
         self._create_trees()
 
-        # Builds the class
         self.build()
 
         logger.info('Class overrided.')
@@ -183,7 +180,6 @@ class TreeSpace(Space):
 
         """
 
-        # List of terminals
         self.terminals = [Agent(self.n_variables, self.n_dimensions,
                                 self.lb, self.ub) for _ in range(self.n_terminals)]
 
@@ -192,11 +188,9 @@ class TreeSpace(Space):
 
         """
 
-        # List of trees
         self.trees = [self.grow(self.min_depth, self.max_depth)
                       for _ in range(self.n_agents)]
 
-        # Defines a best tree
         self.best_tree = copy.deepcopy(self.trees[0])
 
         logger.debug('Depth: [%d, %d] | Terminals: %d | Function: %s.',
@@ -207,12 +201,9 @@ class TreeSpace(Space):
 
         """
 
-        # Iterates through all agents
         for agent in self.agents:
-            # Initializes the agent
             agent.fill_with_uniform()
 
-        # Defines a best agent and a best tree
         self.best_agent = copy.deepcopy(self.agents[0])
 
     def _initialize_terminals(self):
@@ -220,9 +211,7 @@ class TreeSpace(Space):
 
         """
 
-        # Iterates through all terminals
         for terminal in self.terminals:
-            # Initializes the terminal
             terminal.fill_with_uniform()
 
     def grow(self, min_depth=1, max_depth=3):

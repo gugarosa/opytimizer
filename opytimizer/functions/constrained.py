@@ -25,7 +25,6 @@ class ConstrainedFunction(Function):
 
         logger.info('Overriding class: Function -> ConstrainedFunction.')
 
-        # Overrides its parent class with the receiving arguments
         super(ConstrainedFunction, self).__init__(pointer)
 
         # List of constraints
@@ -34,7 +33,6 @@ class ConstrainedFunction(Function):
         # Penalization factor
         self.penalty = penalty
 
-        # Logs the attributes
         logger.debug('Constraints: %s | Penalty: %s.',
                      self.constraints, self.penalty)
         logger.info('Class overrided.')
@@ -85,13 +83,10 @@ class ConstrainedFunction(Function):
         # Calculates the fitness function
         fitness = self.pointer(x)
 
-        # For every possible constraint
         for constraint in self.constraints:
-            # Checks if constraint is valid
             if constraint(x):
                 pass
 
-            # If the constraint is not valid
             else:
                 # Penalizes the objective function
                 fitness += self.penalty * fitness

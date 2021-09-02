@@ -108,7 +108,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_iteration_begin(iteration, opt_model)
 
@@ -121,7 +120,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_iteration_end(iteration, opt_model)
 
@@ -130,7 +128,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_evaluate_before(*evaluate_args)
 
@@ -139,7 +136,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_evaluate_after(*evaluate_args)
 
@@ -148,7 +144,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_update_before(*update_args)
 
@@ -157,7 +152,6 @@ class CallbackVessel:
 
         """
 
-        # Iterates through all callbacks and invokes their method
         for callback in self.callbacks:
             callback.on_update_after(*update_args)
 
@@ -177,7 +171,6 @@ class CheckpointCallback(Callback):
 
         """
 
-        # Overrides its parent class with the receiving arguments
         super(CheckpointCallback, self).__init__()
 
         # File's path

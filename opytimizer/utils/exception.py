@@ -22,7 +22,6 @@ class Error(Exception):
 
         """
 
-        # Overrides its parent class
         super(Error, self).__init__()
 
         # Logs the error in a formatted way
@@ -42,7 +41,6 @@ class ArgumentError(Error):
 
         """
 
-        # Overrides its parent class with class name and error message
         super(ArgumentError, self).__init__('ArgumentError', error)
 
 
@@ -59,7 +57,6 @@ class BuildError(Error):
 
         """
 
-        # Overrides its parent class with class name and error message
         super(BuildError, self).__init__('BuildError', error)
 
 
@@ -76,7 +73,6 @@ class SizeError(Error):
 
         """
 
-        # Overrides its parent class with class name and error message
         super(SizeError, self).__init__('SizeError', error)
 
 
@@ -93,7 +89,6 @@ class TypeError(Error):
 
         """
 
-        # Overrides its parent class with class name and error message
         super(TypeError, self).__init__('TypeError', error)
 
 
@@ -110,5 +105,4 @@ class ValueError(Error):
 
         """
 
-        # Overrides its parent class with class name and error message
         super(ValueError, self).__init__('ValueError', error)

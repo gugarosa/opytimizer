@@ -53,7 +53,6 @@ class Opytimizer:
         # Total number of iterations
         self.total_iterations = 0
 
-        # Logs the properties
         logger.debug('Space: %s | Optimizer: %s| Function: %s.',
                      self.space, self.optimizer, self.function)
         logger.info('Class created.')
@@ -158,7 +157,6 @@ class Opytimizer:
 
         """
 
-        # Inspects the `evaluate` and retrieves its parameters
         args = signature(self.optimizer.evaluate).parameters
 
         return [getattr(self, v) for v in args]
@@ -169,7 +167,6 @@ class Opytimizer:
 
         """
 
-        # Inspects the `update` and retrieves its parameters
         args = signature(self.optimizer.update).parameters
 
         return [getattr(self, v) for v in args]
@@ -235,7 +232,6 @@ class Opytimizer:
 
         # Initializes a progress bar
         with tqdm(total=n_iterations) as b:
-            # Loops through all iterations
             for t in range(n_iterations):
                 logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
@@ -284,9 +280,7 @@ class Opytimizer:
 
         """
 
-        # Opens an output file
         with open(file_path, 'wb') as output_file:
-            # Dumps object to file
             pickle.dump(self, output_file)
 
     @classmethod
@@ -299,9 +293,7 @@ class Opytimizer:
 
         """
 
-        # Opens an input file
-        with open(file_path, "rb") as input_file:
-            # Loads object from file
+        with open(file_path, 'rb') as input_file:
             opt_model = pickle.load(input_file)
 
             return opt_model

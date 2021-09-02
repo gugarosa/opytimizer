@@ -33,7 +33,6 @@ class WeightedFunction:
         # Set built variable to 'True'
         self.built = True
 
-        # Logging attributes
         logger.debug('Functions: %s | Weights: %s | Built: %s',
                      [f.name for f in self.functions], self.weights, self.built)
         logger.info('Class created.')
@@ -52,7 +51,6 @@ class WeightedFunction:
         # Defines a variable to hold the total fitness
         z = 0
 
-        # Iterates through every function
         for (f, w) in zip(self.functions, self.weights):
             # Applies w * f(x)
             z += w * f.pointer(x)

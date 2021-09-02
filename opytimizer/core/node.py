@@ -216,7 +216,6 @@ class Node:
         # Creates lists for post-order and stacked nodes
         post_order, stacked = [], []
 
-        # Creates a perpetual while
         while True:
             # Creates another while to check if node exists
             while self is not None:
@@ -245,7 +244,6 @@ class Node:
                 # Gathers the right child node
                 self = self.right
 
-            # If the condition fails
             else:
                 # Appends the node to the output list
                 post_order.append(self)
@@ -253,9 +251,7 @@ class Node:
                 # And apply None as the current node
                 self = None
 
-            # If the stacked list is empty
             if len(stacked) == 0:
-                # Breaks the loop
                 break
 
         return post_order
@@ -308,11 +304,9 @@ class Node:
             # Gets the node from position
             node = pre_order[position]
 
-            # If the node is a terminal
             if node.category == 'TERMINAL':
                 return node.parent, node.flag
 
-            # If the node is a function
             if node.category == 'FUNCTION':
                 # If it is a function node, we need to return the parent of its parent
                 if node.parent and node.parent.parent:
@@ -337,7 +331,6 @@ def _build_string(node):
 
     """
 
-    # If current node is None
     if node is None:
         # Return an empty list along with `0` arguments
         return [], 0, 0, 0
@@ -355,7 +348,6 @@ def _build_string(node):
     left_branch, left_width, left_start, left_end = _build_string(node.left)
     right_branch, right_width, right_start, right_end = _build_string(node.right)
 
-    # If left branch width is greater than 0
     if left_width > 0:
         # Calculates the left node
         left = (left_start + left_end) // 2 + 1
@@ -374,7 +366,6 @@ def _build_string(node):
         # Increases the gap
         gap += 1
 
-    # If not
     else:
         # The start point will be 0
         start = 0
@@ -385,7 +376,6 @@ def _build_string(node):
     # Appending space chars to second line based on the node's width
     second_line.append(' ' * width)
 
-    # If right branch width is greater than 0
     if right_width > 0:
         # Calculates the right node
         right = (right_start + right_end) // 2
@@ -417,7 +407,6 @@ def _build_string(node):
             # Applies the left branch to the left line
             left_line = left_branch[i]
 
-        # If not
         else:
             # Apply space chars
             left_line = ' ' * left_width
@@ -427,7 +416,6 @@ def _build_string(node):
             # Applies the right branch to the right line
             right_line = right_branch[i]
 
-        # If not
         else:
             # Apply space chars
             right_line = ' ' * right_width
@@ -450,53 +438,41 @@ def _evaluate(node):
 
     """
 
-    # Checks if the node exists
     if node:
         # Performs a recursive pass on the left and right branches
         x = _evaluate(node.left)
         y = _evaluate(node.right)
 
-        # If the node is an agent or constant
         if node.category == 'TERMINAL':
             return node.value
 
-        # Checks if its a summation
         if node.name == 'SUM':
             return x + y
 
-        # Checks if its a subtraction
         if node.name == 'SUB':
             return x - y
 
-        # Checks if its a multiplication
         if node.name == 'MUL':
             return x * y
 
-        # Checks if its a division
         if node.name == 'DIV':
             return x / (y + c.EPSILON)
 
-        # Checks if its an exponential
         if node.name == 'EXP':
             return np.exp(x)
 
-        # Checks if its a square root
         if node.name == 'SQRT':
             return np.sqrt(np.abs(x))
 
-        # Checks if its a logarithm
         if node.name == 'LOG':
             return np.log(np.abs(x) + c.EPSILON)
 
-        # Checks if its an absolute value
         if node.name == 'ABS':
             return np.abs(x)
 
-        # Checks if its a sine value
         if node.name == 'SIN':
             return np.sin(x)
 
-        # Checks if its a cosine value
         if node.name == 'COS':
             return np.cos(x)
 
@@ -515,16 +491,15 @@ def _properties(node):
 
     """
 
-    # Initializing minimum and maximum depths
+    # Initializes minimum and maximum depths
     min_depth, max_depth = 0, -1
 
-    # Initializing number of leaves and nodes as 0
+    # Initializes number of leaves and nodes as 0
     n_leaves = n_nodes = 0
 
     # Gathers a list of possible nodes
     nodes = [node]
 
-    # While there is a nonde
     while len(nodes) > 0:
         # Maximum depth increases by 1
         max_depth += 1
@@ -532,14 +507,12 @@ def _properties(node):
         # Creates a list for further nodes
         next_nodes = []
 
-        # For each node in the current ones
         for n in nodes:
             # Increases the number of nodes
             n_nodes += 1
 
             # If the node is a leaf
             if n.left is None and n.right is None:
-                # If minimum depth is equal to 0
                 if min_depth == 0:
                     # Minimum depth will be equal to maximum depth
                     min_depth = max_depth

@@ -32,9 +32,7 @@ def plot(points, title='', subtitle='', style='winter', colorbar=True):
                               rstride=1, cstride=1, cmap=style,
                               edgecolor='none')
 
-    # If colorbar usage is `True`
     if colorbar:
-        # Adds the colorbar property to the figure
         fig.colorbar(surface, shrink=0.5, aspect=10)
 
     # Displays the plot

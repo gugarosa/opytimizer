@@ -20,7 +20,6 @@ def euclidean_distance(x, y):
 
     """
 
-    # Calculates the Euclidean distance
     distance = np.linalg.norm(x - y)
 
     return distance
@@ -47,13 +46,11 @@ def kmeans(x, n_clusters=1, max_iterations=100, tol=1e-4):
     centroids = np.zeros((n_clusters, n_variables, n_dimensions))
     labels = np.zeros(n_samples)
 
-    # Iterates through all possible clusters
     for i in range(n_clusters):
         # Chooses a random sample to compose the centroid
         idx = r.generate_integer_random_number(0, n_samples)
         centroids[i] = x[idx]
 
-    # Iterates till the maximum amount of possible iterations
     for _ in range(max_iterations):
         # Calculates the euclidean distance between samples and each centroid
         dists = np.squeeze(np.array([np.linalg.norm(x - c, axis=1) for c in centroids]))
@@ -64,15 +61,12 @@ def kmeans(x, n_clusters=1, max_iterations=100, tol=1e-4):
         # Calculates the difference ratio between old and new labels
         ratio = np.sum(labels != updated_labels) / n_samples
 
-        # If ratio is smaller than tolerance
         if ratio <= tol:
-            # Breaks the loop
             break
 
         # Updates the old labels with the new ones
         labels = updated_labels
 
-        # Iterates through all centroids
         for i in range(n_clusters):
             # Gathers the samples that belongs to current centroid
             centroid_samples = x[labels == i]
@@ -97,7 +91,6 @@ def n_wise(x, size=2):
 
     """
 
-    # Creates an iterator from `x`
     iterator = iter(x)
 
     return iter(lambda: tuple(islice(iterator, size)), ())
@@ -119,7 +112,6 @@ def tournament_selection(fitness, n, size=2):
     # Creates a list to append selected individuals
     selected = []
 
-    # For every n-individual to be selected
     for _ in range(n):
         # For every tournament round, we select `size` individuals
         step = [np.random.choice(fitness) for _ in range(size)]
@@ -147,7 +139,6 @@ def weighted_wheel_selection(weights):
     # Defines the selection probability
     prob = r.generate_uniform_random_number() * cumulative_sum[-1]
 
-    # For every individual
     for i, c_sum in enumerate(cumulative_sum):
         # If individual's cumulative sum is bigger than selection probability
         if c_sum > prob:

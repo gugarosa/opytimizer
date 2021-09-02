@@ -191,7 +191,6 @@ class Space:
 
         """
 
-        # List of agents
         self.agents = [Agent(self.n_variables, self.n_dimensions,
                              self.lb, self.ub) for _ in range(self.n_agents)]
 
@@ -210,16 +209,12 @@ class Space:
 
         """
 
-        # Creates the agents
         self._create_agents()
-
-        # Initializes the agents
         self._initialize_agents()
 
         # If no errors were shown, we can declare the space as `built`
         self.built = True
 
-        # Logs the properties
         logger.debug('Agents: %d | Size: (%d, %d) | '
                      'Lower Bound: %s | Upper Bound: %s | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions,
@@ -230,7 +225,5 @@ class Space:
 
         """
 
-        # Iterates through all agents
         for agent in self.agents:
-            # Clips its limits
             agent.clip_by_bound()

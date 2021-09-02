@@ -82,14 +82,11 @@ class Optimizer:
 
         """
 
-        # Checks if `params` are really provided
         if params:
             # Saves the `params` for faster looking up
             self.params = params
 
-            # Iterates through all parameters
             for k, v in params.items():
-                # Sets its key-value pair
                 setattr(self, k, v)
 
         # Sets the `built` variable to true
@@ -124,7 +121,6 @@ class Optimizer:
 
         """
 
-        # Iterates through all agents
         for agent in space.agents:
             # Calculates the fitness value of current agent
             agent.fit = function(agent.position)

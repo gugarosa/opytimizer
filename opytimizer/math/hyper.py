@@ -19,7 +19,6 @@ def norm(array):
 
     """
 
-    # Calculates the norm over a hypercomplex number
     array_norm = np.linalg.norm(array, axis=1)
 
     return array_norm

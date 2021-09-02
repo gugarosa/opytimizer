@@ -15,7 +15,6 @@ def generate_binary_random_number(size=1):
 
     """
 
-    # Generates a random binary number or array
     binary_array = np.round(np.random.uniform(0, 1, size))
 
     return binary_array
@@ -33,7 +32,6 @@ def generate_exponential_random_number(scale=1.0, size=1):
 
     """
 
-    # Generates a random exponential number or array
     exponential_array = np.random.exponential(scale, size)
 
     return exponential_array
@@ -52,7 +50,6 @@ def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
 
     """
 
-    # Generates a random Erlang number or array
     gamma_array = np.random.gamma(shape, scale, size)
 
     return gamma_array
@@ -72,7 +69,6 @@ def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None)
 
     """
 
-    # Generates a random integer number or array
     integer_array = np.random.randint(low, high, size)
 
     # Checks if a value is supposed to be excluded
@@ -101,7 +97,6 @@ def generate_uniform_random_number(low=0.0, high=1.0, size=1):
 
     """
 
-    # Generates a random uniform number or array
     uniform_array = np.random.uniform(low, high, size)
 
     return uniform_array
@@ -120,7 +115,6 @@ def generate_gaussian_random_number(mean=0.0, variance=1.0, size=1):
 
     """
 
-    # Generates a random gaussian number or array
     gaussian_array = np.random.normal(mean, variance, size)
 
     return gaussian_array

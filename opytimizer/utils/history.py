@@ -52,17 +52,14 @@ class History:
 
         """
 
-        # Checks if the key is `agents`
         if key == 'agents':
             # Returns a list of tuples (position, fit)
             return [(v.position.tolist(), v.fit) for v in value]
 
-        # Checks if the key is `best_agent`
         if key == 'best_agent':
             # Returns a tuple (position, fit)
             return (value.position.tolist(), value.fit)
 
-        # Checks if the key is `local_position`
         if key == 'local_position':
             # Returns a list of local positions
             return [v.tolist() for v in value]
@@ -72,7 +69,6 @@ class History:
 
         """
 
-        # Iterates through all keyword arguments
         for (key, value) in kwargs.items():
             # If current `key` is `agents` and they should not be saved,
             # we skip this loop iteration
@@ -108,7 +104,6 @@ class History:
         # Gathers the numpy array from the attribute
         attr = np.asarray(getattr(self, key), dtype=list)
 
-        # Checks if the key is `agents`
         if key in ['agents']:
             # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), index, 0)])
@@ -116,7 +111,6 @@ class History:
 
             return attr_pos, attr_fit
 
-        # Checks if the key is `best_agent`
         if key in ['best_agent']:
             # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), 0)])
@@ -124,7 +118,6 @@ class History:
 
             return attr_pos, attr_fit
 
-        # Checks if the key is `local_position`
         if key in ['local_position']:
             # Gathers positions
             attr_pos = np.hstack(attr[(slice(None), index)])
