@@ -231,7 +231,7 @@ class Opytimizer:
         self.evaluate(callbacks)
 
         # Initializes a progress bar
-        with tqdm(total=n_iterations) as b:
+        with tqdm(total=n_iterations, ascii=True) as b:
             for t in range(n_iterations):
                 logger.to_file(f'Iteration {t+1}/{n_iterations}')
 
