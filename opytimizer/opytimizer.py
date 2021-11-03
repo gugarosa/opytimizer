@@ -1,7 +1,7 @@
 """Optimization entry point.
 """
 
-import pickle
+import dill
 import time
 from inspect import signature
 
@@ -273,7 +273,7 @@ class Opytimizer:
         logger.info('It took %s seconds.', opt_time)
 
     def save(self, file_path):
-        """Saves the optimization model to a pickle file.
+        """Saves the optimization model to a dill (pickle) file.
 
         Args:
             file_path (str): Path of file to be saved.
@@ -281,11 +281,11 @@ class Opytimizer:
         """
 
         with open(file_path, 'wb') as output_file:
-            pickle.dump(self, output_file)
+            dill.dump(self, output_file)
 
     @classmethod
     def load(cls, file_path):
-        """Loads the optimization model from a pickle file without needing
+        """Loads the optimization model from a dill (pickle) file without needing
         to instantiate the class.
 
         Args:
@@ -294,6 +294,6 @@ class Opytimizer:
         """
 
         with open(file_path, 'rb') as input_file:
-            opt_model = pickle.load(input_file)
+            opt_model = dill.load(input_file)
 
             return opt_model

@@ -1,4 +1,5 @@
 coverage>=5.5
+dill>=0.3.4
 matplotlib>=3.3.4
 numpy>=1.19.5
 opytimark>=1.0.7

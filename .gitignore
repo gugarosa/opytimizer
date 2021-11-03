@@ -10,7 +10,7 @@
 opytimizer.log.*
 opytimark.log.*
 
-# Saved pickles
+# Saved dill (pickles)
 **/*.pkl
 
 # Downloaded datasets
