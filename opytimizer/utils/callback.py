@@ -17,6 +17,26 @@ class Callback:
 
         pass
 
+    def on_task_begin(self, opt_model):
+        """Performs a callback whenever a task begins.
+
+        Args:
+            opt_model (Opytimizer): An instance of the optimization model.
+
+        """
+
+        pass
+
+    def on_task_end(self, opt_model):
+        """Performs a callback whenever a task ends.
+
+        Args:
+            opt_model (Opytimizer): An instance of the optimization model.
+
+        """
+
+        pass
+
     def on_iteration_begin(self, iteration, opt_model):
         """Performs a callback whenever an iteration begins.
 
@@ -98,6 +118,28 @@ class CallbackVessel:
             raise e.TypeError('`callbacks` should be a list')
 
         self._callbacks = callbacks
+
+    def on_task_begin(self, opt_model):
+        """Performs a list of callbacks whenever a task begins.
+
+        Args:
+            opt_model (Opytimizer): An instance of the optimization model.
+
+        """
+
+        for callback in self.callbacks:
+            callback.on_task_begin(opt_model)
+
+    def on_task_end(self, opt_model):
+        """Performs a list of callbacks whenever a task ends.
+
+        Args:
+            opt_model (Opytimizer): An instance of the optimization model.
+
+        """
+
+        for callback in self.callbacks:
+            callback.on_task_end(opt_model)
 
     def on_iteration_begin(self, iteration, opt_model):
         """Performs a list of callbacks whenever an iteration begins.

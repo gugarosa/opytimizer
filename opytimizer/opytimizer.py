@@ -227,6 +227,9 @@ class Opytimizer:
         # Triggers starting time
         start = time.time()
 
+        # Invokes the `on_task_begin` callback
+        callbacks.on_task_begin(self)
+
         # Evaluates the search space
         self.evaluate(callbacks)
 
@@ -261,6 +264,9 @@ class Opytimizer:
 
                 logger.to_file(f'Fitness: {self.space.best_agent.fit}')
                 logger.to_file(f'Position: {self.space.best_agent.position}')
+
+        # Invokes the `on_task_end` callback
+        callbacks.on_task_end(self)
 
         # Stops the timer and calculates the optimization time
         end = time.time()
