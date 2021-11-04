@@ -219,7 +219,7 @@ class SSD(Optimizer):
                 # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-                space.best_agent.ts = time.time()
+                space.best_agent.ts = int(time.time())
 
     def update(self, space, function):
         """Wraps Social Ski Driver over all agents and variables.

@@ -15,6 +15,20 @@ class CustomCallback(Callback):
         # You only need to override its parent class
         super(CustomCallback).__init__()
 
+    def on_task_begin(self, opt_model):
+        """Called at the beginning of an task.
+
+        """
+
+        pass
+
+    def on_task_end(self, opt_model):
+        """Called at the end of an task.
+
+        """
+
+        pass
+
     def on_iteration_begin(self, iteration, opt_model):
         """Called at the beginning of an iteration.
 

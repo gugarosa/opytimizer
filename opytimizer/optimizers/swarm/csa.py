@@ -136,7 +136,7 @@ class CSA(Optimizer):
                 # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.memory[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
-                space.best_agent.ts = time.time()
+                space.best_agent.ts = int(time.time())
 
     def update(self, space):
         """Wraps Crow Search Algorithm over all agents and variables.

@@ -47,8 +47,7 @@ class Agent:
         self.ub = np.asarray(upper_bound)
 
         # Timestamp
-        self.ts = time.time()
-
+        self.ts = int(time.time())
 
     @property
     def n_variables(self):
@@ -154,7 +153,7 @@ class Agent:
 
     @property
     def ts(self):
-        """float: Timestamp of the agent.
+        """int: Timestamp of the agent.
 
         """
 
@@ -162,8 +161,8 @@ class Agent:
 
     @ts.setter
     def ts(self, ts):
-        if not isinstance(ts, (float, int, np.int32, np.int64)):
-            raise e.TypeError('`ts` should be a float or integer')
+        if not isinstance(ts, int):
+            raise e.TypeError('`ts` should be an integer')
 
         self._ts = ts
 
