@@ -270,7 +270,7 @@ class RRA(Optimizer):
         daughters.sort(key=lambda x: x.fit)
 
         # Checks the new positions' effectiviness (eq. 3)
-        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / self.last_best_fit)
+        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON))
 
         # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:
@@ -295,7 +295,7 @@ class RRA(Optimizer):
             agent = copy.deepcopy(daughters[idx])
 
         # Checks again the positions' effectiviness (eq. 3)
-        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / self.last_best_fit)
+        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON))
 
         # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:

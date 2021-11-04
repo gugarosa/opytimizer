@@ -4,6 +4,8 @@ from opytimizer.utils import callback
 def test_callback():
     new_callback = callback.Callback()
 
+    new_callback.on_task_begin(None)
+    new_callback.on_task_end(None)
     new_callback.on_iteration_begin(None, None)
     new_callback.on_iteration_end(None, None)
     new_callback.on_evaluate_before()
@@ -19,6 +21,8 @@ def test_callback_vessel():
     new_callback_vessel = callback.CallbackVessel(
         [new_callback_1, new_callback_2])
 
+    new_callback_vessel.on_task_begin(None)
+    new_callback_vessel.on_task_end(None)
     new_callback_vessel.on_iteration_begin(None, None)
     new_callback_vessel.on_iteration_end(None, None)
     new_callback_vessel.on_evaluate_before()
