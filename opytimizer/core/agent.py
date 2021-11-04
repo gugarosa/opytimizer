@@ -1,6 +1,7 @@
 """Agent.
 """
 
+import time
 import numpy as np
 
 import opytimizer.math.random as r
@@ -44,6 +45,10 @@ class Agent:
 
         # Upper bounds
         self.ub = np.asarray(upper_bound)
+
+        # Timestamp
+        self.ts = time.time()
+
 
     @property
     def n_variables(self):
@@ -146,6 +151,21 @@ class Agent:
             raise e.SizeError('`ub` should be the same size as `n_variables`')
 
         self._ub = ub
+
+    @property
+    def ts(self):
+        """float: Timestamp of the agent.
+
+        """
+
+        return self._ts
+
+    @ts.setter
+    def ts(self, ts):
+        if not isinstance(ts, (float, int, np.int32, np.int64)):
+            raise e.TypeError('`ts` should be a float or integer')
+
+        self._ts = ts
 
     def clip_by_bound(self):
         """Clips the agent's decision variables to the bounds limits.

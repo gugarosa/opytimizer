@@ -2,6 +2,7 @@
 """
 
 import copy
+import time
 
 import numpy as np
 
@@ -430,6 +431,7 @@ class GP(Optimizer):
                 space.best_tree = copy.deepcopy(tree)
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
+                space.best_agent.ts = time.time()
 
     def update(self, space):
         """Wraps Genetic Programming over all trees and variables.

@@ -2,6 +2,7 @@
 """
 
 import copy
+import time
 
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
@@ -130,6 +131,7 @@ class Optimizer:
                 # Makes a deep copy of agent's position and fitness
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
+                space.best_agent.ts = time.time()
 
     def update(self):
         """Updates the agents' position array.

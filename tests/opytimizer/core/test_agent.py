@@ -127,6 +127,23 @@ def test_agent_ub_setter():
     assert new_agent.ub[0] == 1
 
 
+def test_agent_ts():
+    new_agent = agent.Agent(1, 1, 0, 1)
+
+    assert type(new_agent.ts) == float
+
+
+def test_agent_ts_setter():
+    new_agent = agent.Agent(1, 1, 0, 1)
+
+    try:
+        new_agent.ts = np.array([0])
+    except:
+        new_agent.ts = 0.0
+
+    assert new_agent.ts == 0.0
+
+
 def test_agent_clip_by_bound():
     new_agent = agent.Agent(1, 1, 0, 1)
 
