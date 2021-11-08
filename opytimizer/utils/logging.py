@@ -59,7 +59,7 @@ def get_timed_file_handler():
     """
 
     # Creates a timed rotating file handler for logger
-    file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight', encoding='utf-8')
+    file_handler = TimedRotatingFileHandler(LOG_FILE, delay=True, when='midnight', encoding='utf-8')
     file_handler.setFormatter(FORMATTER)
 
     return file_handler
