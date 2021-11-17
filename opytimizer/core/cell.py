@@ -6,7 +6,7 @@ import copy
 import networkx as nx
 from networkx import DiGraph
 
-from opytimizer.core import InputBlock, IntermediateBlock, OutputBlock
+from opytimizer.core import InnerBlock, InputBlock, OutputBlock
 
 
 class Cell(DiGraph):
@@ -40,14 +40,6 @@ class Cell(DiGraph):
                 if self.nodes[u]['block'].n_output == self.nodes[v]['block'].n_input:
                     # Adds edge to the DAG
                     self.add_edge(u, v)
-
-    @property
-    def n_blocks(self):
-        """int: Number of blocks.
-
-        """
-
-        return len(self.nodes)
 
     @property
     def input_idx(self):
@@ -127,14 +119,16 @@ if __name__ == '__main__':
         return x, y
     def f2(x, y):
         return x+1, y+1
-        
+
     cell = Cell([InputBlock(2, 2),
-                 IntermediateBlock(f1, 2, 2),
-                 IntermediateBlock(f2, 2, 2),
+                 InnerBlock(f1, 2, 2),
+                 InnerBlock(f2, 2, 2),
                  OutputBlock(2, 2)],
                  [(0, 1), (1, 3), (0, 2), (2, 3)])
     x = 1
     y = 2
+
+    print(cell.edges)
 
     # print(cell.nodes[0]['block'].n_input)
 

@@ -2,6 +2,7 @@
 """
 
 import time
+
 import numpy as np
 
 import opytimizer.math.random as r

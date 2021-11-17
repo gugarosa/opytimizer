@@ -52,8 +52,8 @@ class Block:
 
     @type.setter
     def type(self, type):
-        if type not in ['input', 'intermediate', 'output']:
-            raise e.ValueError('`type` should be `input`, `intermediate` or `output`')
+        if type not in ['input', 'inner', 'output']:
+            raise e.ValueError('`type` should be `input`, `inner` or `output`')
 
         self._type = type
 
@@ -108,33 +108,52 @@ class Block:
 
 
 class InputBlock(Block):
-    """
+    """An InputBlock defines a block that is only used for entry points.
+
     """
 
     def __init__(self, n_input, n_output):
-        """
+        """Initialization method.
+
+        Args:
+            n_input (int): Number of input arguments.
+            n_output (int): Number of output arguments.
+            
         """
 
         super().__init__('input', lambda *args: args, n_input, n_output)
 
 
-class IntermediateBlock(Block):
-    """
+class InnerBlock(Block):
+    """An InnerBlock defines a block that is used for inner points (between input and output).
+
     """
 
     def __init__(self, pointer, n_input, n_output):
-        """
+        """Initialization method.
+
+        Args:
+            pointer (callable): Any type of callable to be applied when block is called.
+            n_input (int): Number of input arguments.
+            n_output (int): Number of output arguments.
+            
         """
 
-        super().__init__('intermediate', pointer, n_input, n_output)
+        super().__init__('inner', pointer, n_input, n_output)
 
 
 class OutputBlock(Block):
-    """
+    """An OutputBlock defines a block that is only used for output points.
+
     """
 
     def __init__(self, n_input, n_output):
-        """
+        """Initialization method.
+
+        Args:
+            n_input (int): Number of input arguments.
+            n_output (int): Number of output arguments.
+
         """
 
         super().__init__('output', lambda *args: args, n_input, n_output)
