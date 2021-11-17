@@ -1,11 +1,12 @@
 """Cell.
 """
 
+import copy
 
 import networkx as nx
 from networkx import DiGraph
 
-from opytimizer.core import Block
+from opytimizer.core import InputBlock, IntermediateBlock, OutputBlock
 
 
 class Cell(DiGraph):
@@ -35,8 +36,10 @@ class Cell(DiGraph):
         for (u, v) in edges:
             # Checks if nodes actually exists in DAG
             if u in self.nodes and v in self.nodes:
-                # Adds edge to the DAG
-                self.add_edge(u, v)
+                # Checks if `u` number of outputs matches the number of `v` inputs
+                if self.nodes[u]['block'].n_output == self.nodes[v]['block'].n_input:
+                    # Adds edge to the DAG
+                    self.add_edge(u, v)
 
     @property
     def n_blocks(self):
@@ -81,8 +84,12 @@ class Cell(DiGraph):
 
         return nx.is_directed_acyclic_graph(self)
 
-    def forward(self, x):
-        """
+    def forward(self, *args):
+        """Performs a forward pass over the cell.
+
+        Returns:
+            List holding an output for each possible path in DAG.
+
         """
         
         # Checks whether current DAG is valid or not
@@ -90,32 +97,47 @@ class Cell(DiGraph):
             # If not valid, it should not be forwarded and should return empty outputs
             return []
 
+        # Gathers a list of paths from `input` to `output`
         paths = list(nx.all_simple_paths(self, self.input_idx, self.output_idx))
 
+        # Iterates through all paths
         outputs = []
         for path in paths:
-            print(path)
-            x_path = x
+            # Makes a copy of current arguments
+            current_args = copy.deepcopy(args)
+
+            # Iterates through all nodes in path
             for node in path:
-                x_path = self.nodes[node]['block'](x_path)
-            outputs.append(x_path)
+                # Passes down through every node in path
+                current_args = self.nodes[node]['block'](*current_args)
+                
+                # Makes sure that outputs are always encoded as tuples
+                if type(current_args) != tuple:
+                    current_args = (current_args,)
+
+            # Appends the outputs
+            outputs.append(current_args)
 
         return outputs
 
 
-
-
 if __name__ == '__main__':
-    cell = Cell([Block('input', lambda y: y),
-                 Block('intermediate', lambda y: y),
-                 Block('intermediate', lambda y: y),
-                 Block('intermediate', lambda y: y),
-                 Block('output', lambda y: y)],
-                 [(0, 1), (1, 2), (2, 4), (2, 3), (3, 4), (0, 2)])
+    import numpy as np
+    def f1(x, y):
+        return x, y
+    def f2(x, y):
+        return x+1, y+1
+        
+    cell = Cell([InputBlock(2, 2),
+                 IntermediateBlock(f1, 2, 2),
+                 IntermediateBlock(f2, 2, 2),
+                 OutputBlock(2, 2)],
+                 [(0, 1), (1, 3), (0, 2), (2, 3)])
     x = 1
+    y = 2
 
-    # print(cell.nodes)
-    # print(cell.edges)
-    print(cell.forward(x))
+    # print(cell.nodes[0]['block'].n_input)
 
-    # print(cell.valid)
+    outputs = cell.forward(x, y)
+
+    print(outputs)

@@ -1,7 +1,6 @@
 """Block.
 """
 
-from inspect import signature
 import opytimizer.utils.exception as e
 
 
@@ -10,12 +9,14 @@ class Block:
 
     """
 
-    def __init__(self, type, pointer):
+    def __init__(self, type, pointer, n_input, n_output):
         """Initialization method.
 
         Args:
             type (str): Type of the block.
             pointer (callable): Any type of callable to be applied when block is called.
+            n_input (int): Number of input arguments.
+            n_output (int): Number of output arguments.
 
         """
 
@@ -24,6 +25,12 @@ class Block:
 
         # Callable applied when block is called
         self.pointer = pointer
+
+        # Number of input arguments
+        self.n_input = n_input
+
+        # Number of output arguments
+        self.n_output = n_output
     
     def __call__(self, *args):
         """Callable to avoid using the `pointer` property.
@@ -62,7 +69,72 @@ class Block:
     def pointer(self, pointer):
         if not callable(pointer):
             raise e.TypeError('`pointer` should be a callable')
-        if len(signature(pointer).parameters) < 1:
-            raise e.ArgumentError('`pointer` should have at least 1 argument')
 
         self._pointer = pointer
+
+    @property
+    def n_input(self):
+        """int: Number of input arguments.
+
+        """
+
+        return self._n_input
+
+    @n_input.setter
+    def n_input(self, n_input):
+        if not isinstance(n_input, int):
+            raise e.TypeError('`n_input` should be an integer')
+        if n_input <= 0:
+            raise e.ValueError('`n_input` should be > 0')
+
+        self._n_input = n_input
+
+    @property
+    def n_output(self):
+        """int: Number of output arguments.
+
+        """
+
+        return self._n_output
+
+    @n_output.setter
+    def n_output(self, n_output):
+        if not isinstance(n_output, int):
+            raise e.TypeError('`n_output` should be an integer')
+        if n_output <= 0:
+            raise e.ValueError('`n_output` should be > 0')
+
+        self._n_output = n_output
+
+
+class InputBlock(Block):
+    """
+    """
+
+    def __init__(self, n_input, n_output):
+        """
+        """
+
+        super().__init__('input', lambda *args: args, n_input, n_output)
+
+
+class IntermediateBlock(Block):
+    """
+    """
+
+    def __init__(self, pointer, n_input, n_output):
+        """
+        """
+
+        super().__init__('intermediate', pointer, n_input, n_output)
+
+
+class OutputBlock(Block):
+    """
+    """
+
+    def __init__(self, n_input, n_output):
+        """
+        """
+
+        super().__init__('output', lambda *args: args, n_input, n_output)
