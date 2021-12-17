@@ -41,42 +41,7 @@ class Cell(DiGraph):
                     # Adds edge to the DAG
                     self.add_edge(u, v)
 
-    @property
-    def input_idx(self):
-        """int: Index of the input node.
-
-        """
-
-        for node in self.nodes:
-            if self.nodes[node]['block'].type == 'input':
-                return node
-        
-        return -1
-
-    @property
-    def output_idx(self):
-        """int: Index of the output node.
-
-        """
-
-        for node in self.nodes:
-            if self.nodes[node]['block'].type == 'output':
-                return node
-
-        return -1
-
-    @property
-    def valid(self):
-        """bool: Whether cell is valid or not.
-
-        """
-
-        if self.input_idx == -1 or self.output_idx == -1:
-            return False
-
-        return nx.is_directed_acyclic_graph(self)
-
-    def forward(self, *args):
+    def __call__(self, *args):
         """Performs a forward pass over the cell.
 
         Returns:
@@ -112,6 +77,40 @@ class Cell(DiGraph):
 
         return outputs
 
+    @property
+    def input_idx(self):
+        """int: Index of the input node.
+
+        """
+
+        for node in self.nodes:
+            if self.nodes[node]['block'].type == 'input':
+                return node
+        
+        return -1
+
+    @property
+    def output_idx(self):
+        """int: Index of the output node.
+
+        """
+
+        for node in self.nodes:
+            if self.nodes[node]['block'].type == 'output':
+                return node
+
+        return -1
+
+    @property
+    def valid(self):
+        """bool: Whether cell is valid or not.
+
+        """
+
+        if self.input_idx == -1 or self.output_idx == -1:
+            return False
+
+        return nx.is_directed_acyclic_graph(self)
 
 if __name__ == '__main__':
     import numpy as np
@@ -132,6 +131,6 @@ if __name__ == '__main__':
 
     # print(cell.nodes[0]['block'].n_input)
 
-    outputs = cell.forward(x, y)
+    outputs = cell(x, y)
 
     print(outputs)
