@@ -1,15 +1,15 @@
-"""Weighted multi-objective functions.
+"""Multi-objective weighted functions.
 """
 
 import opytimizer.utils.exception as e
 import opytimizer.utils.logging as l
-from opytimizer.core import Function
+from opytimizer.functions.multi_objective.standard import MultiObjectiveFunction
 
 logger = l.get_logger(__name__)
 
 
-class WeightedFunction:
-    """A WeightedFunction class used to hold weighted multi-objective functions.
+class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
+    """A MultiObjectiveWeightedFunction class used to hold multi-objective weighted functions.
 
     """
 
@@ -22,20 +22,15 @@ class WeightedFunction:
 
         """
 
-        logger.info('Creating class: WeightedFunction.')
+        logger.info('Overriding class: MultiObjectiveFunction -> MultiObjectiveWeightedFunction.')
 
-        # List of functions
-        self.functions = [Function(f) for f in functions] or []
+        super(MultiObjectiveWeightedFunction, self).__init__(functions)
 
         # List of weights
         self.weights = weights or []
 
-        # Set built variable to 'True'
-        self.built = True
-
-        logger.debug('Functions: %s | Weights: %s | Built: %s',
-                     [f.name for f in self.functions], self.weights, self.built)
-        logger.info('Class created.')
+        logger.debug('Weights: %s', self.weights)
+        logger.info('Class overrided.')
 
     def __call__(self, x):
         """Callable to avoid using the `pointer` property.
@@ -44,7 +39,7 @@ class WeightedFunction:
             x (np.array): Array of positions.
 
         Returns:
-            Weighted multi-objective function fitness.
+            Multi-objective weighted function fitness.
 
         """
 
@@ -56,21 +51,6 @@ class WeightedFunction:
             z += w * f.pointer(x)
 
         return z
-
-    @property
-    def functions(self):
-        """list: Function's instances.
-
-        """
-
-        return self._functions
-
-    @functions.setter
-    def functions(self, functions):
-        if not isinstance(functions, list):
-            raise e.TypeError('`functions` should be a list')
-
-        self._functions = functions
 
     @property
     def weights(self):

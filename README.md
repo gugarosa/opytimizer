@@ -68,7 +68,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - space
     - functions
         - constrained
-        - weighted
+        - multi_objective
     - math
         - distribution
         - general

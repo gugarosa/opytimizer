@@ -2,4 +2,3 @@
 """
 
 from opytimizer.functions.constrained import ConstrainedFunction
-from opytimizer.functions.weighted import WeightedFunction
