@@ -4,7 +4,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='opytimizer',
-      version='3.0.3',
+      version='3.1.0',
       description='Nature-Inspired Python Optimizer',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -15,6 +15,7 @@ setup(name='opytimizer',
       install_requires=['coverage>=5.5',
                         'dill>=0.3.4',
                         'matplotlib>=3.3.4',
+                        'networkx>=2.5.1',
                         'numpy>=1.19.5',
                         'opytimark>=1.0.7',
                         'pylint>=2.7.2',

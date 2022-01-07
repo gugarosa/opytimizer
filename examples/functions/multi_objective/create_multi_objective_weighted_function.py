@@ -1,4 +1,4 @@
-from opytimizer.functions import WeightedFunction
+from opytimizer.functions.multi_objective import MultiObjectiveWeightedFunction
 
 
 # Defines some test functions
@@ -15,7 +15,7 @@ x = 0
 
 # Any type of internal python-coded function
 # can be used as a pointer
-h = WeightedFunction([test_function1, test_function2], [0.5, 0.5])
+h = MultiObjectiveWeightedFunction([test_function1, test_function2], [0.5, 0.5])
 
 # Testing out your new Function class
 print(f'x: {x}')

@@ -1,10 +1,10 @@
 """Optimization entry point.
 """
 
-import dill
 import time
 from inspect import signature
 
+import dill
 from tqdm import tqdm
 
 import opytimizer.utils.exception as e

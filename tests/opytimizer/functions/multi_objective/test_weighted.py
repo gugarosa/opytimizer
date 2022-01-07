@@ -1,33 +1,14 @@
-import numpy as np
-
-from opytimizer.functions import weighted
-
-
-def test_weighted_functions():
-    new_weighted = weighted.WeightedFunction([], [])
-
-    assert type(new_weighted.functions) == list
-
-
-def test_weighted_functions_setter():
-    new_weighted = weighted.WeightedFunction([], [])
-
-    try:
-        new_weighted.functions = None
-    except:
-        new_weighted.functions = [1, 2]
-
-    assert len(new_weighted.functions) == 2
+from opytimizer.functions.multi_objective import weighted
 
 
 def test_weighted_weights():
-    new_weighted = weighted.WeightedFunction([], [])
+    new_weighted = weighted.MultiObjectiveWeightedFunction([], [])
 
     assert type(new_weighted.weights) == list
 
 
 def test_weighted_weights_setter():
-    new_weighted = weighted.WeightedFunction([], [])
+    new_weighted = weighted.MultiObjectiveWeightedFunction([], [])
 
     try:
         new_weighted.weights = None
@@ -53,7 +34,7 @@ def test_weighted_call():
 
     assert cube(2) == 8
 
-    new_weighted = weighted.WeightedFunction(
+    new_weighted = weighted.MultiObjectiveWeightedFunction(
         functions=[square, cube], weights=[0.5, 0.5])
 
     assert new_weighted(2) == 6

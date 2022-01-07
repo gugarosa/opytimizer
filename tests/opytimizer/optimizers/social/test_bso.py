@@ -1,4 +1,3 @@
-from types import new_class
 import numpy as np
 
 from opytimizer.optimizers.social import bso

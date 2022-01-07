@@ -60,13 +60,15 @@ Opytimizer is based on the following structure, and you should pay attention to 
 - opytimizer
     - core
         - agent
+        - block
+        - cell
         - function
         - node
         - optimizer
         - space
     - functions
         - constrained
-        - weighted
+        - multi_objective
     - math
         - distribution
         - general
@@ -82,6 +84,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - swarm
     - spaces
         - boolean
+        - graph
         - grid
         - hyper_complex
         - search
