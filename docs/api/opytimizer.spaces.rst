@@ -8,6 +8,7 @@ One can see the space as the place that agents will update their positions and e
     opytimizer.spaces.graph
     opytimizer.spaces.grid
     opytimizer.spaces.hyper_complex
+    opytimizer.spaces.pareto
     opytimizer.spaces.search
     opytimizer.spaces.tree
 
