@@ -87,6 +87,7 @@ Opytimizer is based on the following structure, and you should pay attention to 
         - graph
         - grid
         - hyper_complex
+        - pareto
         - search
         - tree
     - utils
