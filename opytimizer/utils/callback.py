@@ -1,6 +1,7 @@
 """Callbacks.
 """
 
+import numpy as np
 import opytimizer.utils.exception as e
 
 
@@ -269,3 +270,71 @@ class CheckpointCallback(Callback):
             if iteration % self.frequency == 0:
                 # Checkpoints the current model's state
                 opt_model.save(f'iter_{iteration}_{self.file_path}')
+
+
+class DiscreteSearchCallback(Callback):
+    """A DiscreteSearchCallback class that handles mapping floating-point variables
+    to discrete values.
+
+    """
+
+    def __init__(self, allowed_values=None):
+        """Initialization method.
+
+        Args:
+            allowed_values (list): Possible values between lower and upper bounds that variables can be mapped.
+
+        """
+
+        super(DiscreteSearchCallback, self).__init__()
+
+        # Allowed values between lower and upper bounds
+        if allowed_values is not None:
+            self.allowed_values = allowed_values
+        else:
+            self.allowed_values = []
+
+    @property
+    def allowed_values(self):
+        """list: Allowed values between lower and upper bounds.
+
+        """
+
+        return self._allowed_values
+
+    @allowed_values.setter
+    def allowed_values(self, allowed_values):
+        if not isinstance(allowed_values, list):
+            raise e.TypeError('`allowed_values` should be a list')
+
+        self._allowed_values = allowed_values
+
+
+    def on_task_begin(self, opt_model):
+        """Performs a callback whenever a task begins.
+
+        Args:
+            opt_model (Opytimizer): An instance of the optimization model.
+
+        """
+
+        # Gathers the number of variables, lower and upper bounds from search space
+        n_variables = opt_model.space.n_variables
+        lower_bound = opt_model.space.lb
+        upper_bound = opt_model.space.ub
+
+        assert len(self.allowed_values) == n_variables, f'`allowed_values` should have length equals to {n_variables}.'
+        assert np.all([np.all((av >= lb) == (av <= ub)) for av, lb, ub in zip(self.allowed_values, lower_bound, upper_bound)]), \
+            'Every value from `allowed_values` should be between `lower_bound` and `upper_bound`.'
+
+    def on_evaluate_before(self, *evaluate_args):
+        """Performs a callback prior to the `evaluate` method.
+
+        """
+
+        for agent in evaluate_args[0].agents:
+            for i in range(agent.n_variables):
+                # Gathers the current closest allowed value and replaces agent's value
+                min_value_idx = np.argmin(abs(agent.position[i] - self.allowed_values[i]))
+                agent.position[i] = self.allowed_values[i][min_value_idx]
+        
