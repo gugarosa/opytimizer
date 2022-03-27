@@ -2,7 +2,9 @@
 """
 
 import numpy as np
+
 import opytimizer.utils.exception as e
+from opytimizer.core.space import Space
 
 
 class Callback:
@@ -309,7 +311,6 @@ class DiscreteSearchCallback(Callback):
 
         self._allowed_values = allowed_values
 
-
     def on_task_begin(self, opt_model):
         """Performs a callback whenever a task begins.
 
@@ -332,7 +333,10 @@ class DiscreteSearchCallback(Callback):
 
         """
 
-        for agent in evaluate_args[0].agents:
+        space = evaluate_args[0]
+        assert isinstance(space, Space), '`evaluate_args[0]` is not derived from Space class.'
+
+        for agent in space.agents:
             for i in range(agent.n_variables):
                 # Gathers the current closest allowed value and replaces agent's value
                 min_value_idx = np.argmin(abs(agent.position[i] - self.allowed_values[i]))

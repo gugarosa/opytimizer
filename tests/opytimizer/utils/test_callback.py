@@ -1,4 +1,10 @@
+from opytimizer.core import function
+from opytimizer.optimizers import swarm
+from opytimizer.spaces import search
 from opytimizer.utils import callback
+
+from opytimark.markers.n_dimensional import Sphere
+from opytimizer.opytimizer import Opytimizer
 
 
 def test_callback():
@@ -18,8 +24,7 @@ def test_callback_vessel():
     new_callback_1 = callback.Callback()
     new_callback_2 = callback.Callback()
 
-    new_callback_vessel = callback.CallbackVessel(
-        [new_callback_1, new_callback_2])
+    new_callback_vessel = callback.CallbackVessel([new_callback_1, new_callback_2])
 
     new_callback_vessel.on_task_begin(None)
     new_callback_vessel.on_task_end(None)
@@ -94,3 +99,62 @@ def test_checkpoint_callback_on_iteration_end():
     model = Model()
 
     new_checkpoint_callback.on_iteration_end(1, model)
+
+
+def test_discrete_search_callback():
+    new_discrete_search_callback = callback.DiscreteSearchCallback()
+
+    assert new_discrete_search_callback.allowed_values == []
+
+
+def test_discrete_search_callback_allowed_values_setter():
+    new_discrete_search_callback = callback.DiscreteSearchCallback()
+
+    try:
+        new_discrete_search_callback.allowed_values = 1
+    except:
+        new_discrete_search_callback.allowed_values = []
+
+    assert new_discrete_search_callback.allowed_values == []
+
+
+def test_discrete_search_callback_on_task_begin():
+    space = search.SearchSpace(1, 2, [0, 0], [1, 1])
+    optimizer = swarm.PSO()
+    func = function.Function(Sphere())
+
+    opt_model = Opytimizer(space, optimizer, func)
+
+    try:
+        allowed_values = [[1]]
+        new_discrete_search_callback = callback.DiscreteSearchCallback(allowed_values=allowed_values)
+        new_discrete_search_callback.on_task_begin(opt_model)
+    except:
+        allowed_values = [[1], [1]]
+        new_discrete_search_callback = callback.DiscreteSearchCallback(allowed_values=allowed_values)
+        new_discrete_search_callback.on_task_begin(opt_model)
+
+    try:
+        allowed_values = [[10], [10]]
+        new_discrete_search_callback = callback.DiscreteSearchCallback(allowed_values=allowed_values)
+        new_discrete_search_callback.on_task_begin(opt_model)
+    except:
+        allowed_values = [[1], [1]]
+        new_discrete_search_callback = callback.DiscreteSearchCallback(allowed_values=allowed_values)
+        new_discrete_search_callback.on_task_begin(opt_model)
+
+
+def test_discrete_search_callback_on_evaluate_before():
+    allowed_values = [[1], [1]]
+    new_discrete_search_callback = callback.DiscreteSearchCallback(allowed_values=allowed_values)
+
+    space = search.SearchSpace(1, 2, [0, 0], [1, 1])
+    optimizer = swarm.PSO()
+    func = function.Function(Sphere())
+
+    opt_model = Opytimizer(space, optimizer, func)
+
+    try:
+        new_discrete_search_callback.on_evaluate_before(None)
+    except:
+        new_discrete_search_callback.on_evaluate_before(opt_model.space)
