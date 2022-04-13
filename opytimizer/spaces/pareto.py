@@ -69,3 +69,10 @@ class ParetoSpace(Space):
 
         logger.debug('Agents: %d | Size: (%d, %d) | Built: %s.',
                      self.n_agents, self.n_variables, self.n_dimensions, self.built)
+
+    def clip_by_bound(self):
+        """Overrides default function as no clipping should be performed.
+
+        """
+
+        pass
