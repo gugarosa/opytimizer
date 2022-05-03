@@ -18,6 +18,7 @@ setup(name='opytimizer',
                         'networkx>=2.5.1',
                         'numpy>=1.19.5',
                         'opytimark>=1.0.7',
+                        'pre-commit>=2.17.0',
                         'pylint>=2.7.2',
                         'pytest>=6.2.2',
                         'tqdm>=4.49.0'
