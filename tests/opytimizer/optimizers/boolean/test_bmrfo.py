@@ -35,25 +35,25 @@ def test_bmrfo_cyclone_foraging():
         boolean_space.agents, boolean_space.best_agent.position, 0, 1, 100
     )
 
-    assert cyclone[0] is False or cyclone[0] is True
+    assert cyclone[0].item() is False or cyclone[0].item() is True
 
     cyclone = new_bmrfo._cyclone_foraging(
         boolean_space.agents, boolean_space.best_agent.position, 1, 1, 100
     )
 
-    assert cyclone[0] is False or cyclone[0] is True
+    assert cyclone[0].item() is False or cyclone[0].item() is True
 
     cyclone = new_bmrfo._cyclone_foraging(
         boolean_space.agents, boolean_space.best_agent.position, 0, 1, 1
     )
 
-    assert cyclone[0] is False or cyclone[0] is True
+    assert cyclone[0].item() is False or cyclone[0].item() is True
 
     cyclone = new_bmrfo._cyclone_foraging(
         boolean_space.agents, boolean_space.best_agent.position, 1, 1, 1
     )
 
-    assert cyclone[0] is False or cyclone[0] is True
+    assert cyclone[0].item() is False or cyclone[0].item() is True
 
 
 def test_bmrfo_chain_foraging():
@@ -65,7 +65,7 @@ def test_bmrfo_chain_foraging():
         boolean_space.agents, boolean_space.best_agent.position, 0
     )
 
-    assert chain[0] is False or chain[0] is True
+    assert chain[0].item() is False or chain[0].item() is True
 
 
 def test_bmrfo_somersault_foraging():
@@ -77,7 +77,7 @@ def test_bmrfo_somersault_foraging():
         boolean_space.agents[0].position, boolean_space.best_agent.position
     )
 
-    assert somersault[0] is False or somersault[0] is True
+    assert somersault[0].item() is False or somersault[0].item() is True
 
 
 def test_bmrfo_update():

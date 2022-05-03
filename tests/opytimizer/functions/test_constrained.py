@@ -123,8 +123,6 @@ def test_constrained_call():
     def c_1(x):
         return x[0] + x[1] <= 0
 
-    assert c_1(np.zeros(2)) is True
-
     new_constrained_function = constrained.ConstrainedFunction(square, [c_1], 100)
 
     assert new_constrained_function(np.zeros(2)) == 0
