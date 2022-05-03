@@ -5,11 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_fpa_params():
-    params = {
-        'beta': 1.0,
-        'eta': 0.5,
-        'p': 0.5
-    }
+    params = {"beta": 1.0, "eta": 0.5, "p": 0.5}
 
     new_fpa = fpa.FPA(params=params)
 
@@ -24,7 +20,7 @@ def test_fpa_params_setter():
     new_fpa = fpa.FPA()
 
     try:
-        new_fpa.beta = 'a'
+        new_fpa.beta = "a"
     except:
         new_fpa.beta = 0.75
 
@@ -36,7 +32,7 @@ def test_fpa_params_setter():
     assert new_fpa.beta == 0.75
 
     try:
-        new_fpa.eta = 'b'
+        new_fpa.eta = "b"
     except:
         new_fpa.eta = 1.5
 
@@ -48,7 +44,7 @@ def test_fpa_params_setter():
     assert new_fpa.eta == 1.5
 
     try:
-        new_fpa.p = 'c'
+        new_fpa.p = "c"
     except:
         new_fpa.p = 0.25
 
@@ -82,8 +78,9 @@ def test_fpa_update():
 
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_fpa.update(search_space, square)
 

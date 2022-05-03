@@ -8,10 +8,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SSD(Optimizer):
@@ -35,7 +35,7 @@ class SSD(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SSD.')
+        logger.info("Overriding class: Optimizer -> SSD.")
 
         # Overrides its parent class with the receiving params
         super(SSD, self).__init__()
@@ -49,68 +49,60 @@ class SSD(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c(self):
-        """float: Exploration parameter.
-
-        """
+        """float: Exploration parameter."""
 
         return self._c
 
     @c.setter
     def c(self, c):
         if not isinstance(c, (float, int)):
-            raise e.TypeError('`c` should be a float or integer')
+            raise e.TypeError("`c` should be a float or integer")
         if c < 0:
-            raise e.ValueError('`c` should be >= 0')
+            raise e.ValueError("`c` should be >= 0")
 
         self._c = c
 
     @property
     def decay(self):
-        """float: Decay rate.
-
-        """
+        """float: Decay rate."""
 
         return self._decay
 
     @decay.setter
     def decay(self, decay):
         if not isinstance(decay, (float, int)):
-            raise e.TypeError('`decay` should be a float or integer')
+            raise e.TypeError("`decay` should be a float or integer")
         if decay < 0 or decay > 1:
-            raise e.ValueError('`decay` should be between 0 and 1')
+            raise e.ValueError("`decay` should be between 0 and 1")
         self._decay = decay
 
     @property
     def local_position(self):
-        """np.array: Array of local positions.
-
-        """
+        """np.array: Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
     def local_position(self, local_position):
         if not isinstance(local_position, np.ndarray):
-            raise e.TypeError('`local_position` should be a numpy array')
+            raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -123,8 +115,12 @@ class SSD(Optimizer):
         """
 
         # Arrays of local positions and velocities
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.velocity = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.velocity = r.generate_uniform_random_number(
+            size=(space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def _mean_global_solution(self, alpha, beta, gamma):
         """Calculates the mean global solution (eq. 9).
@@ -181,14 +177,16 @@ class SSD(Optimizer):
         # If random number is smaller than or equal to 0.5
         if r2 <= 0.5:
             # Updates its velocity based on sine wave
-            new_velocity = self.c * np.sin(r1) * (self.local_position[index] - position) \
-                           + np.sin(r1) * (mean - position)
+            new_velocity = self.c * np.sin(r1) * (
+                self.local_position[index] - position
+            ) + np.sin(r1) * (mean - position)
 
         # If random number is bigger than 0.5
         else:
             # Updates its velocity based on cosine wave
-            new_velocity = self.c * np.cos(r1) * (self.local_position[index] - position) \
-                           + np.cos(r1) * (mean - position)
+            new_velocity = self.c * np.cos(r1) * (
+                self.local_position[index] - position
+            ) + np.cos(r1) * (mean - position)
 
         return new_velocity
 
@@ -247,8 +245,11 @@ class SSD(Optimizer):
             space.agents.sort(key=lambda x: x.fit)
 
             # Calculates the mean global solution
-            mean = self._mean_global_solution(space.agents[0].position, space.agents[1].position,
-                                              space.agents[2].position)
+            mean = self._mean_global_solution(
+                space.agents[0].position,
+                space.agents[1].position,
+                space.agents[2].position,
+            )
 
             # Updates current agent positions
             agent.position = self._update_position(agent.position, i)

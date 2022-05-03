@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class LSA(Optimizer):
@@ -33,7 +33,7 @@ class LSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> LSA.')
+        logger.info("Overriding class: Optimizer -> LSA.")
 
         # Overrides its parent class with the receiving params
         super(LSA, self).__init__()
@@ -50,88 +50,78 @@ class LSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def max_time(self):
-        """int: Maximum channel time.
-
-        """
+        """int: Maximum channel time."""
 
         return self._max_time
 
     @max_time.setter
     def max_time(self, max_time):
         if not isinstance(max_time, int):
-            raise e.TypeError('`max_time` should be an integer')
+            raise e.TypeError("`max_time` should be an integer")
         if max_time <= 0:
-            raise e.ValueError('`max_time` should be > 0')
+            raise e.ValueError("`max_time` should be > 0")
 
         self._max_time = max_time
 
     @property
     def E(self):
-        """float: Initial energy.
-
-        """
+        """float: Initial energy."""
 
         return self._E
 
     @E.setter
     def E(self, E):
         if not isinstance(E, (float, int)):
-            raise e.TypeError('`E` should be a float or integer')
+            raise e.TypeError("`E` should be a float or integer")
         if E < 0:
-            raise e.ValueError('`E` should be >= 0')
+            raise e.ValueError("`E` should be >= 0")
 
         self._E = E
 
     @property
     def p_fork(self):
-        """float: Probability of forking.
-
-        """
+        """float: Probability of forking."""
 
         return self._p_fork
 
     @p_fork.setter
     def p_fork(self, p_fork):
         if not isinstance(p_fork, (float, int)):
-            raise e.TypeError('`p_fork` should be a float or integer')
+            raise e.TypeError("`p_fork` should be a float or integer")
         if p_fork < 0 or p_fork > 1:
-            raise e.ValueError('`p_fork` should be between 0 and 1')
+            raise e.ValueError("`p_fork` should be between 0 and 1")
 
         self._p_fork = p_fork
 
     @property
     def time(self):
-        """int: Channel time.
-
-        """
+        """int: Channel time."""
 
         return self._time
 
     @time.setter
     def time(self, time):
         if not isinstance(time, int):
-            raise e.TypeError('`time` should be an integer')
+            raise e.TypeError("`time` should be an integer")
         if time < 0:
-            raise e.ValueError('`time` should be >= 0')
+            raise e.ValueError("`time` should be >= 0")
 
         self._time = time
 
     @property
     def direction(self):
-        """np.array: Array of directions.
-
-        """
+        """np.array: Array of directions."""
 
         return self._direction
 
     @direction.setter
     def direction(self, direction):
         if not isinstance(direction, np.ndarray):
-            raise e.TypeError('`direction` should be a numpy array')
+            raise e.TypeError("`direction` should be a numpy array")
 
         self._direction = direction
 
@@ -147,7 +137,11 @@ class LSA(Optimizer):
         self.time = 0
 
         # Array of directions
-        self.direction = np.sign(r.generate_uniform_random_number(-1, 1, (space.n_variables, space.n_dimensions)))
+        self.direction = np.sign(
+            r.generate_uniform_random_number(
+                -1, 1, (space.n_variables, space.n_dimensions)
+            )
+        )
 
     def _update_direction(self, agent, function):
         """Updates the direction array by shaking agent's direction.
@@ -164,7 +158,9 @@ class LSA(Optimizer):
             direction = copy.deepcopy(agent)
 
             # Shakes the direction
-            direction.position[j] += self.direction[j] * 0.005 * (agent.ub[j] - agent.lb[j])
+            direction.position[j] += (
+                self.direction[j] * 0.005 * (agent.ub[j] - agent.lb[j])
+            )
 
             # Clips its bounds
             direction.clip_by_bound()
@@ -209,12 +205,16 @@ class LSA(Optimizer):
                     # If distance is smaller than zero
                     if distance[j][k] < 0:
                         # Updates the position by adding an exponential number
-                        a.position[j][k] += r.generate_exponential_random_number(np.fabs(distance[j][k]))
+                        a.position[j][k] += r.generate_exponential_random_number(
+                            np.fabs(distance[j][k])
+                        )
 
                     # If distance is bigger than zero
                     else:
                         # Updates the position by subtracting an exponential number
-                        a.position[j][k] -= r.generate_exponential_random_number(distance[j][k])
+                        a.position[j][k] -= r.generate_exponential_random_number(
+                            distance[j][k]
+                        )
 
         # Clips the temporary agent's limits
         a.clip_by_bound()

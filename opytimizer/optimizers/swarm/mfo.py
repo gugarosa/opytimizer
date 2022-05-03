@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MFO(Optimizer):
@@ -33,7 +33,7 @@ class MFO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> MFO.')
+        logger.info("Overriding class: Optimizer -> MFO.")
 
         # Overrides its parent class with the receiving params
         super(MFO, self).__init__()
@@ -44,22 +44,20 @@ class MFO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def b(self):
-        """float: Spiral constant.
-
-        """
+        """float: Spiral constant."""
 
         return self._b
 
     @b.setter
     def b(self, b):
         if not isinstance(b, (float, int)):
-            raise e.TypeError('`b` should be a float or integer')
+            raise e.TypeError("`b` should be a float or integer")
         if b < 0:
-            raise e.ValueError('`b` should be >= 0')
+            raise e.ValueError("`b` should be >= 0")
 
         self._b = b
 
@@ -98,8 +96,10 @@ class MFO(Optimizer):
                     D = np.fabs(flames[i].position[j] - agent.position[j])
 
                     # Updates current agent's position (eq. 3.12)
-                    agent.position[j] = D * np.exp(self.b * t) * \
-                        np.cos(2 * np.pi * t) + flames[i].position[j]
+                    agent.position[j] = (
+                        D * np.exp(self.b * t) * np.cos(2 * np.pi * t)
+                        + flames[i].position[j]
+                    )
 
                 # If current moth should be updated with best flame
                 else:
@@ -107,5 +107,7 @@ class MFO(Optimizer):
                     D = np.fabs(flames[0].position[j] - agent.position[j])
 
                     # Updates current agent's position (eq. 3.12)
-                    agent.position[j] = D * np.exp(self.b * t) * \
-                        np.cos(2 * np.pi * t) + flames[0].position[j]
+                    agent.position[j] = (
+                        D * np.exp(self.b * t) * np.cos(2 * np.pi * t)
+                        + flames[0].position[j]
+                    )

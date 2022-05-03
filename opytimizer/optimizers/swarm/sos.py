@@ -6,10 +6,10 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SOS(Optimizer):
@@ -32,7 +32,7 @@ class SOS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SOS.')
+        logger.info("Overriding class: Optimizer -> SOS.")
 
         # Overrides its parent class with the receiving params
         super(SOS, self).__init__()
@@ -40,7 +40,7 @@ class SOS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _mutualism(self, agent_i, agent_j, best_agent, function):
         """Performs the mutualism operation.
@@ -165,7 +165,7 @@ class SOS(Optimizer):
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Generates a random integer for mutualism and performs it
-            j = r.generate_integer_random_number( 0, len(space.agents), exclude_value=i)
+            j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
             self._mutualism(agent, space.agents[j], space.best_agent, function)
 
             # Re-generates a random integer for commensalism and performs it

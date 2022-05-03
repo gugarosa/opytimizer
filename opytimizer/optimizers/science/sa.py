@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SA(Optimizer):
@@ -34,7 +34,7 @@ class SA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SA.')
+        logger.info("Overriding class: Optimizer -> SA.")
 
         # Overrides its parent class with the receiving params
         super(SA, self).__init__()
@@ -48,39 +48,35 @@ class SA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def T(self):
-        """float: System's temperature.
-
-        """
+        """float: System's temperature."""
 
         return self._T
 
     @T.setter
     def T(self, T):
         if not isinstance(T, (float, int)):
-            raise e.TypeError('`T` should be a float or integer')
+            raise e.TypeError("`T` should be a float or integer")
         if T < 0:
-            raise e.ValueError('`T` should be >= 0')
+            raise e.ValueError("`T` should be >= 0")
 
         self._T = T
 
     @property
     def beta(self):
-        """float: Temperature decay.
-
-        """
+        """float: Temperature decay."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+            raise e.ValueError("`beta` should be >= 0")
 
         self._beta = beta
 
@@ -99,7 +95,9 @@ class SA(Optimizer):
             a = copy.deepcopy(agent)
 
             # Generates a random noise from a gaussian distribution
-            noise = r.generate_gaussian_random_number(0, 0.1, size=((agent.n_variables, agent.n_dimensions)))
+            noise = r.generate_gaussian_random_number(
+                0, 0.1, size=((agent.n_variables, agent.n_dimensions))
+            )
 
             # Applies the noise
             a.position += noise

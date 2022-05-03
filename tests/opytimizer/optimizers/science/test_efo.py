@@ -8,10 +8,10 @@ np.random.seed(0)
 
 def test_efo_params():
     params = {
-        'positive_field': 0.1,
-        'negative_field': 0.5,
-        'ps_ratio': 0.1,
-        'r_ratio': 0.4
+        "positive_field": 0.1,
+        "negative_field": 0.5,
+        "ps_ratio": 0.1,
+        "r_ratio": 0.4,
     }
 
     new_efo = efo.EFO(params=params)
@@ -33,7 +33,7 @@ def test_efo_params_setter():
     new_efo = efo.EFO()
 
     try:
-        new_efo.positive_field = 'a'
+        new_efo.positive_field = "a"
     except:
         new_efo.positive_field = 0.5
 
@@ -45,7 +45,7 @@ def test_efo_params_setter():
     assert new_efo.positive_field == 0.5
 
     try:
-        new_efo.negative_field = 'b'
+        new_efo.negative_field = "b"
     except:
         new_efo.negative_field = 0.2
 
@@ -62,7 +62,7 @@ def test_efo_params_setter():
     assert new_efo.negative_field == 0.2
 
     try:
-        new_efo.ps_ratio = 'c'
+        new_efo.ps_ratio = "c"
     except:
         new_efo.ps_ratio = 0.25
 
@@ -74,7 +74,7 @@ def test_efo_params_setter():
     assert new_efo.ps_ratio == 0.25
 
     try:
-        new_efo.r_ratio = 'd'
+        new_efo.r_ratio = "d"
     except:
         new_efo.r_ratio = 0.25
 
@@ -86,14 +86,14 @@ def test_efo_params_setter():
     assert new_efo.r_ratio == 0.25
 
     try:
-        new_efo.phi = 'e'
+        new_efo.phi = "e"
     except:
         new_efo.phi = (1 + np.sqrt(5)) / 2
 
     assert new_efo.phi == (1 + np.sqrt(5)) / 2
 
     try:
-        new_efo.RI = 'f'
+        new_efo.RI = "f"
     except:
         new_efo.RI = 0
 
@@ -121,7 +121,8 @@ def test_efo_update():
 
     new_efo = efo.EFO()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_efo.update(search_space, square)

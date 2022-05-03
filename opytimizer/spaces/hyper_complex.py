@@ -5,10 +5,10 @@ import copy
 
 import numpy as np
 
-import opytimizer.utils.logging as l
 from opytimizer.core import Space
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class HyperComplexSpace(Space):
@@ -27,23 +27,22 @@ class HyperComplexSpace(Space):
 
         """
 
-        logger.info('Overriding class: Space -> HyperComplexSpace.')
+        logger.info("Overriding class: Space -> HyperComplexSpace.")
 
         # Defines missing override arguments
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 
-        super(HyperComplexSpace, self).__init__(n_agents, n_variables, n_dimensions,
-                                                lower_bound, upper_bound)
+        super(HyperComplexSpace, self).__init__(
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+        )
 
         self.build()
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _initialize_agents(self):
-        """Initializes agents with their positions and defines a best agent.
-
-        """
+        """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:
             agent.fill_with_uniform()

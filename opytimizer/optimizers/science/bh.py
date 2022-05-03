@@ -4,11 +4,10 @@
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
-from opytimizer.utils import constant
+from opytimizer.utils import constant, logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BH(Optimizer):
@@ -31,7 +30,7 @@ class BH(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BH.')
+        logger.info("Overriding class: Optimizer -> BH.")
 
         # Overrides its parent class with the receiving params
         super(BH, self).__init__()
@@ -39,7 +38,7 @@ class BH(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _update_position(self, agents, best_agent, function):
         """It updates every star position and calculates their event's horizon cost (eq. 3).
@@ -74,7 +73,10 @@ class BH(Optimizer):
             # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:
                 # Swap their positions and their fitness
-                agent.position, best_agent.position = best_agent.position, agent.position
+                agent.position, best_agent.position = (
+                    best_agent.position,
+                    agent.position,
+                )
                 agent.fit, best_agent.fit = best_agent.fit, agent.fit
 
             # Increment the cost with current agent's fitness
@@ -98,7 +100,7 @@ class BH(Optimizer):
         # Iterate through every agent
         for agent in agents:
             # Calculates distance between star and black hole
-            distance = (np.linalg.norm(best_agent.position - agent.position))
+            distance = np.linalg.norm(best_agent.position - agent.position)
 
             # If distance is smaller than horizon's radius
             if distance < radius:

@@ -5,10 +5,10 @@ import copy
 
 import numpy as np
 
-import opytimizer.utils.logging as l
 from opytimizer.core import Space
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ParetoSpace(Space):
@@ -25,7 +25,7 @@ class ParetoSpace(Space):
 
         """
 
-        logger.info('Overriding class: Space -> ParetoSpace.')
+        logger.info("Overriding class: Space -> ParetoSpace.")
 
         # Defines missing override arguments
         n_agents, n_variables = data_points.shape
@@ -33,12 +33,13 @@ class ParetoSpace(Space):
         lower_bound = [0] * n_variables
         upper_bound = [0] * n_variables
 
-        super(ParetoSpace, self).__init__(n_agents, n_variables, n_dimensions,
-                                          lower_bound, upper_bound)
+        super(ParetoSpace, self).__init__(
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+        )
 
         self.build(data_points)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _load_agents(self, data_points):
         """Loads agents from pre-defined data points.
@@ -67,12 +68,15 @@ class ParetoSpace(Space):
         # If no errors were shown, we can declare the space as `built`
         self.built = True
 
-        logger.debug('Agents: %d | Size: (%d, %d) | Built: %s.',
-                     self.n_agents, self.n_variables, self.n_dimensions, self.built)
+        logger.debug(
+            "Agents: %d | Size: (%d, %d) | Built: %s.",
+            self.n_agents,
+            self.n_variables,
+            self.n_dimensions,
+            self.built,
+        )
 
     def clip_by_bound(self):
-        """Overrides default function as no clipping should be performed.
-
-        """
+        """Overrides default function as no clipping should be performed."""
 
         pass

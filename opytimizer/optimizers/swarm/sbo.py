@@ -6,10 +6,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SBO(Optimizer):
@@ -49,71 +49,63 @@ class SBO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Step size.
-
-        """
+        """float: Step size."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def p_mutation(self):
-        """float: Probability of mutation.
-
-        """
+        """float: Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
         if not isinstance(p_mutation, (float, int)):
-            raise e.TypeError('`p_mutation` should be a float or integer')
+            raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
-            raise e.ValueError('`p_mutation` should be between 0 and 1')
+            raise e.ValueError("`p_mutation` should be between 0 and 1")
 
         self._p_mutation = p_mutation
 
     @property
     def z(self):
-        """float: Percentage of width between lower and upper bounds.
-
-        """
+        """float: Percentage of width between lower and upper bounds."""
 
         return self._z
 
     @z.setter
     def z(self, z):
         if not isinstance(z, (float, int)):
-            raise e.TypeError('`z` should be a float or integer')
+            raise e.TypeError("`z` should be a float or integer")
         if z < 0 or z > 1:
-            raise e.ValueError('`z` should be between 0 and 1')
+            raise e.ValueError("`z` should be between 0 and 1")
 
         self._z = z
 
     @property
     def sigma(self):
-        """list: List of widths.
-
-        """
+        """list: List of widths."""
 
         return self._sigma
 
     @sigma.setter
     def sigma(self, sigma):
         if not isinstance(sigma, list):
-            raise e.TypeError('`sigma` should be a list')
+            raise e.TypeError("`sigma` should be a list")
 
         self._sigma = sigma
 
@@ -138,8 +130,10 @@ class SBO(Optimizer):
         """
 
         # Calculates a list of fitness per agent
-        fitness = [1 / (1 + agent.fit) if agent.fit >= 0 else 1 +
-                   np.abs(agent.fit) for agent in space.agents]
+        fitness = [
+            1 / (1 + agent.fit) if agent.fit >= 0 else 1 + np.abs(agent.fit)
+            for agent in space.agents
+        ]
 
         # Calculates the total fitness
         total_fitness = np.sum(fitness)
@@ -158,8 +152,10 @@ class SBO(Optimizer):
                 lambda_k = self.alpha / (1 + probs[s])
 
                 # Updates the decision variable position
-                agent.position[j] += lambda_k * ((space.agents[s].position[j] + space.best_agent.position[j]) / \
-                                     2 - agent.position[j])
+                agent.position[j] += lambda_k * (
+                    (space.agents[s].position[j] + space.best_agent.position[j]) / 2
+                    - agent.position[j]
+                )
 
                 # Generates an uniform random number
                 r1 = r.generate_uniform_random_number()
@@ -167,7 +163,9 @@ class SBO(Optimizer):
                 # If random number is smaller than probability of mutation
                 if r1 < self.p_mutation:
                     # Mutates the decision variable position
-                    agent.position[j] += self.sigma[j] * r.generate_gaussian_random_number()
+                    agent.position[j] += (
+                        self.sigma[j] * r.generate_gaussian_random_number()
+                    )
 
             # Checks agent's limits
             agent.clip_by_bound()

@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as ex
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BA(Optimizer):
@@ -33,7 +33,7 @@ class BA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BA.')
+        logger.info("Overriding class: Optimizer -> BA.")
 
         # Overrides its parent class with the receiving params
         super(BA, self).__init__()
@@ -53,135 +53,119 @@ class BA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def f_min(self):
-        """float: Minimum frequency range.
-
-        """
+        """float: Minimum frequency range."""
 
         return self._f_min
 
     @f_min.setter
     def f_min(self, f_min):
         if not isinstance(f_min, (float, int)):
-            raise ex.TypeError('`f_min` should be a float or integer')
+            raise ex.TypeError("`f_min` should be a float or integer")
         if f_min < 0:
-            raise ex.ValueError('`f_min` should be >= 0')
+            raise ex.ValueError("`f_min` should be >= 0")
 
         self._f_min = f_min
 
     @property
     def f_max(self):
-        """float: Maximum frequency range.
-
-        """
+        """float: Maximum frequency range."""
 
         return self._f_max
 
     @f_max.setter
     def f_max(self, f_max):
         if not isinstance(f_max, (float, int)):
-            raise ex.TypeError('`f_max` should be a float or integer')
+            raise ex.TypeError("`f_max` should be a float or integer")
         if f_max < 0:
-            raise ex.ValueError('`f_max` should be >= 0')
+            raise ex.ValueError("`f_max` should be >= 0")
         if f_max < self.f_min:
-            raise ex.ValueError('`f_max` should be >= `f_min`')
+            raise ex.ValueError("`f_max` should be >= `f_min`")
 
         self._f_max = f_max
 
     @property
     def A(self):
-        """float: Loudness parameter.
-
-        """
+        """float: Loudness parameter."""
 
         return self._A
 
     @A.setter
     def A(self, A):
         if not isinstance(A, (float, int)):
-            raise ex.TypeError('`A` should be a float or integer')
+            raise ex.TypeError("`A` should be a float or integer")
         if A < 0:
-            raise ex.ValueError('`A` should be >= 0')
+            raise ex.ValueError("`A` should be >= 0")
 
         self._A = A
 
     @property
     def r(self):
-        """float: Pulse rate.
-
-        """
+        """float: Pulse rate."""
 
         return self._r
 
     @r.setter
     def r(self, r):
         if not isinstance(r, (float, int)):
-            raise ex.TypeError('`r` should be a float or integer')
+            raise ex.TypeError("`r` should be a float or integer")
         if r < 0:
-            raise ex.ValueError('`r` should be >= 0')
+            raise ex.ValueError("`r` should be >= 0")
 
         self._r = r
 
     @property
     def frequency(self):
-        """np.array: Array of frequencies.
-
-        """
+        """np.array: Array of frequencies."""
 
         return self._frequency
 
     @frequency.setter
     def frequency(self, frequency):
         if not isinstance(frequency, np.ndarray):
-            raise ex.TypeError('`frequency` should be a numpy array')
+            raise ex.TypeError("`frequency` should be a numpy array")
 
         self._frequency = frequency
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise ex.TypeError('`velocity` should be a numpy array')
+            raise ex.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
     @property
     def loudness(self):
-        """np.array: Array of loudnesses.
-
-        """
+        """np.array: Array of loudnesses."""
 
         return self._loudness
 
     @loudness.setter
     def loudness(self, loudness):
         if not isinstance(loudness, np.ndarray):
-            raise ex.TypeError('`loudness` should be a numpy array')
+            raise ex.TypeError("`loudness` should be a numpy array")
 
         self._loudness = loudness
 
     @property
     def pulse_rate(self):
-        """np.array: Array of pulse rates.
-
-        """
+        """np.array: Array of pulse rates."""
 
         return self._pulse_rate
 
     @pulse_rate.setter
     def pulse_rate(self, pulse_rate):
         if not isinstance(pulse_rate, np.ndarray):
-            raise ex.TypeError('`pulse_rate` should be a numpy array')
+            raise ex.TypeError("`pulse_rate` should be a numpy array")
 
         self._pulse_rate = pulse_rate
 
@@ -194,8 +178,12 @@ class BA(Optimizer):
         """
 
         # Arrays of frequencies, velocities, loudnesses and pulse rates
-        self.frequency = rnd.generate_uniform_random_number(self.f_min, self.f_max, space.n_agents)
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.frequency = rnd.generate_uniform_random_number(
+            self.f_min, self.f_max, space.n_agents
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
         self.loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
         self.pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
 
@@ -220,7 +208,9 @@ class BA(Optimizer):
             self.frequency[i] = self.f_min + (self.f_min - self.f_max) * beta
 
             # Updates velocity (eq. 3)
-            self.velocity[i] += (agent.position - space.best_agent.position) * self.frequency[i]
+            self.velocity[i] += (
+                agent.position - space.best_agent.position
+            ) * self.frequency[i]
 
             # Updates agent's position (eq. 4)
             agent.position += self.velocity[i]
@@ -233,7 +223,9 @@ class BA(Optimizer):
             if p > self.pulse_rate[i]:
                 # Performs a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size
-                agent.position = space.best_agent.position + 0.001 * e * np.mean(self.loudness)
+                agent.position = space.best_agent.position + 0.001 * e * np.mean(
+                    self.loudness
+                )
 
             # Checks agent limits
             agent.clip_by_bound()

@@ -6,10 +6,10 @@ import copy
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as ex
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class IWO(Optimizer):
@@ -56,107 +56,95 @@ class IWO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def min_seeds(self):
-        """int: Minimum number of seeds.
-
-        """
+        """int: Minimum number of seeds."""
 
         return self._min_seeds
 
     @min_seeds.setter
     def min_seeds(self, min_seeds):
         if not isinstance(min_seeds, int):
-            raise ex.TypeError('`min_seeds` should be an integer')
+            raise ex.TypeError("`min_seeds` should be an integer")
         if min_seeds < 0:
-            raise ex.ValueError('`min_seeds` should be >= 0')
+            raise ex.ValueError("`min_seeds` should be >= 0")
 
         self._min_seeds = min_seeds
 
     @property
     def max_seeds(self):
-        """int: Maximum number of seeds.
-
-        """
+        """int: Maximum number of seeds."""
 
         return self._max_seeds
 
     @max_seeds.setter
     def max_seeds(self, max_seeds):
         if not isinstance(max_seeds, int):
-            raise ex.TypeError('`max_seeds` should be an integer')
+            raise ex.TypeError("`max_seeds` should be an integer")
         if max_seeds < self.min_seeds:
-            raise ex.ValueError('`max_seeds` should be >= `min_seeds`')
+            raise ex.ValueError("`max_seeds` should be >= `min_seeds`")
 
         self._max_seeds = max_seeds
 
     @property
     def e(self):
-        """float: Exponent used to calculate the Spatial Dispersal.
-
-        """
+        """float: Exponent used to calculate the Spatial Dispersal."""
 
         return self._e
 
     @e.setter
     def e(self, e):
         if not isinstance(e, (float, int)):
-            raise ex.TypeError('`e` should be a float or integer')
+            raise ex.TypeError("`e` should be a float or integer")
         if e < 0:
-            raise ex.ValueError('`e` should be >= 0')
+            raise ex.ValueError("`e` should be >= 0")
 
         self._e = e
 
     @property
     def final_sigma(self):
-        """float: Final standard deviation.
-
-        """
+        """float: Final standard deviation."""
 
         return self._final_sigma
 
     @final_sigma.setter
     def final_sigma(self, final_sigma):
         if not isinstance(final_sigma, (float, int)):
-            raise ex.TypeError('`final_sigma` should be a float or integer')
+            raise ex.TypeError("`final_sigma` should be a float or integer")
         if final_sigma < 0:
-            raise ex.ValueError('`final_sigma` should be >= 0')
+            raise ex.ValueError("`final_sigma` should be >= 0")
 
         self._final_sigma = final_sigma
 
     @property
     def init_sigma(self):
-        """float: Initial standard deviation.
-
-        """
+        """float: Initial standard deviation."""
 
         return self._init_sigma
 
     @init_sigma.setter
     def init_sigma(self, init_sigma):
         if not isinstance(init_sigma, (float, int)):
-            raise ex.TypeError('`init_sigma` should be a float or integer')
+            raise ex.TypeError("`init_sigma` should be a float or integer")
         if init_sigma < 0:
-            raise ex.ValueError('`init_sigma` should be >= 0')
+            raise ex.ValueError("`init_sigma` should be >= 0")
         if init_sigma < self.final_sigma:
-            raise ex.ValueError('`init_sigma` should be >= `final_sigma`')
+            raise ex.ValueError("`init_sigma` should be >= `final_sigma`")
 
         self._init_sigma = init_sigma
 
     @property
     def sigma(self):
-        """float: Standard deviation.
-
-        """
+        """float: Standard deviation."""
 
         return self._sigma
 
     @sigma.setter
     def sigma(self, sigma):
         if not isinstance(sigma, (float, int)):
-            raise ex.TypeError('`sigma` should be a float or integer')
+            raise ex.TypeError("`sigma` should be a float or integer")
 
         self._sigma = sigma
 
@@ -170,7 +158,9 @@ class IWO(Optimizer):
         """
 
         # Calculates the iteration coefficient
-        coef = ((n_iterations - iteration) ** self.e) / ((n_iterations + c.EPSILON) ** self.e)
+        coef = ((n_iterations - iteration) ** self.e) / (
+            (n_iterations + c.EPSILON) ** self.e
+        )
 
         # Updates the Spatial Dispersial
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
@@ -193,7 +183,9 @@ class IWO(Optimizer):
         # For every possible decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             # Updates its position
-            a.position[j] += self.sigma * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+            a.position[j] += self.sigma * r.generate_uniform_random_number(
+                lb, ub, a.n_dimensions
+            )
 
         # Clips its limits
         a.clip_by_bound()
@@ -227,7 +219,9 @@ class IWO(Optimizer):
         # Iterates through all agents
         for agent in space.agents:
             # Calculates the seeding ratio based on its fitness
-            ratio = (agent.fit - space.agents[-1].fit) / (space.agents[0].fit - space.agents[-1].fit + c.EPSILON)
+            ratio = (agent.fit - space.agents[-1].fit) / (
+                space.agents[0].fit - space.agents[-1].fit + c.EPSILON
+            )
 
             # Calculates the number of produced seeds
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)

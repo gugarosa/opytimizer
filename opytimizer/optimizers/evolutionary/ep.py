@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class EP(Optimizer):
@@ -45,54 +45,48 @@ class EP(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def bout_size(self):
-        """float: Size of bout during the tournament selection.
-
-        """
+        """float: Size of bout during the tournament selection."""
 
         return self._bout_size
 
     @bout_size.setter
     def bout_size(self, bout_size):
         if not isinstance(bout_size, (float, int)):
-            raise e.TypeError('`bout_size` should be a float or integer')
+            raise e.TypeError("`bout_size` should be a float or integer")
         if bout_size < 0 or bout_size > 1:
-            raise e.ValueError('`bout_size` should be between 0 and 1')
+            raise e.ValueError("`bout_size` should be between 0 and 1")
 
         self._bout_size = bout_size
 
     @property
     def clip_ratio(self):
-        """float: Clipping ratio to helps the algorithm's convergence.
-
-        """
+        """float: Clipping ratio to helps the algorithm's convergence."""
 
         return self._clip_ratio
 
     @clip_ratio.setter
     def clip_ratio(self, clip_ratio):
         if not isinstance(clip_ratio, (float, int)):
-            raise e.TypeError('`clip_ratio` should be a float or integer')
+            raise e.TypeError("`clip_ratio` should be a float or integer")
         if clip_ratio < 0 or clip_ratio > 1:
-            raise e.ValueError('`clip_ratio` should be between 0 and 1')
+            raise e.ValueError("`clip_ratio` should be between 0 and 1")
 
         self._clip_ratio = clip_ratio
 
     @property
     def strategy(self):
-        """np.array: Array of strategies.
-
-        """
+        """np.array: Array of strategies."""
 
         return self._strategy
 
     @strategy.setter
     def strategy(self, strategy):
         if not isinstance(strategy, np.ndarray):
-            raise e.TypeError('`strategy` should be a numpy array')
+            raise e.TypeError("`strategy` should be a numpy array")
 
         self._strategy = strategy
 
@@ -105,7 +99,9 @@ class EP(Optimizer):
         """
 
         # Array of strategies
-        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.strategy = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
         # Iterates through all agents
         for i in range(space.n_agents):
@@ -113,7 +109,8 @@ class EP(Optimizer):
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
                 # Initializes the strategy array with the proposed EP distance
                 self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
-                    0, ub - lb, size=space.agents[i].n_dimensions)
+                    0, ub - lb, size=space.agents[i].n_dimensions
+                )
 
     def _mutate_parent(self, agent, index, function):
         """Mutates a parent into a new child (eq. 5.1).
@@ -170,7 +167,9 @@ class EP(Optimizer):
         # For every decision variable
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
             # Uses the clip ratio to help the convergence
-            self.strategy[index][j] = np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
+            self.strategy[index][j] = (
+                np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
+            )
 
     def update(self, space, function):
         """Wraps Evolutionary Programming over all agents and variables.
@@ -220,8 +219,12 @@ class EP(Optimizer):
                     wins[i] += 1
 
         # Sorts agents list based on its winnings
-        space.agents = [agents for _, agents in sorted(
-            zip(wins, space.agents), key=lambda pair: pair[0], reverse=True)]
+        space.agents = [
+            agents
+            for _, agents in sorted(
+                zip(wins, space.agents), key=lambda pair: pair[0], reverse=True
+            )
+        ]
 
         # Gathers the best `n_agents`
         space.agents = space.agents[:n_agents]

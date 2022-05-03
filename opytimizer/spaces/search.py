@@ -3,10 +3,10 @@
 
 import copy
 
-import opytimizer.utils.logging as l
 from opytimizer.core import Space
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SearchSpace(Space):
@@ -26,22 +26,21 @@ class SearchSpace(Space):
 
         """
 
-        logger.info('Overriding class: Space -> SearchSpace.')
+        logger.info("Overriding class: Space -> SearchSpace.")
 
         # Defines missing override arguments
         n_dimensions = 1
 
-        super(SearchSpace, self).__init__(n_agents, n_variables, n_dimensions,
-                                          lower_bound, upper_bound)
+        super(SearchSpace, self).__init__(
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+        )
 
         self.build()
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _initialize_agents(self):
-        """Initializes agents with their positions and defines a best agent.
-
-        """
+        """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:
             agent.fill_with_uniform()

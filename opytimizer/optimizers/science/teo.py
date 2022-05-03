@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class TEO(Optimizer):
@@ -33,7 +33,7 @@ class TEO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> TEO.')
+        logger.info("Overriding class: Optimizer -> TEO.")
 
         # Overrides its parent class with the receiving params
         super(TEO, self).__init__()
@@ -56,99 +56,87 @@ class TEO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c1(self):
-        """bool: Random step size control.
-
-        """
+        """bool: Random step size control."""
 
         return self._c1
 
     @c1.setter
     def c1(self, c1):
         if not isinstance(c1, bool):
-            raise e.TypeError('`c1` should be a bool')
+            raise e.TypeError("`c1` should be a bool")
 
         self._c1 = c1
 
     @property
     def c2(self):
-        """bool: Randomness control.
-
-        """
+        """bool: Randomness control."""
 
         return self._c2
 
     @c2.setter
     def c2(self, c2):
         if not isinstance(c2, bool):
-            raise e.TypeError('`c2` should be a bool')
+            raise e.TypeError("`c2` should be a bool")
 
         self._c2 = c2
 
     @property
     def pro(self):
-        """float: Cooling parameter.
-
-        """
+        """float: Cooling parameter."""
 
         return self._pro
 
     @pro.setter
     def pro(self, pro):
         if not isinstance(pro, (float, int)):
-            raise e.TypeError('`pro` should be a float or integer')
+            raise e.TypeError("`pro` should be a float or integer")
         if pro < 0 or pro > 1:
-            raise e.ValueError('`pro` should be between 0 and 1')
+            raise e.ValueError("`pro` should be between 0 and 1")
 
         self._pro = pro
 
     @property
     def n_TM(self):
-        """int: Size of thermal memory.
-
-        """
+        """int: Size of thermal memory."""
 
         return self._n_TM
 
     @n_TM.setter
     def n_TM(self, n_TM):
         if not isinstance(n_TM, int):
-            raise e.TypeError('`n_TM` should be an integer')
+            raise e.TypeError("`n_TM` should be an integer")
         if n_TM <= 0:
-            raise e.ValueError('`n_TM` should be > 0')
+            raise e.ValueError("`n_TM` should be > 0")
 
         self._n_TM = n_TM
 
     @property
     def TM(self):
-        """list: Thermal memory.
-
-        """
+        """list: Thermal memory."""
 
         return self._TM
 
     @TM.setter
     def TM(self, TM):
         if not isinstance(TM, list):
-            raise e.TypeError('`TM` should be a list')
+            raise e.TypeError("`TM` should be a list")
 
         self._TM = TM
 
     @property
     def environment(self):
-        """list: Environmental population.
-
-        """
+        """list: Environmental population."""
 
         return self._environment
 
     @environment.setter
     def environment(self, environment):
         if not isinstance(environment, list):
-            raise e.TypeError('`environment` should be a list')
+            raise e.TypeError("`environment` should be a list")
 
         self._environment = environment
 
@@ -178,10 +166,10 @@ class TEO(Optimizer):
 
         # Updates the thermal memory and cuts it to maximum allowed size
         self.TM.append(copy.deepcopy(space.agents[0]))
-        self.TM = self.TM[-self.n_TM:]
+        self.TM = self.TM[-self.n_TM :]
 
         # Replaces the worst agents with the thermal memory and re-sorts the agents
-        space.agents = space.agents[:-len(self.TM)] + self.TM
+        space.agents = space.agents[: -len(self.TM)] + self.TM
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the time (eq. 9)
@@ -191,7 +179,7 @@ class TEO(Optimizer):
         for env in self.environment:
             # Updates the environment's position (eq. 10)
             r1 = r.generate_uniform_random_number()
-            env.position = (1 - (self.c1 + self.c2 * (1 - time)) * r1 * env.position)
+            env.position = 1 - (self.c1 + self.c2 * (1 - time)) * r1 * env.position
 
         # Iterates through both populations' agents
         for agent, env in zip(space.agents, self.environment):
@@ -199,7 +187,9 @@ class TEO(Optimizer):
             beta = agent.fit / space.agents[-1].fit
 
             # Updates the agent's position (eq. 11)
-            agent.position = env.position + (agent.position - env.position) * np.exp(-beta * time)
+            agent.position = env.position + (agent.position - env.position) * np.exp(
+                -beta * time
+            )
 
             # Generates a random number
             r1 = r.generate_uniform_random_number()
@@ -211,4 +201,6 @@ class TEO(Optimizer):
 
                 # Resets its position (eq. 12)
                 r2 = r.generate_uniform_random_number()
-                agent.position[idx] = agent.lb[idx] + r2 * (agent.ub[idx] - agent.lb[idx])
+                agent.position[idx] = agent.lb[idx] + r2 * (
+                    agent.ub[idx] - agent.lb[idx]
+                )

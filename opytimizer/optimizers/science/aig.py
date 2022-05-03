@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class AIG(Optimizer):
@@ -34,7 +34,7 @@ class AIG(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> AIG.')
+        logger.info("Overriding class: Optimizer -> AIG.")
 
         # Overrides its parent class with the receiving params
         super(AIG, self).__init__()
@@ -48,39 +48,35 @@ class AIG(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: First maximum correction angle.
-
-        """
+        """float: First maximum correction angle."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
-        if alpha < 0 or alpha > np.pi*2:
-            raise e.ValueError('`alpha` should be between 0 and 2PI')
+            raise e.TypeError("`alpha` should be a float or integer")
+        if alpha < 0 or alpha > np.pi * 2:
+            raise e.ValueError("`alpha` should be between 0 and 2PI")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Second maximum correction angle.
-
-        """
+        """float: Second maximum correction angle."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
-        if beta < 0 or beta > np.pi*2:
-            raise e.ValueError('`beta` should be between 0 and 2PI')
+            raise e.TypeError("`beta` should be a float or integer")
+        if beta < 0 or beta > np.pi * 2:
+            raise e.ValueError("`beta` should be between 0 and 2PI")
 
         self._beta = beta
 
@@ -104,8 +100,12 @@ class AIG(Optimizer):
             a = copy.deepcopy(agent)
 
             # Samples correction angles
-            alpha = r.generate_gaussian_random_number(0, alpha_max/3, (agent.n_variables, agent.n_dimensions))
-            beta = r.generate_gaussian_random_number(0, beta_max/3, (agent.n_variables, agent.n_dimensions))
+            alpha = r.generate_gaussian_random_number(
+                0, alpha_max / 3, (agent.n_variables, agent.n_dimensions)
+            )
+            beta = r.generate_gaussian_random_number(
+                0, beta_max / 3, (agent.n_variables, agent.n_dimensions)
+            )
 
             # Calculates correction functions (eq. 16 and 17)
             g_alpha = np.where(alpha < 0, np.cos(alpha), 1 / np.cos(alpha))

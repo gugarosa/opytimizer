@@ -8,15 +8,15 @@ np.random.seed(0)
 
 def test_kh_params():
     params = {
-        'N_max': 0.01,
-        'w_n': 0.42,
-        'NN': 5,
-        'V_f': 0.02,
-        'w_f': 0.38,
-        'D_max': 0.002,
-        'C_t': 0.5,
-        'Cr': 0.2,
-        'Mu': 0.05
+        "N_max": 0.01,
+        "w_n": 0.42,
+        "NN": 5,
+        "V_f": 0.02,
+        "w_f": 0.38,
+        "D_max": 0.002,
+        "C_t": 0.5,
+        "Cr": 0.2,
+        "Mu": 0.05,
     }
 
     new_kh = kh.KH(params=params)
@@ -36,7 +36,7 @@ def test_kh_params_setter():
     new_kh = kh.KH()
 
     try:
-        new_kh.N_max = 'a'
+        new_kh.N_max = "a"
     except:
         new_kh.N_max = 0.01
 
@@ -50,7 +50,7 @@ def test_kh_params_setter():
     assert new_kh.N_max == 0.01
 
     try:
-        new_kh.w_n = 'a'
+        new_kh.w_n = "a"
     except:
         new_kh.w_n = 0.42
 
@@ -78,7 +78,7 @@ def test_kh_params_setter():
     assert new_kh.NN == 5
 
     try:
-        new_kh.V_f = 'a'
+        new_kh.V_f = "a"
     except:
         new_kh.V_f = 0.02
 
@@ -92,7 +92,7 @@ def test_kh_params_setter():
     assert new_kh.V_f == 0.02
 
     try:
-        new_kh.w_f = 'a'
+        new_kh.w_f = "a"
     except:
         new_kh.w_f = 0.38
 
@@ -106,7 +106,7 @@ def test_kh_params_setter():
     assert new_kh.w_f == 0.38
 
     try:
-        new_kh.D_max = 'a'
+        new_kh.D_max = "a"
     except:
         new_kh.D_max = 0.02
 
@@ -120,7 +120,7 @@ def test_kh_params_setter():
     assert new_kh.D_max == 0.02
 
     try:
-        new_kh.C_t = 'a'
+        new_kh.C_t = "a"
     except:
         new_kh.C_t = 0.5
 
@@ -134,7 +134,7 @@ def test_kh_params_setter():
     assert new_kh.C_t == 0.5
 
     try:
-        new_kh.Cr = 'a'
+        new_kh.Cr = "a"
     except:
         new_kh.Cr = 0.2
 
@@ -148,7 +148,7 @@ def test_kh_params_setter():
     assert new_kh.Cr == 0.2
 
     try:
-        new_kh.Mu = 'a'
+        new_kh.Mu = "a"
     except:
         new_kh.Mu = 0.05
 
@@ -163,8 +163,9 @@ def test_kh_params_setter():
 
 
 def test_kh_compile():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -188,8 +189,9 @@ def test_kh_food_location():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -200,8 +202,9 @@ def test_kh_food_location():
 
 
 def test_kh_sensing_distance():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -213,95 +216,110 @@ def test_kh_sensing_distance():
 
 
 def test_kh_get_neighbours():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     distance, eucl_distance = new_kh._sensing_distance(search_space.agents, 0)
 
-    neighbours = new_kh._get_neighbours(
-        search_space.agents, 0, distance, eucl_distance)
+    neighbours = new_kh._get_neighbours(search_space.agents, 0, distance, eucl_distance)
 
     assert len(neighbours) >= 0
 
 
 def test_kh_local_alpha():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     distance, eucl_distance = new_kh._sensing_distance(search_space.agents, 0)
 
-    neighbours = new_kh._get_neighbours(
-        search_space.agents, 0, distance, eucl_distance)
+    neighbours = new_kh._get_neighbours(search_space.agents, 0, distance, eucl_distance)
 
     alpha = new_kh._local_alpha(
-        search_space.agents[0], search_space.agents[-1], search_space.agents[0], neighbours)
+        search_space.agents[0],
+        search_space.agents[-1],
+        search_space.agents[0],
+        neighbours,
+    )
 
     assert alpha.shape == (2, 1) or alpha == 0
 
 
 def test_kh_target_alpha():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     alpha = new_kh._target_alpha(
-        search_space.agents[0], search_space.agents[-1], search_space.agents[0], 1)
+        search_space.agents[0], search_space.agents[-1], search_space.agents[0], 1
+    )
 
     assert alpha.shape == (2, 1) or alpha == 0
 
 
 def test_kh_neighbour_motion():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     motion = np.zeros((5, 2, 1))
 
-    new_motion = new_kh._neighbour_motion(
-        search_space.agents, 0, 1, 20, motion)
+    new_motion = new_kh._neighbour_motion(search_space.agents, 0, 1, 20, motion)
 
     assert new_motion.shape == (5, 2, 1)
 
 
 def test_kh_food_beta():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     beta = new_kh._food_beta(
-        search_space.agents[0], search_space.agents[-1], search_space.agents[0], search_space.agents[0], 1)
+        search_space.agents[0],
+        search_space.agents[-1],
+        search_space.agents[0],
+        search_space.agents[0],
+        1,
+    )
 
     assert beta.shape == (2, 1)
 
 
 def test_kh_best_beta():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
 
     beta = new_kh._best_beta(
-        search_space.agents[0], search_space.agents[-1], search_space.agents[0])
+        search_space.agents[0], search_space.agents[-1], search_space.agents[0]
+    )
 
     assert beta.shape == (2, 1)
 
 
 def test_kh_foraging_motion():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -309,14 +327,16 @@ def test_kh_foraging_motion():
     foraging = np.zeros((5, 2, 1))
 
     new_foraging = new_kh._foraging_motion(
-        search_space.agents, 0, 1, 20, search_space.agents[0], foraging)
+        search_space.agents, 0, 1, 20, search_space.agents[0], foraging
+    )
 
     assert new_foraging.shape == (5, 2, 1)
 
 
 def test_kh_physical_diffusion():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -327,8 +347,9 @@ def test_kh_physical_diffusion():
 
 
 def test_kh_update_position():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -338,14 +359,16 @@ def test_kh_update_position():
     foraging = np.zeros((2, 1))
 
     new_position = new_kh._update_position(
-        search_space.agents, 0, 1, 20, search_space.agents[0], motion, foraging)
+        search_space.agents, 0, 1, 20, search_space.agents[0], motion, foraging
+    )
 
     assert new_position.shape == (2, 1)
 
 
 def test_kh_crossover():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -356,8 +379,9 @@ def test_kh_crossover():
 
 
 def test_kh_mutation():
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)
@@ -371,8 +395,9 @@ def test_kh_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_kh = kh.KH()
     new_kh.compile(search_space)

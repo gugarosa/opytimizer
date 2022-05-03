@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as log
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = log.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class CS(Optimizer):
@@ -34,7 +34,7 @@ class CS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CS.')
+        logger.info("Overriding class: Optimizer -> CS.")
 
         # Overrides its parent class with the receiving params
         super(CS, self).__init__()
@@ -51,56 +51,50 @@ class CS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Step size.
-
-        """
+        """float: Step size."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Lévy distribution parameter.
-
-        """
+        """float: Lévy distribution parameter."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 2:
-            raise e.ValueError('`beta` should be between 0 and 2')
+            raise e.ValueError("`beta` should be between 0 and 2")
 
         self._beta = beta
 
     @property
     def p(self):
-        """float: Probability of replacing worst nests.
-
-        """
+        """float: Probability of replacing worst nests."""
 
         return self._p
 
     @p.setter
     def p(self, p):
         if not isinstance(p, (float, int)):
-            raise e.TypeError('`p` should be a float or integer')
+            raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
-            raise e.ValueError('`p` should be between 0 and 1')
+            raise e.ValueError("`p` should be between 0 and 1")
 
         self._p = p
 
@@ -167,15 +161,15 @@ class CS(Optimizer):
             r1 = r.generate_uniform_random_number()
 
             # Then, we select two random nests
-            k = r.generate_integer_random_number(0, len(agents)-1)
-            l = r.generate_integer_random_number(0, len(agents)-1, exclude_value=k)
+            k = r.generate_integer_random_number(0, len(agents) - 1)
+            l = r.generate_integer_random_number(0, len(agents) - 1, exclude_value=k)
 
             # Calculates the random walk between these two nests
             step_size = r1 * (agents[k].position - agents[l].position)
 
             # Finally, we replace the old nest
             # Note it will only be replaced if 'b' is 1
-            new_agent.position += (step_size * b[j])
+            new_agent.position += step_size * b[j]
 
         return new_agents
 

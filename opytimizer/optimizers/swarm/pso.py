@@ -9,10 +9,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class PSO(Optimizer):
@@ -35,7 +35,7 @@ class PSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> PSO.')
+        logger.info("Overriding class: Optimizer -> PSO.")
 
         # Overrides its parent class with the receiving params
         super(PSO, self).__init__()
@@ -52,86 +52,76 @@ class PSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def w(self):
-        """float: Inertia weight.
-
-        """
+        """float: Inertia weight."""
 
         return self._w
 
     @w.setter
     def w(self, w):
         if not isinstance(w, (float, int)):
-            raise e.TypeError('`w` should be a float or integer')
+            raise e.TypeError("`w` should be a float or integer")
         if w < 0:
-            raise e.ValueError('`w` should be >= 0')
+            raise e.ValueError("`w` should be >= 0")
 
         self._w = w
 
     @property
     def c1(self):
-        """float: Cognitive constant.
-
-        """
+        """float: Cognitive constant."""
 
         return self._c1
 
     @c1.setter
     def c1(self, c1):
         if not isinstance(c1, (float, int)):
-            raise e.TypeError('`c1` should be a float or integer')
+            raise e.TypeError("`c1` should be a float or integer")
         if c1 < 0:
-            raise e.ValueError('`c1` should be >= 0')
+            raise e.ValueError("`c1` should be >= 0")
 
         self._c1 = c1
 
     @property
     def c2(self):
-        """float: Social constant.
-
-        """
+        """float: Social constant."""
 
         return self._c2
 
     @c2.setter
     def c2(self, c2):
         if not isinstance(c2, (float, int)):
-            raise e.TypeError('`c2` should be a float or integer')
+            raise e.TypeError("`c2` should be a float or integer")
         if c2 < 0:
-            raise e.ValueError('`c2` should be >= 0')
+            raise e.ValueError("`c2` should be >= 0")
 
         self._c2 = c2
 
     @property
     def local_position(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._local_position
 
     @local_position.setter
     def local_position(self, local_position):
         if not isinstance(local_position, np.ndarray):
-            raise e.TypeError('`local_position` should be a numpy array')
+            raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -144,8 +134,12 @@ class PSO(Optimizer):
         """
 
         # Arrays of local positions and velocities
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
@@ -191,9 +185,11 @@ class PSO(Optimizer):
             r2 = r.generate_uniform_random_number()
 
             # Updates agent's velocity (p. 294)
-            self.velocity[i] = self.w * self.velocity[i] + \
-                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
-                               self.c2 * r2 * (space.best_agent.position - agent.position)
+            self.velocity[i] = (
+                self.w * self.velocity[i]
+                + self.c1 * r1 * (self.local_position[i] - agent.position)
+                + self.c2 * r2 * (space.best_agent.position - agent.position)
+            )
 
             # Updates agent's position (p. 294)
             agent.position += self.velocity[i]
@@ -220,7 +216,7 @@ class AIWPSO(PSO):
 
         """
 
-        logger.info('Overriding class: PSO -> AIWPSO.')
+        logger.info("Overriding class: PSO -> AIWPSO.")
 
         # Minimum inertia weight
         self.w_min = 0.1
@@ -231,56 +227,50 @@ class AIWPSO(PSO):
         # Overrides its parent class with the receiving params
         super(AIWPSO, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def w_min(self):
-        """float: Minimum inertia weight.
-
-        """
+        """float: Minimum inertia weight."""
 
         return self._w_min
 
     @w_min.setter
     def w_min(self, w_min):
         if not isinstance(w_min, (float, int)):
-            raise e.TypeError('`w_min` should be a float or integer')
+            raise e.TypeError("`w_min` should be a float or integer")
         if w_min < 0:
-            raise e.ValueError('`w_min` should be >= 0')
+            raise e.ValueError("`w_min` should be >= 0")
 
         self._w_min = w_min
 
     @property
     def w_max(self):
-        """float: Maximum inertia weight.
-
-        """
+        """float: Maximum inertia weight."""
 
         return self._w_max
 
     @w_max.setter
     def w_max(self, w_max):
         if not isinstance(w_max, (float, int)):
-            raise e.TypeError('`w_max` should be a float or integer')
+            raise e.TypeError("`w_max` should be a float or integer")
         if w_max < 0:
-            raise e.ValueError('`w_max` should be >= 0')
+            raise e.ValueError("`w_max` should be >= 0")
         if w_max < self.w_min:
-            raise e.ValueError('`w_max` should be >= `w_min`')
+            raise e.ValueError("`w_max` should be >= `w_min`")
 
         self._w_max = w_max
 
     @property
     def fitness(self):
-        """list: List of fitnesses.
-
-        """
+        """list: List of fitnesses."""
 
         return self._fitness
 
     @fitness.setter
     def fitness(self, fitness):
         if not isinstance(fitness, list):
-            raise e.TypeError('`fitness` should be a list')
+            raise e.TypeError("`fitness` should be a list")
 
         self._fitness = fitness
 
@@ -329,9 +319,11 @@ class AIWPSO(PSO):
             r2 = r.generate_uniform_random_number()
 
             # Updates agent's velocity
-            self.velocity[i] = self.w * self.velocity[i] + \
-                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
-                               self.c2 * r2 * (space.best_agent.position - agent.position)
+            self.velocity[i] = (
+                self.w * self.velocity[i]
+                + self.c1 * r1 * (self.local_position[i] - agent.position)
+                + self.c2 * r2 * (space.best_agent.position - agent.position)
+            )
 
             # Updates agent's position
             agent.position += self.velocity[i]
@@ -361,25 +353,23 @@ class RPSO(PSO):
 
         """
 
-        logger.info('Overriding class: PSO -> RPSO.')
+        logger.info("Overriding class: PSO -> RPSO.")
 
         # Overrides its parent class with the receiving params
         super(RPSO, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def mass(self):
-        """np.array: Array of masses.
-
-        """
+        """np.array: Array of masses."""
 
         return self._mass
 
     @mass.setter
     def mass(self, mass):
         if not isinstance(mass, np.ndarray):
-            raise e.TypeError('`mass` should be a numpy array')
+            raise e.TypeError("`mass` should be a numpy array")
 
         self._mass = mass
 
@@ -392,9 +382,15 @@ class RPSO(PSO):
         """
 
         # Arrays of local positions, velocities and masses
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.mass = r.generate_uniform_random_number(size=(space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.mass = r.generate_uniform_random_number(
+            size=(space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def update(self, space):
         """Wraps Relativistic Particle Swarm Optimization over all agents and variables.
@@ -414,10 +410,12 @@ class RPSO(PSO):
             r2 = r.generate_uniform_random_number()
 
             # Updates current agent velocity (eq. 11)
-            gamma = 1 / np.sqrt(1 - (max_velocity ** 2 / c.LIGHT_SPEED ** 2))
-            self.velocity[i] = self.mass[i] * self.velocity[i] * gamma + \
-                               self.c1 * r1 * (self.local_position[i] - agent.position) + \
-                               self.c2 * r2 * (space.best_agent.position - agent.position)
+            gamma = 1 / np.sqrt(1 - (max_velocity**2 / c.LIGHT_SPEED**2))
+            self.velocity[i] = (
+                self.mass[i] * self.velocity[i] * gamma
+                + self.c1 * r1 * (self.local_position[i] - agent.position)
+                + self.c2 * r2 * (space.best_agent.position - agent.position)
+            )
 
             # Updates current agent position
             agent.position += self.velocity[i]
@@ -444,12 +442,12 @@ class SAVPSO(PSO):
 
         """
 
-        logger.info('Overriding class: PSO -> SAVPSO.')
+        logger.info("Overriding class: PSO -> SAVPSO.")
 
         # Overrides its parent class with the receiving params
         super(SAVPSO, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def update(self, space):
         """Wraps Self-adaptive Velocity Particle Swarm Optimization over all agents and variables.
@@ -460,7 +458,9 @@ class SAVPSO(PSO):
         """
 
         # Creates an array of positions
-        positions = np.zeros((space.agents[0].position.shape[0], space.agents[0].position.shape[1]))
+        positions = np.zeros(
+            (space.agents[0].position.shape[0], space.agents[0].position.shape[1])
+        )
 
         # For every agent
         for agent in space.agents:
@@ -477,9 +477,13 @@ class SAVPSO(PSO):
 
             # Updates current agent's velocity (eq. 8)
             r1 = r.generate_uniform_random_number()
-            self.velocity[i] = self.w * np.fabs(self.local_position[idx] - self.local_position[i]) * \
-                               np.sign(self.velocity[i]) + r1 * (self.local_position[i] - agent.position) + \
-                               (1 - r1) * (space.best_agent.position - agent.position)
+            self.velocity[i] = (
+                self.w
+                * np.fabs(self.local_position[idx] - self.local_position[i])
+                * np.sign(self.velocity[i])
+                + r1 * (self.local_position[i] - agent.position)
+                + (1 - r1) * (space.best_agent.position - agent.position)
+            )
 
             # Updates current agent's position
             agent.position += self.velocity[i]
@@ -492,12 +496,16 @@ class SAVPSO(PSO):
                 # If position is greater than upper bound
                 if agent.position[j] > agent.ub[j]:
                     # Replaces its value
-                    agent.position[j] = positions[j] + 1 * r4 * (agent.ub[j] - positions[j])
+                    agent.position[j] = positions[j] + 1 * r4 * (
+                        agent.ub[j] - positions[j]
+                    )
 
                 # If position is smaller than lower bound
                 if agent.position[j] < agent.lb[j]:
                     # Replaces its value
-                    agent.position[j] = positions[j] + 1 * r4 * (agent.lb[j] - positions[j])
+                    agent.position[j] = positions[j] + 1 * r4 * (
+                        agent.lb[j] - positions[j]
+                    )
 
 
 class VPSO(PSO):
@@ -520,25 +528,23 @@ class VPSO(PSO):
 
         """
 
-        logger.info('Overriding class: PSO -> VPSO.')
+        logger.info("Overriding class: PSO -> VPSO.")
 
         # Overrides its parent class with the receiving params
         super(VPSO, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def v_velocity(self):
-        """np.array: Array of vertical velocities.
-
-        """
+        """np.array: Array of vertical velocities."""
 
         return self._v_velocity
 
     @v_velocity.setter
     def v_velocity(self, v_velocity):
         if not isinstance(v_velocity, np.ndarray):
-            raise e.TypeError('`v_velocity` should be a numpy array')
+            raise e.TypeError("`v_velocity` should be a numpy array")
 
         self._v_velocity = v_velocity
 
@@ -551,9 +557,15 @@ class VPSO(PSO):
         """
 
         # Arrays of local positions, velocities and vertical velocities
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.v_velocity = np.ones((space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.v_velocity = np.ones(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def update(self, space):
         """Wraps Vertical Particle Swarm Optimization over all agents and variables.
@@ -570,12 +582,17 @@ class VPSO(PSO):
             r2 = r.generate_uniform_random_number()
 
             # Updates current agent velocity (eq. 3)
-            self.velocity[i] = self.w * self.velocity[i] + self.c1 * r1 * (self.local_position[i] - agent.position) + \
-                               self.c2 * r2 * (space.best_agent.position - agent.position)
+            self.velocity[i] = (
+                self.w * self.velocity[i]
+                + self.c1 * r1 * (self.local_position[i] - agent.position)
+                + self.c2 * r2 * (space.best_agent.position - agent.position)
+            )
 
             # Updates current agent vertical velocity (eq. 4)
-            self.v_velocity[i] -= (np.dot(self.velocity[i].T, self.v_velocity[i]) /
-                                  (np.dot(self.velocity[i].T, self.velocity[i]) + c.EPSILON)) * self.velocity[i]
+            self.v_velocity[i] -= (
+                np.dot(self.velocity[i].T, self.v_velocity[i])
+                / (np.dot(self.velocity[i].T, self.velocity[i]) + c.EPSILON)
+            ) * self.velocity[i]
 
             # Updates current agent position (eq. 5)
             r1 = r.generate_uniform_random_number()

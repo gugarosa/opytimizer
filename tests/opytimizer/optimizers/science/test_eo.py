@@ -5,12 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_eo_params():
-    params = {
-        'a1': 2.0,
-        'a2': 1.0,
-        'GP': 0.5,
-        'V': 1.0
-    }
+    params = {"a1": 2.0, "a2": 1.0, "GP": 0.5, "V": 1.0}
 
     new_eo = eo.EO(params=params)
 
@@ -27,7 +22,7 @@ def test_eo_params_setter():
     new_eo = eo.EO()
 
     try:
-        new_eo.a1 = 'a'
+        new_eo.a1 = "a"
     except:
         new_eo.a1 = 2.0
 
@@ -39,7 +34,7 @@ def test_eo_params_setter():
     assert new_eo.a1 == 2.0
 
     try:
-        new_eo.a2 = 'b'
+        new_eo.a2 = "b"
     except:
         new_eo.a2 = 1.0
 
@@ -51,7 +46,7 @@ def test_eo_params_setter():
     assert new_eo.a2 == 1.0
 
     try:
-        new_eo.GP = 'c'
+        new_eo.GP = "c"
     except:
         new_eo.GP = 0.5
 
@@ -63,7 +58,7 @@ def test_eo_params_setter():
     assert new_eo.GP == 0.5
 
     try:
-        new_eo.V = 'd'
+        new_eo.V = "d"
     except:
         new_eo.V = 1.0
 
@@ -76,8 +71,9 @@ def test_eo_params_setter():
 
 
 def test_eo_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_eo = eo.EO()
     new_eo.compile(search_space)
@@ -91,8 +87,9 @@ def test_eo_compile():
 
 
 def test_eo_calculate_equilibrium():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_eo = eo.EO()
     new_eo.compile(search_space)
@@ -104,23 +101,25 @@ def test_eo_average_concentration():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_eo = eo.EO()
     new_eo.compile(search_space)
 
     C_avg = new_eo._average_concentration(square)
 
-    assert type(C_avg).__name__ == 'Agent'
+    assert type(C_avg).__name__ == "Agent"
 
 
 def test_eo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_eo = eo.EO()
     new_eo.compile(search_space)

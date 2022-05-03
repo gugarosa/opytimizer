@@ -5,11 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_mvo_params():
-    params = {
-        'WEP_min': 0.2,
-        'WEP_max': 1.0,
-        'p': 0.5
-    }
+    params = {"WEP_min": 0.2, "WEP_max": 1.0, "p": 0.5}
 
     new_mvo = mvo.MVO(params=params)
 
@@ -24,7 +20,7 @@ def test_mvo_params_setter():
     new_mvo = mvo.MVO()
 
     try:
-        new_mvo.WEP_min = 'a'
+        new_mvo.WEP_min = "a"
     except:
         new_mvo.WEP_min = 0.75
 
@@ -36,7 +32,7 @@ def test_mvo_params_setter():
     assert new_mvo.WEP_min == 0.75
 
     try:
-        new_mvo.WEP_max = 'b'
+        new_mvo.WEP_max = "b"
     except:
         new_mvo.WEP_max = 0.9
 
@@ -53,7 +49,7 @@ def test_mvo_params_setter():
     assert new_mvo.WEP_max == 0.9
 
     try:
-        new_mvo.p = 'c'
+        new_mvo.p = "c"
     except:
         new_mvo.p = 0.25
 
@@ -71,8 +67,9 @@ def test_mvo_update():
 
     new_mvo = mvo.MVO()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_mvo.update(search_space, square, 1, 10)
     new_mvo.update(search_space, square, 5, 10)

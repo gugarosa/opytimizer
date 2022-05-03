@@ -7,13 +7,14 @@ from opytimizer.utils import constant
 def pointer(x):
     return x
 
+
 assert pointer(1) == 1
 
 
 def test_function_name():
     new_function = function.Function(pointer)
 
-    assert new_function.name == 'pointer'
+    assert new_function.name == "pointer"
 
 
 def test_function_name_setter():
@@ -22,32 +23,35 @@ def test_function_name_setter():
     try:
         new_function.name = 1
     except:
-        new_function.name = 'pointer'
+        new_function.name = "pointer"
 
-    assert new_function.name == 'pointer'
+    assert new_function.name == "pointer"
 
 
 def test_function_pointer():
     new_function = function.Function(pointer)
 
-    assert new_function.pointer.__name__ == 'pointer'
+    assert new_function.pointer.__name__ == "pointer"
 
 
 def test_function_pointer_setter():
     new_function = function.Function(pointer)
 
     try:
-        new_function.pointer = 'a'
+        new_function.pointer = "a"
     except:
         new_function.pointer = callable
 
-    assert new_function.pointer.__class__.__name__ == 'builtin_function_or_method' or 'builtin_function'
+    assert (
+        new_function.pointer.__class__.__name__ == "builtin_function_or_method"
+        or "builtin_function"
+    )
 
 
 def test_function_built():
     new_function = function.Function(pointer)
 
-    assert new_function.built == True
+    assert new_function.built is True
 
 
 def test_function_built_setter():
@@ -55,7 +59,7 @@ def test_function_built_setter():
 
     new_function.built = False
 
-    assert new_function.built == False
+    assert new_function.built is False
 
 
 def test_function_call():
@@ -78,11 +82,11 @@ def test_function_call():
     except:
         new_function = function.Function(square)
 
-    assert new_function.name == 'square'
+    assert new_function.name == "square"
 
 
 def test_function():
-    class Square():
+    class Square:
         def __call__(self, x):
             return np.sum(x**2)
 
@@ -92,4 +96,4 @@ def test_function():
 
     new_function = function.Function(s)
 
-    assert new_function.name == 'Square'
+    assert new_function.name == "Square"

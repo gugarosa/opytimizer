@@ -18,8 +18,7 @@ X = digits.data
 Y = digits.target
 
 # Splitting the data
-X_train, X_val, Y_train, Y_val = train_test_split(
-    X, Y, test_size=0.5, random_state=42)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.5, random_state=42)
 
 # Reshaping the data
 X_train = X_train.reshape(-1, 1, 8, 8)
@@ -122,7 +121,7 @@ def cnn(opytimizer):
     momentum = opytimizer[1][0]
 
     # Declares the loss function
-    loss = torch.nn.CrossEntropyLoss(reduction='mean')
+    loss = torch.nn.CrossEntropyLoss(reduction="mean")
 
     # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
@@ -141,8 +140,7 @@ def cnn(opytimizer):
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting
-            cost += fit(model, loss, opt,
-                        X_train[start:end], Y_train[start:end])
+            cost += fit(model, loss, opt, X_train[start:end], Y_train[start:end])
 
     # Predicting samples from evaluating set
     preds = predict(model, X_val)

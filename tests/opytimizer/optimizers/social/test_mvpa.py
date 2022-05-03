@@ -6,9 +6,7 @@ from opytimizer.utils import constant
 
 
 def test_mvpa_params():
-    params = {
-        'n_teams': 4
-    }
+    params = {"n_teams": 4}
 
     new_mvpa = mvpa.MVPA(params=params)
 
@@ -19,7 +17,7 @@ def test_mvpa_params_setter():
     new_mvpa = mvpa.MVPA()
 
     try:
-        new_mvpa.n_teams = 'a'
+        new_mvpa.n_teams = "a"
     except:
         new_mvpa.n_teams = 4
 
@@ -34,14 +32,15 @@ def test_mvpa_params_setter():
 
 
 def test_mvpa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_mvpa = mvpa.MVPA()
     new_mvpa.compile(search_space)
 
     try:
-        new_mvpa.n_p = 'a'
+        new_mvpa.n_p = "a"
     except:
         new_mvpa.n_p = 1
 
@@ -59,8 +58,9 @@ def test_mvpa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_mvpa = mvpa.MVPA()
     new_mvpa.compile(search_space)

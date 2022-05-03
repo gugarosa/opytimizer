@@ -9,10 +9,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GP(Optimizer):
@@ -34,7 +34,7 @@ class GP(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> GP.')
+        logger.info("Overriding class: Optimizer -> GP.")
 
         # Overrides its parent class with the receiving params
         super(GP, self).__init__()
@@ -54,73 +54,65 @@ class GP(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def p_reproduction(self):
-        """float: Probability of reproduction.
-
-        """
+        """float: Probability of reproduction."""
 
         return self._p_reproduction
 
     @p_reproduction.setter
     def p_reproduction(self, p_reproduction):
         if not isinstance(p_reproduction, (float, int)):
-            raise e.TypeError('`p_reproduction` should be a float or integer')
+            raise e.TypeError("`p_reproduction` should be a float or integer")
         if p_reproduction < 0 or p_reproduction > 1:
-            raise e.ValueError('`p_reproduction` should be between 0 and 1')
+            raise e.ValueError("`p_reproduction` should be between 0 and 1")
 
         self._p_reproduction = p_reproduction
 
     @property
     def p_mutation(self):
-        """float: Probability of mutation.
-
-        """
+        """float: Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
         if not isinstance(p_mutation, (float, int)):
-            raise e.TypeError('`p_mutation` should be a float or integer')
+            raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
-            raise e.ValueError('`p_mutation` should be between 0 and 1')
+            raise e.ValueError("`p_mutation` should be between 0 and 1")
 
         self._p_mutation = p_mutation
 
     @property
     def p_crossover(self):
-        """float: Probability of crossover.
-
-        """
+        """float: Probability of crossover."""
 
         return self._p_crossover
 
     @p_crossover.setter
     def p_crossover(self, p_crossover):
         if not isinstance(p_crossover, (float, int)):
-            raise e.TypeError('`p_crossover` should be a float or integer')
+            raise e.TypeError("`p_crossover` should be a float or integer")
         if p_crossover < 0 or p_crossover > 1:
-            raise e.ValueError('`p_crossover` should be between 0 and 1')
+            raise e.ValueError("`p_crossover` should be between 0 and 1")
 
         self._p_crossover = p_crossover
 
     @property
     def prunning_ratio(self):
-        """float: Nodes' prunning ratio.
-
-        """
+        """float: Nodes' prunning ratio."""
 
         return self._prunning_ratio
 
     @prunning_ratio.setter
     def prunning_ratio(self, prunning_ratio):
         if not isinstance(prunning_ratio, (float, int)):
-            raise e.TypeError('`prunning_ratio` should be a float or integer')
+            raise e.TypeError("`prunning_ratio` should be a float or integer")
         if prunning_ratio < 0 or prunning_ratio > 1:
-            raise e.ValueError('`prunning_ratio` should be between 0 and 1')
+            raise e.ValueError("`prunning_ratio` should be between 0 and 1")
 
         self._prunning_ratio = prunning_ratio
 
@@ -302,7 +294,8 @@ class GP(Optimizer):
 
                 # Apply the crossover operation
                 space.trees[s[0]], space.trees[s[1]] = self._cross(
-                    space.trees[s[0]], space.trees[s[1]], max_f_nodes, max_m_nodes)
+                    space.trees[s[0]], space.trees[s[1]], max_f_nodes, max_m_nodes
+                )
 
     def _cross(self, father, mother, max_father, max_mother):
         """Actually performs the crossover over a father and mother nodes.

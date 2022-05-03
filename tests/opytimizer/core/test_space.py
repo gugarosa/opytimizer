@@ -101,7 +101,7 @@ def test_space_best_agent_setter():
 def test_space_lb():
     new_space = space.Space(n_variables=1)
 
-    assert new_space.lb.shape == (1, )
+    assert new_space.lb.shape == (1,)
 
 
 def test_space_lb_setter():
@@ -125,7 +125,7 @@ def test_space_lb_setter():
 def test_space_ub():
     new_space = space.Space(n_variables=1)
 
-    assert new_space.ub.shape == (1, )
+    assert new_space.ub.shape == (1,)
 
 
 def test_space_ub_setter():
@@ -149,7 +149,7 @@ def test_space_ub_setter():
 def test_space_built():
     new_space = space.Space()
 
-    assert new_space.built == False
+    assert new_space.built is False
 
 
 def test_space_built_setter():
@@ -160,7 +160,7 @@ def test_space_built_setter():
     except:
         new_space.built = True
 
-    assert new_space.built == True
+    assert new_space.built is True
 
 
 def test_space_create_agents():
@@ -182,7 +182,7 @@ def test_space_build():
 
     new_space.build()
 
-    assert new_space.built == True
+    assert new_space.built is True
 
 
 def test_space_clip_by_bound():

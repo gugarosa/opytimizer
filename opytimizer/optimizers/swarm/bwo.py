@@ -5,10 +5,10 @@ import copy
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BWO(Optimizer):
@@ -33,7 +33,7 @@ class BWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BWO.')
+        logger.info("Overriding class: Optimizer -> BWO.")
 
         # Overrides its parent class with the receiving params
         super(BWO, self).__init__()
@@ -50,56 +50,50 @@ class BWO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def pp(self):
-        """float: Procreating rate.
-
-        """
+        """float: Procreating rate."""
 
         return self._pp
 
     @pp.setter
     def pp(self, pp):
         if not isinstance(pp, (float, int)):
-            raise e.TypeError('`pp` should be a float or integer')
+            raise e.TypeError("`pp` should be a float or integer")
         if pp < 0 or pp > 1:
-            raise e.ValueError('`pp` should be between 0 and 1')
+            raise e.ValueError("`pp` should be between 0 and 1")
 
         self._pp = pp
 
     @property
     def cr(self):
-        """float: Cannibalism rate.
-
-        """
+        """float: Cannibalism rate."""
 
         return self._cr
 
     @cr.setter
     def cr(self, cr):
         if not isinstance(cr, (float, int)):
-            raise e.TypeError('`cr` should be a float or integer')
+            raise e.TypeError("`cr` should be a float or integer")
         if cr < 0 or cr > 1:
-            raise e.ValueError('`cr` should be between 0 and 1')
+            raise e.ValueError("`cr` should be between 0 and 1")
 
         self._cr = cr
 
     @property
     def pm(self):
-        """float: Mutation rate.
-
-        """
+        """float: Mutation rate."""
 
         return self._pm
 
     @pm.setter
     def pm(self, pm):
         if not isinstance(pm, (float, int)):
-            raise e.TypeError('`pm` should be a float or integer')
+            raise e.TypeError("`pm` should be a float or integer")
         if pm < 0 or pm > 1:
-            raise e.ValueError('`pm` should be between 0 and 1')
+            raise e.ValueError("`pm` should be between 0 and 1")
 
         self._pm = pm
 
@@ -142,10 +136,15 @@ class BWO(Optimizer):
         if alpha.n_variables > 1:
             # Samples random integers
             r1 = r.generate_integer_random_number(0, alpha.n_variables)
-            r2 = r.generate_integer_random_number(0, alpha.n_variables, exclude_value=r1)
+            r2 = r.generate_integer_random_number(
+                0, alpha.n_variables, exclude_value=r1
+            )
 
             # Swaps the randomly selected variables
-            alpha.position[r1], alpha.position[r2] = alpha.position[r2], alpha.position[r1]
+            alpha.position[r1], alpha.position[r2] = (
+                alpha.position[r2],
+                alpha.position[r1],
+            )
 
         return alpha
 
@@ -182,7 +181,9 @@ class BWO(Optimizer):
             idx = r.generate_uniform_random_number(0, n_agents, size=2)
 
             # Making a deepcopy of father and mother
-            father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(space.agents[int(idx[1])])
+            father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(
+                space.agents[int(idx[1])]
+            )
 
             # Creates an empty list of auxiliary agents
             new_agents = []

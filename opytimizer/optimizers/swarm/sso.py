@@ -8,10 +8,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SSO(Optimizer):
@@ -34,7 +34,7 @@ class SSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SSO.')
+        logger.info("Overriding class: Optimizer -> SSO.")
 
         # Overrides its parent class with the receiving params
         super(SSO, self).__init__()
@@ -51,71 +51,63 @@ class SSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def C_w(self):
-        """float: Weighing constant.
-
-        """
+        """float: Weighing constant."""
 
         return self._C_w
 
     @C_w.setter
     def C_w(self, C_w):
         if not isinstance(C_w, (float, int)):
-            raise e.TypeError('`C_w` should be a float or integer')
+            raise e.TypeError("`C_w` should be a float or integer")
         if C_w < 0 or C_w > 1:
-            raise e.ValueError('`C_w` should be between 0 and 1')
+            raise e.ValueError("`C_w` should be between 0 and 1")
 
         self._C_w = C_w
 
     @property
     def C_p(self):
-        """float: Local constant.
-
-        """
+        """float: Local constant."""
 
         return self._C_p
 
     @C_p.setter
     def C_p(self, C_p):
         if not isinstance(C_p, (float, int)):
-            raise e.TypeError('`C_p` should be a float or integer')
+            raise e.TypeError("`C_p` should be a float or integer")
         if C_p < self.C_w:
-            raise e.ValueError('`C_p` should be equal or greater than `C_w`')
+            raise e.ValueError("`C_p` should be equal or greater than `C_w`")
 
         self._C_p = C_p
 
     @property
     def C_g(self):
-        """float: Global constant.
-
-        """
+        """float: Global constant."""
 
         return self._C_g
 
     @C_g.setter
     def C_g(self, C_g):
         if not isinstance(C_g, (float, int)):
-            raise e.TypeError('`C_g` should be a float or integer')
+            raise e.TypeError("`C_g` should be a float or integer")
         if C_g < self.C_p:
-            raise e.ValueError('`C_g` should be equal or greater than `C_p`')
+            raise e.ValueError("`C_g` should be equal or greater than `C_p`")
 
         self._C_g = C_g
 
     @property
     def local_position(self):
-        """np.array: Array of local positions.
-
-        """
+        """np.array: Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
     def local_position(self, local_position):
         if not isinstance(local_position, np.ndarray):
-            raise e.TypeError('`local_position` should be a numpy array')
+            raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
@@ -128,7 +120,9 @@ class SSO(Optimizer):
         """
 
         # Arrays of local positions
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
@@ -192,4 +186,6 @@ class SSO(Optimizer):
                 # If random number is greater than `C_g`
                 else:
                     # Updates agent's position with random number
-                    agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
+                    agent.position[j] = r.generate_uniform_random_number(
+                        size=agent.n_dimensions
+                    )

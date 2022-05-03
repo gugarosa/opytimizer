@@ -18,8 +18,7 @@ X = digits.data
 Y = digits.target
 
 # Splits the data
-X_train, X_val, Y_train, Y_val = train_test_split(
-    X, Y, test_size=0.5, random_state=42)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.5, random_state=42)
 
 # Converts from numpy array to torch tensors
 X_train = torch.from_numpy(X_train).float()
@@ -71,8 +70,7 @@ def enhanced_neural_network(opytimizer):
     n_classes = 10
 
     # Adding first linear layer
-    model.add_module("linear_1", torch.nn.Linear(
-        n_features, n_hidden, bias=False))
+    model.add_module("linear_1", torch.nn.Linear(n_features, n_hidden, bias=False))
 
     # Activated by ReLU
     model.add_module("relu_1", torch.nn.ReLU())
@@ -81,8 +79,7 @@ def enhanced_neural_network(opytimizer):
     model.add_module("dropout_1", torch.nn.Dropout(0.2))
 
     # Adding secondary linear layer
-    model.add_module("linear_2", torch.nn.Linear(
-        n_hidden, n_hidden, bias=False))
+    model.add_module("linear_2", torch.nn.Linear(n_hidden, n_hidden, bias=False))
 
     # Activated by ReLU
     model.add_module("relu_2", torch.nn.ReLU())
@@ -91,8 +88,7 @@ def enhanced_neural_network(opytimizer):
     model.add_module("dropout_2", torch.nn.Dropout(0.2))
 
     # Final linear layer
-    model.add_module("linear_3", torch.nn.Linear(
-        n_hidden, n_classes, bias=False))
+    model.add_module("linear_3", torch.nn.Linear(n_hidden, n_classes, bias=False))
 
     # Input variables
     batch_size = 100
@@ -105,11 +101,12 @@ def enhanced_neural_network(opytimizer):
     weight_decay = opytimizer[2][0]
 
     # Declares the loss function
-    loss = torch.nn.CrossEntropyLoss(reduction='mean')
+    loss = torch.nn.CrossEntropyLoss(reduction="mean")
 
     # Declares the optimization algorithm
-    opt = optim.Adam(model.parameters(), lr=learning_rate,
-                     eps=eps, weight_decay=weight_decay)
+    opt = optim.Adam(
+        model.parameters(), lr=learning_rate, eps=eps, weight_decay=weight_decay
+    )
 
     # Performs training loop
     for _ in range(epochs):
@@ -125,8 +122,7 @@ def enhanced_neural_network(opytimizer):
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting
-            cost += fit(model, loss, opt,
-                        X_train[start:end], Y_train[start:end])
+            cost += fit(model, loss, opt, X_train[start:end], Y_train[start:end])
 
     # Predicting samples from evaluating set
     preds = predict(model, X_val)

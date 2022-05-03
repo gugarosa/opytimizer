@@ -14,5 +14,5 @@ x = 0
 f = Function(test_function)
 
 # Prints out some properties
-print(f'x: {x}')
-print(f'f(x): {f(x)}')
+print(f"x: {x}")
+print(f"f(x): {f(x)}")

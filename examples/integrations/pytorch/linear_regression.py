@@ -16,6 +16,7 @@ torch.manual_seed(42)
 X = torch.linspace(-1, 1, 101)
 Y = 2 * X + torch.randn(X.size()) * 0.33
 
+
 def fit(model, loss, opt, x, y):
     # Declares initial variables
     x = Variable(x, requires_grad=False)
@@ -36,6 +37,7 @@ def fit(model, loss, opt, x, y):
 
     return output.item()
 
+
 def linear_regression(opytimizer):
     # Instanciating the model
     model = torch.nn.Sequential()
@@ -53,7 +55,7 @@ def linear_regression(opytimizer):
     momentum = opytimizer[1][0]
 
     # Declares the loss function
-    loss = torch.nn.MSELoss(reduction='mean')
+    loss = torch.nn.MSELoss(reduction="mean")
 
     # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)

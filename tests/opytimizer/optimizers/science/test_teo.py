@@ -3,18 +3,13 @@ from opytimizer.spaces import search
 
 
 def test_teo_params():
-    params = {
-        'c1': True,
-        'c2': True,
-        'pro': 0.05,
-        'n_TM': 4
-    }
+    params = {"c1": True, "c2": True, "pro": 0.05, "n_TM": 4}
 
     new_teo = teo.TEO(params=params)
 
-    assert new_teo.c1 == True
+    assert new_teo.c1 is True
 
-    assert new_teo.c2 == True
+    assert new_teo.c2 is True
 
     assert new_teo.pro == 0.05
 
@@ -29,17 +24,17 @@ def test_teo_params_setter():
     except:
         new_teo.c1 = True
 
-    assert new_teo.c1 == True
+    assert new_teo.c1 is True
 
     try:
         new_teo.c2 = 1
     except:
         new_teo.c2 = True
 
-    assert new_teo.c2 == True
+    assert new_teo.c2 is True
 
     try:
-        new_teo.pro = 'a'
+        new_teo.pro = "a"
     except:
         new_teo.pro = 0.05
 
@@ -53,7 +48,7 @@ def test_teo_params_setter():
     assert new_teo.pro == 0.05
 
     try:
-        new_teo.n_TM = 'b'
+        new_teo.n_TM = "b"
     except:
         new_teo.n_TM = 4
 
@@ -75,8 +70,9 @@ def test_teo_params_setter():
 
 
 def test_teo_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_teo = teo.TEO()
     new_teo.compile(search_space)
@@ -90,8 +86,9 @@ def test_teo_compile():
 
 
 def test_teo_update():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_teo = teo.TEO()
     new_teo.compile(search_space)

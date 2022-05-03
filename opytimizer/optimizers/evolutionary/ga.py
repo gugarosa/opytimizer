@@ -10,10 +10,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GA(Optimizer):
@@ -50,56 +50,50 @@ class GA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def p_selection(self):
-        """float: Probability of selection.
-
-        """
+        """float: Probability of selection."""
 
         return self._p_selection
 
     @p_selection.setter
     def p_selection(self, p_selection):
         if not isinstance(p_selection, (float, int)):
-            raise e.TypeError('`p_selection` should be a float or integer')
+            raise e.TypeError("`p_selection` should be a float or integer")
         if p_selection < 0 or p_selection > 1:
-            raise e.ValueError('`p_selection` should be between 0 and 1')
+            raise e.ValueError("`p_selection` should be between 0 and 1")
 
         self._p_selection = p_selection
 
     @property
     def p_mutation(self):
-        """float: Probability of mutation.
-
-        """
+        """float: Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
     def p_mutation(self, p_mutation):
         if not isinstance(p_mutation, (float, int)):
-            raise e.TypeError('`p_mutation` should be a float or integer')
+            raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
-            raise e.ValueError('`p_mutation` should be between 0 and 1')
+            raise e.ValueError("`p_mutation` should be between 0 and 1")
 
         self._p_mutation = p_mutation
 
     @property
     def p_crossover(self):
-        """float: Probability of crossover.
-
-        """
+        """float: Probability of crossover."""
 
         return self._p_crossover
 
     @p_crossover.setter
     def p_crossover(self, p_crossover):
         if not isinstance(p_crossover, (float, int)):
-            raise e.TypeError('`p_crossover` should be a float or integer')
+            raise e.TypeError("`p_crossover` should be a float or integer")
         if p_crossover < 0 or p_crossover > 1:
-            raise e.ValueError('`p_crossover` should be between 0 and 1')
+            raise e.ValueError("`p_crossover` should be between 0 and 1")
 
         self._p_crossover = p_crossover
 

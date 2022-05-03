@@ -6,12 +6,12 @@ from opytimizer.spaces import search
 
 def test_bso_params():
     params = {
-        'm': 5,
-        'p_replacement_cluster': 0.2,
-        'p_single_cluster': 0.8,
-        'p_single_best': 0.4,
-        'p_double_best': 0.5,
-        'k': 20
+        "m": 5,
+        "p_replacement_cluster": 0.2,
+        "p_single_cluster": 0.8,
+        "p_single_best": 0.4,
+        "p_double_best": 0.5,
+        "k": 20,
     }
 
     new_bso = bso.BSO(params=params)
@@ -33,7 +33,7 @@ def test_bso_params_setter():
     new_bso = bso.BSO()
 
     try:
-        new_bso.m = 'a'
+        new_bso.m = "a"
     except:
         new_bso.m = 5
 
@@ -47,7 +47,7 @@ def test_bso_params_setter():
     assert new_bso.m == 5
 
     try:
-        new_bso.p_replacement_cluster = 'b'
+        new_bso.p_replacement_cluster = "b"
     except:
         new_bso.p_replacement_cluster = 0.2
 
@@ -61,7 +61,7 @@ def test_bso_params_setter():
     assert new_bso.p_replacement_cluster == 0.2
 
     try:
-        new_bso.p_single_cluster = 'c'
+        new_bso.p_single_cluster = "c"
     except:
         new_bso.p_single_cluster = 0.8
 
@@ -75,7 +75,7 @@ def test_bso_params_setter():
     assert new_bso.p_single_cluster == 0.8
 
     try:
-        new_bso.p_single_best = 'd'
+        new_bso.p_single_best = "d"
     except:
         new_bso.p_single_best = 0.4
 
@@ -89,7 +89,7 @@ def test_bso_params_setter():
     assert new_bso.p_single_best == 0.4
 
     try:
-        new_bso.p_double_best = 'e'
+        new_bso.p_double_best = "e"
     except:
         new_bso.p_double_best = 0.5
 
@@ -103,7 +103,7 @@ def test_bso_params_setter():
     assert new_bso.p_double_best == 0.5
 
     try:
-        new_bso.k = 'f'
+        new_bso.k = "f"
     except:
         new_bso.k = 20
 
@@ -118,8 +118,9 @@ def test_bso_params_setter():
 
 
 def test_bso_clusterize():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bso = bso.BSO()
 
@@ -140,8 +141,9 @@ def test_bso_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=50, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bso = bso.BSO()
     new_bso.evaluate(search_space, square)

@@ -5,10 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_wca_params():
-    params = {
-        'nsr': 5,
-        'd_max': 0.25
-    }
+    params = {"nsr": 5, "d_max": 0.25}
 
     new_wca = wca.WCA(params=params)
 
@@ -33,7 +30,7 @@ def test_wca_params_setter():
     assert new_wca.nsr == 10
 
     try:
-        new_wca.d_max = 'a'
+        new_wca.d_max = "a"
     except:
         new_wca.d_max = 0.1
 
@@ -46,8 +43,9 @@ def test_wca_params_setter():
 
 
 def test_wca_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
@@ -61,16 +59,18 @@ def test_wca_compile():
 
 
 def test_wca_flow_intensity():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
 
 
 def test_wca_raining_process():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
@@ -84,8 +84,9 @@ def test_wca_update_stream():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
@@ -98,8 +99,9 @@ def test_wca_update_river():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
@@ -111,8 +113,9 @@ def test_wca_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)

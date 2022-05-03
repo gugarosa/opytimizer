@@ -74,7 +74,7 @@ def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None)
     # Checks if a value is supposed to be excluded
     if exclude_value is not None:
         # Creates a boolean array based on excluded value
-        bool_array = (integer_array == exclude_value)
+        bool_array = integer_array == exclude_value
 
         # If the excluded value is present
         if np.any(bool_array):

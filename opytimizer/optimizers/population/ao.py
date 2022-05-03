@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class AO(Optimizer):
@@ -34,7 +34,7 @@ class AO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> AO.')
+        logger.info("Overriding class: Optimizer -> AO.")
 
         # Overrides its parent class with the receiving params
         super(AO, self).__init__()
@@ -57,90 +57,80 @@ class AO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: First exploitation adjustment coefficient.
-
-        """
+        """float: First exploitation adjustment coefficient."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def delta(self):
-        """float: Second exploitation adjustment coefficient.
-
-        """
+        """float: Second exploitation adjustment coefficient."""
 
         return self._delta
 
     @delta.setter
     def delta(self, delta):
         if not isinstance(delta, (float, int)):
-            raise e.TypeError('`delta` should be a float or integer')
+            raise e.TypeError("`delta` should be a float or integer")
         if delta < 0:
-            raise e.ValueError('`delta` should be >= 0')
+            raise e.ValueError("`delta` should be >= 0")
 
         self._delta = delta
 
     @property
     def n_cycles(self):
-        """int: Number of cycles.
-
-        """
+        """int: Number of cycles."""
 
         return self._n_cycles
 
     @n_cycles.setter
     def n_cycles(self, n_cycles):
         if not isinstance(n_cycles, int):
-            raise e.TypeError('`n_cycles` should be an integer')
+            raise e.TypeError("`n_cycles` should be an integer")
         if n_cycles <= 0:
-            raise e.ValueError('`n_cycles` should be > 0')
+            raise e.ValueError("`n_cycles` should be > 0")
 
         self._n_cycles = n_cycles
 
     @property
     def U(self):
-        """float: Cycle regularizer.
-
-        """
+        """float: Cycle regularizer."""
 
         return self._U
 
     @U.setter
     def U(self, U):
         if not isinstance(U, (float, int)):
-            raise e.TypeError('`U` should be a float or integer')
+            raise e.TypeError("`U` should be a float or integer")
         if U < 0:
-            raise e.ValueError('`U` should be >= 0')
+            raise e.ValueError("`U` should be >= 0")
 
         self._U = U
 
     @property
     def w(self):
-        """float: Angle regularizer.
-
-        """
+        """float: Angle regularizer."""
 
         return self._w
 
     @w.setter
     def w(self, w):
         if not isinstance(w, (float, int)):
-            raise e.TypeError('`w` should be a float or integer')
+            raise e.TypeError("`w` should be a float or integer")
         if w < 0:
-            raise e.ValueError('`w` should be >= 0')
+            raise e.ValueError("`w` should be >= 0")
 
         self._w = w
 
@@ -174,13 +164,16 @@ class AO(Optimizer):
                 # If random number is smaller or equal to 0.5
                 if r1 <= 0.5:
                     # Updates temporary agent's position (eq. 3)
-                    a.position = space.best_agent.position * (1 - (iteration / n_iterations)) + \
-                        (average - space.best_agent.position * r2)
+                    a.position = space.best_agent.position * (
+                        1 - (iteration / n_iterations)
+                    ) + (average - space.best_agent.position * r2)
 
                 # If random number is bigger than 0.5
                 else:
                     # Generates a Lévy distirbution and a random integer
-                    levy = d.generate_levy_distribution(size=(agent.n_variables, agent.n_dimensions))
+                    levy = d.generate_levy_distribution(
+                        size=(agent.n_variables, agent.n_dimensions)
+                    )
                     idx = r.generate_integer_random_number(high=len(space.agents))
 
                     # Creates an evenly-space array of `n_variables`
@@ -199,8 +192,11 @@ class AO(Optimizer):
                     y = cycle * np.cos(theta)
 
                     # Updates temporary agent's position (eq. 5)
-                    a.position = space.best_agent.position * levy + \
-                        space.agents[idx].position + (y - x) * r2
+                    a.position = (
+                        space.best_agent.position * levy
+                        + space.agents[idx].position
+                        + (y - x) * r2
+                    )
 
             # If current iteration is bigger than 2/3 of maximum iterations
             else:
@@ -214,8 +210,11 @@ class AO(Optimizer):
                     ub = np.expand_dims(agent.ub, -1)
 
                     # Updates temporary agent's position (eq. 13)
-                    a.position = (space.best_agent.position - average) * \
-                        self.alpha - r2 + ((ub - lb) * r2 + lb) * self.delta
+                    a.position = (
+                        (space.best_agent.position - average) * self.alpha
+                        - r2
+                        + ((ub - lb) * r2 + lb) * self.delta
+                    )
 
                 # If random number is bigger than 0.5
                 else:
@@ -227,11 +226,17 @@ class AO(Optimizer):
                     QF = iteration ** (G1 / (1 - n_iterations) ** 2)
 
                     # Generates a Lévy distribution
-                    levy = d.generate_levy_distribution(size=(agent.n_variables, agent.n_dimensions))
+                    levy = d.generate_levy_distribution(
+                        size=(agent.n_variables, agent.n_dimensions)
+                    )
 
                     # Updates temporary agent's position (eq. 14)
-                    a.position = QF * space.best_agent.position - \
-                        (G1 * a.position * r2) - G2 * levy + r2 * G1
+                    a.position = (
+                        QF * space.best_agent.position
+                        - (G1 * a.position * r2)
+                        - G2 * levy
+                        + r2 * G1
+                    )
 
             # Checks agent's limits
             a.clip_by_bound()

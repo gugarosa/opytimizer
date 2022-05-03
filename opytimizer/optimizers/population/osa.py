@@ -9,10 +9,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class OSA(Optimizer):
@@ -36,7 +36,7 @@ class OSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> OSA.')
+        logger.info("Overriding class: Optimizer -> OSA.")
 
         # Overrides its parent class with the receiving params
         super(OSA, self).__init__()
@@ -47,22 +47,20 @@ class OSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def beta(self):
-        """float: Exploration intensity.
-
-        """
+        """float: Exploration intensity."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+            raise e.ValueError("`beta` should be >= 0")
 
         self._beta = beta
 
@@ -96,7 +94,7 @@ class OSA(Optimizer):
 
             # Obtains the change in intensity (eq. 8)
             noise = r.generate_uniform_random_number()
-            intensity_change = intensity / (distance ** 2 + c.EPSILON) + noise
+            intensity_change = intensity / (distance**2 + c.EPSILON) + noise
 
             # print(agent.fit, worst.fit, best.fit, intensity, intensity_change)
 
@@ -107,11 +105,17 @@ class OSA(Optimizer):
             # If probability of vole movement is smaller than 0.5
             if p_vm < 0.5:
                 # Updates current's owl position (eq. 9 - top)
-                agent.position += beta * intensity_change * \
-                    np.fabs(alpha * best.position - agent.position)
+                agent.position += (
+                    beta
+                    * intensity_change
+                    * np.fabs(alpha * best.position - agent.position)
+                )
 
             # If probability is bigger or equal to 0.5
             else:
                 # Updates current's owl position (eq. 9 - bottom)
-                agent.position -= beta * intensity_change * \
-                    np.fabs(alpha * best.position - agent.position)
+                agent.position -= (
+                    beta
+                    * intensity_change
+                    * np.fabs(alpha * best.position - agent.position)
+                )

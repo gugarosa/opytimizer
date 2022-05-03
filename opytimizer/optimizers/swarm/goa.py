@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as log
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = log.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GOA(Optimizer):
@@ -34,7 +34,7 @@ class GOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> GOA.')
+        logger.info("Overriding class: Optimizer -> GOA.")
 
         # Overrides its parent class with the receiving params
         super(GOA, self).__init__()
@@ -54,73 +54,65 @@ class GOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c_min(self):
-        """float: Minimum comfort zone.
-
-        """
+        """float: Minimum comfort zone."""
 
         return self._c_min
 
     @c_min.setter
     def c_min(self, c_min):
         if not isinstance(c_min, (float, int)):
-            raise e.TypeError('`c_min` should be a float or integer')
+            raise e.TypeError("`c_min` should be a float or integer")
         if c_min < 0:
-            raise e.ValueError('`c_min` should be >= 0')
+            raise e.ValueError("`c_min` should be >= 0")
 
         self._c_min = c_min
 
     @property
     def c_max(self):
-        """float: Maximum comfort zone.
-
-        """
+        """float: Maximum comfort zone."""
 
         return self._c_max
 
     @c_max.setter
     def c_max(self, c_max):
         if not isinstance(c_max, (float, int)):
-            raise e.TypeError('`c_max` should be a float or integer')
+            raise e.TypeError("`c_max` should be a float or integer")
         if c_max < self.c_min:
-            raise e.ValueError('`c_max` should be >= `c_min`')
+            raise e.ValueError("`c_max` should be >= `c_min`")
 
         self._c_max = c_max
 
     @property
     def f(self):
-        """float: Intensity of attraction.
-
-        """
+        """float: Intensity of attraction."""
 
         return self._f
 
     @f.setter
     def f(self, f):
         if not isinstance(f, (float, int)):
-            raise e.TypeError('`f` should be a float or integer')
+            raise e.TypeError("`f` should be a float or integer")
         if f < 0:
-            raise e.ValueError('`f` should be >= 0')
+            raise e.ValueError("`f` should be >= 0")
 
         self._f = f
 
     @property
     def l(self):
-        """float: Attractive length scale.
-
-        """
+        """float: Attractive length scale."""
 
         return self._l
 
     @l.setter
     def l(self, l):
         if not isinstance(l, (float, int)):
-            raise e.TypeError('`l` should be a float or integer')
+            raise e.TypeError("`l` should be a float or integer")
         if l < 0:
-            raise e.ValueError('`l` should be >= 0')
+            raise e.ValueError("`l` should be >= 0")
 
         self._l = l
 

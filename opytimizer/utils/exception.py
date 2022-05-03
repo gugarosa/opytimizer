@@ -1,9 +1,9 @@
 """Exceptions.
 """
 
-import opytimizer.utils.logging as l
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class Error(Exception):
@@ -25,13 +25,11 @@ class Error(Exception):
         super(Error, self).__init__()
 
         # Logs the error in a formatted way
-        logger.error('%s: %s.', cls, msg)
+        logger.error("%s: %s.", cls, msg)
 
 
 class ArgumentError(Error):
-    """An ArgumentError class for logging errors related to wrong number of provided arguments.
-
-    """
+    """An ArgumentError class for logging errors related to wrong number of provided arguments."""
 
     def __init__(self, error):
         """Initialization method.
@@ -41,13 +39,11 @@ class ArgumentError(Error):
 
         """
 
-        super(ArgumentError, self).__init__('ArgumentError', error)
+        super(ArgumentError, self).__init__("ArgumentError", error)
 
 
 class BuildError(Error):
-    """A BuildError class for logging errors related to classes not being built.
-
-    """
+    """A BuildError class for logging errors related to classes not being built."""
 
     def __init__(self, error):
         """Initialization method.
@@ -57,13 +53,11 @@ class BuildError(Error):
 
         """
 
-        super(BuildError, self).__init__('BuildError', error)
+        super(BuildError, self).__init__("BuildError", error)
 
 
 class SizeError(Error):
-    """A SizeError class for logging errors related to wrong length or size of variables.
-
-    """
+    """A SizeError class for logging errors related to wrong length or size of variables."""
 
     def __init__(self, error):
         """Initialization method.
@@ -73,13 +67,11 @@ class SizeError(Error):
 
         """
 
-        super(SizeError, self).__init__('SizeError', error)
+        super(SizeError, self).__init__("SizeError", error)
 
 
 class TypeError(Error):
-    """A TypeError class for logging errors related to wrong type of variables.
-
-    """
+    """A TypeError class for logging errors related to wrong type of variables."""
 
     def __init__(self, error):
         """Initialization method.
@@ -89,13 +81,11 @@ class TypeError(Error):
 
         """
 
-        super(TypeError, self).__init__('TypeError', error)
+        super(TypeError, self).__init__("TypeError", error)
 
 
 class ValueError(Error):
-    """A ValueError class for logging errors related to wrong value of variables.
-
-    """
+    """A ValueError class for logging errors related to wrong value of variables."""
 
     def __init__(self, error):
         """Initialization method.
@@ -105,4 +95,4 @@ class ValueError(Error):
 
         """
 
-        super(ValueError, self).__init__('ValueError', error)
+        super(ValueError, self).__init__("ValueError", error)

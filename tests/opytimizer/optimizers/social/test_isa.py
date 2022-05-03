@@ -6,10 +6,7 @@ from opytimizer.utils import constant
 
 
 def test_isa_params():
-    params = {
-        'w': 0.7,
-        'tau': 0.3
-    }
+    params = {"w": 0.7, "tau": 0.3}
 
     new_isa = isa.ISA(params=params)
 
@@ -22,7 +19,7 @@ def test_isa_params_setter():
     new_isa = isa.ISA()
 
     try:
-        new_isa.w = 'a'
+        new_isa.w = "a"
     except:
         new_isa.w = 0.7
 
@@ -34,7 +31,7 @@ def test_isa_params_setter():
     assert new_isa.w == 0.7
 
     try:
-        new_isa.tau = 'b'
+        new_isa.tau = "b"
     except:
         new_isa.tau = 0.3
 
@@ -47,8 +44,9 @@ def test_isa_params_setter():
 
 
 def test_isa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_isa = isa.ISA()
     new_isa.compile(search_space)
@@ -72,8 +70,9 @@ def test_isa_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_isa = isa.ISA()
     new_isa.compile(search_space)
@@ -87,8 +86,9 @@ def test_isa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_isa = isa.ISA()
     new_isa.compile(search_space)

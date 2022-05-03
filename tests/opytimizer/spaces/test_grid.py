@@ -13,7 +13,7 @@ def test_grid_space_step_setter():
     new_grid_space = grid.GridSpace(1, 0.1, 0, 1)
 
     try:
-        new_grid_space.step = 'a'
+        new_grid_space.step = "a"
     except:
         new_grid_space.step = np.array([0.1])
 
@@ -36,7 +36,7 @@ def test_grid_space_grid():
 def test_grid_space_terminals_setter():
     try:
         new_grid_space = grid.GridSpace(1, 0.1, 0, 1)
-        new_grid_space.grid = 'a'
+        new_grid_space.grid = "a"
     except:
         new_grid_space = grid.GridSpace(1, 0.1, 0, 1)
         new_grid_space.grid = np.array([1, 1])

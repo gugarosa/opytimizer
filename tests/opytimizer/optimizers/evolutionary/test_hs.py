@@ -9,11 +9,7 @@ np.random.seed(0)
 
 
 def test_hs_params():
-    params = {
-        'HMCR': 0.7,
-        'PAR': 0.7,
-        'bw': 10.0
-    }
+    params = {"HMCR": 0.7, "PAR": 0.7, "bw": 10.0}
 
     new_hs = hs.HS(params=params)
 
@@ -28,7 +24,7 @@ def test_hs_params_setter():
     new_hs = hs.HS()
 
     try:
-        new_hs.HMCR = 'a'
+        new_hs.HMCR = "a"
     except:
         new_hs.HMCR = 0.5
 
@@ -40,7 +36,7 @@ def test_hs_params_setter():
     assert new_hs.HMCR == 0.5
 
     try:
-        new_hs.PAR = 'b'
+        new_hs.PAR = "b"
     except:
         new_hs.PAR = 0.5
 
@@ -52,7 +48,7 @@ def test_hs_params_setter():
     assert new_hs.PAR == 0.5
 
     try:
-        new_hs.bw = 'c'
+        new_hs.bw = "c"
     except:
         new_hs.bw = 5
 
@@ -69,8 +65,9 @@ def test_hs_params_setter():
 def test_hs_generate_new_harmony():
     new_hs = hs.HS()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     agent = new_hs._generate_new_harmony(search_space.agents)
 
@@ -83,19 +80,15 @@ def test_hs_update():
 
     new_hs = hs.HS()
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_hs.update(search_space, square)
 
 
 def test_ihs_params():
-    params = {
-        'PAR_min': 0.5,
-        'PAR_max': 1,
-        'bw_min': 2,
-        'bw_max': 5
-    }
+    params = {"PAR_min": 0.5, "PAR_max": 1, "bw_min": 2, "bw_max": 5}
 
     new_ihs = hs.IHS(params=params)
 
@@ -112,7 +105,7 @@ def test_ihs_params_setter():
     new_ihs = hs.IHS()
 
     try:
-        new_ihs.PAR_min = 'a'
+        new_ihs.PAR_min = "a"
     except:
         new_ihs.PAR_min = 0.5
 
@@ -124,7 +117,7 @@ def test_ihs_params_setter():
     assert new_ihs.PAR_min == 0.5
 
     try:
-        new_ihs.PAR_max = 'b'
+        new_ihs.PAR_max = "b"
     except:
         new_ihs.PAR_max = 1.0
 
@@ -141,7 +134,7 @@ def test_ihs_params_setter():
     assert new_ihs.PAR_max == 1.0
 
     try:
-        new_ihs.bw_min = 'c'
+        new_ihs.bw_min = "c"
     except:
         new_ihs.bw_min = 1.0
 
@@ -153,7 +146,7 @@ def test_ihs_params_setter():
     assert new_ihs.bw_min == 1.0
 
     try:
-        new_ihs.bw_max = 'd'
+        new_ihs.bw_max = "d"
     except:
         new_ihs.bw_max = 10.0
 
@@ -176,8 +169,9 @@ def test_ihs_update():
 
     new_ihs = hs.IHS()
 
-    search_space = search.SearchSpace(n_agents=20, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[5, 5])
+    search_space = search.SearchSpace(
+        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[5, 5]
+    )
 
     new_ihs.update(search_space, square, 1, 10)
 
@@ -185,8 +179,9 @@ def test_ihs_update():
 def test_ghs_generate_new_harmony():
     new_ghs = hs.GHS()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     agent = new_ghs._generate_new_harmony(search_space.agents)
 
@@ -200,13 +195,7 @@ def test_ghs_generate_new_harmony():
 
 
 def test_sghs_params():
-    params = {
-        'LP': 100,
-        'HMCRm': 0.98,
-        'PARm': 0.9,
-        'bw_min': 1,
-        'bw_max': 10
-    }
+    params = {"LP": 100, "HMCRm": 0.98, "PARm": 0.9, "bw_min": 1, "bw_max": 10}
 
     new_sghs = hs.SGHS(params=params)
 
@@ -225,14 +214,14 @@ def test_sghs_params_setter():
     new_sghs = hs.SGHS()
 
     try:
-        new_sghs.HMCR = 'a'
+        new_sghs.HMCR = "a"
     except:
         new_sghs.HMCR = 0.5
 
     assert new_sghs.HMCR == 0.5
 
     try:
-        new_sghs.PAR = 'b'
+        new_sghs.PAR = "b"
     except:
         new_sghs.PAR = 0.5
 
@@ -251,7 +240,7 @@ def test_sghs_params_setter():
     assert new_sghs.LP == 100
 
     try:
-        new_sghs.HMCRm = 'a'
+        new_sghs.HMCRm = "a"
     except:
         new_sghs.HMCRm = 0.98
 
@@ -263,7 +252,7 @@ def test_sghs_params_setter():
     assert new_sghs.HMCRm == 0.98
 
     try:
-        new_sghs.PARm = 'b'
+        new_sghs.PARm = "b"
     except:
         new_sghs.PARm = 0.9
 
@@ -275,7 +264,7 @@ def test_sghs_params_setter():
     assert new_sghs.PARm == 0.9
 
     try:
-        new_sghs.bw_min = 'c'
+        new_sghs.bw_min = "c"
     except:
         new_sghs.bw_min = 1.0
 
@@ -287,7 +276,7 @@ def test_sghs_params_setter():
     assert new_sghs.bw_min == 1.0
 
     try:
-        new_sghs.bw_max = 'd'
+        new_sghs.bw_max = "d"
     except:
         new_sghs.bw_max = 10.0
 
@@ -305,14 +294,15 @@ def test_sghs_params_setter():
 
 
 def test_sghs_compile():
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_sghs = hs.SGHS()
     new_sghs.compile(search_space)
 
     try:
-        new_sghs.lp = 'a'
+        new_sghs.lp = "a"
     except:
         new_sghs.lp = 1
 
@@ -326,14 +316,14 @@ def test_sghs_compile():
     assert new_sghs.lp == 1
 
     try:
-        new_sghs.HMCR_history = 'a'
+        new_sghs.HMCR_history = "a"
     except:
         new_sghs.HMCR_history = []
 
     assert new_sghs.HMCR_history == []
 
     try:
-        new_sghs.PAR_history = 'a'
+        new_sghs.PAR_history = "a"
     except:
         new_sghs.PAR_history = []
 
@@ -341,8 +331,9 @@ def test_sghs_compile():
 
 
 def test_sghs_generate_new_harmony():
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_sghs = hs.SGHS()
     new_sghs.compile(search_space)
@@ -362,8 +353,9 @@ def test_sghs_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_sghs = hs.SGHS()
     new_sghs.compile(search_space)
@@ -378,9 +370,7 @@ def test_sghs_update():
 
 
 def test_nghs_params():
-    params = {
-        'pm': 0.1
-    }
+    params = {"pm": 0.1}
 
     new_nghs = hs.NGHS(params=params)
 
@@ -391,7 +381,7 @@ def test_nghs_params_setter():
     new_nghs = hs.NGHS()
 
     try:
-        new_nghs.pm = 'a'
+        new_nghs.pm = "a"
     except:
         new_nghs.pm = 0.1
 
@@ -409,12 +399,13 @@ def test_nghs_generate_new_harmony():
     new_nghs = hs.NGHS()
     new_nghs.pm = 1
 
-    search_space = search.SearchSpace(n_agents=2,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     agent = new_nghs._generate_new_harmony(
-        search_space.agents[0], search_space.agents[-1])
+        search_space.agents[0], search_space.agents[-1]
+    )
 
     assert agent.fit > 0
 
@@ -425,9 +416,9 @@ def test_nghs_update():
 
     new_nghs = hs.NGHS()
 
-    search_space = search.SearchSpace(n_agents=2,
-                                      n_variables=2, lower_bound=[0, 0],
-                                      upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_nghs.update(search_space, square)
 
@@ -437,11 +428,13 @@ def test_nghs_update():
 def test_goghs_generate_opposition_harmony():
     new_goghs = hs.GOGHS()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     agent = new_goghs._generate_opposition_harmony(
-        search_space.agents[0], search_space.agents)
+        search_space.agents[0], search_space.agents
+    )
 
     assert agent.fit > 0
 
@@ -452,8 +445,9 @@ def test_goghs_update():
 
     new_goghs = hs.GOGHS()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_goghs.update(search_space, square)
 

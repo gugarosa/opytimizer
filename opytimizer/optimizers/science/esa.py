@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ESA(Optimizer):
@@ -33,7 +33,7 @@ class ESA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ESA.')
+        logger.info("Overriding class: Optimizer -> ESA.")
 
         # Overrides its parent class with the receiving params
         super(ESA, self).__init__()
@@ -44,37 +44,33 @@ class ESA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_electrons(self):
-        """int: Number of electrons per atom.
-
-        """
+        """int: Number of electrons per atom."""
 
         return self._n_electrons
 
     @n_electrons.setter
     def n_electrons(self, n_electrons):
         if not isinstance(n_electrons, int):
-            raise e.TypeError('`n_electrons` should be an integer')
+            raise e.TypeError("`n_electrons` should be an integer")
         if n_electrons <= 0:
-            raise e.ValueError('`n_electrons` should be > 0')
+            raise e.ValueError("`n_electrons` should be > 0")
 
         self._n_electrons = n_electrons
 
     @property
     def D(self):
-        """np.array: Orbital radius.
-
-        """
+        """np.array: Orbital radius."""
 
         return self._D
 
     @D.setter
     def D(self, D):
         if not isinstance(D, np.ndarray):
-            raise e.TypeError('`D` should be a numpy array')
+            raise e.TypeError("`D` should be a numpy array")
 
         self._D = D
 
@@ -88,7 +84,8 @@ class ESA(Optimizer):
 
         # Orbital radius
         self.D = r.generate_uniform_random_number(
-            size=(space.n_agents, space.n_variables, space.n_dimensions))
+            size=(space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def update(self, space, function):
         """Wraps EElectro-Search Algorithm over all agents and variables.
@@ -114,7 +111,7 @@ class ESA(Optimizer):
                 n = r.generate_integer_random_number(2, 6)
 
                 # Updates the electron's position (eq. 3)
-                electron.position += (2 * r1 - 1) * (1 - 1 / n ** 2) / self.D[i]
+                electron.position += (2 * r1 - 1) * (1 - 1 / n**2) / self.D[i]
 
                 # Clips its bounds
                 electron.clip_by_bound()
@@ -131,8 +128,9 @@ class ESA(Optimizer):
             Ac = r.generate_uniform_random_number()
 
             # Updates the Orbital radius (eq. 4)
-            self.D[i] = (electrons[0].position - space.best_agent.position) + \
-                Re * (1 / space.best_agent.position ** 2 - 1 / a.position ** 2)
+            self.D[i] = (electrons[0].position - space.best_agent.position) + Re * (
+                1 / space.best_agent.position**2 - 1 / a.position**2
+            )
 
             # Updates the temporary agent's position (eq. 5)
             a.position += Ac * self.D[i]

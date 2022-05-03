@@ -8,13 +8,13 @@ np.random.seed(0)
 
 def test_hgso_params():
     params = {
-        'n_clusters': 2,
-        'l1': 0.0005,
-        'l2': 100,
-        'l3': 0.001,
-        'alpha': 1.0,
-        'beta': 1.0,
-        'K': 1.0
+        "n_clusters": 2,
+        "l1": 0.0005,
+        "l2": 100,
+        "l3": 0.001,
+        "alpha": 1.0,
+        "beta": 1.0,
+        "K": 1.0,
     }
 
     new_hgso = hgso.HGSO(params=params)
@@ -38,7 +38,7 @@ def test_hgso_params_setter():
     new_hgso = hgso.HGSO()
 
     try:
-        new_hgso.n_clusters = 'a'
+        new_hgso.n_clusters = "a"
     except:
         new_hgso.n_clusters = 2
 
@@ -50,7 +50,7 @@ def test_hgso_params_setter():
     assert new_hgso.n_clusters == 2
 
     try:
-        new_hgso.l1 = 'b'
+        new_hgso.l1 = "b"
     except:
         new_hgso.l1 = 0.0005
 
@@ -62,7 +62,7 @@ def test_hgso_params_setter():
     assert new_hgso.l1 == 0.0005
 
     try:
-        new_hgso.l2 = 'c'
+        new_hgso.l2 = "c"
     except:
         new_hgso.l2 = 100
 
@@ -74,7 +74,7 @@ def test_hgso_params_setter():
     assert new_hgso.l2 == 100
 
     try:
-        new_hgso.l3 = 'd'
+        new_hgso.l3 = "d"
     except:
         new_hgso.l3 = 0.001
 
@@ -86,7 +86,7 @@ def test_hgso_params_setter():
     assert new_hgso.l3 == 0.001
 
     try:
-        new_hgso.alpha = 'e'
+        new_hgso.alpha = "e"
     except:
         new_hgso.alpha = 1.0
 
@@ -98,7 +98,7 @@ def test_hgso_params_setter():
     assert new_hgso.alpha == 1.0
 
     try:
-        new_hgso.beta = 'f'
+        new_hgso.beta = "f"
     except:
         new_hgso.beta = 1.0
 
@@ -110,7 +110,7 @@ def test_hgso_params_setter():
     assert new_hgso.beta == 1.0
 
     try:
-        new_hgso.K = 'g'
+        new_hgso.K = "g"
     except:
         new_hgso.K = 1.0
 
@@ -123,8 +123,9 @@ def test_hgso_params_setter():
 
 
 def test_hgso_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)
@@ -152,14 +153,16 @@ def test_hgso_compile():
 
 
 def test_hgso_update_position():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)
 
     position = new_hgso._update_position(
-        search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5)
+        search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5
+    )
 
     assert position[0][0] != 0
 
@@ -168,8 +171,9 @@ def test_hgso_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)

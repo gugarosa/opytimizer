@@ -21,7 +21,8 @@ def test_gwo_update():
 
     new_gwo = gwo.GWO()
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_gwo.update(search_space, square, 1, 10)

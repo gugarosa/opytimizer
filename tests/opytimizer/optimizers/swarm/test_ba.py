@@ -5,12 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_ba_params():
-    params = {
-        'f_min': 0,
-        'f_max': 2,
-        'A': 0.5,
-        'r': 0.5
-    }
+    params = {"f_min": 0, "f_max": 2, "A": 0.5, "r": 0.5}
 
     new_ba = ba.BA(params=params)
 
@@ -27,7 +22,7 @@ def test_ba_params_setter():
     new_ba = ba.BA()
 
     try:
-        new_ba.f_min = 'a'
+        new_ba.f_min = "a"
     except:
         new_ba.f_min = 0.1
 
@@ -39,7 +34,7 @@ def test_ba_params_setter():
     assert new_ba.f_min == 0.1
 
     try:
-        new_ba.f_max = 'b'
+        new_ba.f_max = "b"
     except:
         new_ba.f_max = 2
 
@@ -56,7 +51,7 @@ def test_ba_params_setter():
     assert new_ba.f_max == 2
 
     try:
-        new_ba.A = 'c'
+        new_ba.A = "c"
     except:
         new_ba.A = 0.5
 
@@ -68,7 +63,7 @@ def test_ba_params_setter():
     assert new_ba.A == 0.5
 
     try:
-        new_ba.r = 'd'
+        new_ba.r = "d"
     except:
         new_ba.r = 0.5
 
@@ -81,8 +76,9 @@ def test_ba_params_setter():
 
 
 def test_ba_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ba = ba.BA()
     new_ba.compile(search_space)
@@ -120,8 +116,9 @@ def test_ba_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ba = ba.BA()
     new_ba.compile(search_space)

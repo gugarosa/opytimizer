@@ -8,11 +8,11 @@ import dill
 from tqdm import tqdm
 
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
+from opytimizer.utils import logging
 from opytimizer.utils.callback import CallbackVessel
 from opytimizer.utils.history import History
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class Opytimizer:
@@ -32,7 +32,7 @@ class Opytimizer:
 
         """
 
-        logger.info('Creating class: Opytimizer.')
+        logger.info("Creating class: Opytimizer.")
 
         # Space
         self.space = space
@@ -53,109 +53,99 @@ class Opytimizer:
         # Total number of iterations
         self.total_iterations = 0
 
-        logger.debug('Space: %s | Optimizer: %s| Function: %s.',
-                     self.space, self.optimizer, self.function)
-        logger.info('Class created.')
+        logger.debug(
+            "Space: %s | Optimizer: %s| Function: %s.",
+            self.space,
+            self.optimizer,
+            self.function,
+        )
+        logger.info("Class created.")
 
     @property
     def space(self):
-        """Space: Space-child instance (SearchSpace, HyperComplexSpace, etc).
-
-        """
+        """Space: Space-child instance (SearchSpace, HyperComplexSpace, etc)."""
 
         return self._space
 
     @space.setter
     def space(self, space):
         if not space.built:
-            raise e.BuildError('`space` should be built before using Opytimizer')
+            raise e.BuildError("`space` should be built before using Opytimizer")
 
         self._space = space
 
     @property
     def optimizer(self):
-        """Optimizer: Optimizer-child instance (PSO, BA, etc).
-
-        """
+        """Optimizer: Optimizer-child instance (PSO, BA, etc)."""
 
         return self._optimizer
 
     @optimizer.setter
     def optimizer(self, optimizer):
         if not optimizer.built:
-            raise e.BuildError('`optimizer` should be built before using Opytimizer')
+            raise e.BuildError("`optimizer` should be built before using Opytimizer")
 
         self._optimizer = optimizer
 
     @property
     def function(self):
-        """Function: Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc).
-
-        """
+        """Function: Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc)."""
 
         return self._function
 
     @function.setter
     def function(self, function):
         if not function.built:
-            raise e.BuildError('`function` should be built before using Opytimizer')
+            raise e.BuildError("`function` should be built before using Opytimizer")
 
         self._function = function
 
     @property
     def history(self):
-        """History: Optimization history.
-
-        """
+        """History: Optimization history."""
 
         return self._history
 
     @history.setter
     def history(self, history):
         if not isinstance(history, History):
-            raise e.TypeError('`history` should be a History')
+            raise e.TypeError("`history` should be a History")
 
         self._history = history
 
     @property
     def iteration(self):
-        """int: Current iteration.
-
-        """
+        """int: Current iteration."""
 
         return self._iteration
 
     @iteration.setter
     def iteration(self, iteration):
         if not isinstance(iteration, int):
-            raise e.TypeError('`iteration` should be an integer')
+            raise e.TypeError("`iteration` should be an integer")
         if iteration < 0:
-            raise e.ValueError('`iteration` should be >= 0')
+            raise e.ValueError("`iteration` should be >= 0")
 
         self._iteration = iteration
 
     @property
     def total_iterations(self):
-        """int: Total number of iterations.
-
-        """
+        """int: Total number of iterations."""
 
         return self._total_iterations
 
     @total_iterations.setter
     def total_iterations(self, total_iterations):
         if not isinstance(total_iterations, int):
-            raise e.TypeError('`total_iterations` should be an integer')
+            raise e.TypeError("`total_iterations` should be an integer")
         if total_iterations < 0:
-            raise e.ValueError('`total_iterations` should be >= 0')
+            raise e.ValueError("`total_iterations` should be >= 0")
 
         self._total_iterations = total_iterations
 
     @property
     def evaluate_args(self):
-        """Converts the optimizer `evaluate` arguments into real variables.
-
-        """
+        """Converts the optimizer `evaluate` arguments into real variables."""
 
         args = signature(self.optimizer.evaluate).parameters
 
@@ -163,9 +153,7 @@ class Opytimizer:
 
     @property
     def update_args(self):
-        """Converts the optimizer `update` arguments into real variables.
-
-        """
+        """Converts the optimizer `update` arguments into real variables."""
 
         args = signature(self.optimizer.update).parameters
 
@@ -218,7 +206,7 @@ class Opytimizer:
 
         """
 
-        logger.info('Starting optimization task.')
+        logger.info("Starting optimization task.")
 
         # Additional properties
         self.n_iterations = n_iterations
@@ -236,7 +224,7 @@ class Opytimizer:
         # Initializes a progress bar
         with tqdm(total=n_iterations, ascii=True) as b:
             for t in range(n_iterations):
-                logger.to_file(f'Iteration {t+1}/{n_iterations}')
+                logger.to_file(f"Iteration {t+1}/{n_iterations}")
 
                 # Saves the number of total iterations and current iteration
                 self.total_iterations += 1
@@ -256,14 +244,15 @@ class Opytimizer:
                 b.update()
 
                 # Dumps keyword arguments to model's history
-                self.history.dump(agents=self.space.agents,
-                                  best_agent=self.space.best_agent)
+                self.history.dump(
+                    agents=self.space.agents, best_agent=self.space.best_agent
+                )
 
                 # Invokes the `on_iteration_end` callback
                 callbacks.on_iteration_end(self.total_iterations, self)
 
-                logger.to_file(f'Fitness: {self.space.best_agent.fit}')
-                logger.to_file(f'Position: {self.space.best_agent.position}')
+                logger.to_file(f"Fitness: {self.space.best_agent.fit}")
+                logger.to_file(f"Position: {self.space.best_agent.position}")
 
         # Invokes the `on_task_end` callback
         callbacks.on_task_end(self)
@@ -275,8 +264,8 @@ class Opytimizer:
         # Dumps the elapsed time to model's history
         self.history.dump(time=opt_time)
 
-        logger.info('Optimization task ended.')
-        logger.info('It took %s seconds.', opt_time)
+        logger.info("Optimization task ended.")
+        logger.info("It took %s seconds.", opt_time)
 
     def save(self, file_path):
         """Saves the optimization model to a dill (pickle) file.
@@ -286,7 +275,7 @@ class Opytimizer:
 
         """
 
-        with open(file_path, 'wb') as output_file:
+        with open(file_path, "wb") as output_file:
             dill.dump(self, output_file)
 
     @classmethod
@@ -299,7 +288,7 @@ class Opytimizer:
 
         """
 
-        with open(file_path, 'rb') as input_file:
+        with open(file_path, "rb") as input_file:
             opt_model = dill.load(input_file)
 
             return opt_model

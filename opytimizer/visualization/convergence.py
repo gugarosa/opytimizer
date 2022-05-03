@@ -6,8 +6,16 @@ import matplotlib.pyplot as plt
 import opytimizer.utils.exception as e
 
 
-def plot(*args, labels=None, title='', subtitle='', xlabel='iteration', ylabel='value',
-         grid=True, legend=True):
+def plot(
+    *args,
+    labels=None,
+    title="",
+    subtitle="",
+    xlabel="iteration",
+    ylabel="value",
+    grid=True,
+    legend=True,
+):
     """Plots the convergence graph of desired variables.
 
     Essentially, each variable is a list or numpy array
@@ -29,8 +37,8 @@ def plot(*args, labels=None, title='', subtitle='', xlabel='iteration', ylabel='
 
     # Defines some properties, such as labels, title and subtitle
     ax.set(xlabel=xlabel, ylabel=ylabel)
-    ax.set_title(title, loc='left', fontsize=14)
-    ax.set_title(subtitle, loc='right', fontsize=8, color='grey')
+    ax.set_title(title, loc="left", fontsize=14)
+    ax.set_title(subtitle, loc="right", fontsize=8, color="grey")
 
     if grid:
         ax.grid()
@@ -38,14 +46,14 @@ def plot(*args, labels=None, title='', subtitle='', xlabel='iteration', ylabel='
     if labels:
         # Checks a set of pre-defined `labels` conditions
         if not isinstance(labels, list):
-            raise e.TypeError('`labels` should be a list')
+            raise e.TypeError("`labels` should be a list")
 
         if len(labels) != len(args):
-            raise e.SizeError('`args` and `labels` should have the same size')
+            raise e.SizeError("`args` and `labels` should have the same size")
 
     else:
         # Creates pre-defined `labels`
-        labels = [f'variable_{i}' for i in range(len(args))]
+        labels = [f"variable_{i}" for i in range(len(args))]
 
     # Plots every argument
     for (arg, label) in zip(args, labels):

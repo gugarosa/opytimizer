@@ -5,10 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_aig_params():
-    params = {
-        'alpha': np.pi,
-        'beta': np.pi
-    }
+    params = {"alpha": np.pi, "beta": np.pi}
 
     new_aig = aig.AIG(params=params)
 
@@ -21,7 +18,7 @@ def test_aig_params_setter():
     new_aig = aig.AIG()
 
     try:
-        new_aig.alpha = 'a'
+        new_aig.alpha = "a"
     except:
         new_aig.alpha = np.pi
 
@@ -35,7 +32,7 @@ def test_aig_params_setter():
     assert new_aig.alpha == np.pi
 
     try:
-        new_aig.beta = 'b'
+        new_aig.beta = "b"
     except:
         new_aig.beta = np.pi
 
@@ -53,8 +50,9 @@ def test_aig_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[-10, -10], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10]
+    )
 
     new_aig = aig.AIG()
 

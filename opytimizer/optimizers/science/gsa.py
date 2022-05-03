@@ -7,10 +7,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GSA(Optimizer):
@@ -33,7 +33,7 @@ class GSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> GSA.')
+        logger.info("Overriding class: Optimizer -> GSA.")
 
         # Overrides its parent class with the receiving params
         super(GSA, self).__init__()
@@ -44,37 +44,33 @@ class GSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def G(self):
-        """float: Initial gravity.
-
-        """
+        """float: Initial gravity."""
 
         return self._G
 
     @G.setter
     def G(self, G):
         if not isinstance(G, (float, int)):
-            raise e.TypeError('`G` should be a float or integer')
+            raise e.TypeError("`G` should be a float or integer")
         if G < 0:
-            raise e.ValueError('`G` should be >= 0')
+            raise e.ValueError("`G` should be >= 0")
 
         self._G = G
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -87,7 +83,9 @@ class GSA(Optimizer):
         """
 
         # Arrays of velocities
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def _calculate_mass(self, agents):
         """Calculates agents' mass (eq. 16).
@@ -125,8 +123,19 @@ class GSA(Optimizer):
         """
 
         # Calculates the force
-        force = [[gravity * (mass[i] * mass[j]) / (g.euclidean_distance(agents[i].position, agents[j].position) + c.EPSILON)
-                  * (agents[j].position - agents[i].position) for j in range(len(agents))] for i in range(len(agents))]
+        force = [
+            [
+                gravity
+                * (mass[i] * mass[j])
+                / (
+                    g.euclidean_distance(agents[i].position, agents[j].position)
+                    + c.EPSILON
+                )
+                * (agents[j].position - agents[i].position)
+                for j in range(len(agents))
+            ]
+            for i in range(len(agents))
+        ]
 
         # Transforms the force into an array
         force = np.asarray(force)

@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class HHO(Optimizer):
@@ -31,7 +31,7 @@ class HHO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> HHO.')
+        logger.info("Overriding class: Optimizer -> HHO.")
 
         # Overrides its parent class with the receiving params
         super(HHO, self).__init__()
@@ -39,7 +39,7 @@ class HHO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _calculate_initial_coefficients(self, iteration, n_iterations):
         """Calculates the initial coefficients, i.e., energy and jump's strength.
@@ -93,8 +93,9 @@ class HHO(Optimizer):
             r2 = r.generate_uniform_random_number()
 
             # Updates the location vector (eq. 1 - part 1)
-            location_vector = agents[j].position - r1 * \
-                np.fabs(agents[j].position - 2 * r2 * current_agent.position)
+            location_vector = agents[j].position - r1 * np.fabs(
+                agents[j].position - 2 * r2 * current_agent.position
+            )
 
         # If random number is smaller than 0.5
         else:
@@ -110,11 +111,15 @@ class HHO(Optimizer):
             ub = np.expand_dims(current_agent.ub, -1)
 
             # Updates the location vector (eq. 1 - part 2)
-            location_vector = (best_agent.position - average) - r3 * (lb + r4 * (ub - lb))
+            location_vector = (best_agent.position - average) - r3 * (
+                lb + r4 * (ub - lb)
+            )
 
         return location_vector
 
-    def _exploitation_phase(self, energy, jump, agents, current_agent, best_agent, function):
+    def _exploitation_phase(
+        self, energy, jump, agents, current_agent, best_agent, function
+    ):
         """Performs the exploitation phase.
 
         Args:
@@ -141,7 +146,9 @@ class HHO(Optimizer):
                 delta = best_agent.position - current_agent.position
 
                 # Calculates the location vector (eq. 4)
-                location_vector = delta - energy * np.fabs(jump * best_agent.position - current_agent.position)
+                location_vector = delta - energy * np.fabs(
+                    jump * best_agent.position - current_agent.position
+                )
 
                 return location_vector
 
@@ -159,11 +166,17 @@ class HHO(Optimizer):
         # Soft besiege
         if energy >= 0.5:
             # Calculates the `Y` position (eq. 7)
-            Y = best_agent.position - energy * np.fabs(jump * best_agent.position - current_agent.position)
+            Y = best_agent.position - energy * np.fabs(
+                jump * best_agent.position - current_agent.position
+            )
 
             # Generates the Lévy's flight and random array (eq. 9)
-            LF = d.generate_levy_distribution(1.5, (current_agent.n_variables, current_agent.n_dimensions))
-            S = r.generate_uniform_random_number(size=(current_agent.n_variables, current_agent.n_dimensions))
+            LF = d.generate_levy_distribution(
+                1.5, (current_agent.n_variables, current_agent.n_dimensions)
+            )
+            S = r.generate_uniform_random_number(
+                size=(current_agent.n_variables, current_agent.n_dimensions)
+            )
 
             # Calculates the `Z` position (eq. 8)
             Z = Y + S * LF
@@ -186,11 +199,17 @@ class HHO(Optimizer):
             average = np.mean([x.position for x in agents], axis=0)
 
             # Calculates the `Y` position (eq. 12)
-            Y = best_agent.position - energy * np.fabs(jump * best_agent.position - average)
+            Y = best_agent.position - energy * np.fabs(
+                jump * best_agent.position - average
+            )
 
             # Generates the Lévy's flight and random array (eq. 9)
-            LF = d.generate_levy_distribution(1.5, (current_agent.n_variables, current_agent.n_dimensions))
-            S = r.generate_uniform_random_number(size=(current_agent.n_variables, current_agent.n_dimensions))
+            LF = d.generate_levy_distribution(
+                1.5, (current_agent.n_variables, current_agent.n_dimensions)
+            )
+            S = r.generate_uniform_random_number(
+                size=(current_agent.n_variables, current_agent.n_dimensions)
+            )
 
             # Calculates the `Z` position (eq. 13)
             Z = Y + S * LF
@@ -228,10 +247,13 @@ class HHO(Optimizer):
             # Checks if energy is bigger or equal to one
             if E >= 1:
                 # Performs the exploration phase
-                agent.position = self._exploration_phase(space.agents, agent, space.best_agent)
+                agent.position = self._exploration_phase(
+                    space.agents, agent, space.best_agent
+                )
 
             # If energy is smaller than one
             else:
                 # Performs the exploitation phase
-                agent.position = self._exploitation_phase(E, J, space.agents, agent,
-                                                          space.best_agent, function)
+                agent.position = self._exploitation_phase(
+                    E, J, space.agents, agent, space.best_agent, function
+                )

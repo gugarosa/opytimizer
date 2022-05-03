@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BOA(Optimizer):
@@ -31,7 +31,7 @@ class BOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BOA.')
+        logger.info("Overriding class: Optimizer -> BOA.")
 
         # Overrides its parent class with the receiving params
         super(BOA, self).__init__()
@@ -48,71 +48,63 @@ class BOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c(self):
-        """float: Sensor modality.
-
-        """
+        """float: Sensor modality."""
 
         return self._c
 
     @c.setter
     def c(self, c):
         if not isinstance(c, (float, int)):
-            raise e.TypeError('`c` should be a float or integer')
+            raise e.TypeError("`c` should be a float or integer")
         if c < 0:
-            raise e.ValueError('`c` should be >= 0')
+            raise e.ValueError("`c` should be >= 0")
 
         self._c = c
 
     @property
     def a(self):
-        """float: Power exponent.
-
-        """
+        """float: Power exponent."""
 
         return self._a
 
     @a.setter
     def a(self, a):
         if not isinstance(a, (float, int)):
-            raise e.TypeError('`a` should be a float or integer')
+            raise e.TypeError("`a` should be a float or integer")
         if a < 0:
-            raise e.ValueError('`a` should be >= 0')
+            raise e.ValueError("`a` should be >= 0")
 
         self._a = a
 
     @property
     def p(self):
-        """float: Switch probability.
-
-        """
+        """float: Switch probability."""
 
         return self._p
 
     @p.setter
     def p(self, p):
         if not isinstance(p, (float, int)):
-            raise e.TypeError('`p` should be a float or integer')
+            raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
-            raise e.ValueError('`p` should be between 0 and 1')
+            raise e.ValueError("`p` should be between 0 and 1")
 
         self._p = p
 
     @property
     def fragrance(self):
-        """np.array: Array of fragrances.
-
-        """
+        """np.array: Array of fragrances."""
 
         return self._fragrance
 
     @fragrance.setter
     def fragrance(self, fragrance):
         if not isinstance(fragrance, np.ndarray):
-            raise e.TypeError('`fragrance` should be a numpy array')
+            raise e.TypeError("`fragrance` should be a numpy array")
 
         self._fragrance = fragrance
 
@@ -142,11 +134,15 @@ class BOA(Optimizer):
         """
 
         # Calculates the new position based on best movement
-        new_position = agent_position + (random ** 2 * best_position - agent_position) * fragrance
+        new_position = (
+            agent_position + (random**2 * best_position - agent_position) * fragrance
+        )
 
         return new_position
 
-    def _local_movement(self, agent_position, j_position, k_position, fragrance, random):
+    def _local_movement(
+        self, agent_position, j_position, k_position, fragrance, random
+    ):
         """Updates the agent's position using a local movement (eq. 3).
 
         Args:
@@ -162,7 +158,9 @@ class BOA(Optimizer):
         """
 
         # Calculates the new position based on local movement
-        new_position = agent_position + (random ** 2 * j_position - k_position) * fragrance
+        new_position = (
+            agent_position + (random**2 * j_position - k_position) * fragrance
+        )
 
         return new_position
 
@@ -177,7 +175,7 @@ class BOA(Optimizer):
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Calculates fragrance for current agent (eq. 1)
-            self.fragrance[i] = self.c * agent.fit ** self.a
+            self.fragrance[i] = self.c * agent.fit**self.a
 
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
@@ -187,16 +185,23 @@ class BOA(Optimizer):
             # If random number is smaller than switch probability
             if r1 < self.p:
                 # Moves current agent towards the best one (eq. 2)
-                agent.position = self._best_movement(agent.position, space.best_agent.position,
-                                                     self.fragrance[i], r1)
+                agent.position = self._best_movement(
+                    agent.position, space.best_agent.position, self.fragrance[i], r1
+                )
 
             # If random number is bigger than switch probability
             else:
                 # Generates `j` and `k` indexes
                 j = r.generate_integer_random_number(0, len(space.agents))
-                k = r.generate_integer_random_number(0, len(space.agents), exclude_value=j)
+                k = r.generate_integer_random_number(
+                    0, len(space.agents), exclude_value=j
+                )
 
                 # Moves current agent using a local movement (eq. 3)
-                agent.position = self._local_movement(agent.position, space.agents[j].position,
-                                                      space.agents[k].position, self.fragrance[i],
-                                                      r1)
+                agent.position = self._local_movement(
+                    agent.position,
+                    space.agents[j].position,
+                    space.agents[k].position,
+                    self.fragrance[i],
+                    r1,
+                )

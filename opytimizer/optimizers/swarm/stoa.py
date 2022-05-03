@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class STOA(Optimizer):
@@ -31,7 +31,7 @@ class STOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> STOA.')
+        logger.info("Overriding class: Optimizer -> STOA.")
 
         # Overrides its parent class with the receiving params
         super(STOA, self).__init__()
@@ -48,56 +48,50 @@ class STOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def Cf(self):
-        """float: Controlling variable.
-
-        """
+        """float: Controlling variable."""
 
         return self._Cf
 
     @Cf.setter
     def Cf(self, Cf):
         if not isinstance(Cf, (float, int)):
-            raise e.TypeError('`Cf` should be a float or integer')
+            raise e.TypeError("`Cf` should be a float or integer")
         if Cf < 0:
-            raise e.ValueError('`Cf` should be >= 0')
+            raise e.ValueError("`Cf` should be >= 0")
 
         self._Cf = Cf
 
     @property
     def u(self):
-        """float: Spiral shape first constant.
-
-        """
+        """float: Spiral shape first constant."""
 
         return self._u
 
     @u.setter
     def u(self, u):
         if not isinstance(u, (float, int)):
-            raise e.TypeError('`u` should be a float or integer')
+            raise e.TypeError("`u` should be a float or integer")
         if u < 0:
-            raise e.ValueError('`u` should be >= 0')
+            raise e.ValueError("`u` should be >= 0")
 
         self._u = u
 
     @property
     def v(self):
-        """float: Spiral shape second constant.
-
-        """
+        """float: Spiral shape second constant."""
 
         return self._v
 
     @v.setter
     def v(self, v):
         if not isinstance(v, (float, int)):
-            raise e.TypeError('`v` should be a float or integer')
+            raise e.TypeError("`v` should be a float or integer")
         if v < 0:
-            raise e.ValueError('`v` should be >= 0')
+            raise e.ValueError("`v` should be >= 0")
 
         self._v = v
 
@@ -129,7 +123,7 @@ class STOA(Optimizer):
             D = C + M
 
             # Defines the spiral radius (eq. 9)
-            k = r.generate_uniform_random_number(0, 2*np.pi)
+            k = r.generate_uniform_random_number(0, 2 * np.pi)
             R = self.u * np.exp(k * self.v)
 
             # Calculates the spiral movement (eq. 6, 7 and 8)

@@ -3,10 +3,10 @@
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class HC(Optimizer):
@@ -28,7 +28,7 @@ class HC(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> HC.')
+        logger.info("Overriding class: Optimizer -> HC.")
 
         # Overrides its parent class with the receiving params
         super(HC, self).__init__()
@@ -42,37 +42,33 @@ class HC(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def r_mean(self):
-        """float: Mean of noise distribution.
-
-        """
+        """float: Mean of noise distribution."""
 
         return self._r_mean
 
     @r_mean.setter
     def r_mean(self, r_mean):
         if not isinstance(r_mean, (float, int)):
-            raise e.TypeError('`r_mean` should be a float or integer')
+            raise e.TypeError("`r_mean` should be a float or integer")
 
         self._r_mean = r_mean
 
     @property
     def r_var(self):
-        """float: Variance of noise distribution.
-
-        """
+        """float: Variance of noise distribution."""
 
         return self._r_var
 
     @r_var.setter
     def r_var(self, r_var):
         if not isinstance(r_var, (float, int)):
-            raise e.TypeError('`r_var` should be a float or integer')
+            raise e.TypeError("`r_var` should be a float or integer")
         if r_var < 0:
-            raise e.ValueError('`r_var` should be >= 0')
+            raise e.ValueError("`r_var` should be >= 0")
 
         self._r_var = r_var
 
@@ -88,7 +84,8 @@ class HC(Optimizer):
         for agent in space.agents:
             # Creates a gaussian noise vector
             noise = r.generate_gaussian_random_number(
-                self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions))
+                self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions)
+            )
 
             # Updates agent's position
             agent.position += noise

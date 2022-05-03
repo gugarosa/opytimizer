@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class CI(Optimizer):
@@ -34,7 +34,7 @@ class CI(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CI.')
+        logger.info("Overriding class: Optimizer -> CI.")
 
         # Overrides its parent class with the receiving params
         super(CI, self).__init__()
@@ -48,69 +48,61 @@ class CI(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def r(self):
-        """float: Sampling interval reduction factor.
-
-        """
+        """float: Sampling interval reduction factor."""
 
         return self._r
 
     @r.setter
     def r(self, r):
         if not isinstance(r, (float, int)):
-            raise e.TypeError('`r` should be a float or integer')
+            raise e.TypeError("`r` should be a float or integer")
         if r < 0 or r > 1:
-            raise e.ValueError('`r` should be between 0 and 1')
+            raise e.ValueError("`r` should be between 0 and 1")
 
         self._r = r
 
     @property
     def t(self):
-        """int: Number of variations.
-
-        """
+        """int: Number of variations."""
 
         return self._t
 
     @t.setter
     def t(self, t):
         if not isinstance(t, int):
-            raise e.TypeError('`t` should be an integer')
+            raise e.TypeError("`t` should be an integer")
         if t <= 0:
-            raise e.ValueError('`t` should be > 0')
+            raise e.ValueError("`t` should be > 0")
 
         self._t = t
 
     @property
     def lower(self):
-        """np.array: Array of lower bounds.
-
-        """
+        """np.array: Array of lower bounds."""
 
         return self._lower
 
     @lower.setter
     def lower(self, lower):
         if not isinstance(lower, np.ndarray):
-            raise e.TypeError('`lower` should be a numpy array')
+            raise e.TypeError("`lower` should be a numpy array")
 
         self._lower = lower
 
     @property
     def upper(self):
-        """np.array: Array of upper bounds.
-
-        """
+        """np.array: Array of upper bounds."""
 
         return self._upper
 
     @upper.setter
     def upper(self, upper):
         if not isinstance(upper, np.ndarray):
-            raise e.TypeError('`upper` should be a numpy array')
+            raise e.TypeError("`upper` should be a numpy array")
 
         self._upper = upper
 
@@ -159,7 +151,9 @@ class CI(Optimizer):
                 # Iterates through all the decision variables
                 for j, (lb, ub) in enumerate(zip(self.lower[i], self.upper[i])):
                     # Fills the array based on a uniform distribution
-                    a.position[j] = rnd.generate_uniform_random_number(lb, ub, agent.n_dimensions)
+                    a.position[j] = rnd.generate_uniform_random_number(
+                        lb, ub, agent.n_dimensions
+                    )
 
                 # Checks agent's limits
                 a.clip_by_bound()

@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class EO(Optimizer):
@@ -33,7 +33,7 @@ class EO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> EO.')
+        logger.info("Overriding class: Optimizer -> EO.")
 
         # Overrides its parent class with the receiving params
         super(EO, self).__init__()
@@ -53,88 +53,78 @@ class EO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def a1(self):
-        """float: Exploration constant.
-
-        """
+        """float: Exploration constant."""
 
         return self._a1
 
     @a1.setter
     def a1(self, a1):
         if not isinstance(a1, (float, int)):
-            raise e.TypeError('`a1` should be a float or integer')
+            raise e.TypeError("`a1` should be a float or integer")
         if a1 < 0:
-            raise e.ValueError('`a1` should be >= 0')
+            raise e.ValueError("`a1` should be >= 0")
 
         self._a1 = a1
 
     @property
     def a2(self):
-        """float: Exploitation constant.
-
-        """
+        """float: Exploitation constant."""
 
         return self._a2
 
     @a2.setter
     def a2(self, a2):
         if not isinstance(a2, (float, int)):
-            raise e.TypeError('`a2` should be a float or integer')
+            raise e.TypeError("`a2` should be a float or integer")
         if a2 < 0:
-            raise e.ValueError('`a2` should be >= 0')
+            raise e.ValueError("`a2` should be >= 0")
 
         self._a2 = a2
 
     @property
     def GP(self):
-        """float: Generation probability.
-
-        """
+        """float: Generation probability."""
 
         return self._GP
 
     @GP.setter
     def GP(self, GP):
         if not isinstance(GP, (float, int)):
-            raise e.TypeError('`GP` should be a float or integer')
+            raise e.TypeError("`GP` should be a float or integer")
         if GP < 0 or GP > 1:
-            raise e.ValueError('`GP` should be between 0 and 1')
+            raise e.ValueError("`GP` should be between 0 and 1")
 
         self._GP = GP
 
     @property
     def V(self):
-        """float: Velocity.
-
-        """
+        """float: Velocity."""
 
         return self._V
 
     @V.setter
     def V(self, V):
         if not isinstance(V, (float, int)):
-            raise e.TypeError('`V` should be a float or integer')
+            raise e.TypeError("`V` should be a float or integer")
         if V < 0:
-            raise e.ValueError('`V` should be >= 0')
+            raise e.ValueError("`V` should be >= 0")
 
         self._V = V
 
     @property
     def C(self):
-        """list: Concentrations (agents).
-
-        """
+        """list: Concentrations (agents)."""
 
         return self._C
 
     @C.setter
     def C(self, C):
         if not isinstance(C, list):
-            raise e.TypeError('`C` should be a list')
+            raise e.TypeError("`C` should be a list")
 
         self._C = C
 
@@ -231,8 +221,12 @@ class EO(Optimizer):
             i = rnd.generate_integer_random_number(0, 5)
 
             # Generates two uniform random vectors (eq. 11)
-            r = rnd.generate_uniform_random_number(size=(agent.n_variables, agent.n_dimensions))
-            lambd = rnd.generate_uniform_random_number(size=(agent.n_variables, agent.n_dimensions))
+            r = rnd.generate_uniform_random_number(
+                size=(agent.n_variables, agent.n_dimensions)
+            )
+            lambd = rnd.generate_uniform_random_number(
+                size=(agent.n_variables, agent.n_dimensions)
+            )
 
             # Calculates the exponential term (eq. 11)
             F = self.a1 * np.sign(r - 0.5) * (np.exp(-lambd * t) - 1)
@@ -258,5 +252,8 @@ class EO(Optimizer):
             G = G_0 * F
 
             # Updates agent's position (eq. 16)
-            agent.position = C_pool[i].position + (
-                agent.position - C_pool[i].position) * F + (G / (lambd * self.V)) * (1 - F)
+            agent.position = (
+                C_pool[i].position
+                + (agent.position - C_pool[i].position) * F
+                + (G / (lambd * self.V)) * (1 - F)
+            )

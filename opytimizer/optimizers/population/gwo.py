@@ -6,10 +6,10 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GWO(Optimizer):
@@ -32,7 +32,7 @@ class GWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> GWO.')
+        logger.info("Overriding class: Optimizer -> GWO.")
 
         # Overrides its parent class with the receiving params
         super(GWO, self).__init__()
@@ -40,7 +40,7 @@ class GWO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _calculate_coefficients(self, a):
         """Calculates the mathematical coefficients.

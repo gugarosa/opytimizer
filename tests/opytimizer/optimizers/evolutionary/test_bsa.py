@@ -7,10 +7,7 @@ np.random.seed(0)
 
 
 def test_bsa_params():
-    params = {
-        'F': 3.0,
-        'mix_rate': 1
-    }
+    params = {"F": 3.0, "mix_rate": 1}
 
     new_bsa = bsa.BSA(params=params)
 
@@ -23,12 +20,12 @@ def test_bsa_params_setter():
     new_bsa = bsa.BSA()
 
     try:
-        new_bsa.F = 'a'
+        new_bsa.F = "a"
     except:
         new_bsa.F = 3.0
 
     try:
-        new_bsa.mix_rate = 'b'
+        new_bsa.mix_rate = "b"
     except:
         new_bsa.mix_rate = 1
 
@@ -41,8 +38,9 @@ def test_bsa_params_setter():
 
 
 def test_bsa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -56,8 +54,9 @@ def test_bsa_compile():
 
 
 def test_bsa_permute():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -66,8 +65,9 @@ def test_bsa_permute():
 
 
 def test_bsa_mutate():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -78,8 +78,9 @@ def test_bsa_mutate():
 
 
 def test_bsa_crossover():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -92,8 +93,9 @@ def test_bsa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=75, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=75, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)

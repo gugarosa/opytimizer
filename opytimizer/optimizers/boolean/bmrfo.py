@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BMRFO(Optimizer):
@@ -32,7 +32,7 @@ class BMRFO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BMRFO.')
+        logger.info("Overriding class: Optimizer -> BMRFO.")
 
         # Overrides its parent class with the receiving params
         super(BMRFO, self).__init__()
@@ -43,20 +43,18 @@ class BMRFO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def S(self):
-        """float: Somersault foraging.
-
-        """
+        """float: Somersault foraging."""
 
         return self._S
 
     @S.setter
     def S(self, S):
         if not isinstance(S, np.ndarray):
-            raise e.TypeError('`S` should be a numpy array')
+            raise e.TypeError("`S` should be a numpy array")
 
         self._S = S
 
@@ -86,37 +84,62 @@ class BMRFO(Optimizer):
         if iteration / n_iterations < u:
             # Generates binary random positions
             r_position = r.generate_binary_random_number(
-                size=(agents[i].n_variables, agents[i].n_dimensions))
+                size=(agents[i].n_variables, agents[i].n_dimensions)
+            )
 
             # Checks if the index is equal to zero
             if i == 0:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r1, np.logical_xor(r_position, agents[i].position))
-                partial_two = np.logical_or(beta, np.logical_xor(r_position, agents[i].position))
-                cyclone_foraging = np.logical_and(r_position, np.logical_and(partial_one, partial_two))
+                partial_one = np.logical_or(
+                    r1, np.logical_xor(r_position, agents[i].position)
+                )
+                partial_two = np.logical_or(
+                    beta, np.logical_xor(r_position, agents[i].position)
+                )
+                cyclone_foraging = np.logical_and(
+                    r_position, np.logical_and(partial_one, partial_two)
+                )
 
             # If index is different than zero
             else:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
-                partial_two = np.logical_or(beta, np.logical_xor(r_position, agents[i].position))
-                cyclone_foraging = np.logical_and(r_position, np.logical_and(partial_one, partial_two))
+                partial_one = np.logical_or(
+                    r1, np.logical_xor(agents[i - 1].position, agents[i].position)
+                )
+                partial_two = np.logical_or(
+                    beta, np.logical_xor(r_position, agents[i].position)
+                )
+                cyclone_foraging = np.logical_and(
+                    r_position, np.logical_and(partial_one, partial_two)
+                )
 
         # If current iteration proportion is bigger than random generated number
         else:
             # Checks if the index is equal to zero
             if i == 0:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r1, np.logical_xor(best_position, agents[i].position))
-                partial_two = np.logical_or(beta, np.logical_xor(best_position, agents[i].position))
-                cyclone_foraging = np.logical_and(best_position, np.logical_and(partial_one, partial_two))
+                partial_one = np.logical_or(
+                    r1, np.logical_xor(best_position, agents[i].position)
+                )
+                partial_two = np.logical_or(
+                    beta, np.logical_xor(best_position, agents[i].position)
+                )
+                cyclone_foraging = np.logical_and(
+                    best_position, np.logical_and(partial_one, partial_two)
+                )
 
             # If index is different than zero
             else:
                 # Calculates the cyclone foraging
-                partial_one = np.logical_or(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
-                partial_two = np.logical_or(beta, np.logical_xor(best_position, agents[i].position))
-                cyclone_foraging = np.logical_and(best_position, np.logical_and(partial_one, partial_two))
+                partial_one = np.logical_or(
+                    r1, np.logical_xor(agents[i - 1].position, agents[i].position)
+                )
+                partial_two = np.logical_or(
+                    beta, np.logical_xor(best_position, agents[i].position)
+                )
+                cyclone_foraging = np.logical_and(
+                    best_position, np.logical_and(partial_one, partial_two)
+                )
 
         return cyclone_foraging
 
@@ -140,16 +163,28 @@ class BMRFO(Optimizer):
         # Checks if the index is equal to zero
         if i == 0:
             # Calculates the chain foraging
-            partial_one = np.logical_and(r1, np.logical_xor(best_position, agents[i].position))
-            partial_two = np.logical_and(alpha, np.logical_xor(best_position, agents[i].position))
-            chain_foraging = np.logical_or(agents[i].position, np.logical_or(partial_one, partial_two))
+            partial_one = np.logical_and(
+                r1, np.logical_xor(best_position, agents[i].position)
+            )
+            partial_two = np.logical_and(
+                alpha, np.logical_xor(best_position, agents[i].position)
+            )
+            chain_foraging = np.logical_or(
+                agents[i].position, np.logical_or(partial_one, partial_two)
+            )
 
         # If index is different than zero
         else:
             # Calculates the chain foraging
-            partial_one = np.logical_and(r1, np.logical_xor(agents[i - 1].position, agents[i].position))
-            partial_two = np.logical_and(alpha, np.logical_xor(best_position, agents[i].position))
-            chain_foraging = np.logical_or(agents[i].position, np.logical_or(partial_one, partial_two))
+            partial_one = np.logical_and(
+                r1, np.logical_xor(agents[i - 1].position, agents[i].position)
+            )
+            partial_two = np.logical_and(
+                alpha, np.logical_xor(best_position, agents[i].position)
+            )
+            chain_foraging = np.logical_or(
+                agents[i].position, np.logical_or(partial_one, partial_two)
+            )
 
         return chain_foraging
 
@@ -170,8 +205,15 @@ class BMRFO(Optimizer):
         r2 = r.generate_binary_random_number(best_position.shape)
 
         # Calculates the somersault foraging
-        somersault_foraging = np.logical_or(position, np.logical_and(self.S, np.logical_xor(
-            np.logical_xor(r1, best_position), np.logical_xor(r2, position))))
+        somersault_foraging = np.logical_or(
+            position,
+            np.logical_and(
+                self.S,
+                np.logical_xor(
+                    np.logical_xor(r1, best_position), np.logical_xor(r2, position)
+                ),
+            ),
+        )
 
         return somersault_foraging
 
@@ -195,12 +237,15 @@ class BMRFO(Optimizer):
             if r1 < 0.5:
                 # Performs the cyclone foraging
                 agent.position = self._cyclone_foraging(
-                    space.agents, space.best_agent.position, i, iteration, n_iterations)
+                    space.agents, space.best_agent.position, i, iteration, n_iterations
+                )
 
             # If random number is bigger than 1/2
             else:
                 # Performs the chain foraging
-                agent.position = self._chain_foraging(space.agents, space.best_agent.position, i)
+                agent.position = self._chain_foraging(
+                    space.agents, space.best_agent.position, i
+                )
 
             # Clips the agent's limits
             agent.clip_by_bound()
@@ -217,4 +262,6 @@ class BMRFO(Optimizer):
         # Iterates through all agents
         for agent in space.agents:
             # Performs the somersault foraging
-            agent.position = self._somersault_foraging(agent.position, space.best_agent.position)
+            agent.position = self._somersault_foraging(
+                agent.position, space.best_agent.position
+            )

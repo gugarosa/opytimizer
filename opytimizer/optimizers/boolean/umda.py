@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class UMDA(Optimizer):
@@ -45,58 +45,52 @@ class UMDA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def p_selection(self):
-        """float: Probability of selection.
-
-        """
+        """float: Probability of selection."""
 
         return self._p_selection
 
     @p_selection.setter
     def p_selection(self, p_selection):
         if not isinstance(p_selection, (float, int)):
-            raise e.TypeError('`p_selection` should be a float or integer')
+            raise e.TypeError("`p_selection` should be a float or integer")
         if p_selection < 0 or p_selection > 1:
-            raise e.ValueError('`p_selection` should be between 0 and 1')
+            raise e.ValueError("`p_selection` should be between 0 and 1")
 
         self._p_selection = p_selection
 
     @property
     def lower_bound(self):
-        """float: Distribution lower bound.
-
-        """
+        """float: Distribution lower bound."""
 
         return self._lower_bound
 
     @lower_bound.setter
     def lower_bound(self, lower_bound):
         if not isinstance(lower_bound, (float, int)):
-            raise e.TypeError('`lower_bound` should be a float or integer')
+            raise e.TypeError("`lower_bound` should be a float or integer")
         if lower_bound < 0 or lower_bound > 1:
-            raise e.ValueError('`lower_bound` should be between 0 and 1')
+            raise e.ValueError("`lower_bound` should be between 0 and 1")
 
         self._lower_bound = lower_bound
 
     @property
     def upper_bound(self):
-        """float: Distribution upper bound.
-
-        """
+        """float: Distribution upper bound."""
 
         return self._upper_bound
 
     @upper_bound.setter
     def upper_bound(self, upper_bound):
         if not isinstance(upper_bound, (float, int)):
-            raise e.TypeError('`upper_bound` should be a float or integer')
+            raise e.TypeError("`upper_bound` should be a float or integer")
         if upper_bound < 0 or upper_bound > 1:
-            raise e.ValueError('`upper_bound` should be between 0 and 1')
+            raise e.ValueError("`upper_bound` should be between 0 and 1")
         if upper_bound < self.lower_bound:
-            raise e.ValueError('`upper_bound` should be greater than `lower_bound')
+            raise e.ValueError("`upper_bound` should be greater than `lower_bound")
 
         self._upper_bound = upper_bound
 

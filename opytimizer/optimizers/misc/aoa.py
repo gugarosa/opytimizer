@@ -4,10 +4,10 @@
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class AOA(Optimizer):
@@ -30,7 +30,7 @@ class AOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> AOA.')
+        logger.info("Overriding class: Optimizer -> AOA.")
 
         # Overrides its parent class with the receiving params
         super(AOA, self).__init__()
@@ -50,75 +50,67 @@ class AOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def a_min(self):
-        """float: Minimum accelerated function.
-
-        """
+        """float: Minimum accelerated function."""
 
         return self._a_min
 
     @a_min.setter
     def a_min(self, a_min):
         if not isinstance(a_min, (float, int)):
-            raise e.TypeError('`a_min` should be a float or integer')
+            raise e.TypeError("`a_min` should be a float or integer")
         if a_min < 0:
-            raise e.ValueError('`a_min` should be >= 0')
+            raise e.ValueError("`a_min` should be >= 0")
 
         self._a_min = a_min
 
     @property
     def a_max(self):
-        """float: Maximum accelerated function.
-
-        """
+        """float: Maximum accelerated function."""
 
         return self._a_max
 
     @a_max.setter
     def a_max(self, a_max):
         if not isinstance(a_max, (float, int)):
-            raise e.TypeError('`a_max` should be a float or integer')
+            raise e.TypeError("`a_max` should be a float or integer")
         if a_max < 0:
-            raise e.ValueError('`a_max` should be >= 0')
+            raise e.ValueError("`a_max` should be >= 0")
         if a_max < self.a_min:
-            raise e.ValueError('`a_max` should be >= `a_min`')
+            raise e.ValueError("`a_max` should be >= `a_min`")
 
         self._a_max = a_max
 
     @property
     def alpha(self):
-        """float: Sensitive parameter.
-
-        """
+        """float: Sensitive parameter."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def mu(self):
-        """float: Control parameter.
-
-        """
+        """float: Control parameter."""
 
         return self._mu
 
     @mu.setter
     def mu(self, mu):
         if not isinstance(mu, (float, int)):
-            raise e.TypeError('`mu` should be a float or integer')
+            raise e.TypeError("`mu` should be a float or integer")
         if mu < 0:
-            raise e.ValueError('`mu` should be >= 0')
+            raise e.ValueError("`mu` should be >= 0")
 
         self._mu = mu
 
@@ -156,12 +148,18 @@ class AOA(Optimizer):
                     # If probability is bigger than 0.5
                     if r2 > 0.5:
                         # Updates position with (eq. 3 - top)
-                        agent.position[j] = space.best_agent.position[j] / (MOP + c.EPSILON) * search_partition
+                        agent.position[j] = (
+                            space.best_agent.position[j]
+                            / (MOP + c.EPSILON)
+                            * search_partition
+                        )
 
                     # If probability is smaller than 0.5
                     else:
                         # Updates position with (eq. 3 - bottom)
-                        agent.position[j] = space.best_agent.position[j] * MOP * search_partition
+                        agent.position[j] = (
+                            space.best_agent.position[j] * MOP * search_partition
+                        )
 
                 # If probability is smaller than MOA
                 else:
@@ -171,9 +169,13 @@ class AOA(Optimizer):
                     # If probability is bigger than 0.5
                     if r3 > 0.5:
                         # Updates position with (eq. 5 - top)
-                        agent.position[j] = space.best_agent.position[j] - MOP * search_partition
+                        agent.position[j] = (
+                            space.best_agent.position[j] - MOP * search_partition
+                        )
 
                     # If probability is smaller than 0.5
                     else:
                         # Updates position with (eq. 5 - bottom)
-                        agent.position[j] = space.best_agent.position[j] + MOP * search_partition
+                        agent.position[j] = (
+                            space.best_agent.position[j] + MOP * search_partition
+                        )

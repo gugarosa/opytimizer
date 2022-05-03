@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class TWO(Optimizer):
@@ -34,7 +34,7 @@ class TWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> TWO.')
+        logger.info("Overriding class: Optimizer -> TWO.")
 
         # Overrides its parent class with the receiving params
         super(TWO, self).__init__()
@@ -57,91 +57,80 @@ class TWO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def mu_s(self):
-        """float: Static friction coefficient.
-
-        """
+        """float: Static friction coefficient."""
 
         return self._mu_s
 
     @mu_s.setter
     def mu_s(self, mu_s):
         if not isinstance(mu_s, (float, int)):
-            raise e.TypeError('`mu_s` should be a float or integer')
+            raise e.TypeError("`mu_s` should be a float or integer")
         if mu_s < 0:
-            raise e.ValueError('`mu_s` should be >= 0')
+            raise e.ValueError("`mu_s` should be >= 0")
 
         self._mu_s = mu_s
 
     @property
     def mu_k(self):
-        """float: Kinematic friction coefficient.
-
-        """
+        """float: Kinematic friction coefficient."""
 
         return self._mu_k
 
     @mu_k.setter
     def mu_k(self, mu_k):
         if not isinstance(mu_k, (float, int)):
-            raise e.TypeError('`mu_k` should be a float or integer')
+            raise e.TypeError("`mu_k` should be a float or integer")
         if mu_k < 0:
-            raise e.ValueError('`mu_k` should be >= 0')
+            raise e.ValueError("`mu_k` should be >= 0")
 
         self._mu_k = mu_k
 
     @property
     def delta_t(self):
-        """float: Time displacement.
-
-        """
+        """float: Time displacement."""
 
         return self._delta_t
 
     @delta_t.setter
     def delta_t(self, delta_t):
         if not isinstance(delta_t, (float, int)):
-            raise e.TypeError('`delta_t` should be a float or integer')
+            raise e.TypeError("`delta_t` should be a float or integer")
         if delta_t < 0:
-            raise e.ValueError('`delta_t` should be >= 0')
+            raise e.ValueError("`delta_t` should be >= 0")
 
         self._delta_t = delta_t
 
     @property
     def alpha(self):
-        """float: Speed constant.
-
-        """
+        """float: Speed constant."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0.9 or alpha > 1:
-            raise e.ValueError('`alpha` should be between 0.9 and 1')
+            raise e.ValueError("`alpha` should be between 0.9 and 1")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Scaling factor.
-
-        """
+        """float: Scaling factor."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 1:
-            raise e.ValueError(
-                '`beta` should be greater than 0 and less than 1')
+            raise e.ValueError("`beta` should be greater than 0 and less than 1")
 
         self._beta = beta
 
@@ -167,7 +156,9 @@ class TWO(Optimizer):
                 r2 = r.generate_gaussian_random_number()
 
                 # Updates the agent's position
-                agent.position = best_agent.position + (r2 / iteration) * (best_agent.position - agent.position)
+                agent.position = best_agent.position + (r2 / iteration) * (
+                    best_agent.position - agent.position
+                )
 
             # Clips its limits
             agent.clip_by_bound()
@@ -193,8 +184,10 @@ class TWO(Optimizer):
         best_fit, worst_fit = space.agents[0].fit, space.agents[-1].fit
 
         # Calculates the agents' weights
-        weights = [(agent.fit - worst_fit) /
-                   (best_fit - worst_fit + c.EPSILON) + 1 for agent in space.agents]
+        weights = [
+            (agent.fit - worst_fit) / (best_fit - worst_fit + c.EPSILON) + 1
+            for agent in space.agents
+        ]
 
         # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
@@ -212,7 +205,10 @@ class TWO(Optimizer):
                 # If weight from agent `i` is smaller than weight from agent `j`
                 if weights[i] < weights[j]:
                     # Calculates the residual force (eq. 6)
-                    force = np.maximum(weights[i] * self.mu_s, weights[j] * self.mu_s) - weights[i] * mu_k
+                    force = (
+                        np.maximum(weights[i] * self.mu_s, weights[j] * self.mu_s)
+                        - weights[i] * mu_k
+                    )
 
                     # Calculates the gravitational acceleration (eq. 8)
                     g = temp2.position - temp1.position
@@ -221,18 +217,23 @@ class TWO(Optimizer):
                     acceleration = (force / (weights[i] * mu_k)) * g
 
                     # Generates a random gaussian number
-                    r1 = r.generate_gaussian_random_number(size=(temp1.n_variables, temp1.n_dimensions))
+                    r1 = r.generate_gaussian_random_number(
+                        size=(temp1.n_variables, temp1.n_dimensions)
+                    )
 
                     # Calculates the displacement (eq. 9-10)
-                    delta += 0.5 * acceleration * self.delta_t ** 2 + \
-                             np.multiply(self.alpha ** iteration * self.beta * (np.expand_dims(temp1.ub, -1) \
-                             - np.expand_dims(temp1.lb, -1)), r1)
+                    delta += 0.5 * acceleration * self.delta_t**2 + np.multiply(
+                        self.alpha**iteration
+                        * self.beta
+                        * (np.expand_dims(temp1.ub, -1) - np.expand_dims(temp1.lb, -1)),
+                        r1,
+                    )
 
             # Updates the temporary agent's position (eq. 11)
             temp1.position += delta
 
         # Performs the constraint handling
-        self._constraint_handle(temp_agents, space.best_agent, function, iteration+1)
+        self._constraint_handle(temp_agents, space.best_agent, function, iteration + 1)
 
         # Iterates through real and temporary populations
         for agent, temp in zip(space.agents, temp_agents):

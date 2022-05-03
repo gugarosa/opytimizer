@@ -5,13 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_two_params():
-    params = {
-        'mu_s': 1,
-        'mu_k': 1,
-        'delta_t': 1,
-        'alpha': 0.9,
-        'beta': 0.05
-    }
+    params = {"mu_s": 1, "mu_k": 1, "delta_t": 1, "alpha": 0.9, "beta": 0.05}
 
     new_two = two.TWO(params=params)
 
@@ -30,7 +24,7 @@ def test_two_params_setter():
     new_two = two.TWO()
 
     try:
-        new_two.mu_s = 'a'
+        new_two.mu_s = "a"
     except:
         new_two.mu_s = 1
 
@@ -42,7 +36,7 @@ def test_two_params_setter():
     assert new_two.mu_s == 1
 
     try:
-        new_two.mu_k = 'b'
+        new_two.mu_k = "b"
     except:
         new_two.mu_k = 1
 
@@ -54,7 +48,7 @@ def test_two_params_setter():
     assert new_two.mu_k == 1
 
     try:
-        new_two.delta_t = 'c'
+        new_two.delta_t = "c"
     except:
         new_two.delta_t = 1
 
@@ -66,7 +60,7 @@ def test_two_params_setter():
     assert new_two.delta_t == 1
 
     try:
-        new_two.alpha = 'd'
+        new_two.alpha = "d"
     except:
         new_two.alpha = 0.9
 
@@ -78,7 +72,7 @@ def test_two_params_setter():
     assert new_two.alpha == 0.9
 
     try:
-        new_two.beta = 'e'
+        new_two.beta = "e"
     except:
         new_two.beta = 0.05
 
@@ -94,21 +88,22 @@ def test_two_constraint_handle():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_two = two.TWO()
 
-    new_two._constraint_handle(
-        search_space.agents, search_space.best_agent, square, 1)
+    new_two._constraint_handle(search_space.agents, search_space.best_agent, square, 1)
 
 
 def test_two_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_two = two.TWO()
 

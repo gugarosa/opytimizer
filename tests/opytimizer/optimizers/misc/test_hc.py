@@ -10,8 +10,8 @@ np.random.seed(0)
 
 def test_hc_params():
     params = {
-        'r_mean': 0,
-        'r_var': 0.1,
+        "r_mean": 0,
+        "r_var": 0.1,
     }
 
     new_hc = hc.HC(params=params)
@@ -25,14 +25,14 @@ def test_hc_params_setter():
     new_hc = hc.HC()
 
     try:
-        new_hc.r_mean = 'a'
+        new_hc.r_mean = "a"
     except:
         new_hc.r_mean = 0.1
 
     assert new_hc.r_mean == 0.1
 
     try:
-        new_hc.r_var = 'b'
+        new_hc.r_var = "b"
     except:
         new_hc.r_var = 2
 
@@ -45,8 +45,9 @@ def test_hc_params_setter():
 
 
 def test_hc_update():
-    search_space = search.SearchSpace(n_agents=50, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_hc = hc.HC()
 

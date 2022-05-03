@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class COA(Optimizer):
@@ -33,7 +33,7 @@ class COA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> COA.')
+        logger.info("Overriding class: Optimizer -> COA.")
 
         # Overrides its parent class with the receiving params
         super(COA, self).__init__()
@@ -44,39 +44,35 @@ class COA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_p(self):
-        """int: Number of packs.
-
-        """
+        """int: Number of packs."""
 
         return self._n_p
 
     @n_p.setter
     def n_p(self, n_p):
         if not isinstance(n_p, int):
-            raise e.TypeError('`n_p` should be an integer')
+            raise e.TypeError("`n_p` should be an integer")
         if n_p <= 0:
-            raise e.ValueError('`n_p` should be > 0')
+            raise e.ValueError("`n_p` should be > 0")
 
         self._n_p = n_p
 
     @property
     def n_c(self):
-        """int: Number of coyotes per pack.
-
-        """
+        """int: Number of coyotes per pack."""
 
         return self._n_c
 
     @n_c.setter
     def n_c(self, n_c):
         if not isinstance(n_c, int):
-            raise e.TypeError('`n_c` should be an integer')
+            raise e.TypeError("`n_c` should be an integer")
         if n_c <= 0:
-            raise e.ValueError('`n_c` should be > 0')
+            raise e.ValueError("`n_c` should be > 0")
 
         self._n_c = n_c
 
@@ -161,7 +157,9 @@ class COA(Optimizer):
             alpha = pack_agents[0]
 
             # Computes the cultural tendency (eq. 6)
-            tendency = np.median(np.array([agent.position for agent in pack_agents]), axis=0)
+            tendency = np.median(
+                np.array([agent.position for agent in pack_agents]), axis=0
+            )
 
             # Iterates through all coyotes in the pack
             for agent in pack_agents:

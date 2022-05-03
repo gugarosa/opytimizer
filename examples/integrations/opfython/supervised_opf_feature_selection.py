@@ -20,8 +20,7 @@ Y = digits.target
 Y += 1
 
 # Splits data into training and testing sets
-X_train, X_val, Y_train, Y_val = s.split(
-    X, Y, percentage=0.5, random_state=1)
+X_train, X_val, Y_train, Y_val = s.split(X, Y, percentage=0.5, random_state=1)
 
 
 def supervised_opf_feature_selection(opytimizer):
@@ -33,8 +32,7 @@ def supervised_opf_feature_selection(opytimizer):
     X_val_selected = X_val[:, features]
 
     # Creates a SupervisedOPF instance
-    opf = SupervisedOPF(distance='log_squared_euclidean',
-                        pre_computed_distance=None)
+    opf = SupervisedOPF(distance="log_squared_euclidean", pre_computed_distance=None)
 
     # Fits training data into the classifier
     opf.fit(X_train_selected, Y_train)
@@ -54,8 +52,8 @@ n_variables = 64
 
 # Parameters for the optimizer
 params = {
-    'c1': r.generate_binary_random_number(size=(n_variables, 1)),
-    'c2': r.generate_binary_random_number(size=(n_variables, 1))
+    "c1": r.generate_binary_random_number(size=(n_variables, 1)),
+    "c2": r.generate_binary_random_number(size=(n_variables, 1)),
 }
 
 # Creates the space, optimizer and function

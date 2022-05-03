@@ -25,26 +25,27 @@ def cnn(opytimizer):
     model = models.Sequential()
 
     # Adding layers to the model itself
-    model.add(layers.Conv2D(
-        32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+    model.add(layers.Conv2D(32, (3, 3), activation="relu", input_shape=(32, 32, 3)))
     model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.Conv2D(64, (3, 3), activation="relu"))
     model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.Conv2D(64, (3, 3), activation="relu"))
     model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation='relu'))
-    model.add(layers.Dense(10, activation='softmax'))
+    model.add(layers.Dense(64, activation="relu"))
+    model.add(layers.Dense(10, activation="softmax"))
 
     # Compiling the model
-    model.compile(optimizer=optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
+    model.compile(
+        optimizer=optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"],
+    )
 
     # Fitting the model
     history = model.fit(X_train, Y_train, epochs=3, validation_data=(X_val, Y_val))
 
     # Gathers validation accuracy
-    val_acc = history.history['val_accuracy'][-1]
+    val_acc = history.history["val_accuracy"][-1]
 
     # Cleaning up memory
     del history

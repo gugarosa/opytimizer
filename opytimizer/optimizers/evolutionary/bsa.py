@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BSA(Optimizer):
@@ -33,7 +33,7 @@ class BSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BSA.')
+        logger.info("Overriding class: Optimizer -> BSA.")
 
         # Overrides its parent class with the receiving params
         super(BSA, self).__init__()
@@ -47,52 +47,46 @@ class BSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def F(self):
-        """float: Experience from previous generation.
-
-        """
+        """float: Experience from previous generation."""
 
         return self._F
 
     @F.setter
     def F(self, F):
         if not isinstance(F, (float, int)):
-            raise e.TypeError('`F` should be a float or integer')
+            raise e.TypeError("`F` should be a float or integer")
 
         self._F = F
 
     @property
     def mix_rate(self):
-        """int: Number of non-crosses.
-
-        """
+        """int: Number of non-crosses."""
 
         return self._mix_rate
 
     @mix_rate.setter
     def mix_rate(self, mix_rate):
         if not isinstance(mix_rate, int):
-            raise e.TypeError('`mix_rate` should be an integer')
+            raise e.TypeError("`mix_rate` should be an integer")
         if mix_rate < 0:
-            raise e.ValueError('`mix_rate` should be > 0')
+            raise e.ValueError("`mix_rate` should be > 0")
 
         self._mix_rate = mix_rate
 
     @property
     def old_agents(self):
-        """list: List of historical agents.
-
-        """
+        """list: List of historical agents."""
 
         return self._old_agents
 
     @old_agents.setter
     def old_agents(self, old_agents):
         if not isinstance(old_agents, list):
-            raise e.TypeError('`old_agents` should be a list')
+            raise e.TypeError("`old_agents` should be a list")
 
         self._old_agents = old_agents
 
@@ -129,7 +123,9 @@ class BSA(Optimizer):
         j = r.generate_integer_random_number(high=len(agents), exclude_value=i)
 
         # Swap the agents
-        self.old_agents[i], self.old_agents[j] = copy.deepcopy(self.old_agents[j]), copy.deepcopy(self.old_agents[i])
+        self.old_agents[i], self.old_agents[j] = copy.deepcopy(
+            self.old_agents[j]
+        ), copy.deepcopy(self.old_agents[i])
 
     def _mutate(self, agents):
         """Performs the mutation operator.
@@ -149,9 +145,13 @@ class BSA(Optimizer):
         r1 = r.generate_uniform_random_number()
 
         # Iterates through all populations
-        for (trial_agent, agent, old_agent) in zip(trial_agents, agents, self.old_agents):
+        for (trial_agent, agent, old_agent) in zip(
+            trial_agents, agents, self.old_agents
+        ):
             # Updates the new trial agent's position
-            trial_agent.position = agent.position + self.F * r1 * (old_agent.position - agent.position)
+            trial_agent.position = agent.position + self.F * r1 * (
+                old_agent.position - agent.position
+            )
 
             # Clips its limits
             trial_agent.clip_by_bound()

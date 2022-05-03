@@ -5,11 +5,7 @@ from opytimizer.spaces import boolean
 
 
 def test_umda_params():
-    params = {
-        'p_selection': 0.75,
-        'lower_bound': 0.05,
-        'upper_bound': 0.95
-    }
+    params = {"p_selection": 0.75, "lower_bound": 0.05, "upper_bound": 0.95}
 
     new_umda = umda.UMDA(params=params)
 
@@ -24,7 +20,7 @@ def test_umda_params_setter():
     new_umda = umda.UMDA()
 
     try:
-        new_umda.p_selection = 'a'
+        new_umda.p_selection = "a"
     except:
         new_umda.p_selection = 0.75
 
@@ -38,7 +34,7 @@ def test_umda_params_setter():
     assert new_umda.p_selection == 0.75
 
     try:
-        new_umda.lower_bound = 'a'
+        new_umda.lower_bound = "a"
     except:
         new_umda.lower_bound = 0.05
 
@@ -52,7 +48,7 @@ def test_umda_params_setter():
     assert new_umda.lower_bound == 0.05
 
     try:
-        new_umda.upper_bound = 'a'
+        new_umda.upper_bound = "a"
     except:
         new_umda.upper_bound = 0.95
 

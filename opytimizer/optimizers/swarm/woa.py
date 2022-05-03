@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as log
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = log.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class WOA(Optimizer):
@@ -42,20 +42,18 @@ class WOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def b(self):
-        """float: Logarithmic spiral.
-
-        """
+        """float: Logarithmic spiral."""
 
         return self._b
 
     @b.setter
     def b(self, b):
         if not isinstance(b, (float, int)):
-            raise e.TypeError('`b` should be a float or integer')
+            raise e.TypeError("`b` should be a float or integer")
 
         self._b = b
 
@@ -135,4 +133,7 @@ class WOA(Optimizer):
                 D = np.fabs(space.best_agent.position - agent.position)
 
                 # Updates the agent's position
-                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + space.best_agent.position
+                agent.position = (
+                    D * np.exp(self.b * l) * np.cos(2 * np.pi * l)
+                    + space.best_agent.position
+                )

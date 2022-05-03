@@ -5,10 +5,10 @@ import copy
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class FOA(Optimizer):
@@ -31,7 +31,7 @@ class FOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> FOA.')
+        logger.info("Overriding class: Optimizer -> FOA.")
 
         # Overrides its parent class with the receiving params
         super(FOA, self).__init__()
@@ -54,105 +54,93 @@ class FOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def life_time(self):
-        """int: Maximum age of trees.
-
-        """
+        """int: Maximum age of trees."""
 
         return self._life_time
 
     @life_time.setter
     def life_time(self, life_time):
         if not isinstance(life_time, int):
-            raise e.TypeError('`life_time` should be an integer')
+            raise e.TypeError("`life_time` should be an integer")
         if life_time <= 0:
-            raise e.ValueError('`life_time` should be > 0')
+            raise e.ValueError("`life_time` should be > 0")
 
         self._life_time = life_time
 
     @property
     def area_limit(self):
-        """int: Maximum number of trees in the florest.
-
-        """
+        """int: Maximum number of trees in the florest."""
 
         return self._area_limit
 
     @area_limit.setter
     def area_limit(self, area_limit):
         if not isinstance(area_limit, int):
-            raise e.TypeError('`area_limit` should be an integer')
+            raise e.TypeError("`area_limit` should be an integer")
         if area_limit <= 0:
-            raise e.ValueError('`area_limit` should be > 0')
+            raise e.ValueError("`area_limit` should be > 0")
 
         self._area_limit = area_limit
 
     @property
     def LSC(self):
-        """int: Local Seeding Changes.
-
-        """
+        """int: Local Seeding Changes."""
 
         return self._LSC
 
     @LSC.setter
     def LSC(self, LSC):
         if not isinstance(LSC, int):
-            raise e.TypeError('`LSC` should be an integer')
+            raise e.TypeError("`LSC` should be an integer")
         if LSC <= 0:
-            raise e.ValueError('`LSC` should be > 0')
+            raise e.ValueError("`LSC` should be > 0")
 
         self._LSC = LSC
 
     @property
     def GSC(self):
-        """int: Global Seeding Changes.
-
-        """
+        """int: Global Seeding Changes."""
 
         return self._GSC
 
     @GSC.setter
     def GSC(self, GSC):
         if not isinstance(GSC, int):
-            raise e.TypeError('`GSC` should be an integer')
+            raise e.TypeError("`GSC` should be an integer")
         if GSC <= 0:
-            raise e.ValueError('`GSC` should be > 0')
+            raise e.ValueError("`GSC` should be > 0")
 
         self._GSC = GSC
 
     @property
     def transfer_rate(self):
-        """float: Global seeding percentage.
-
-        """
+        """float: Global seeding percentage."""
 
         return self._transfer_rate
 
     @transfer_rate.setter
     def transfer_rate(self, transfer_rate):
         if not isinstance(transfer_rate, (float, int)):
-            raise e.TypeError('`transfer_rate` should be a float or integer')
+            raise e.TypeError("`transfer_rate` should be a float or integer")
         if transfer_rate < 0 or transfer_rate > 1:
-            raise e.ValueError('`transfer_rate` should be between 0 and 1')
+            raise e.ValueError("`transfer_rate` should be between 0 and 1")
 
         self._transfer_rate = transfer_rate
 
     @property
     def age(self):
-        """list: Trees ages.
-
-        """
+        """list: Trees ages."""
 
         return self._age
 
     @age.setter
     def age(self, age):
         if not isinstance(age, list):
-            raise e.TypeError('`age` should be a list')
+            raise e.TypeError("`age` should be a list")
 
         self._age = age
 
@@ -192,7 +180,9 @@ class FOA(Optimizer):
                     j = r.generate_integer_random_number(high=child.n_variables)
 
                     # Updates the temporary agent's position and clips its bounds
-                    child.position[j] += r.generate_uniform_random_number(child.lb[j], child.ub[j])
+                    child.position[j] += r.generate_uniform_random_number(
+                        child.lb[j], child.ub[j]
+                    )
                     child.clip_by_bound()
 
                     # Evaluates new position
@@ -237,16 +227,17 @@ class FOA(Optimizer):
 
         # Sorts agents and their corresponding ages
         space.agents, self.age = map(
-            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit)))
+            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit))
+        )
 
         # If the population exceeds the forest limits
         if len(space.agents) > self.area_limit:
             # Adds extra trees to the candidate list
-            candidate += space.agents[self.area_limit:]
+            candidate += space.agents[self.area_limit :]
 
             # Removes the extra trees and their corresponding ages from forest
-            space.agents = space.agents[:self.area_limit]
-            self.age = self.age[:self.area_limit]
+            space.agents = space.agents[: self.area_limit]
+            self.age = self.age[: self.area_limit]
 
         return candidate
 
@@ -312,7 +303,8 @@ class FOA(Optimizer):
 
         # Sorts agents and their corresponding ages
         space.agents, self.age = map(
-            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit)))
+            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit))
+        )
 
         # Sets the best tree's age to zero
         self.age[0] = 0

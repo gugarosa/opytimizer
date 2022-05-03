@@ -6,10 +6,10 @@ import copy
 import numpy as np
 
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class NDS(Optimizer):
@@ -42,67 +42,59 @@ class NDS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_pareto_points(self):
-        """int: Number of points in the frontier.
-
-        """
+        """int: Number of points in the frontier."""
 
         return self._n_pareto_points
 
     @n_pareto_points.setter
     def n_pareto_points(self, n_pareto_points):
         if not isinstance(n_pareto_points, int):
-            raise e.TypeError('`n_pareto_points` should be an integer')
+            raise e.TypeError("`n_pareto_points` should be an integer")
         if n_pareto_points < 0:
-            raise e.ValueError('`n_pareto_points` should be >= 0')
+            raise e.ValueError("`n_pareto_points` should be >= 0")
 
         self._n_pareto_points = n_pareto_points
 
     @property
     def count(self):
-        """np.array: Array of domination counts.
-
-        """
+        """np.array: Array of domination counts."""
 
         return self._count
 
     @count.setter
     def count(self, count):
         if not isinstance(count, np.ndarray):
-            raise e.TypeError('`count` should be a numpy array')
+            raise e.TypeError("`count` should be a numpy array")
 
         self._count = count
 
     @property
     def set(self):
-        """np.array: Array of dominating set.
-
-        """
+        """np.array: Array of dominating set."""
 
         return self._set
 
     @set.setter
     def set(self, set):
         if not isinstance(set, np.ndarray):
-            raise e.TypeError('`set` should be a numpy array')
+            raise e.TypeError("`set` should be a numpy array")
 
         self._set = set
 
     @property
     def status(self):
-        """np.array: Array of pareto status.
-
-        """
+        """np.array: Array of pareto status."""
 
         return self._status
 
     @status.setter
     def status(self, status):
         if not isinstance(status, np.ndarray):
-            raise e.TypeError('`status` should be a numpy array')
+            raise e.TypeError("`status` should be a numpy array")
 
         self._status = status
 
@@ -152,7 +144,7 @@ class NDS(Optimizer):
                 if agent_i.position[k] > agent_j.position[k]:
                     gt += 1
 
-        return (gte == n_objectives and gt > 0)
+        return gte == n_objectives and gt > 0
 
     def update(self, space):
         """Wraps Non-Dominated Sorting over all agents and variables.
@@ -209,7 +201,7 @@ class NDS(Optimizer):
 
             # When current frontier is explored, resets the auxiliary frontier
             archive = aux_archive
-            aux_archive = []          
+            aux_archive = []
 
         # Adjusts the rankings based on the found frontiers
         for i, agent in enumerate(space.agents):

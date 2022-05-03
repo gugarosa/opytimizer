@@ -1,9 +1,8 @@
 import numpy as np
 
+import opytimizer.math.random as r
 from opytimizer.optimizers.misc import nds
 from opytimizer.spaces import pareto
-
-import opytimizer.math.random as r
 
 
 def test_nds_params():
@@ -16,7 +15,7 @@ def test_nds_params_setter():
     new_nds = nds.NDS()
 
     try:
-        new_nds.n_pareto_points = 'a'
+        new_nds.n_pareto_points = "a"
     except:
         new_nds.n_pareto_points = 0
 

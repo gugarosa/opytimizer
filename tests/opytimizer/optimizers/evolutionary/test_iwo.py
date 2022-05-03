@@ -8,11 +8,11 @@ np.random.seed(0)
 
 def test_iwo_params():
     params = {
-        'min_seeds': 0,
-        'max_seeds': 5,
-        'e': 2,
-        'final_sigma': 0.001,
-        'init_sigma': 3
+        "min_seeds": 0,
+        "max_seeds": 5,
+        "e": 2,
+        "final_sigma": 0.001,
+        "init_sigma": 3,
     }
 
     new_iwo = iwo.IWO(params=params)
@@ -32,7 +32,7 @@ def test_iwo_params_setter():
     new_iwo = iwo.IWO()
 
     try:
-        new_iwo.min_seeds = 'a'
+        new_iwo.min_seeds = "a"
     except:
         new_iwo.min_seeds = 0
 
@@ -44,7 +44,7 @@ def test_iwo_params_setter():
     assert new_iwo.min_seeds == 0
 
     try:
-        new_iwo.max_seeds = 'b'
+        new_iwo.max_seeds = "b"
     except:
         new_iwo.max_seeds = 2
 
@@ -56,7 +56,7 @@ def test_iwo_params_setter():
     assert new_iwo.max_seeds == 2
 
     try:
-        new_iwo.e = 'c'
+        new_iwo.e = "c"
     except:
         new_iwo.e = 1.5
 
@@ -68,7 +68,7 @@ def test_iwo_params_setter():
     assert new_iwo.e == 1.5
 
     try:
-        new_iwo.final_sigma = 'd'
+        new_iwo.final_sigma = "d"
     except:
         new_iwo.final_sigma = 1.5
 
@@ -80,7 +80,7 @@ def test_iwo_params_setter():
     assert new_iwo.final_sigma == 1.5
 
     try:
-        new_iwo.init_sigma = 'e'
+        new_iwo.init_sigma = "e"
     except:
         new_iwo.init_sigma = 2.0
 
@@ -97,7 +97,7 @@ def test_iwo_params_setter():
     assert new_iwo.init_sigma == 2.0
 
     try:
-        new_iwo.sigma = 'f'
+        new_iwo.sigma = "f"
     except:
         new_iwo.sigma = 1
 
@@ -116,14 +116,15 @@ def test_iwo_produce_offspring():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_iwo = iwo.IWO()
 
     agent = new_iwo._produce_offspring(search_space.agents[0], square)
 
-    assert type(agent).__name__ == 'Agent'
+    assert type(agent).__name__ == "Agent"
 
 
 def test_iwo_update():
@@ -134,7 +135,8 @@ def test_iwo_update():
     new_iwo.min_seeds = 5
     new_iwo.max_seeds = 20
 
-    search_space = search.SearchSpace(n_agents=5, n_variables=2,
-                lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=5, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_iwo.update(search_space, square, 1, 10)

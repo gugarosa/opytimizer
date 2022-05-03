@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class FA(Optimizer):
@@ -34,7 +34,7 @@ class FA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> FA.')
+        logger.info("Overriding class: Optimizer -> FA.")
 
         # Overrides its parent class with the receiving params
         super(FA, self).__init__()
@@ -51,56 +51,50 @@ class FA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Randomization parameter.
-
-        """
+        """float: Randomization parameter."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Attractiveness parameter.
-
-        """
+        """float: Attractiveness parameter."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+            raise e.ValueError("`beta` should be >= 0")
 
         self._beta = beta
 
     @property
     def gamma(self):
-        """float: Light absorption coefficient.
-
-        """
+        """float: Light absorption coefficient."""
 
         return self._gamma
 
     @gamma.setter
     def gamma(self, gamma):
         if not isinstance(gamma, (float, int)):
-            raise e.TypeError('`gamma` should be a float or integer')
+            raise e.TypeError("`gamma` should be a float or integer")
         if gamma < 0:
-            raise e.ValueError('`gamma` should be >= 0')
+            raise e.ValueError("`gamma` should be >= 0")
 
         self._gamma = gamma
 
@@ -117,7 +111,7 @@ class FA(Optimizer):
         delta = 1 - ((10e-4) / 0.9) ** (1 / n_iterations)
 
         # Applies update to alpha parameter
-        self.alpha *= (1 - delta)
+        self.alpha *= 1 - delta
 
         # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
@@ -138,4 +132,6 @@ class FA(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates agent's position (eq. 9)
-                    agent.position = beta * (temp.position + agent.position) + self.alpha * (r1 - 0.5)
+                    agent.position = beta * (
+                        temp.position + agent.position
+                    ) + self.alpha * (r1 - 0.5)

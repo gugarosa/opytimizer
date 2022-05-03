@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class WDO(Optimizer):
@@ -31,7 +31,7 @@ class WDO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> WDO.')
+        logger.info("Overriding class: Optimizer -> WDO.")
 
         # Overrides its parent class with the receiving params
         super(WDO, self).__init__()
@@ -54,105 +54,93 @@ class WDO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def v_max(self):
-        """float: Maximum velocity.
-
-        """
+        """float: Maximum velocity."""
 
         return self._v_max
 
     @v_max.setter
     def v_max(self, v_max):
         if not isinstance(v_max, (float, int)):
-            raise e.TypeError('`v_max` should be a float or integer')
+            raise e.TypeError("`v_max` should be a float or integer")
         if v_max < 0:
-            raise e.ValueError('`v_max` should be >= 0')
+            raise e.ValueError("`v_max` should be >= 0")
 
         self._v_max = v_max
 
     @property
     def alpha(self):
-        """float: Friction coefficient.
-
-        """
+        """float: Friction coefficient."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0 or alpha > 1:
-            raise e.ValueError('`alpha` should be between 0 and 1')
+            raise e.ValueError("`alpha` should be between 0 and 1")
 
         self._alpha = alpha
 
     @property
     def g(self):
-        """float: Gravitational force coefficient.
-
-        """
+        """float: Gravitational force coefficient."""
 
         return self._g
 
     @g.setter
     def g(self, g):
         if not isinstance(g, (float, int)):
-            raise e.TypeError('`g` should be a float or integer')
+            raise e.TypeError("`g` should be a float or integer")
         if g < 0:
-            raise e.ValueError('`g` should be >= 0')
+            raise e.ValueError("`g` should be >= 0")
 
         self._g = g
 
     @property
     def c(self):
-        """float: Coriolis force.
-
-        """
+        """float: Coriolis force."""
 
         return self._c
 
     @c.setter
     def c(self, c):
         if not isinstance(c, (float, int)):
-            raise e.TypeError('`c` should be a float or integer')
+            raise e.TypeError("`c` should be a float or integer")
         if c < 0:
-            raise e.ValueError('`c` should be >= 0')
+            raise e.ValueError("`c` should be >= 0")
 
         self._c = c
 
     @property
     def RT(self):
-        """float: Pressure constant.
-
-        """
+        """float: Pressure constant."""
 
         return self._RT
 
     @RT.setter
     def RT(self, RT):
         if not isinstance(RT, (float, int)):
-            raise e.TypeError('`RT` should be a float or integer')
+            raise e.TypeError("`RT` should be a float or integer")
         if RT < 0:
-            raise e.ValueError('`RT` should be >= 0')
+            raise e.ValueError("`RT` should be >= 0")
 
         self._RT = RT
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -165,7 +153,9 @@ class WDO(Optimizer):
         """
 
         # Arrays of velocities
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def update(self, space, function):
         """Wraps Wind Driven Optimization over all agents and variables.
@@ -182,9 +172,16 @@ class WDO(Optimizer):
             index = r.generate_integer_random_number(0, len(space.agents))
 
             # Updates velocity (eq. 15)
-            self.velocity[i] = (1 - self.alpha) * self.velocity[i] - self.g * agent.position + \
-                               (self.RT * np.abs(1 / (index + 1) - 1) * (space.best_agent.position - agent.position)) + \
-                               (self.c * self.velocity[index] / (index + 1))
+            self.velocity[i] = (
+                (1 - self.alpha) * self.velocity[i]
+                - self.g * agent.position
+                + (
+                    self.RT
+                    * np.abs(1 / (index + 1) - 1)
+                    * (space.best_agent.position - agent.position)
+                )
+                + (self.c * self.velocity[index] / (index + 1))
+            )
 
             # Clips the velocity values between [-v_max, v_max]
             self.velocity = np.clip(self.velocity, -self.v_max, self.v_max)

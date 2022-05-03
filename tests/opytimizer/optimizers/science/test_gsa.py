@@ -6,7 +6,7 @@ from opytimizer.spaces import search
 
 def test_gsa_params():
     params = {
-        'G': 2.467,
+        "G": 2.467,
     }
 
     new_gsa = gsa.GSA(params=params)
@@ -18,7 +18,7 @@ def test_gsa_params_setter():
     new_gsa = gsa.GSA()
 
     try:
-        new_gsa.G = 'a'
+        new_gsa.G = "a"
     except:
         new_gsa.G = 0.1
 
@@ -31,8 +31,9 @@ def test_gsa_params_setter():
 
 
 def test_gsa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_gsa = gsa.GSA()
     new_gsa.compile(search_space)
@@ -46,8 +47,9 @@ def test_gsa_compile():
 
 
 def test_gsa_calculate_mass():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_gsa = gsa.GSA()
     new_gsa.compile(search_space)
@@ -62,8 +64,9 @@ def test_gsa_calculate_mass():
 
 
 def test_gsa_calculate_force():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_gsa = gsa.GSA()
     new_gsa.compile(search_space)
@@ -82,8 +85,9 @@ def test_gsa_calculate_force():
 
 
 def test_gsa_update():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_gsa = gsa.GSA()
     new_gsa.compile(search_space)

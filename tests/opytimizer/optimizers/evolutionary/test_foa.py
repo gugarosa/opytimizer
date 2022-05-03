@@ -6,11 +6,11 @@ from opytimizer.spaces import search
 
 def test_foa_params():
     params = {
-        'life_time': 6,
-        'area_limit': 30,
-        'LSC': 1,
-        'GSC': 1,
-        'transfer_rate': 0.1
+        "life_time": 6,
+        "area_limit": 30,
+        "LSC": 1,
+        "GSC": 1,
+        "transfer_rate": 0.1,
     }
 
     new_foa = foa.FOA(params=params)
@@ -30,7 +30,7 @@ def test_foa_params_setter():
     new_foa = foa.FOA()
 
     try:
-        new_foa.life_time = 'a'
+        new_foa.life_time = "a"
     except:
         new_foa.life_time = 6
 
@@ -44,7 +44,7 @@ def test_foa_params_setter():
     assert new_foa.life_time == 6
 
     try:
-        new_foa.area_limit = 'b'
+        new_foa.area_limit = "b"
     except:
         new_foa.area_limit = 30
 
@@ -58,7 +58,7 @@ def test_foa_params_setter():
     assert new_foa.area_limit == 30
 
     try:
-        new_foa.LSC = 'c'
+        new_foa.LSC = "c"
     except:
         new_foa.LSC = 1
 
@@ -72,7 +72,7 @@ def test_foa_params_setter():
     assert new_foa.LSC == 1
 
     try:
-        new_foa.GSC = 'd'
+        new_foa.GSC = "d"
     except:
         new_foa.GSC = 1
 
@@ -86,7 +86,7 @@ def test_foa_params_setter():
     assert new_foa.GSC == 1
 
     try:
-        new_foa.transfer_rate = 'e'
+        new_foa.transfer_rate = "e"
     except:
         new_foa.transfer_rate = 0.1
 
@@ -101,8 +101,9 @@ def test_foa_params_setter():
 
 
 def test_foa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_foa = foa.FOA()
     new_foa.compile(search_space)
@@ -119,8 +120,9 @@ def test_foa_local_seeding():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_foa = foa.FOA()
     new_foa.compile(search_space)
@@ -129,8 +131,9 @@ def test_foa_local_seeding():
 
 
 def test_foa_population_limiting():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_foa = foa.FOA()
     new_foa.compile(search_space)
@@ -151,8 +154,9 @@ def test_foa_global_seeding():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_foa = foa.FOA()
     new_foa.compile(search_space)
@@ -170,8 +174,9 @@ def test_foa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_foa = foa.FOA()
     new_foa.compile(search_space)

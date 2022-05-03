@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as ex
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SFO(Optimizer):
@@ -35,7 +35,7 @@ class SFO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SFO.')
+        logger.info("Overriding class: Optimizer -> SFO.")
 
         # Overrides its parent class with the receiving params
         super(SFO, self).__init__()
@@ -52,71 +52,63 @@ class SFO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def PP(self):
-        """float: Percentage of initial sailfishes.
-
-        """
+        """float: Percentage of initial sailfishes."""
 
         return self._PP
 
     @PP.setter
     def PP(self, PP):
         if not isinstance(PP, (float, int)):
-            raise ex.TypeError('`PP` should be a float or integer')
+            raise ex.TypeError("`PP` should be a float or integer")
         if PP < 0 or PP > 1:
-            raise ex.ValueError('`PP` should be between 0 and 1')
+            raise ex.ValueError("`PP` should be between 0 and 1")
 
         self._PP = PP
 
     @property
     def A(self):
-        """int: Attack power coefficient.
-
-        """
+        """int: Attack power coefficient."""
 
         return self._A
 
     @A.setter
     def A(self, A):
         if not isinstance(A, int):
-            raise ex.TypeError('`A` should be an integer')
+            raise ex.TypeError("`A` should be an integer")
         if A <= 0:
-            raise ex.ValueError('`A` should be > 0')
+            raise ex.ValueError("`A` should be > 0")
 
         self._A = A
 
     @property
     def e(self):
-        """float: Attack power decrease.
-
-        """
+        """float: Attack power decrease."""
 
         return self._e
 
     @e.setter
     def e(self, e):
         if not isinstance(e, (float, int)):
-            raise ex.TypeError('`e` should be a float or integer')
+            raise ex.TypeError("`e` should be a float or integer")
         if e < 0:
-            raise ex.ValueError('`e` should be >= 0')
+            raise ex.ValueError("`e` should be >= 0")
 
         self._e = e
 
     @property
     def sardines(self):
-        """list: List of sardines.
-
-        """
+        """list: List of sardines."""
 
         return self._sardines
 
     @sardines.setter
     def sardines(self, sardines):
         if not isinstance(sardines, list):
-            raise ex.TypeError('`sardines` should be a list')
+            raise ex.TypeError("`sardines` should be a list")
 
         self._sardines = sardines
 
@@ -129,8 +121,10 @@ class SFO(Optimizer):
         """
 
         # List of sardines
-        self.sardines = [self._generate_random_agent(space.best_agent)
-                         for _ in range(int(space.n_agents / self.PP))]
+        self.sardines = [
+            self._generate_random_agent(space.best_agent)
+            for _ in range(int(space.n_agents / self.PP))
+        ]
 
         # Sorts the population of sardines
         self.sardines.sort(key=lambda x: x.fit)
@@ -195,8 +189,9 @@ class SFO(Optimizer):
         r1 = r.generate_uniform_random_number()
 
         # Calculates the new position
-        new_position = best_sardine.position - lambda_i * \
-            (r1 * (best_agent.position - best_sardine.position) / 2 - agent.position)
+        new_position = best_sardine.position - lambda_i * (
+            r1 * (best_agent.position - best_sardine.position) / 2 - agent.position
+        )
 
         return new_position
 
@@ -226,7 +221,9 @@ class SFO(Optimizer):
             lambda_i = self._calculate_lambda_i(n_sailfishes, n_sardines)
 
             # Updates agent's position
-            agent.position = self._update_sailfish(agent, space.best_agent, best_sardine, lambda_i)
+            agent.position = self._update_sailfish(
+                agent, space.best_agent, best_sardine, lambda_i
+            )
 
             # Clips agent's limits
             agent.clip_by_bound()
@@ -246,12 +243,16 @@ class SFO(Optimizer):
             beta = int(n_variables * AP)
 
             # Generates a list of selected sardines
-            selected_sardines = r.generate_integer_random_number(0, n_sardines, size=alpha)
+            selected_sardines = r.generate_integer_random_number(
+                0, n_sardines, size=alpha
+            )
 
             # Iterates through every selected sardine
             for i in selected_sardines:
                 # Generates a list of selected variables
-                selected_vars = r.generate_integer_random_number(0, n_variables, size=beta)
+                selected_vars = r.generate_integer_random_number(
+                    0, n_variables, size=beta
+                )
 
                 # Iterates through every selected variable
                 for j in selected_vars:
@@ -259,8 +260,9 @@ class SFO(Optimizer):
                     r1 = r.generate_uniform_random_number()
 
                     # Updates the sardine's position (eq. 9)
-                    self.sardines[i].position[j] = r1 * \
-                        (space.best_agent.position[j] - self.sardines[i].position[j] + AP)
+                    self.sardines[i].position[j] = r1 * (
+                        space.best_agent.position[j] - self.sardines[i].position[j] + AP
+                    )
 
                 # Clips sardine's limits
                 self.sardines[i].clip_by_bound()
@@ -276,7 +278,9 @@ class SFO(Optimizer):
                 r1 = r.generate_uniform_random_number()
 
                 # Updates the sardine's position (eq. 9)
-                sardine.position = r1 * (space.best_agent.position - sardine.position + AP)
+                sardine.position = r1 * (
+                    space.best_agent.position - sardine.position + AP
+                )
 
                 # Clips sardine's limits
                 sardine.clip_by_bound()

@@ -7,10 +7,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MOA(Optimizer):
@@ -33,7 +33,7 @@ class MOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> MOA.')
+        logger.info("Overriding class: Optimizer -> MOA.")
 
         # Overrides its parent class with the receiving params
         super(MOA, self).__init__()
@@ -47,39 +47,35 @@ class MOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Particle moviment first constant.
-
-        """
+        """float: Particle moviment first constant."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def rho(self):
-        """float: Particle moviment second constant.
-
-        """
+        """float: Particle moviment second constant."""
 
         return self._rho
 
     @rho.setter
     def rho(self, rho):
         if not isinstance(rho, (float, int)):
-            raise e.TypeError('`rho` should be a float or integer')
+            raise e.TypeError("`rho` should be a float or integer")
         if rho < 0:
-            raise e.ValueError('`rho` should be >= 0')
+            raise e.ValueError("`rho` should be >= 0")
 
         self._rho = rho
 
@@ -93,7 +89,7 @@ class MOA(Optimizer):
 
         # Checks if supplied number of agents has a perfect square
         if not np.sqrt(space.n_agents).is_integer():
-            raise e.SizeError('`n_agents` should have a perfect square')
+            raise e.SizeError("`n_agents` should have a perfect square")
 
     def update(self, space):
         """Wraps Magnetic Optimization Algorithm over all agents and variables.
@@ -108,8 +104,10 @@ class MOA(Optimizer):
 
         # Gathers the best and worst agents and calculates a list of normalized fitness (eq. 2)
         best, worst = space.agents[0], space.agents[-1]
-        fitness = [(agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
-                   for agent in space.agents]
+        fitness = [
+            (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
+            for agent in space.agents
+        ]
 
         # Calculates the masses (eq. 3)
         mass = [self.alpha + self.rho * fit for fit in fitness]
@@ -130,10 +128,16 @@ class MOA(Optimizer):
             # Iterates through all neighbours
             for n in neighbours:
                 # Calculates the distance between current agent and neighbour (eq. 7)
-                distance = g.euclidean_distance(agent.position, space.agents[n].position)
+                distance = g.euclidean_distance(
+                    agent.position, space.agents[n].position
+                )
 
                 # Calculates the force between agents (eq. 5)
-                force += (space.agents[n].position - agent.position) * fitness[n] / (distance + c.EPSILON)
+                force += (
+                    (space.agents[n].position - agent.position)
+                    * fitness[n]
+                    / (distance + c.EPSILON)
+                )
 
             # Calculates the force's mean
             # This increases the performance of algorithm by eliminating addition biases

@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BSO(Optimizer):
@@ -34,7 +34,7 @@ class BSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BSO.')
+        logger.info("Overriding class: Optimizer -> BSO.")
 
         # Overrides its parent class with the receiving params
         super(BSO, self).__init__()
@@ -60,107 +60,95 @@ class BSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def m(self):
-        """int: Number of clusters.
-
-        """
+        """int: Number of clusters."""
 
         return self._m
 
     @m.setter
     def m(self, m):
         if not isinstance(m, int):
-            raise e.TypeError('`m` should be an integer')
+            raise e.TypeError("`m` should be an integer")
         if m <= 0:
-            raise e.ValueError('`m` should be > 0')
+            raise e.ValueError("`m` should be > 0")
 
         self._m = m
 
     @property
     def p_replacement_cluster(self):
-        """float: Probability of replacing a random cluster.
-
-        """
+        """float: Probability of replacing a random cluster."""
 
         return self._p_replacement_cluster
 
     @p_replacement_cluster.setter
     def p_replacement_cluster(self, p_replacement_cluster):
         if not isinstance(p_replacement_cluster, (float, int)):
-            raise e.TypeError('`p_replacement_cluster` should be a float or integer')
+            raise e.TypeError("`p_replacement_cluster` should be a float or integer")
         if p_replacement_cluster < 0 or p_replacement_cluster > 1:
-            raise e.ValueError('`p_replacement_cluster` should be between 0 and 1')
+            raise e.ValueError("`p_replacement_cluster` should be between 0 and 1")
 
         self._p_replacement_cluster = p_replacement_cluster
 
     @property
     def p_single_cluster(self):
-        """float: Probability of selecting a single cluster.
-
-        """
+        """float: Probability of selecting a single cluster."""
 
         return self._p_single_cluster
 
     @p_single_cluster.setter
     def p_single_cluster(self, p_single_cluster):
         if not isinstance(p_single_cluster, (float, int)):
-            raise e.TypeError('`p_single_cluster` should be a float or integer')
+            raise e.TypeError("`p_single_cluster` should be a float or integer")
         if p_single_cluster < 0 or p_single_cluster > 1:
-            raise e.ValueError('`p_single_cluster` should be between 0 and 1')
+            raise e.ValueError("`p_single_cluster` should be between 0 and 1")
 
         self._p_single_cluster = p_single_cluster
 
     @property
     def p_single_best(self):
-        """float: Probability of selecting the best idea from a single cluster.
-
-        """
+        """float: Probability of selecting the best idea from a single cluster."""
 
         return self._p_single_best
 
     @p_single_best.setter
     def p_single_best(self, p_single_best):
         if not isinstance(p_single_best, (float, int)):
-            raise e.TypeError('`p_single_best` should be a float or integer')
+            raise e.TypeError("`p_single_best` should be a float or integer")
         if p_single_best < 0 or p_single_best > 1:
-            raise e.ValueError('`p_single_best` should be between 0 and 1')
+            raise e.ValueError("`p_single_best` should be between 0 and 1")
 
         self._p_single_best = p_single_best
 
     @property
     def p_double_best(self):
-        """float: Probability of selecting the best idea from a pair of clusters.
-
-        """
+        """float: Probability of selecting the best idea from a pair of clusters."""
 
         return self._p_double_best
 
     @p_double_best.setter
     def p_double_best(self, p_double_best):
         if not isinstance(p_double_best, (float, int)):
-            raise e.TypeError('`p_double_best` should be a float or integer')
+            raise e.TypeError("`p_double_best` should be a float or integer")
         if p_double_best < 0 or p_double_best > 1:
-            raise e.ValueError('`p_double_best` should be between 0 and 1')
+            raise e.ValueError("`p_double_best` should be between 0 and 1")
 
         self._p_double_best = p_double_best
 
     @property
     def k(self):
-        """float: Controls the sigmoid's slope.
-
-        """
+        """float: Controls the sigmoid's slope."""
 
         return self._k
 
     @k.setter
     def k(self, k):
         if not isinstance(k, (float, int)):
-            raise e.TypeError('`k` should be a float or integer')
+            raise e.TypeError("`k` should be a float or integer")
         if k <= 0:
-            raise e.ValueError('`k` should should be > 0')
+            raise e.ValueError("`k` should should be > 0")
 
         self._k = k
 
@@ -273,15 +261,21 @@ class BSO(Optimizer):
                     # If selection should come from best cluster
                     if r3 < self.p_single_best:
                         # Updates the temporary agent's position
-                        a.position = copy.deepcopy(space.agents[best_idx_per_cluster[c]].position)
+                        a.position = copy.deepcopy(
+                            space.agents[best_idx_per_cluster[c]].position
+                        )
 
                     # If selection should come from a random agent in cluster
                     else:
                         # Gathers an index from random agent in cluster
-                        j = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c]))
+                        j = r.generate_integer_random_number(
+                            0, len(ideas_idx_per_cluster[c])
+                        )
 
                         # Updates the temporary agent's position
-                        a.position = copy.deepcopy(space.agents[ideas_idx_per_cluster[c][j]].position)
+                        a.position = copy.deepcopy(
+                            space.agents[ideas_idx_per_cluster[c][j]].position
+                        )
 
             # If random number is bigger than probability of selecting a single cluster
             else:
@@ -292,25 +286,36 @@ class BSO(Optimizer):
                     c2 = r.generate_integer_random_number(0, self.m, c1)
 
                     # If both clusters have at least one idea
-                    if len(ideas_idx_per_cluster[c1]) > 0 and len(ideas_idx_per_cluster[c2]) > 0:
+                    if (
+                        len(ideas_idx_per_cluster[c1]) > 0
+                        and len(ideas_idx_per_cluster[c2]) > 0
+                    ):
                         # Generates a new set of random numbers
                         r4 = r.generate_uniform_random_number()
 
                         # If selection should come from best clusters
                         if r4 < self.p_double_best:
                             # Updates the temporary agent's position
-                            a.position = (space.agents[best_idx_per_cluster[c1]].position + \
-                                         space.agents[best_idx_per_cluster[c2]].position) / 2
+                            a.position = (
+                                space.agents[best_idx_per_cluster[c1]].position
+                                + space.agents[best_idx_per_cluster[c2]].position
+                            ) / 2
 
                         # If selection should come from random agents in clusters
                         else:
                             # Gathers indexes from agents in clusters
-                            u = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c1]))
-                            v = r.generate_integer_random_number(0, len(ideas_idx_per_cluster[c2]))
+                            u = r.generate_integer_random_number(
+                                0, len(ideas_idx_per_cluster[c1])
+                            )
+                            v = r.generate_integer_random_number(
+                                0, len(ideas_idx_per_cluster[c2])
+                            )
 
                             # Updates the temporary agent's position
-                            a.position = (space.agents[ideas_idx_per_cluster[c1][u]].position + \
-                                         space.agents[ideas_idx_per_cluster[c2][v]].position) / 2
+                            a.position = (
+                                space.agents[ideas_idx_per_cluster[c1][u]].position
+                                + space.agents[ideas_idx_per_cluster[c2][v]].position
+                            ) / 2
 
             # Generates a random noise and activates it with a sigmoid function
             r5 = r.generate_uniform_random_number()

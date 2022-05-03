@@ -7,13 +7,14 @@ from opytimizer.utils import constant
 def pointer(x):
     return x
 
+
 assert pointer(1) == 1
 
 
 def test_constrained_function_name():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
-    assert new_constrained_function.name == 'pointer'
+    assert new_constrained_function.name == "pointer"
 
 
 def test_constrained_function_name_setter():
@@ -22,9 +23,9 @@ def test_constrained_function_name_setter():
     try:
         new_constrained_function.name = 1
     except:
-        new_constrained_function.name = 'callable'
+        new_constrained_function.name = "callable"
 
-    assert new_constrained_function.name == 'callable'
+    assert new_constrained_function.name == "callable"
 
 
 def test_constrained_function_constraints():
@@ -41,10 +42,12 @@ def test_constrained_function_constraints_setter():
 
     try:
         new_constrained_function = constrained.ConstrainedFunction(
-            pointer, constraints=c_1)
+            pointer, constraints=c_1
+        )
     except:
         new_constrained_function = constrained.ConstrainedFunction(
-            pointer, constraints=[c_1])
+            pointer, constraints=[c_1]
+        )
 
     assert len(new_constrained_function.constraints) == 1
 
@@ -59,7 +62,7 @@ def test_constrained_function_penalty_setter():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     try:
-        new_constrained_function.penalty = 'a'
+        new_constrained_function.penalty = "a"
     except:
         new_constrained_function.penalty = 1
 
@@ -74,24 +77,28 @@ def test_constrained_function_penalty_setter():
 def test_constrained_function_pointer():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
-    assert new_constrained_function.pointer.__name__ == 'pointer'
+    assert new_constrained_function.pointer.__name__ == "pointer"
 
 
 def test_constrained_function_pointer_setter():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
     try:
-        new_constrained_function.pointer = 'a'
+        new_constrained_function.pointer = "a"
     except:
         new_constrained_function.pointer = callable
 
-    assert new_constrained_function.pointer.__class__.__name__ == 'builtin_constrained_function_or_method' or 'builtin_constrained_function'
+    assert (
+        new_constrained_function.pointer.__class__.__name__
+        == "builtin_constrained_function_or_method"
+        or "builtin_constrained_function"
+    )
 
 
 def test_constrained_function_built():
     new_constrained_function = constrained.ConstrainedFunction(pointer, [])
 
-    assert new_constrained_function.built == True
+    assert new_constrained_function.built is True
 
 
 def test_constrained_function_built_setter():
@@ -99,7 +106,7 @@ def test_constrained_function_built_setter():
 
     new_constrained_function.built = False
 
-    assert new_constrained_function.built == False
+    assert new_constrained_function.built is False
 
 
 def test_constrained_call():
@@ -116,7 +123,7 @@ def test_constrained_call():
     def c_1(x):
         return x[0] + x[1] <= 0
 
-    assert c_1(np.zeros(2)) == True
+    assert c_1(np.zeros(2)) is True
 
     new_constrained_function = constrained.ConstrainedFunction(square, [c_1], 100)
 

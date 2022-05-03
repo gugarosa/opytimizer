@@ -18,8 +18,7 @@ X = digits.data
 Y = digits.target
 
 # Splits the data
-X_train, X_val, Y_train, Y_val = train_test_split(
-    X, Y, test_size=0.5, random_state=42)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.5, random_state=42)
 
 # Reshapes the data
 X_train = X_train.reshape(-1, 8, 8)
@@ -54,12 +53,10 @@ class LSTM(torch.nn.Module):
         batch_size = x.size()[1]
 
         # Variable to hold hidden state
-        h0 = Variable(torch.zeros(
-            [1, batch_size, self.n_hidden]), requires_grad=False)
+        h0 = Variable(torch.zeros([1, batch_size, self.n_hidden]), requires_grad=False)
 
         # Variable to hold cell state
-        c0 = Variable(torch.zeros(
-            [1, batch_size, self.n_hidden]), requires_grad=False)
+        c0 = Variable(torch.zeros([1, batch_size, self.n_hidden]), requires_grad=False)
 
         # Performs forward pass
         fx, _ = self.lstm.forward(x, (h0, c0))
@@ -120,7 +117,7 @@ def lstm(opytimizer):
     momentum = opytimizer[1][0]
 
     # Declares the loss function
-    loss = torch.nn.CrossEntropyLoss(reduction='mean')
+    loss = torch.nn.CrossEntropyLoss(reduction="mean")
 
     # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
@@ -139,8 +136,7 @@ def lstm(opytimizer):
             start, end = k * batch_size, (k + 1) * batch_size
 
             # Cost will be the loss accumulated from model's fitting
-            cost += fit(model, loss, opt,
-                        X_train[:, start:end, :], Y_train[start:end])
+            cost += fit(model, loss, opt, X_train[:, start:end, :], Y_train[start:end])
 
     # Predicting samples from evaluating set
     preds = predict(model, X_val)

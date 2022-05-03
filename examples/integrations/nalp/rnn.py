@@ -10,7 +10,9 @@ from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
 # Creates a character TextCorpus from file
-corpus = TextCorpus(from_file='examples/integrations/nalp/chapter1_harry.txt', corpus_type='char')
+corpus = TextCorpus(
+    from_file="examples/integrations/nalp/chapter1_harry.txt", corpus_type="char"
+)
 
 # Creating an IntegerEncoder, learning encoding and encoding tokens
 encoder = IntegerEncoder()
@@ -18,7 +20,9 @@ encoder.learn(corpus.vocab_index, corpus.index_vocab)
 encoded_tokens = encoder.encode(corpus.tokens)
 
 # Creating Language Modeling Dataset
-dataset = LanguageModelingDataset(encoded_tokens, max_contiguous_pad_length=10, batch_size=64)
+dataset = LanguageModelingDataset(
+    encoded_tokens, max_contiguous_pad_length=10, batch_size=64
+)
 
 
 def rnn(opytimizer):
@@ -27,21 +31,25 @@ def rnn(opytimizer):
     learning_rate = opytimizer[0][0]
 
     # Creates the RNN
-    rnn = RNNGenerator(vocab_size=corpus.vocab_size, embedding_size=256, hidden_size=512)
+    rnn = RNNGenerator(
+        vocab_size=corpus.vocab_size, embedding_size=256, hidden_size=512
+    )
 
     # As NALP's RNNs are stateful, we need to build it with a fixed batch size
     rnn.build((64, None))
 
     # Compiling the RNN
-    rnn.compile(optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
-                loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-                metrics=[tf.metrics.SparseCategoricalAccuracy(name='accuracy')])
+    rnn.compile(
+        optimizer=tf.optimizers.Adam(learning_rate=learning_rate),
+        loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+        metrics=[tf.metrics.SparseCategoricalAccuracy(name="accuracy")],
+    )
 
     # Fitting the RNN
     history = rnn.fit(dataset.batches, epochs=100)
 
     # Gathers last iteration's accuracy
-    acc = history.history['accuracy'][-1]
+    acc = history.history["accuracy"][-1]
 
     return 1 - acc
 

@@ -5,13 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_wdo_params():
-    params = {
-        'v_max': 0.3,
-        'alpha': 0.8,
-        'g': 0.6,
-        'c': 1.0,
-        'RT': 1.5
-    }
+    params = {"v_max": 0.3, "alpha": 0.8, "g": 0.6, "c": 1.0, "RT": 1.5}
 
     new_wdo = wdo.WDO(params=params)
 
@@ -30,7 +24,7 @@ def test_wdo_params_setter():
     new_wdo = wdo.WDO()
 
     try:
-        new_wdo.v_max = 'a'
+        new_wdo.v_max = "a"
     except:
         new_wdo.v_max = 0.1
 
@@ -42,7 +36,7 @@ def test_wdo_params_setter():
     assert new_wdo.v_max == 0.1
 
     try:
-        new_wdo.alpha = 'b'
+        new_wdo.alpha = "b"
     except:
         new_wdo.alpha = 0.8
 
@@ -54,7 +48,7 @@ def test_wdo_params_setter():
     assert new_wdo.alpha == 0.8
 
     try:
-        new_wdo.g = 'c'
+        new_wdo.g = "c"
     except:
         new_wdo.g = 0.5
 
@@ -66,7 +60,7 @@ def test_wdo_params_setter():
     assert new_wdo.g == 0.5
 
     try:
-        new_wdo.c = 'd'
+        new_wdo.c = "d"
     except:
         new_wdo.c = 0.5
 
@@ -78,7 +72,7 @@ def test_wdo_params_setter():
     assert new_wdo.c == 0.5
 
     try:
-        new_wdo.RT = 'e'
+        new_wdo.RT = "e"
     except:
         new_wdo.RT = 0.5
 
@@ -91,8 +85,9 @@ def test_wdo_params_setter():
 
 
 def test_wdo_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wdo = wdo.WDO()
     new_wdo.compile(search_space)
@@ -109,8 +104,9 @@ def test_wdo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_wdo = wdo.WDO()
     new_wdo.compile(search_space)

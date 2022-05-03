@@ -14,9 +14,7 @@ class Callback:
     """
 
     def __init__(self):
-        """Initialization method.
-
-        """
+        """Initialization method."""
 
         pass
 
@@ -63,38 +61,28 @@ class Callback:
         pass
 
     def on_evaluate_before(self, *evaluate_args):
-        """Performs a callback prior to the `evaluate` method.
-
-        """
+        """Performs a callback prior to the `evaluate` method."""
 
         pass
 
     def on_evaluate_after(self, *evaluate_args):
-        """Performs a callback after the `evaluate` method.
-
-        """
+        """Performs a callback after the `evaluate` method."""
 
         pass
 
     def on_update_before(self, *update_args):
-        """Performs a callback prior to the `update` method.
-
-        """
+        """Performs a callback prior to the `update` method."""
 
         pass
 
     def on_update_after(self, *update_args):
-        """Performs a callback after the `update` method.
-
-        """
+        """Performs a callback after the `update` method."""
 
         pass
 
 
 class CallbackVessel:
-    """Wraps multiple callbacks in an ready-to-use class.
-
-    """
+    """Wraps multiple callbacks in an ready-to-use class."""
 
     def __init__(self, callbacks):
         """Initialization method.
@@ -109,16 +97,14 @@ class CallbackVessel:
 
     @property
     def callbacks(self):
-        """Space: List of Callback-based childs.
-
-        """
+        """Space: List of Callback-based childs."""
 
         return self._callbacks
 
     @callbacks.setter
     def callbacks(self, callbacks):
         if not isinstance(callbacks, list):
-            raise e.TypeError('`callbacks` should be a list')
+            raise e.TypeError("`callbacks` should be a list")
 
         self._callbacks = callbacks
 
@@ -169,33 +155,25 @@ class CallbackVessel:
             callback.on_iteration_end(iteration, opt_model)
 
     def on_evaluate_before(self, *evaluate_args):
-        """Performs a list of callbacks prior to the `evaluate` method.
-
-        """
+        """Performs a list of callbacks prior to the `evaluate` method."""
 
         for callback in self.callbacks:
             callback.on_evaluate_before(*evaluate_args)
 
     def on_evaluate_after(self, *evaluate_args):
-        """Performs a list of callbacks after the `evaluate` method.
-
-        """
+        """Performs a list of callbacks after the `evaluate` method."""
 
         for callback in self.callbacks:
             callback.on_evaluate_after(*evaluate_args)
 
     def on_update_before(self, *update_args):
-        """Performs a list of callbacks prior to the `update` method.
-
-        """
+        """Performs a list of callbacks prior to the `update` method."""
 
         for callback in self.callbacks:
             callback.on_update_before(*update_args)
 
     def on_update_after(self, *update_args):
-        """Performs a list of callbacks after the `update` method.
-
-        """
+        """Performs a list of callbacks after the `update` method."""
 
         for callback in self.callbacks:
             callback.on_update_after(*update_args)
@@ -219,40 +197,36 @@ class CheckpointCallback(Callback):
         super(CheckpointCallback, self).__init__()
 
         # File's path
-        self.file_path = file_path or 'checkpoint.pkl'
+        self.file_path = file_path or "checkpoint.pkl"
 
         # Interval between checkpoints
         self.frequency = frequency
 
     @property
     def file_path(self):
-        """str: File's path.
-
-        """
+        """str: File's path."""
 
         return self._file_path
 
     @file_path.setter
     def file_path(self, file_path):
         if not isinstance(file_path, str):
-            raise e.TypeError('`file_path` should be a string')
+            raise e.TypeError("`file_path` should be a string")
 
         self._file_path = file_path
 
     @property
     def frequency(self):
-        """int: Interval between checkpoints.
-
-        """
+        """int: Interval between checkpoints."""
 
         return self._frequency
 
     @frequency.setter
     def frequency(self, frequency):
         if not isinstance(frequency, int):
-            raise e.TypeError('`frequency` should be an integer')
+            raise e.TypeError("`frequency` should be an integer")
         if frequency < 0:
-            raise e.ValueError('`frequency` should be >= 0')
+            raise e.ValueError("`frequency` should be >= 0")
 
         self._frequency = frequency
 
@@ -271,7 +245,7 @@ class CheckpointCallback(Callback):
             # It means that current iteration must be checkpointed
             if iteration % self.frequency == 0:
                 # Checkpoints the current model's state
-                opt_model.save(f'iter_{iteration}_{self.file_path}')
+                opt_model.save(f"iter_{iteration}_{self.file_path}")
 
 
 class DiscreteSearchCallback(Callback):
@@ -298,16 +272,14 @@ class DiscreteSearchCallback(Callback):
 
     @property
     def allowed_values(self):
-        """list: Allowed values between lower and upper bounds.
-
-        """
+        """list: Allowed values between lower and upper bounds."""
 
         return self._allowed_values
 
     @allowed_values.setter
     def allowed_values(self, allowed_values):
         if not isinstance(allowed_values, list):
-            raise e.TypeError('`allowed_values` should be a list')
+            raise e.TypeError("`allowed_values` should be a list")
 
         self._allowed_values = allowed_values
 
@@ -324,21 +296,28 @@ class DiscreteSearchCallback(Callback):
         lower_bound = opt_model.space.lb
         upper_bound = opt_model.space.ub
 
-        assert len(self.allowed_values) == n_variables, f'`allowed_values` should have length equals to {n_variables}.'
-        assert np.all([np.all((av >= lb) == (av <= ub)) for av, lb, ub in zip(self.allowed_values, lower_bound, upper_bound)]), \
-            'Every value from `allowed_values` should be between `lower_bound` and `upper_bound`.'
+        assert (
+            len(self.allowed_values) == n_variables
+        ), f"`allowed_values` should have length equals to {n_variables}."
+        assert np.all(
+            [
+                np.all((av >= lb) == (av <= ub))
+                for av, lb, ub in zip(self.allowed_values, lower_bound, upper_bound)
+            ]
+        ), "Every value from `allowed_values` should be between `lower_bound` and `upper_bound`."
 
     def on_evaluate_before(self, *evaluate_args):
-        """Performs a callback prior to the `evaluate` method.
-
-        """
+        """Performs a callback prior to the `evaluate` method."""
 
         space = evaluate_args[0]
-        assert isinstance(space, Space), '`evaluate_args[0]` is not derived from Space class.'
+        assert isinstance(
+            space, Space
+        ), "`evaluate_args[0]` is not derived from Space class."
 
         for agent in space.agents:
             for i in range(agent.n_variables):
                 # Gathers the current closest allowed value and replaces agent's value
-                min_value_idx = np.argmin(abs(agent.position[i] - self.allowed_values[i]))
+                min_value_idx = np.argmin(
+                    abs(agent.position[i] - self.allowed_values[i])
+                )
                 agent.position[i] = self.allowed_values[i][min_value_idx]
-        

@@ -13,11 +13,13 @@ def test_bh_update_position():
 
     new_bh = bh.BH()
 
-    search_space = search.SearchSpace(n_agents=20, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     cost = new_bh._update_position(
-        search_space.agents, search_space.best_agent, new_function)
+        search_space.agents, search_space.best_agent, new_function
+    )
 
     assert cost != 0
 
@@ -25,8 +27,9 @@ def test_bh_update_position():
 def test_bh_event_horizon():
     new_bh = bh.BH()
 
-    search_space = search.SearchSpace(n_agents=20, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bh._event_horizon(search_space.agents, search_space.best_agent, 10)
 
@@ -39,7 +42,8 @@ def test_bh_update():
 
     new_bh = bh.BH()
 
-    search_space = search.SearchSpace(n_agents=20, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_bh.update(search_space, square)

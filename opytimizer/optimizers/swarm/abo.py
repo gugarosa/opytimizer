@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ABO(Optimizer):
@@ -33,7 +33,7 @@ class ABO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ABO.')
+        logger.info("Overriding class: Optimizer -> ABO.")
 
         # Overrides its parent class with the receiving params
         super(ABO, self).__init__()
@@ -47,39 +47,35 @@ class ABO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def sunspot_ratio(self):
-        """float: Ratio of sunspot butterflies.
-
-        """
+        """float: Ratio of sunspot butterflies."""
 
         return self._sunspot_ratio
 
     @sunspot_ratio.setter
     def sunspot_ratio(self, sunspot_ratio):
         if not isinstance(sunspot_ratio, (float, int)):
-            raise e.TypeError('`sunspot_ratio` should be a float or integer')
+            raise e.TypeError("`sunspot_ratio` should be a float or integer")
         if sunspot_ratio < 0 or sunspot_ratio > 1:
-            raise e.ValueError('`sunspot_ratio` should be between 0 and 1')
+            raise e.ValueError("`sunspot_ratio` should be between 0 and 1")
 
         self._sunspot_ratio = sunspot_ratio
 
     @property
     def a(self):
-        """float: Free flight constant.
-
-        """
+        """float: Free flight constant."""
 
         return self._a
 
     @a.setter
     def a(self, a):
         if not isinstance(a, (float, int)):
-            raise e.TypeError('`a` should be a float or integer')
+            raise e.TypeError("`a` should be a float or integer")
         if a < 0:
-            raise e.ValueError('`a` should be >= 0')
+            raise e.ValueError("`a` should be >= 0")
 
         self._a = a
 
@@ -107,7 +103,9 @@ class ABO(Optimizer):
         temp = copy.deepcopy(agent)
 
         # Updates temporary agent's position (eq. 1)
-        temp.position[j] = agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
+        temp.position[j] = (
+            agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
+        )
 
         # Clips its limits
         temp.clip_by_bound()
@@ -146,7 +144,9 @@ class ABO(Optimizer):
             k = r.generate_integer_random_number(0, len(space.agents))
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
-            agent.position, agent.fit, _ = self._flight_mode(agent, space.agents[k], function)
+            agent.position, agent.fit, _ = self._flight_mode(
+                agent, space.agents[k], function
+            )
 
         # Iterates through all canopy butterflies
         for agent in space.agents[n_sunspots:]:
@@ -154,7 +154,9 @@ class ABO(Optimizer):
             k = r.generate_integer_random_number(0, len(space.agents) - n_sunspots)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
-            agent.position, agent.fit, is_better = self._flight_mode(agent, space.agents[k], function)
+            agent.position, agent.fit, is_better = self._flight_mode(
+                agent, space.agents[k], function
+            )
 
             # If there was not fitness replacement
             if not is_better:
@@ -171,7 +173,7 @@ class ABO(Optimizer):
                 r2 = r.generate_uniform_random_number()
 
                 # Linearly decreases `a`
-                a = (self.a - self.a * (iteration / n_iterations))
+                a = self.a - self.a * (iteration / n_iterations)
 
                 # Updates the agent's position (eq. 3)
                 agent.position = space.agents[k].position - 2 * a * r2 - a * D

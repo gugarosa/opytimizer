@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as log
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = log.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class EPO(Optimizer):
@@ -31,7 +31,7 @@ class EPO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> EPO.')
+        logger.info("Overriding class: Optimizer -> EPO.")
 
         # Overrides its parent class with the receiving params
         super(EPO, self).__init__()
@@ -45,35 +45,31 @@ class EPO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def f(self):
-        """float: Exploration control parameter.
-
-        """
+        """float: Exploration control parameter."""
 
         return self._f
 
     @f.setter
     def f(self, f):
         if not isinstance(f, (float, int)):
-            raise e.TypeError('`f` should be a float or integer')
+            raise e.TypeError("`f` should be a float or integer")
 
         self._f = f
 
     @property
     def l(self):
-        """float: Exploitation control parameter.
-
-        """
+        """float: Exploitation control parameter."""
 
         return self._l
 
     @l.setter
     def l(self, l):
         if not isinstance(l, (float, int)):
-            raise e.TypeError('`l` should be a float or integer')
+            raise e.TypeError("`l` should be a float or integer")
 
         self._l = l
 
@@ -116,7 +112,9 @@ class EPO(Optimizer):
             A = 2 * (T_p + P_grid) * r1 - T_p
 
             # Calculates the social forces of emperor penguin (eq. 12)
-            S = (np.fabs(self.f * np.exp(-iteration / self.l) - np.exp(-iteration))) ** 2
+            S = (
+                np.fabs(self.f * np.exp(-iteration / self.l) - np.exp(-iteration))
+            ) ** 2
 
             # Calculates the distance between current agent and emperor penguin (eq. 8)
             D_ep = np.fabs(S * space.best_agent.position - C * agent.position)

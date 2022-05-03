@@ -6,10 +6,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class HGSO(Optimizer):
@@ -32,7 +32,7 @@ class HGSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> HGSO.')
+        logger.info("Overriding class: Optimizer -> HGSO.")
 
         # Overrides its parent class with the receiving params
         super(HGSO, self).__init__()
@@ -61,169 +61,149 @@ class HGSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_clusters(self):
-        """int: Number of clusters.
-
-        """
+        """int: Number of clusters."""
 
         return self._n_clusters
 
     @n_clusters.setter
     def n_clusters(self, n_clusters):
         if not isinstance(n_clusters, int):
-            raise e.TypeError('`n_clusters` should be an integer')
+            raise e.TypeError("`n_clusters` should be an integer")
         if n_clusters <= 0:
-            raise e.ValueError('`n_clusters` should be > 0')
+            raise e.ValueError("`n_clusters` should be > 0")
 
         self._n_clusters = n_clusters
 
     @property
     def l1(self):
-        """float: Henry's coefficient constant.
-
-        """
+        """float: Henry's coefficient constant."""
 
         return self._l1
 
     @l1.setter
     def l1(self, l1):
         if not isinstance(l1, (float, int)):
-            raise e.TypeError('`l1` should be a float or integer')
+            raise e.TypeError("`l1` should be a float or integer")
         if l1 < 0:
-            raise e.ValueError('`l1` should be >= 0')
+            raise e.ValueError("`l1` should be >= 0")
 
         self._l1 = l1
 
     @property
     def l2(self):
-        """int: Partial pressure constant.
-
-        """
+        """int: Partial pressure constant."""
 
         return self._l2
 
     @l2.setter
     def l2(self, l2):
         if not isinstance(l2, int):
-            raise e.TypeError('`l2` should be an integer')
+            raise e.TypeError("`l2` should be an integer")
         if l2 <= 0:
-            raise e.ValueError('`l2` should be > 0')
+            raise e.ValueError("`l2` should be > 0")
 
         self._l2 = l2
 
     @property
     def l3(self):
-        """float: Constant.
-
-        """
+        """float: Constant."""
 
         return self._l3
 
     @l3.setter
     def l3(self, l3):
         if not isinstance(l3, (float, int)):
-            raise e.TypeError('`l3` should be a float or integer')
+            raise e.TypeError("`l3` should be a float or integer")
         if l3 < 0:
-            raise e.ValueError('`l3` should be >= 0')
+            raise e.ValueError("`l3` should be >= 0")
 
         self._l3 = l3
 
     @property
     def alpha(self):
-        """float: Influence of gases.
-
-        """
+        """float: Influence of gases."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Gas constant.
-
-        """
+        """float: Gas constant."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+            raise e.ValueError("`beta` should be >= 0")
 
         self._beta = beta
 
     @property
     def K(self):
-        """float: Solubility constant.
-
-        """
+        """float: Solubility constant."""
 
         return self._K
 
     @K.setter
     def K(self, K):
         if not isinstance(K, (float, int)):
-            raise e.TypeError('`K` should be a float or integer')
+            raise e.TypeError("`K` should be a float or integer")
         if K < 0:
-            raise e.ValueError('`K` should be >= 0')
+            raise e.ValueError("`K` should be >= 0")
 
         self._K = K
 
     @property
     def coefficient(self):
-        """np.array: Array of coefficients.
-
-        """
+        """np.array: Array of coefficients."""
 
         return self._coefficient
 
     @coefficient.setter
     def coefficient(self, coefficient):
         if not isinstance(coefficient, np.ndarray):
-            raise e.TypeError('`coefficient` should be a numpy array')
+            raise e.TypeError("`coefficient` should be a numpy array")
 
         self._coefficient = coefficient
 
     @property
     def pressure(self):
-        """np.array: Array of pressures.
-
-        """
+        """np.array: Array of pressures."""
 
         return self._pressure
 
     @pressure.setter
     def pressure(self, pressure):
         if not isinstance(pressure, np.ndarray):
-            raise e.TypeError('`pressure` should be a numpy array')
+            raise e.TypeError("`pressure` should be a numpy array")
 
         self._pressure = pressure
 
     @property
     def constant(self):
-        """np.array: Array of constants.
-
-        """
+        """np.array: Array of constants."""
 
         return self._constant
 
     @constant.setter
     def constant(self, constant):
         if not isinstance(constant, np.ndarray):
-            raise e.TypeError('`constant` should be a numpy array')
+            raise e.TypeError("`constant` should be a numpy array")
 
         self._constant = constant
 
@@ -239,8 +219,12 @@ class HGSO(Optimizer):
         n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
 
         # Arrays of coefficients, pressures and constants
-        self.coefficient = self.l1 * r.generate_uniform_random_number(size=self.n_clusters)
-        self.pressure = self.l2 * r.generate_uniform_random_number(size=(self.n_clusters, n_agents_per_cluster))
+        self.coefficient = self.l1 * r.generate_uniform_random_number(
+            size=self.n_clusters
+        )
+        self.pressure = self.l2 * r.generate_uniform_random_number(
+            size=(self.n_clusters, n_agents_per_cluster)
+        )
         self.constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
 
     def _update_position(self, agent, cluster_agent, best_agent, solubility):
@@ -267,9 +251,14 @@ class HGSO(Optimizer):
         r1 = r.generate_uniform_random_number()
 
         # Updates the position
-        new_position = agent.position + flag * r1 * gamma * \
-            (cluster_agent.position - agent.position) + flag * r1 * \
-            self.alpha * (solubility * best_agent.position - agent.position)
+        new_position = (
+            agent.position
+            + flag * r1 * gamma * (cluster_agent.position - agent.position)
+            + flag
+            * r1
+            * self.alpha
+            * (solubility * best_agent.position - agent.position)
+        )
 
         return new_position
 
@@ -305,7 +294,9 @@ class HGSO(Optimizer):
                 solubility = self.K * self.coefficient[i] * self.pressure[i][j]
 
                 # Updates agent's position (eq. 10)
-                agent.position = self._update_position(agent, cluster[0], space.best_agent, solubility)
+                agent.position = self._update_position(
+                    agent, cluster[0], space.best_agent, solubility
+                )
 
                 # Clips agent's limits
                 agent.clip_by_bound()

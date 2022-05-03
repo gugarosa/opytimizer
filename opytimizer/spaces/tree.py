@@ -6,10 +6,10 @@ import copy
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Agent, Node, Space
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class TreeSpace(Space):
@@ -18,8 +18,17 @@ class TreeSpace(Space):
 
     """
 
-    def __init__(self, n_agents, n_variables, lower_bound, upper_bound,
-                 n_terminals=1, min_depth=1, max_depth=3, functions=None):
+    def __init__(
+        self,
+        n_agents,
+        n_variables,
+        lower_bound,
+        upper_bound,
+        n_terminals=1,
+        min_depth=1,
+        max_depth=3,
+        functions=None,
+    ):
         """Initialization method.
 
         Args:
@@ -34,13 +43,14 @@ class TreeSpace(Space):
 
         """
 
-        logger.info('Overriding class: Space -> TreeSpace.')
+        logger.info("Overriding class: Space -> TreeSpace.")
 
         # Defines missing override arguments
         n_dimensions = 1
 
-        super(TreeSpace, self).__init__(n_agents, n_variables, n_dimensions,
-                                        lower_bound, upper_bound)
+        super(TreeSpace, self).__init__(
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+        )
 
         # Number of terminal nodes
         self.n_terminals = n_terminals
@@ -62,144 +72,132 @@ class TreeSpace(Space):
 
         self.build()
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_terminals(self):
-        """int: Number of terminal nodes.
-
-        """
+        """int: Number of terminal nodes."""
 
         return self._n_terminals
 
     @n_terminals.setter
     def n_terminals(self, n_terminals):
         if not isinstance(n_terminals, int):
-            raise e.TypeError('`n_terminals` should be an integer')
+            raise e.TypeError("`n_terminals` should be an integer")
         if n_terminals <= 0:
-            raise e.ValueError('`n_terminals` should be > 0')
+            raise e.ValueError("`n_terminals` should be > 0")
 
         self._n_terminals = n_terminals
 
     @property
     def min_depth(self):
-        """int: Minimum depth of the trees.
-
-        """
+        """int: Minimum depth of the trees."""
 
         return self._min_depth
 
     @min_depth.setter
     def min_depth(self, min_depth):
         if not isinstance(min_depth, int):
-            raise e.TypeError('`min_depth` should be an integer')
+            raise e.TypeError("`min_depth` should be an integer")
         if min_depth <= 0:
-            raise e.ValueError('`min_depth` should be > 0')
+            raise e.ValueError("`min_depth` should be > 0")
 
         self._min_depth = min_depth
 
     @property
     def max_depth(self):
-        """int: Maximum depth of the trees.
-
-        """
+        """int: Maximum depth of the trees."""
 
         return self._max_depth
 
     @max_depth.setter
     def max_depth(self, max_depth):
         if not isinstance(max_depth, int):
-            raise e.TypeError('`max_depth` should be an integer')
+            raise e.TypeError("`max_depth` should be an integer")
         if max_depth < self.min_depth:
-            raise e.ValueError('`max_depth` should be >= `min_depth`')
+            raise e.ValueError("`max_depth` should be >= `min_depth`")
 
         self._max_depth = max_depth
 
     @property
     def functions(self):
-        """list: Function nodes.
-
-        """
+        """list: Function nodes."""
 
         return self._functions
 
     @functions.setter
     def functions(self, functions):
         if not isinstance(functions, list):
-            raise e.TypeError('`functions` should be a list')
+            raise e.TypeError("`functions` should be a list")
 
         self._functions = functions
 
     @property
     def terminals(self):
-        """list: Terminals nodes.
-
-        """
+        """list: Terminals nodes."""
 
         return self._terminals
 
     @terminals.setter
     def terminals(self, terminals):
         if not isinstance(terminals, list):
-            raise e.TypeError('`terminals` should be a list')
+            raise e.TypeError("`terminals` should be a list")
 
         self._terminals = terminals
 
     @property
     def trees(self):
-        """list: Trees (derived from the Node class).
-
-        """
+        """list: Trees (derived from the Node class)."""
 
         return self._trees
 
     @trees.setter
     def trees(self, trees):
         if not isinstance(trees, list):
-            raise e.TypeError('`trees` should be a list')
+            raise e.TypeError("`trees` should be a list")
 
         self._trees = trees
 
     @property
     def best_tree(self):
-        """Node: Best tree.
-
-        """
+        """Node: Best tree."""
 
         return self._best_tree
 
     @best_tree.setter
     def best_tree(self, best_tree):
         if not isinstance(best_tree, Node):
-            raise e.TypeError('`best_tree` should be a Node')
+            raise e.TypeError("`best_tree` should be a Node")
 
         self._best_tree = best_tree
 
     def _create_terminals(self):
-        """Creates a list of terminals.
+        """Creates a list of terminals."""
 
-        """
-
-        self.terminals = [Agent(self.n_variables, self.n_dimensions,
-                                self.lb, self.ub) for _ in range(self.n_terminals)]
+        self.terminals = [
+            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub)
+            for _ in range(self.n_terminals)
+        ]
 
     def _create_trees(self):
-        """Creates a list of trees based on the GROW algorithm.
+        """Creates a list of trees based on the GROW algorithm."""
 
-        """
-
-        self.trees = [self.grow(self.min_depth, self.max_depth)
-                      for _ in range(self.n_agents)]
+        self.trees = [
+            self.grow(self.min_depth, self.max_depth) for _ in range(self.n_agents)
+        ]
 
         self.best_tree = copy.deepcopy(self.trees[0])
 
-        logger.debug('Depth: [%d, %d] | Terminals: %d | Function: %s.',
-                     self.min_depth, self.max_depth, self.n_terminals, self.functions)
+        logger.debug(
+            "Depth: [%d, %d] | Terminals: %d | Function: %s.",
+            self.min_depth,
+            self.max_depth,
+            self.n_terminals,
+            self.functions,
+        )
 
     def _initialize_agents(self):
-        """Initializes agents with their positions and defines a best agent.
-
-        """
+        """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:
             agent.fill_with_uniform()
@@ -207,9 +205,7 @@ class TreeSpace(Space):
         self.best_agent = copy.deepcopy(self.agents[0])
 
     def _initialize_terminals(self):
-        """Initializes terminals with their positions.
-
-        """
+        """Initializes terminals with their positions."""
 
         for terminal in self.terminals:
             terminal.fill_with_uniform()
@@ -238,21 +234,22 @@ class TreeSpace(Space):
             # Generates a terminal identifier
             terminal_id = r.generate_integer_random_number(0, self.n_terminals)
 
-            return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
+            return Node(terminal_id, "TERMINAL", self.terminals[terminal_id].position)
 
         # Generates a node identifier
         node_id = r.generate_integer_random_number(
-            0, len(self.functions) + self.n_terminals)
+            0, len(self.functions) + self.n_terminals
+        )
 
         # If the identifier is a terminal
         if node_id >= len(self.functions):
             # Gathers its real identifier
             terminal_id = node_id - len(self.functions)
 
-            return Node(terminal_id, 'TERMINAL', self.terminals[terminal_id].position)
+            return Node(terminal_id, "TERMINAL", self.terminals[terminal_id].position)
 
         # Generates a function node
-        function_node = Node(self.functions[node_id], 'FUNCTION')
+        function_node = Node(self.functions[node_id], "FUNCTION")
 
         # For every possible function argument
         for i in range(c.FUNCTION_N_ARGS[self.functions[node_id]]):

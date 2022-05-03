@@ -8,7 +8,11 @@ from opytimizer.spaces import SearchSpace
 
 # Creates training and testing dataset
 train = torchvision.datasets.MNIST(
-    root='./data', train=True, download=True, transform=torchvision.transforms.ToTensor())
+    root="./data",
+    train=True,
+    download=True,
+    transform=torchvision.transforms.ToTensor(),
+)
 
 
 def rbm(opytimizer):
@@ -18,8 +22,16 @@ def rbm(opytimizer):
     decay = opytimizer[2][0]
 
     # Creates an RBM
-    model = RBM(n_visible=784, n_hidden=128, steps=1, learning_rate=lr,
-                momentum=momentum, decay=decay, temperature=1, use_gpu=False)
+    model = RBM(
+        n_visible=784,
+        n_hidden=128,
+        steps=1,
+        learning_rate=lr,
+        momentum=momentum,
+        decay=decay,
+        temperature=1,
+        use_gpu=False,
+    )
 
     # Training an RBM
     error, _ = model.fit(train, batch_size=128, epochs=5)

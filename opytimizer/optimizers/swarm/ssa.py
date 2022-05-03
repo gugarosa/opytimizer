@@ -4,10 +4,10 @@
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SSA(Optimizer):
@@ -30,7 +30,7 @@ class SSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SSA.')
+        logger.info("Overriding class: Optimizer -> SSA.")
 
         # Overrides its parent class with the receiving params
         super(SSA, self).__init__()
@@ -38,7 +38,7 @@ class SSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def update(self, space, iteration, n_iterations):
         """Wraps Salp Swarm Algorithm over all agents and variables.
@@ -51,14 +51,16 @@ class SSA(Optimizer):
         """
 
         # Calculates the `c1` coefficient (eq. 3.2)
-        c1 = 2 * np.exp(-(4 * iteration / n_iterations) ** 2)
+        c1 = 2 * np.exp(-((4 * iteration / n_iterations) ** 2))
 
         # Iterates through every agent
         for i, _ in enumerate(space.agents):
             # Checks if it is the first agent
             if i == 0:
                 # Iterates through every decision variable
-                for j, (lb, ub) in enumerate(zip(space.agents[i].lb, space.agents[i].ub)):
+                for j, (lb, ub) in enumerate(
+                    zip(space.agents[i].lb, space.agents[i].ub)
+                ):
                     # Generates two uniform random numbers
                     c2 = r.generate_uniform_random_number()
                     c3 = r.generate_uniform_random_number()
@@ -66,14 +68,20 @@ class SSA(Optimizer):
                     # Checks if random number is smaller than 0.5
                     if c3 < 0.5:
                         # Updates the leading salp position (eq. 3.1 - part 1)
-                        space.agents[i].position[j] = space.best_agent.position[j] + c1 * ((ub - lb) * c2 + lb)
+                        space.agents[i].position[j] = space.best_agent.position[
+                            j
+                        ] + c1 * ((ub - lb) * c2 + lb)
 
                     # If random number is bigger or equal to 0.5
                     else:
                         # Updates the leading salp position (eq. 3.1 - part 2)
-                        space.agents[i].position[j] = space.best_agent.position[j] - c1 * ((ub - lb) * c2 + lb)
+                        space.agents[i].position[j] = space.best_agent.position[
+                            j
+                        ] - c1 * ((ub - lb) * c2 + lb)
 
             # If it is not the first agent
             else:
                 # Updates the follower salp position (eq. 3.4)
-                space.agents[i].position = 0.5 * (space.agents[i].position + space.agents[i-1].position)
+                space.agents[i].position = 0.5 * (
+                    space.agents[i].position + space.agents[i - 1].position
+                )

@@ -7,11 +7,7 @@ np.random.seed(0)
 
 
 def test_sfo_params():
-    params = {
-        'PP': 0.1,
-        'A': 4,
-        'e': 0.001
-    }
+    params = {"PP": 0.1, "A": 4, "e": 0.001}
 
     new_sfo = sfo.SFO(params=params)
 
@@ -26,7 +22,7 @@ def test_sfo_params_setter():
     new_sfo = sfo.SFO()
 
     try:
-        new_sfo.PP = 'a'
+        new_sfo.PP = "a"
     except:
         new_sfo.PP = 0.1
 
@@ -38,7 +34,7 @@ def test_sfo_params_setter():
     assert new_sfo.PP == 0.1
 
     try:
-        new_sfo.A = 'b'
+        new_sfo.A = "b"
     except:
         new_sfo.A = 4
 
@@ -50,7 +46,7 @@ def test_sfo_params_setter():
     assert new_sfo.A == 4
 
     try:
-        new_sfo.e = 'c'
+        new_sfo.e = "c"
     except:
         new_sfo.e = 0.001
 
@@ -63,8 +59,9 @@ def test_sfo_params_setter():
 
 
 def test_sfo_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=3,
-                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
+    )
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
@@ -78,20 +75,22 @@ def test_sfo_compile():
 
 
 def test_sfo_generate_random_agent():
-    search_space = search.SearchSpace(n_agents=10, n_variables=3,
-                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
+    )
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
 
     agent = new_sfo._generate_random_agent(search_space.agents[0])
 
-    assert type(agent).__name__ == 'Agent'
+    assert type(agent).__name__ == "Agent"
 
 
 def test_sfo_calculate_lambda_i():
-    search_space = search.SearchSpace(n_agents=10, n_variables=3,
-                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
+    )
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
@@ -102,14 +101,16 @@ def test_sfo_calculate_lambda_i():
 
 
 def test_sfo_update_sailfish():
-    search_space = search.SearchSpace(n_agents=10, n_variables=3,
-                                      lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
+    )
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
 
     position = new_sfo._update_sailfish(
-        search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5)
+        search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5
+    )
 
     assert position[0][0] != 0
 
@@ -118,8 +119,12 @@ def test_sfo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=5,
-                                      lower_bound=[0, 0, 0, 0, 0], upper_bound=[10, 10, 10, 10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10,
+        n_variables=5,
+        lower_bound=[0, 0, 0, 0, 0],
+        upper_bound=[10, 10, 10, 10, 10],
+    )
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)

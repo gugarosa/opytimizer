@@ -18,5 +18,5 @@ x = [1, 1]
 f = ConstrainedFunction(test_function, [c_1], 10000.0)
 
 # Prints out some properties
-print(f'x: {x}')
-print(f'f(x): {f(x)}')
+print(f"x: {x}")
+print(f"f(x): {f(x)}")

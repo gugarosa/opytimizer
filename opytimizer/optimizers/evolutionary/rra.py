@@ -9,10 +9,10 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class RRA(Optimizer):
@@ -37,7 +37,7 @@ class RRA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> RRA.')
+        logger.info("Overriding class: Optimizer -> RRA.")
 
         # Overrides its parent class with the receiving params
         super(RRA, self).__init__()
@@ -63,107 +63,95 @@ class RRA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def d_runner(self):
-        """int: Length of runners.
-
-        """
+        """int: Length of runners."""
 
         return self._d_runner
 
     @d_runner.setter
     def d_runner(self, d_runner):
         if not isinstance(d_runner, int):
-            raise e.TypeError('`d_runner` should be an integer')
+            raise e.TypeError("`d_runner` should be an integer")
         if d_runner <= 0:
-            raise e.ValueError('`d_runner` should be > 0')
+            raise e.ValueError("`d_runner` should be > 0")
 
         self._d_runner = d_runner
 
     @property
     def d_root(self):
-        """float: Length of roots.
-
-        """
+        """float: Length of roots."""
 
         return self._d_root
 
     @d_root.setter
     def d_root(self, d_root):
         if not isinstance(d_root, (float, int)):
-            raise e.TypeError('`d_root` should be a float or integer')
+            raise e.TypeError("`d_root` should be a float or integer")
         if d_root < 0:
-            raise e.ValueError('`d_root` should be >= 0')
+            raise e.ValueError("`d_root` should be >= 0")
 
         self._d_root = d_root
 
     @property
     def tol(self):
-        """float: Cost function tolerance.
-
-        """
+        """float: Cost function tolerance."""
 
         return self._tol
 
     @tol.setter
     def tol(self, tol):
         if not isinstance(tol, (float, int)):
-            raise e.TypeError('`tol` should be a float or integer')
+            raise e.TypeError("`tol` should be a float or integer")
         if tol < 0:
-            raise e.ValueError('`tol` should be >= 0')
+            raise e.ValueError("`tol` should be >= 0")
 
         self._tol = tol
 
     @property
     def max_stall(self):
-        """int: Maximum number of stalls.
-
-        """
+        """int: Maximum number of stalls."""
 
         return self._max_stall
 
     @max_stall.setter
     def max_stall(self, max_stall):
         if not isinstance(max_stall, int):
-            raise e.TypeError('`max_stall` should be an integer')
+            raise e.TypeError("`max_stall` should be an integer")
         if max_stall <= 0:
-            raise e.ValueError('`max_stall` should be > 0')
+            raise e.ValueError("`max_stall` should be > 0")
 
         self._max_stall = max_stall
 
     @property
     def n_stall(self):
-        """int: Current number of stalls.
-
-        """
+        """int: Current number of stalls."""
 
         return self._n_stall
 
     @n_stall.setter
     def n_stall(self, n_stall):
         if not isinstance(n_stall, int):
-            raise e.TypeError('`n_stall` should be an integer')
+            raise e.TypeError("`n_stall` should be an integer")
         if n_stall < 0:
-            raise e.ValueError('`n_stall` should be > 0')
+            raise e.ValueError("`n_stall` should be > 0")
         if n_stall > self.max_stall:
-            raise e.ValueError('`n_stall` should be smaller than `max_stall')
+            raise e.ValueError("`n_stall` should be smaller than `max_stall")
 
         self._n_stall = n_stall
 
     @property
     def last_best_fit(self):
-        """float: Previous best fitness value.
-
-        """
+        """float: Previous best fitness value."""
 
         return self._last_best_fit
 
     @last_best_fit.setter
     def last_best_fit(self, last_best_fit):
         if not isinstance(last_best_fit, (float, int)):
-            raise e.TypeError('`last_best_fit` should be a float or integer')
+            raise e.TypeError("`last_best_fit` should be a float or integer")
 
         self._last_best_fit = last_best_fit
 
@@ -270,7 +258,9 @@ class RRA(Optimizer):
         daughters.sort(key=lambda x: x.fit)
 
         # Checks the new positions' effectiviness (eq. 3)
-        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON))
+        effectiveness = np.fabs(
+            (self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON)
+        )
 
         # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:
@@ -295,7 +285,9 @@ class RRA(Optimizer):
             agent = copy.deepcopy(daughters[idx])
 
         # Checks again the positions' effectiviness (eq. 3)
-        effectiveness = np.fabs((self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON))
+        effectiveness = np.fabs(
+            (self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON)
+        )
 
         # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:

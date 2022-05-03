@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MRFO(Optimizer):
@@ -34,7 +34,7 @@ class MRFO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> MRFO.')
+        logger.info("Overriding class: Optimizer -> MRFO.")
 
         # Overrides its parent class with the receiving params
         super(MRFO, self).__init__()
@@ -45,22 +45,20 @@ class MRFO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def S(self):
-        """float: Somersault foraging.
-
-        """
+        """float: Somersault foraging."""
 
         return self._S
 
     @S.setter
     def S(self, S):
         if not isinstance(S, (float, int)):
-            raise e.TypeError('`S` should be a float or integer')
+            raise e.TypeError("`S` should be a float or integer")
         if S < 0:
-            raise e.ValueError('`S` should be >= 0')
+            raise e.ValueError("`S` should be >= 0")
 
         self._S = S
 
@@ -85,7 +83,11 @@ class MRFO(Optimizer):
         r3 = r.generate_uniform_random_number()
 
         # Calculates the beta constant
-        beta = 2 * np.exp(r1 * (n_iterations - iteration + 1) / n_iterations) * np.sin(2 * np.pi * r1)
+        beta = (
+            2
+            * np.exp(r1 * (n_iterations - iteration + 1) / n_iterations)
+            * np.sin(2 * np.pi * r1)
+        )
 
         # Check if current iteration proportion is smaller than random generated number
         if iteration / n_iterations < r2:
@@ -95,29 +97,43 @@ class MRFO(Optimizer):
             # For every decision variable
             for j, (lb, ub) in enumerate(zip(agents[i].lb, agents[i].ub)):
                 # Generates uniform random positions
-                r_position[j] = r.generate_uniform_random_number(lb, ub, size=agents[i].n_dimensions)
+                r_position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=agents[i].n_dimensions
+                )
 
             # Checks if the index is equal to zero
             if i == 0:
-                cyclone_foraging = r_position + r3 * (r_position - agents[i].position) + \
-                                   beta * (r_position - agents[i].position)
+                cyclone_foraging = (
+                    r_position
+                    + r3 * (r_position - agents[i].position)
+                    + beta * (r_position - agents[i].position)
+                )
 
             # If index is different than zero
             else:
-                cyclone_foraging = r_position + r3 * (agents[i - 1].position - agents[i].position) + \
-                                   beta * (r_position - agents[i].position)
+                cyclone_foraging = (
+                    r_position
+                    + r3 * (agents[i - 1].position - agents[i].position)
+                    + beta * (r_position - agents[i].position)
+                )
 
         # If current iteration proportion is bigger than random generated number
         else:
             # Checks if the index is equal to zero
             if i == 0:
-                cyclone_foraging = best_position + r3 * (best_position - agents[i].position) + \
-                                   beta * (best_position - agents[i].position)
+                cyclone_foraging = (
+                    best_position
+                    + r3 * (best_position - agents[i].position)
+                    + beta * (best_position - agents[i].position)
+                )
 
             # If index is different than zero
             else:
-                cyclone_foraging = best_position + r3 * (agents[i - 1].position - agents[i].position) + \
-                                   beta * (best_position - agents[i].position)
+                cyclone_foraging = (
+                    best_position
+                    + r3 * (agents[i - 1].position - agents[i].position)
+                    + beta * (best_position - agents[i].position)
+                )
 
         return cyclone_foraging
 
@@ -144,14 +160,20 @@ class MRFO(Optimizer):
         # Checks if the index is equal to zero
         if i == 0:
             # If yes, uses this equation
-            chain_foraging = agents[i].position + r2 * (best_position - agents[i].position) + \
-                             alpha * (best_position - agents[i].position)
+            chain_foraging = (
+                agents[i].position
+                + r2 * (best_position - agents[i].position)
+                + alpha * (best_position - agents[i].position)
+            )
 
         # If index is different than zero
         else:
             # Uses this equation
-            chain_foraging = agents[i].position + r2 * (agents[i - 1].position - agents[i].position) + \
-                             alpha * (best_position - agents[i].position)
+            chain_foraging = (
+                agents[i].position
+                + r2 * (agents[i - 1].position - agents[i].position)
+                + alpha * (best_position - agents[i].position)
+            )
 
         return chain_foraging
 
@@ -195,13 +217,16 @@ class MRFO(Optimizer):
             # If random number is smaller than 1/2
             if r1 < 0.5:
                 # Performs the cyclone foraging
-                agent.position = self._cyclone_foraging(space.agents, space.best_agent.position,
-                                                        i, iteration, n_iterations)
+                agent.position = self._cyclone_foraging(
+                    space.agents, space.best_agent.position, i, iteration, n_iterations
+                )
 
             # If random number is bigger than 1/2
             else:
                 # Performs the chain foraging
-                agent.position = self._chain_foraging(space.agents, space.best_agent.position, i)
+                agent.position = self._chain_foraging(
+                    space.agents, space.best_agent.position, i
+                )
 
             # Clips the agent's limits
             agent.clip_by_bound()
@@ -218,4 +243,6 @@ class MRFO(Optimizer):
         # Iterates through all agents
         for agent in space.agents:
             # Performs the somersault foraging
-            agent.position = self._somersault_foraging(agent.position, space.best_agent.position)
+            agent.position = self._somersault_foraging(
+                agent.position, space.best_agent.position
+            )

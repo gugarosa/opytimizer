@@ -25,8 +25,9 @@ def test_qsa_business_one():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=100, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_qsa = qsa.QSA()
 
@@ -38,8 +39,9 @@ def test_qsa_business_two():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=100, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_qsa = qsa.QSA()
 
@@ -50,8 +52,9 @@ def test_qsa_business_three():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=100, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_qsa = qsa.QSA()
 
@@ -62,8 +65,9 @@ def test_qsa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=100, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_qsa = qsa.QSA()
 

@@ -27,7 +27,7 @@ def test_n_wise():
     for _ in pairs:
         pass
 
-    assert type(pairs).__name__ == 'callable_iterator' or 'generator'
+    assert type(pairs).__name__ == "callable_iterator" or "generator"
 
 
 def test_tournament_selection():

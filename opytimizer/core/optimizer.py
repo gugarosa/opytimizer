@@ -5,9 +5,9 @@ import copy
 import time
 
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class Optimizer:
@@ -17,9 +17,7 @@ class Optimizer:
     """
 
     def __init__(self):
-        """Initialization method.
-
-        """
+        """Initialization method."""
 
         # Algorithm's name
         self.algorithm = self.__class__.__name__
@@ -32,46 +30,40 @@ class Optimizer:
 
     @property
     def algorithm(self):
-        """str: Algorithm's name.
-
-        """
+        """str: Algorithm's name."""
 
         return self._algorithm
 
     @algorithm.setter
     def algorithm(self, algorithm):
         if not isinstance(algorithm, str):
-            raise e.TypeError('`algorithm` should be a string')
+            raise e.TypeError("`algorithm` should be a string")
 
         self._algorithm = algorithm
 
     @property
     def built(self):
-        """bool: Indicates whether the optimizer is built.
-
-        """
+        """bool: Indicates whether the optimizer is built."""
 
         return self._built
 
     @built.setter
     def built(self, built):
         if not isinstance(built, bool):
-            raise e.TypeError('`built` should be a boolean')
+            raise e.TypeError("`built` should be a boolean")
 
         self._built = built
 
     @property
     def params(self):
-        """dict: Key-value parameters.
-
-        """
+        """dict: Key-value parameters."""
 
         return self._params
 
     @params.setter
     def params(self, params):
         if not isinstance(params, dict):
-            raise e.TypeError('`params` should be a dictionary')
+            raise e.TypeError("`params` should be a dictionary")
 
         self._params = params
 
@@ -94,8 +86,12 @@ class Optimizer:
         self.built = True
 
         # Logs the properties
-        logger.debug('Algorithm: %s | Custom Parameters: %s | Built: %s.',
-                     self.algorithm, str(params), self.built)
+        logger.debug(
+            "Algorithm: %s | Custom Parameters: %s | Built: %s.",
+            self.algorithm,
+            str(params),
+            self.built,
+        )
 
     def compile(self, space):
         """Compiles additional information that is used by this optimizer.

@@ -30,4 +30,6 @@ function = Function(Sphere())
 opt = Opytimizer(space, optimizer, function, save_agents=False)
 
 # Runs the optimization task
-opt.start(n_iterations=5, callbacks=[DiscreteSearchCallback(allowed_values=allowed_values)])
+opt.start(
+    n_iterations=5, callbacks=[DiscreteSearchCallback(allowed_values=allowed_values)]
+)

@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class CEM(Optimizer):
@@ -43,69 +43,61 @@ class CEM(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_updates(self):
-        """int: Number of positions to employ in update formulae.
-
-        """
+        """int: Number of positions to employ in update formulae."""
 
         return self._n_updates
 
     @n_updates.setter
     def n_updates(self, n_updates):
         if not isinstance(n_updates, int):
-            raise e.TypeError('`n_updates` should be an integer')
+            raise e.TypeError("`n_updates` should be an integer")
         if n_updates <= 0:
-            raise e.ValueError('`n_updates` should be > 0')
+            raise e.ValueError("`n_updates` should be > 0")
 
         self._n_updates = n_updates
 
     @property
     def alpha(self):
-        """float: Learning rate.
-
-        """
+        """float: Learning rate."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def mean(self):
-        """np.array: Array of means.
-
-        """
+        """np.array: Array of means."""
 
         return self._mean
 
     @mean.setter
     def mean(self, mean):
         if not isinstance(mean, np.ndarray):
-            raise e.TypeError('`mean` should be a numpy array')
+            raise e.TypeError("`mean` should be a numpy array")
 
         self._mean = mean
 
     @property
     def std(self):
-        """np.array: Array of standard deviations.
-
-        """
+        """np.array: Array of standard deviations."""
 
         return self._std
 
     @std.setter
     def std(self, std):
         if not isinstance(std, np.ndarray):
-            raise e.TypeError('`std` should be a numpy array')
+            raise e.TypeError("`std` should be a numpy array")
 
         self._std = std
 
@@ -141,7 +133,9 @@ class CEM(Optimizer):
             # Iterate through all decision variables
             for j, (m, s) in enumerate(zip(self.mean, self.std)):
                 # For each decision variable, we generate gaussian numbers based on mean and std
-                agent.position[j] = r.generate_gaussian_random_number(m, s, agent.n_dimensions)
+                agent.position[j] = r.generate_gaussian_random_number(
+                    m, s, agent.n_dimensions
+                )
 
             # Clips the agent limits
             agent.clip_by_bound()
@@ -177,7 +171,9 @@ class CEM(Optimizer):
         """
 
         # Calculates the new standard deviation based on update formula
-        new_std = self.alpha * self.std + (1 - self.alpha) * np.sqrt(np.mean((updates - self.mean) ** 2))
+        new_std = self.alpha * self.std + (1 - self.alpha) * np.sqrt(
+            np.mean((updates - self.mean) ** 2)
+        )
 
         return new_std
 
@@ -197,7 +193,9 @@ class CEM(Optimizer):
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the update positions
-        update_position = np.array([agent.position for agent in space.agents[:self.n_updates]])
+        update_position = np.array(
+            [agent.position for agent in space.agents[: self.n_updates]]
+        )
 
         # Updates its mean and standard deviation
         self.mean = self._update_mean(update_position)

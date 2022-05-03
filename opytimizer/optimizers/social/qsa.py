@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class QSA(Optimizer):
@@ -34,7 +34,7 @@ class QSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> QSA.')
+        logger.info("Overriding class: Optimizer -> QSA.")
 
         # Overrides its parent class with the receiving params
         super(QSA, self).__init__()
@@ -42,7 +42,7 @@ class QSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _calculate_queue(self, n_agents, t_1, t_2, t_3):
         """Calculates the number of agents that belongs to each queue.
@@ -93,7 +93,11 @@ class QSA(Optimizer):
         agents.sort(key=lambda x: x.fit)
 
         # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
-        A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
+        A_1, A_2, A_3 = (
+            copy.deepcopy(agents[0]),
+            copy.deepcopy(agents[1]),
+            copy.deepcopy(agents[2]),
+        )
 
         # Calculates the number of agents in each queue
         q_1, q_2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
@@ -140,7 +144,9 @@ class QSA(Optimizer):
             alpha = r.generate_uniform_random_number(-1, 1)
 
             # Generates an Erlang distribution
-            E = r.generate_gamma_random_number(1, 0.5, (agent.n_variables, agent.n_dimensions))
+            E = r.generate_gamma_random_number(
+                1, 0.5, (agent.n_variables, agent.n_dimensions)
+            )
 
             # If case is defined as one
             if case == 1:
@@ -148,8 +154,9 @@ class QSA(Optimizer):
                 e = r.generate_gamma_random_number(1, 0.5, 1)
 
                 # Calculates the fluctuation (eq. 6)
-                F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + \
-                    e * (A.position - a.position)
+                F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (
+                    A.position - a.position
+                )
 
                 # Updates the temporary agent's position (eq. 4)
                 a.position = A.position + F_1
@@ -209,7 +216,11 @@ class QSA(Optimizer):
         agents.sort(key=lambda x: x.fit)
 
         # Copies temporary agents to represent `A_1`, `A_2` and `A_3`
-        A_1, A_2, A_3 = copy.deepcopy(agents[0]), copy.deepcopy(agents[1]), copy.deepcopy(agents[2])
+        A_1, A_2, A_3 = (
+            copy.deepcopy(agents[0]),
+            copy.deepcopy(agents[1]),
+            copy.deepcopy(agents[2]),
+        )
 
         # Calculates the number of agents in each queue
         q_1, q_2, _ = self._calculate_queue(len(agents), A_1.fit, A_2.fit, A_3.fit)
@@ -313,7 +324,9 @@ class QSA(Optimizer):
                     e = r.generate_gamma_random_number(1, 0.5, 1)
 
                     # Updates temporary agent's position (eq. 17)
-                    a.position[j] = A_1.position[j] + e * (A_2.position[j] - a.position[j])
+                    a.position[j] = A_1.position[j] + e * (
+                        A_2.position[j] - a.position[j]
+                    )
 
                 # Evaluates the agent
                 a.fit = function(a.position)
@@ -336,7 +349,9 @@ class QSA(Optimizer):
         """
 
         # Calculates the range of fluctuation.
-        beta = np.exp(np.log(1 / (iteration + c.EPSILON)) * np.sqrt(iteration / n_iterations))
+        beta = np.exp(
+            np.log(1 / (iteration + c.EPSILON)) * np.sqrt(iteration / n_iterations)
+        )
 
         # Performs the first business phase
         self._business_one(space.agents, function, beta)

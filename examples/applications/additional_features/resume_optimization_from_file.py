@@ -34,5 +34,5 @@ del opt
 
 # Loads the task from file and resumes it
 # Note that the following lines achieves the same results as a 35-iteration running
-opt = Opytimizer.load('iter_10_checkpoint.pkl')
+opt = Opytimizer.load("iter_10_checkpoint.pkl")
 opt.start(n_iterations=25)

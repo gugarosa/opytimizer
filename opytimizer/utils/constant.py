@@ -18,16 +18,16 @@ LIGHT_SPEED = 3e5
 # When using Genetic Programming, each function node needs an unique number of arguments,
 # which is defined by this dictionary
 FUNCTION_N_ARGS = {
-    'SUM': 2,
-    'SUB': 2,
-    'MUL': 2,
-    'DIV': 2,
-    'EXP': 1,
-    'SQRT': 1,
-    'LOG': 1,
-    'ABS': 1,
-    'SIN': 1,
-    'COS': 1
+    "SUM": 2,
+    "SUB": 2,
+    "MUL": 2,
+    "DIV": 2,
+    "EXP": 1,
+    "SQRT": 1,
+    "LOG": 1,
+    "ABS": 1,
+    "SIN": 1,
+    "COS": 1,
 }
 
 # Test passes if the best solution found by the agent in the target function

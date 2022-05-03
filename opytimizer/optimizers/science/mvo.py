@@ -6,10 +6,10 @@ import numpy as np
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MVO(Optimizer):
@@ -48,58 +48,52 @@ class MVO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def WEP_min(self):
-        """float: Minimum Wormhole Existence Probability.
-
-        """
+        """float: Minimum Wormhole Existence Probability."""
 
         return self._WEP_min
 
     @WEP_min.setter
     def WEP_min(self, WEP_min):
         if not isinstance(WEP_min, (float, int)):
-            raise e.TypeError('`WEP_min` should be a float or integer')
-        if (WEP_min < 0 or WEP_min > 1):
-            raise e.ValueError('`WEP_min` should be >= 0 and < 1')
+            raise e.TypeError("`WEP_min` should be a float or integer")
+        if WEP_min < 0 or WEP_min > 1:
+            raise e.ValueError("`WEP_min` should be >= 0 and < 1")
 
         self._WEP_min = WEP_min
 
     @property
     def WEP_max(self):
-        """float: Maximum Wormhole Existence Probability.
-
-        """
+        """float: Maximum Wormhole Existence Probability."""
 
         return self._WEP_max
 
     @WEP_max.setter
     def WEP_max(self, WEP_max):
         if not isinstance(WEP_max, (float, int)):
-            raise e.TypeError('`WEP_max` should be a float or integer')
-        if (WEP_max < 0 or WEP_max > 1):
-            raise e.ValueError('`WEP_max` should be >= 0 and < 1')
+            raise e.TypeError("`WEP_max` should be a float or integer")
+        if WEP_max < 0 or WEP_max > 1:
+            raise e.ValueError("`WEP_max` should be >= 0 and < 1")
         if WEP_max < self.WEP_min:
-            raise e.ValueError('`WEP_max` should be >= `WEP_min`')
+            raise e.ValueError("`WEP_max` should be >= `WEP_min`")
 
         self._WEP_max = WEP_max
 
     @property
     def p(self):
-        """float: Exploitation accuracy.
-
-        """
+        """float: Exploitation accuracy."""
 
         return self._p
 
     @p.setter
     def p(self, p):
         if not isinstance(p, (float, int)):
-            raise e.TypeError('`p` should be a float or integer')
+            raise e.TypeError("`p` should be a float or integer")
         if p < 0:
-            raise e.ValueError('`p` should be >= 0')
+            raise e.ValueError("`p` should be >= 0")
 
         self._p = p
 
@@ -115,7 +109,9 @@ class MVO(Optimizer):
         """
 
         # Calculates the Wormhole Existence Probability
-        WEP = self.WEP_min + (iteration + 1) * ((self.WEP_max - self.WEP_min) / n_iterations)
+        WEP = self.WEP_min + (iteration + 1) * (
+            (self.WEP_max - self.WEP_min) / n_iterations
+        )
 
         # Calculates the Travelling Distance Rate
         TDR = 1 - ((iteration + 1) ** (1 / self.p) / n_iterations ** (1 / self.p))

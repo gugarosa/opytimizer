@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class SCA(Optimizer):
@@ -31,7 +31,7 @@ class SCA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> SCA.')
+        logger.info("Overriding class: Optimizer -> SCA.")
 
         # Overrides its parent class with the receiving params
         super(SCA, self).__init__()
@@ -48,58 +48,52 @@ class SCA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def r_min(self):
-        """float: Minimum function range.
-
-        """
+        """float: Minimum function range."""
 
         return self._r_min
 
     @r_min.setter
     def r_min(self, r_min):
         if not isinstance(r_min, (float, int)):
-            raise e.TypeError('`r_min` should be a float or integer')
+            raise e.TypeError("`r_min` should be a float or integer")
         if r_min < 0:
-            raise e.ValueError('`r_min` should be >= 0')
+            raise e.ValueError("`r_min` should be >= 0")
 
         self._r_min = r_min
 
     @property
     def r_max(self):
-        """float: Maximum function range.
-
-        """
+        """float: Maximum function range."""
 
         return self._r_max
 
     @r_max.setter
     def r_max(self, r_max):
         if not isinstance(r_max, (float, int)):
-            raise e.TypeError('`r_max` should be a float or integer')
+            raise e.TypeError("`r_max` should be a float or integer")
         if r_max < 0:
-            raise e.ValueError('`r_max` should be >= 0')
+            raise e.ValueError("`r_max` should be >= 0")
         if r_max < self.r_min:
-            raise e.ValueError('`r_max` should be >= `r_min`')
+            raise e.ValueError("`r_max` should be >= `r_min`")
 
         self._r_max = r_max
 
     @property
     def a(self):
-        """float: Loudness parameter.
-
-        """
+        """float: Loudness parameter."""
 
         return self._a
 
     @a.setter
     def a(self, a):
         if not isinstance(a, (float, int)):
-            raise e.TypeError('`a` should be a float or integer')
+            raise e.TypeError("`a` should be a float or integer")
         if a < 0:
-            raise e.ValueError('`a` should be >= 0')
+            raise e.ValueError("`a` should be >= 0")
 
         self._a = a
 
@@ -122,12 +116,16 @@ class SCA(Optimizer):
         # If random number is smaller than threshold
         if r4 < 0.5:
             # Updates the position using sine
-            new_position = agent_position + r1 * np.sin(r2) * np.fabs(r3 * best_position - agent_position)
+            new_position = agent_position + r1 * np.sin(r2) * np.fabs(
+                r3 * best_position - agent_position
+            )
 
         # If the random number is bigger than threshold
         else:
             # Updates the posistion using cosine
-            new_position = agent_position + r1 * np.cos(r2) * np.fabs(r3 * best_position - agent_position)
+            new_position = agent_position + r1 * np.cos(r2) * np.fabs(
+                r3 * best_position - agent_position
+            )
 
         return new_position
 
@@ -156,5 +154,6 @@ class SCA(Optimizer):
         # Iterates through all agents
         for agent in space.agents:
             # Updates agent's position
-            agent.position = self._update_position(agent.position, space.best_agent.position,
-                                                   r1, r2, r3, r4)
+            agent.position = self._update_position(
+                agent.position, space.best_agent.position, r1, r2, r3, r4
+            )

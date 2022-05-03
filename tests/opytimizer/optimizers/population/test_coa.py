@@ -7,9 +7,7 @@ np.random.seed(0)
 
 
 def test_coa_params():
-    params = {
-        'n_p': 2
-    }
+    params = {"n_p": 2}
 
     new_coa = coa.COA(params=params)
 
@@ -20,7 +18,7 @@ def test_coa_params_setter():
     new_coa = coa.COA()
 
     try:
-        new_coa.n_p = 'a'
+        new_coa.n_p = "a"
     except:
         new_coa.n_p = 2
 
@@ -35,14 +33,15 @@ def test_coa_params_setter():
 
 
 def test_coa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_coa = coa.COA()
     new_coa.compile(search_space)
 
     try:
-        new_coa.n_c = 'a'
+        new_coa.n_c = "a"
     except:
         new_coa.n_c = 1
 
@@ -57,8 +56,9 @@ def test_coa_compile():
 
 
 def test_coa_get_agents_from_pack():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_coa = coa.COA()
     new_coa.compile(search_space)
@@ -73,8 +73,9 @@ def test_coa_get_agents_from_pack():
 
 
 def test_coa_transition_packs():
-    search_space = search.SearchSpace(n_agents=200, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=200, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_coa = coa.COA()
     new_coa.compile(search_space)
@@ -86,8 +87,9 @@ def test_coa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_coa = coa.COA()
     new_coa.compile(search_space)

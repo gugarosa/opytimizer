@@ -35,6 +35,7 @@ def test_weighted_call():
     assert cube(2) == 8
 
     new_weighted = weighted.MultiObjectiveWeightedFunction(
-        functions=[square, cube], weights=[0.5, 0.5])
+        functions=[square, cube], weights=[0.5, 0.5]
+    )
 
     assert new_weighted(2) == 6

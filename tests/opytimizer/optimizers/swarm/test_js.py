@@ -7,11 +7,7 @@ np.random.seed(0)
 
 
 def test_js_params():
-    params = {
-        'eta': 4.0,
-        'beta': 3.0,
-        'gamma': 0.1
-    }
+    params = {"eta": 4.0, "beta": 3.0, "gamma": 0.1}
 
     new_js = js.JS(params=params)
 
@@ -26,7 +22,7 @@ def test_js_params_setter():
     new_js = js.JS()
 
     try:
-        new_js.eta = 'a'
+        new_js.eta = "a"
     except:
         new_js.eta = 4.0
 
@@ -38,7 +34,7 @@ def test_js_params_setter():
     assert new_js.eta == 4.0
 
     try:
-        new_js.beta = 'b'
+        new_js.beta = "b"
     except:
         new_js.beta = 2.0
 
@@ -50,7 +46,7 @@ def test_js_params_setter():
     assert new_js.beta == 3.0
 
     try:
-        new_js.gamma = 'c'
+        new_js.gamma = "c"
     except:
         new_js.gamma = 0.1
 
@@ -63,24 +59,27 @@ def test_js_params_setter():
 
 
 def test_js_initialize_chaotic_map():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js._initialize_chaotic_map(search_space.agents)
 
 
 def test_js_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js.compile(search_space)
 
 
 def test_js_ocean_current():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js.compile(search_space)
@@ -91,8 +90,9 @@ def test_js_ocean_current():
 
 
 def test_js_motion_a():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js.compile(search_space)
@@ -103,8 +103,9 @@ def test_js_motion_a():
 
 
 def test_js_motion_b():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js.compile(search_space)
@@ -115,8 +116,9 @@ def test_js_motion_b():
 
 
 def test_js_update():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_js = js.JS()
     new_js.compile(search_space)
@@ -125,8 +127,9 @@ def test_js_update():
 
 
 def test_nbjs_motion_a():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_nbjs = js.NBJS()
     new_nbjs.compile(search_space)

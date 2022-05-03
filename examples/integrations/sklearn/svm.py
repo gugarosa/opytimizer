@@ -15,12 +15,13 @@ digits = load_digits()
 X = digits.data
 Y = digits.target
 
+
 def _svm(opytimizer):
     # Gathers params
     C = opytimizer[0][0]
 
     # Instanciating an SVC class
-    svc = svm.SVC(C=C, kernel='linear')
+    svc = svm.SVC(C=C, kernel="linear")
 
     # Creates a cross-validation holder
     k_fold = KFold(n_splits=5)

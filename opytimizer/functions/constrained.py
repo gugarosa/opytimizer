@@ -2,16 +2,14 @@
 """
 
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Function
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ConstrainedFunction(Function):
-    """A ConstrainedFunction class used to hold constrained single-objective functions.
-
-    """
+    """A ConstrainedFunction class used to hold constrained single-objective functions."""
 
     def __init__(self, pointer, constraints, penalty=0.0):
         """Initialization method.
@@ -23,7 +21,7 @@ class ConstrainedFunction(Function):
 
         """
 
-        logger.info('Overriding class: Function -> ConstrainedFunction.')
+        logger.info("Overriding class: Function -> ConstrainedFunction.")
 
         super(ConstrainedFunction, self).__init__(pointer)
 
@@ -33,39 +31,34 @@ class ConstrainedFunction(Function):
         # Penalization factor
         self.penalty = penalty
 
-        logger.debug('Constraints: %s | Penalty: %s.',
-                     self.constraints, self.penalty)
-        logger.info('Class overrided.')
+        logger.debug("Constraints: %s | Penalty: %s.", self.constraints, self.penalty)
+        logger.info("Class overrided.")
 
     @property
     def constraints(self):
-        """list: Constraints to be applied to the fitness function.
-
-        """
+        """list: Constraints to be applied to the fitness function."""
 
         return self._constraints
 
     @constraints.setter
     def constraints(self, constraints):
         if not isinstance(constraints, list):
-            raise e.TypeError('`constraints` should be a list')
+            raise e.TypeError("`constraints` should be a list")
 
         self._constraints = constraints
 
     @property
     def penalty(self):
-        """float: Penalization factor.
-
-        """
+        """float: Penalization factor."""
 
         return self._penalty
 
     @penalty.setter
     def penalty(self, penalty):
         if not isinstance(penalty, (float, int)):
-            raise e.TypeError('`penalty` should be a float or integer')
+            raise e.TypeError("`penalty` should be a float or integer")
         if penalty < 0:
-            raise e.ValueError('`penalty` should be >= 0')
+            raise e.ValueError("`penalty` should be >= 0")
 
         self._penalty = penalty
 

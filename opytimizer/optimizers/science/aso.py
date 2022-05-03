@@ -6,10 +6,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ASO(Optimizer):
@@ -33,7 +33,7 @@ class ASO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ASO.')
+        logger.info("Overriding class: Optimizer -> ASO.")
 
         # Overrides its parent class with the receiving params
         super(ASO, self).__init__()
@@ -47,52 +47,46 @@ class ASO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Depth weight.
-
-        """
+        """float: Depth weight."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Multiplier weight.
-
-        """
+        """float: Multiplier weight."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0 or beta > 1:
-            raise e.ValueError('`beta` should be between 0 and 1')
+            raise e.ValueError("`beta` should be between 0 and 1")
 
         self._beta = beta
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -105,7 +99,9 @@ class ASO(Optimizer):
         """
 
         # Arrays of velocities
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def _calculate_mass(self, agents):
         """Calculates the atoms' masses (eq. 17 and 18).
@@ -126,11 +122,18 @@ class ASO(Optimizer):
         best = agents[0].fit
 
         # Calculates the total fitness
-        total_fit = np.sum([np.exp(-(agent.fit - best) / (worst - best + c.EPSILON)) for agent in agents])
+        total_fit = np.sum(
+            [
+                np.exp(-(agent.fit - best) / (worst - best + c.EPSILON))
+                for agent in agents
+            ]
+        )
 
         # Calculates the masses
-        mass = [np.exp(-(agent.fit - best) / (worst - best +
-                                              c.EPSILON)) / total_fit for agent in agents]
+        mass = [
+            np.exp(-(agent.fit - best) / (worst - best + c.EPSILON)) / total_fit
+            for agent in agents
+        ]
 
         return mass
 
@@ -178,12 +181,18 @@ class ASO(Optimizer):
 
         # Calculates the potential
         coef = (1 - iteration / n_iterations) ** 3
-        potential = coef * (12 * (-rs) ** (-13) - 6 * (-rs) ** (-7)) * \
-            r1 * ((K_agent.position - agent.position) / (radius + c.EPSILON))
+        potential = (
+            coef
+            * (12 * (-rs) ** (-13) - 6 * (-rs) ** (-7))
+            * r1
+            * ((K_agent.position - agent.position) / (radius + c.EPSILON))
+        )
 
         return potential
 
-    def _calculate_acceleration(self, agents, best_agent, mass, iteration, n_iterations):
+    def _calculate_acceleration(
+        self, agents, best_agent, mass, iteration, n_iterations
+    ):
         """Calculates the atoms' acceleration.
 
         Args:
@@ -199,7 +208,9 @@ class ASO(Optimizer):
         """
 
         # Instantiates an array of accelerations
-        acceleration = np.zeros((len(agents), best_agent.n_variables, best_agent.n_dimensions))
+        acceleration = np.zeros(
+            (len(agents), best_agent.n_variables, best_agent.n_dimensions)
+        )
 
         # Calculates the gravitational force
         G = np.exp(-20.0 * iteration / n_iterations)
@@ -208,7 +219,9 @@ class ASO(Optimizer):
         K = int(len(agents) - (len(agents) - 2) * np.sqrt(iteration / n_iterations))
 
         # Sorts agents according to their masses
-        K_agents, _ = map(list, zip(*sorted(zip(agents, mass), key=lambda x: x[1], reverse=True)[:K]))
+        K_agents, _ = map(
+            list, zip(*sorted(zip(agents, mass), key=lambda x: x[1], reverse=True)[:K])
+        )
 
         # Calculates the average position
         average = np.mean([agent.position for agent in K_agents])
@@ -221,11 +234,15 @@ class ASO(Optimizer):
             # Iterates through every neighbour agent
             for K_agent in K_agents:
                 # Sums up the current potential to the total one
-                total_potential += self._calculate_potential(agent, K_agent, average, iteration, n_iterations)
+                total_potential += self._calculate_potential(
+                    agent, K_agent, average, iteration, n_iterations
+                )
 
             # Finally, calculates the acceleration (eq. 16)
-            acceleration[i] = G * self.alpha * total_potential + \
-                self.beta * (best_agent.position - agent.position) / mass[i]
+            acceleration[i] = (
+                G * self.alpha * total_potential
+                + self.beta * (best_agent.position - agent.position) / mass[i]
+            )
 
         return acceleration
 
@@ -243,8 +260,9 @@ class ASO(Optimizer):
         mass = self._calculate_mass(space.agents)
 
         # Calculates the acceleration (eq. 16)
-        acceleration = self._calculate_acceleration(space.agents, space.best_agent, mass,
-                                                    iteration, n_iterations)
+        acceleration = self._calculate_acceleration(
+            space.agents, space.best_agent, mass, iteration, n_iterations
+        )
 
         # Iterates through all agents
         for i, agent in enumerate(space.agents):

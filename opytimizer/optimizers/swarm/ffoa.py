@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class FFOA(Optimizer):
@@ -34,7 +34,7 @@ class FFOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> FFOA.')
+        logger.info("Overriding class: Optimizer -> FFOA.")
 
         # Overrides its parent class with the receiving params
         super(FFOA, self).__init__()
@@ -42,35 +42,31 @@ class FFOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def x_axis(self):
-        """list: `x` axis.
-
-        """
+        """list: `x` axis."""
 
         return self._x_axis
 
     @x_axis.setter
     def x_axis(self, x_axis):
         if not isinstance(x_axis, list):
-            raise e.TypeError('`x_axis` should be a list')
+            raise e.TypeError("`x_axis` should be a list")
 
         self._x_axis = x_axis
 
     @property
     def y_axis(self):
-        """list: `y` axis.
-
-        """
+        """list: `y` axis."""
 
         return self._y_axis
 
     @y_axis.setter
     def y_axis(self, y_axis):
         if not isinstance(y_axis, list):
-            raise e.TypeError('`y_axis` should be a list')
+            raise e.TypeError("`y_axis` should be a list")
 
         self._y_axis = y_axis
 
@@ -106,7 +102,7 @@ class FFOA(Optimizer):
             y = y_axis.position + r2
 
             # Calculates the distance between axis (eq. 3 - top)
-            distance = np.sqrt(x ** 2 + y ** 2)
+            distance = np.sqrt(x**2 + y**2)
 
             # Calculates the smell's position (eq. 3 - bottom)
             s = 1 / (distance + c.EPSILON)

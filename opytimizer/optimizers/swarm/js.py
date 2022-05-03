@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class JS(Optimizer):
@@ -31,7 +31,7 @@ class JS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> JS.')
+        logger.info("Overriding class: Optimizer -> JS.")
 
         # Overrides its parent class with the receiving params
         super(JS, self).__init__()
@@ -48,56 +48,50 @@ class JS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def eta(self):
-        """float: Chaotic map coefficient.
-
-        """
+        """float: Chaotic map coefficient."""
 
         return self._eta
 
     @eta.setter
     def eta(self, eta):
         if not isinstance(eta, (float, int)):
-            raise e.TypeError('`eta` should be a float or integer')
+            raise e.TypeError("`eta` should be a float or integer")
         if eta <= 0:
-            raise e.ValueError('`eta` should be > 0')
+            raise e.ValueError("`eta` should be > 0")
 
         self._eta = eta
 
     @property
     def beta(self):
-        """float: Distribution coeffiecient.
-
-        """
+        """float: Distribution coeffiecient."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0:
-            raise e.ValueError('`beta` should be > 0')
+            raise e.ValueError("`beta` should be > 0")
 
         self._beta = beta
 
     @property
     def gamma(self):
-        """float: Motion coeffiecient.
-
-        """
+        """float: Motion coeffiecient."""
 
         return self._gamma
 
     @gamma.setter
     def gamma(self, gamma):
         if not isinstance(gamma, (float, int)):
-            raise e.TypeError('`gamma` should be a float or integer')
+            raise e.TypeError("`gamma` should be a float or integer")
         if gamma <= 0:
-            raise e.ValueError('`gamma` should be > 0')
+            raise e.ValueError("`gamma` should be > 0")
 
         self._gamma = gamma
 
@@ -116,14 +110,20 @@ class JS(Optimizer):
                 # Iterates through all decision variables
                 for j in range(agent.n_variables):
                     # Calculates its position with a random uniform number
-                    agent.position[j] = r.generate_uniform_random_number(size=agent.n_dimensions)
+                    agent.position[j] = r.generate_uniform_random_number(
+                        size=agent.n_dimensions
+                    )
 
             # If it is not the first agent
             else:
                 # Iterates through all decision variables
                 for j in range(agent.n_variables):
                     # Calculates its position using logistic chaotic map (eq. 18)
-                    agent.position[j] = self.eta * agents[i-1].position[j] * (1 - agents[i-1].position[j])
+                    agent.position[j] = (
+                        self.eta
+                        * agents[i - 1].position[j]
+                        * (1 - agents[i - 1].position[j])
+                    )
 
     def compile(self, space):
         """Compiles additional information that is used by this optimizer.
@@ -279,12 +279,12 @@ class NBJS(JS):
 
         """
 
-        logger.info('Overriding class: JS -> NBJS.')
+        logger.info("Overriding class: JS -> NBJS.")
 
         # Overrides its parent class with the receiving params
         super(NBJS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _motion_a(self, lb, ub):
         """Calculates type A motion.

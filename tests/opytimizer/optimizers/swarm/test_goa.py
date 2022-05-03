@@ -7,12 +7,7 @@ np.random.seed(0)
 
 
 def test_goa_params():
-    params = {
-        'c_min': 0.00001,
-        'c_max': 1.0,
-        'f': 0.5,
-        'l': 1.5
-    }
+    params = {"c_min": 0.00001, "c_max": 1.0, "f": 0.5, "l": 1.5}
 
     new_goa = goa.GOA(params=params)
 
@@ -29,7 +24,7 @@ def test_goa_params_setter():
     new_goa = goa.GOA()
 
     try:
-        new_goa.c_min = 'a'
+        new_goa.c_min = "a"
     except:
         new_goa.c_min = 0.00001
 
@@ -41,7 +36,7 @@ def test_goa_params_setter():
     assert new_goa.c_min == 0.00001
 
     try:
-        new_goa.c_max = 'b'
+        new_goa.c_max = "b"
     except:
         new_goa.c_max = 2.0
 
@@ -53,7 +48,7 @@ def test_goa_params_setter():
     assert new_goa.c_max == 1.0
 
     try:
-        new_goa.f = 'c'
+        new_goa.f = "c"
     except:
         new_goa.f = 0.5
 
@@ -65,7 +60,7 @@ def test_goa_params_setter():
     assert new_goa.f == 0.5
 
     try:
-        new_goa.l = 'd'
+        new_goa.l = "d"
     except:
         new_goa.l = 1.5
 
@@ -91,7 +86,8 @@ def test_goa_update():
 
     new_goa = goa.GOA()
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_goa.update(search_space, square, 1, 10)

@@ -12,7 +12,7 @@ def test_opytimizer_space():
 
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
-    assert type(new_opytimizer.space).__name__ == 'SearchSpace'
+    assert type(new_opytimizer.space).__name__ == "SearchSpace"
 
 
 def test_opytimizer_space_setter():
@@ -29,7 +29,7 @@ def test_opytimizer_space_setter():
         space.built = True
         new_opytimizer.space = space
 
-    assert type(new_opytimizer.space).__name__ == 'SearchSpace'
+    assert type(new_opytimizer.space).__name__ == "SearchSpace"
 
 
 def test_opytimizer_optimizer():
@@ -39,7 +39,7 @@ def test_opytimizer_optimizer():
 
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
-    assert type(new_opytimizer.optimizer).__name__ == 'PSO'
+    assert type(new_opytimizer.optimizer).__name__ == "PSO"
 
 
 def test_opytimizer_optimizer_setter():
@@ -56,7 +56,7 @@ def test_opytimizer_optimizer_setter():
         optimizer.built = True
         new_opytimizer.optimizer = optimizer
 
-    assert type(new_opytimizer.optimizer).__name__ == 'PSO'
+    assert type(new_opytimizer.optimizer).__name__ == "PSO"
 
 
 def test_opytimizer_function():
@@ -66,7 +66,7 @@ def test_opytimizer_function():
 
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
-    assert type(new_opytimizer.function).__name__ == 'Function'
+    assert type(new_opytimizer.function).__name__ == "Function"
 
 
 def test_opytimizer_function_setter():
@@ -83,7 +83,7 @@ def test_opytimizer_function_setter():
         func.built = True
         new_opytimizer.function = func
 
-    assert type(new_opytimizer.function).__name__ == 'Function'
+    assert type(new_opytimizer.function).__name__ == "Function"
 
 
 def test_opytimizer_history():
@@ -93,7 +93,7 @@ def test_opytimizer_history():
 
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
-    assert type(new_opytimizer.history).__name__ == 'History'
+    assert type(new_opytimizer.history).__name__ == "History"
 
 
 def test_opytimizer_history_setter():
@@ -109,7 +109,7 @@ def test_opytimizer_history_setter():
     except:
         new_opytimizer.history = hist
 
-    assert type(new_opytimizer.history).__name__ == 'History'
+    assert type(new_opytimizer.history).__name__ == "History"
 
 
 def test_opytimizer_iteration():
@@ -130,7 +130,7 @@ def test_opytimizer_iterations_setter():
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
     try:
-        new_opytimizer.iteration = 'a'
+        new_opytimizer.iteration = "a"
     except:
         new_opytimizer.iteration = 0
 
@@ -162,7 +162,7 @@ def test_opytimizer_total_iterations_setter():
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
     try:
-        new_opytimizer.total_iterations = 'a'
+        new_opytimizer.total_iterations = "a"
     except:
         new_opytimizer.total_iterations = 0
 
@@ -235,10 +235,10 @@ def test_opytimizer_save():
 
     new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
 
-    new_opytimizer.save('out.pkl')
+    new_opytimizer.save("out.pkl")
 
 
 def test_opytimizer_load():
-    new_opytimizer = opytimizer.Opytimizer.load('out.pkl')
+    new_opytimizer = opytimizer.Opytimizer.load("out.pkl")
 
-    assert type(new_opytimizer).__name__ == 'Opytimizer'
+    assert type(new_opytimizer).__name__ == "Opytimizer"

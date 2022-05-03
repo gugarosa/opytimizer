@@ -11,10 +11,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Agent, Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class Lion(Agent):
@@ -23,7 +23,9 @@ class Lion(Agent):
 
     """
 
-    def __init__(self, n_variables, n_dimensions, lower_bound, upper_bound, position, fit):
+    def __init__(
+        self, n_variables, n_dimensions, lower_bound, upper_bound, position, fit
+    ):
         """Initialization method.
 
         Args:
@@ -63,95 +65,83 @@ class Lion(Agent):
 
     @property
     def best_position(self):
-        """np.array: N-dimensional array of best positions.
-
-        """
+        """np.array: N-dimensional array of best positions."""
 
         return self._best_position
 
     @best_position.setter
     def best_position(self, best_position):
         if not isinstance(best_position, np.ndarray):
-            raise e.TypeError('`best_position` should be a numpy array')
+            raise e.TypeError("`best_position` should be a numpy array")
 
         self._best_position = best_position
 
     @property
     def p_fit(self):
-        """float: Previous fitness value.
-
-        """
+        """float: Previous fitness value."""
 
         return self._p_fit
 
     @p_fit.setter
     def p_fit(self, p_fit):
         if not isinstance(p_fit, (float, int, np.int32, np.int64)):
-            raise e.TypeError('`p_fit` should be a float or integer')
+            raise e.TypeError("`p_fit` should be a float or integer")
 
         self._p_fit = p_fit
 
     @property
     def nomad(self):
-        """bool: Whether lion is nomad or not.
-
-        """
+        """bool: Whether lion is nomad or not."""
 
         return self._nomad
 
     @nomad.setter
     def nomad(self, nomad):
         if not isinstance(nomad, bool):
-            raise e.TypeError('`nomad` should be a boolean')
+            raise e.TypeError("`nomad` should be a boolean")
 
         self._nomad = nomad
 
     @property
     def female(self):
-        """bool: Whether lion is female or not.
-
-        """
+        """bool: Whether lion is female or not."""
 
         return self._female
 
     @female.setter
     def female(self, female):
         if not isinstance(female, bool):
-            raise e.TypeError('`female` should be a boolean')
+            raise e.TypeError("`female` should be a boolean")
 
         self._female = female
 
     @property
     def pride(self):
-        """int: Index of pride.
-
-        """
+        """int: Index of pride."""
 
         return self._pride
 
     @pride.setter
     def pride(self, pride):
         if not isinstance(pride, int):
-            raise e.TypeError('`pride` should be an integer')
+            raise e.TypeError("`pride` should be an integer")
         if pride < 0:
-            raise e.ValueError('`pride` should be > 0')
+            raise e.ValueError("`pride` should be > 0")
 
         self._pride = pride
 
     @property
     def group(self):
-        """int: Index of hunting group.
-
-        """
+        """int: Index of hunting group."""
 
         return self._group
 
     @group.setter
     def group(self, group):
         if not isinstance(group, int):
-            raise e.TypeError('`group` should be an integer')
+            raise e.TypeError("`group` should be an integer")
         if group < 0:
-            raise e.ValueError('`group` should be > 0')
+            raise e.ValueError("`group` should be > 0")
 
         self._group = group
 
@@ -176,7 +166,7 @@ class LOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> LOA.')
+        logger.info("Overriding class: Optimizer -> LOA.")
 
         # Overrides its parent class with the receiving params
         super(LOA, self).__init__()
@@ -205,124 +195,110 @@ class LOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def N(self):
-        """float: Percentage of nomad lions.
-
-        """
+        """float: Percentage of nomad lions."""
 
         return self._N
 
     @N.setter
     def N(self, N):
         if not isinstance(N, (float, int)):
-            raise e.TypeError('`N` should be a float or integer')
+            raise e.TypeError("`N` should be a float or integer")
         if N < 0 or N > 1:
-            raise e.ValueError('`N` should be between 0 and 1')
+            raise e.ValueError("`N` should be between 0 and 1")
 
         self._N = N
 
     @property
     def P(self):
-        """int: Number of prides.
-
-        """
+        """int: Number of prides."""
 
         return self._P
 
     @P.setter
     def P(self, P):
         if not isinstance(P, int):
-            raise e.TypeError('`P` should be an integer')
+            raise e.TypeError("`P` should be an integer")
         if P <= 0:
-            raise e.ValueError('`P` should be > 0')
+            raise e.ValueError("`P` should be > 0")
 
         self._P = P
 
     @property
     def S(self):
-        """float: Percentage of female lions.
-
-        """
+        """float: Percentage of female lions."""
 
         return self._S
 
     @S.setter
     def S(self, S):
         if not isinstance(S, (float, int)):
-            raise e.TypeError('`S` should be a float or integer')
+            raise e.TypeError("`S` should be a float or integer")
         if S < 0 or S > 1:
-            raise e.ValueError('`S` should be between 0 and 1')
+            raise e.ValueError("`S` should be between 0 and 1")
 
         self._S = S
 
     @property
     def R(self):
-        """float: Percentage of roaming lions.
-
-        """
+        """float: Percentage of roaming lions."""
 
         return self._R
 
     @R.setter
     def R(self, R):
         if not isinstance(R, (float, int)):
-            raise e.TypeError('`R` should be a float or integer')
+            raise e.TypeError("`R` should be a float or integer")
         if R < 0 or R > 1:
-            raise e.ValueError('`R` should be between 0 and 1')
+            raise e.ValueError("`R` should be between 0 and 1")
 
         self._R = R
 
     @property
     def I(self):
-        """float: Immigrate rate.
-
-        """
+        """float: Immigrate rate."""
 
         return self._I
 
     @I.setter
     def I(self, I):
         if not isinstance(I, (float, int)):
-            raise e.TypeError('`I` should be a float or integer')
+            raise e.TypeError("`I` should be a float or integer")
         if I < 0 or I > 1:
-            raise e.ValueError('`I` should be between 0 and 1')
+            raise e.ValueError("`I` should be between 0 and 1")
 
         self._I = I
 
     @property
     def Ma(self):
-        """float: Mating probability.
-
-        """
+        """float: Mating probability."""
 
         return self._Ma
 
     @Ma.setter
     def Ma(self, Ma):
         if not isinstance(Ma, (float, int)):
-            raise e.TypeError('`Ma` should be a float or integer')
+            raise e.TypeError("`Ma` should be a float or integer")
         if Ma < 0 or Ma > 1:
-            raise e.ValueError('`Ma` should be between 0 and 1')
+            raise e.ValueError("`Ma` should be between 0 and 1")
 
         self._Ma = Ma
 
     @property
     def Mu(self):
-        """float: Mutation probability.
-
-        """
+        """float: Mutation probability."""
 
         return self._Mu
 
     @Mu.setter
     def Mu(self, Mu):
         if not isinstance(Mu, (float, int)):
-            raise e.TypeError('`Mu` should be a float or integer')
+            raise e.TypeError("`Mu` should be a float or integer")
         if Mu < 0 or Mu > 1:
-            raise e.ValueError('`Mu` should be between 0 and 1')
+            raise e.ValueError("`Mu` should be between 0 and 1")
 
         self._Mu = Mu
 
@@ -335,8 +311,17 @@ class LOA(Optimizer):
         """
 
         # Replaces the current agents with a derived Lion structure
-        space.agents = [Lion(agent.n_variables, agent.n_dimensions, agent.lb,
-                             agent.ub, agent.position, agent.fit) for agent in space.agents]
+        space.agents = [
+            Lion(
+                agent.n_variables,
+                agent.n_dimensions,
+                agent.lb,
+                agent.ub,
+                agent.position,
+                agent.fit,
+            )
+            for agent in space.agents
+        ]
 
         # Calculates the number of nomad lions and their genders
         n_nomad = int(self.N * space.n_agents)
@@ -351,7 +336,9 @@ class LOA(Optimizer):
             agent.female = bool(nomad_gender[i])
 
         # Calculates the gender of pride lions
-        pride_gender = d.generate_bernoulli_distribution(self.S, space.n_agents - n_nomad)
+        pride_gender = d.generate_bernoulli_distribution(
+            self.S, space.n_agents - n_nomad
+        )
 
         # Iterates through all possible prides
         for i, agent in enumerate(space.agents[n_nomad:]):
@@ -421,7 +408,9 @@ class LOA(Optimizer):
             third_group = np.sum([agent.fit for agent in pride if agent.group == 3])
 
             # Averages the position of the prey (lions in group 0)
-            prey = np.mean([agent.position for agent in pride if agent.group == 0], axis=0)
+            prey = np.mean(
+                [agent.position for agent in pride if agent.group == 0], axis=0
+            )
 
             # Calculates the group indexes and their corresponding
             # positions: center, left and right
@@ -440,11 +429,13 @@ class LOA(Optimizer):
                         if agent.position[j] < prey[j]:
                             # Updates its position (eq. 5 - top)
                             agent.position[j] = r.generate_uniform_random_number(
-                                agent.position[j], prey[j])
+                                agent.position[j], prey[j]
+                            )
                         else:
                             # Updates its position (eq. 5 - bottom)
                             agent.position[j] = r.generate_uniform_random_number(
-                                prey[j], agent.position[j])
+                                prey[j], agent.position[j]
+                            )
 
                 # If agent belongs to the left or right groups
                 if agent.group in [left, right]:
@@ -457,11 +448,13 @@ class LOA(Optimizer):
                         if encircling < prey[j]:
                             # Updates its position (eq. 4 - top)
                             agent.position[j] = r.generate_uniform_random_number(
-                                encircling, prey[j])
+                                encircling, prey[j]
+                            )
                         else:
                             # Updates its position (eq. 4 - bottom)
                             agent.position[j] = r.generate_uniform_random_number(
-                                prey[j], encircling)
+                                prey[j], encircling
+                            )
 
                 # Clips their limits
                 agent.clip_by_bound()
@@ -522,8 +515,9 @@ class LOA(Optimizer):
                     R2 = R2.T - R2.dot(R1) * R1 / (np.linalg.norm(R1) ** 2 + c.EPSILON)
 
                     # Updates agent's position (eq. 6)
-                    agent.position += 2 * distance * rand * R1 + \
-                                      u * np.tan(theta) * distance * R2
+                    agent.position += (
+                        2 * distance * rand * R1 + u * np.tan(theta) * distance * R2
+                    )
 
     def _roaming(self, prides, function):
         """Performs the roaming procedure (s. 2.2.4).
@@ -552,7 +546,9 @@ class LOA(Optimizer):
                         theta = r.generate_uniform_random_number(-np.pi / 6, np.pi / 6)
 
                         # Calculates the distance between selected lion and current one
-                        distance = g.euclidean_distance(pride[s].best_position, agent.position)
+                        distance = g.euclidean_distance(
+                            pride[s].best_position, agent.position
+                        )
 
                         # Generates the step (eq. 10)
                         step = r.generate_uniform_random_number(0, 2 * distance)
@@ -705,11 +701,13 @@ class LOA(Optimizer):
 
             # Gathers the new pride by merging pride's females, cub's females,
             # cub's males and non-beaten pride's males
-            new_pride = pride_female + cub_female + cub_male + pride_male[:-len(cub_male)]
+            new_pride = (
+                pride_female + cub_female + cub_male + pride_male[: -len(cub_male)]
+            )
             new_prides.append(new_pride)
 
             # Gathers the new nomads
-            nomads += pride_male[-len(cub_male):]
+            nomads += pride_male[-len(cub_male) :]
 
         return nomads, new_prides
 
@@ -731,7 +729,9 @@ class LOA(Optimizer):
             best_fit = nomads[0].fit
 
             # Calculates the roaming probability (eq. 12)
-            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON))
+            prob = 0.1 + np.minimum(
+                0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON)
+            )
 
             # Generates a random number
             r1 = r.generate_uniform_random_number()
@@ -741,7 +741,9 @@ class LOA(Optimizer):
                 # Iterates through all decision variables
                 for j in range(agent.n_variables):
                     # Updates the agent's position (eq. 11 - bottom)
-                    agent.position[j] = r.generate_uniform_random_number(agent.lb[j], agent.ub[j])
+                    agent.position[j] = r.generate_uniform_random_number(
+                        agent.lb[j], agent.ub[j]
+                    )
 
             # Clip the agent's limits
             agent.clip_by_bound()
@@ -830,7 +832,9 @@ class LOA(Optimizer):
                             # If current nomad agent is better than male in pride
                             if agent.fit < males[0].fit:
                                 # Swaps them
-                                agent, males[0] = copy.deepcopy(males[0]), copy.deepcopy(agent)
+                                agent, males[0] = copy.deepcopy(
+                                    males[0]
+                                ), copy.deepcopy(agent)
 
         return nomads, prides
 
@@ -855,7 +859,9 @@ class LOA(Optimizer):
             n_migrating = int(len(pride) * self.I)
 
             # Selects `n_migrating` lions
-            selected = r.generate_integer_random_number(high=len(pride), size=n_migrating)
+            selected = r.generate_integer_random_number(
+                high=len(pride), size=n_migrating
+            )
 
             # Iterates through selected pride lions
             for s in selected:
@@ -869,7 +875,9 @@ class LOA(Optimizer):
                     nomads.append(n)
 
             # Appends non-selected lions to the new pride positions
-            new_prides.append([agent for i, agent in enumerate(pride) if i not in selected])
+            new_prides.append(
+                [agent for i, agent in enumerate(pride) if i not in selected]
+            )
 
         return nomads, new_prides
 
@@ -931,7 +939,9 @@ class LOA(Optimizer):
         """
 
         # Gathers the amount of males per pride
-        males_prides = [len([agent for agent in pride if not agent.female]) for pride in prides]
+        males_prides = [
+            len([agent for agent in pride if not agent.female]) for pride in prides
+        ]
 
         # Iterates through all prides
         for males_per_pride, pride in zip(males_prides, prides):
@@ -986,4 +996,5 @@ class LOA(Optimizer):
 
         # Updates the prides
         space.agents[correct_nomad_size:] = copy.deepcopy(
-            list(itertools.chain.from_iterable(prides)))
+            list(itertools.chain.from_iterable(prides))
+        )

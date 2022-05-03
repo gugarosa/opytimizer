@@ -6,10 +6,10 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class PVS(Optimizer):
@@ -32,7 +32,7 @@ class PVS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> PVS.')
+        logger.info("Overriding class: Optimizer -> PVS.")
 
         # Overrides its parent class with the receiving params
         super(PVS, self).__init__()
@@ -40,7 +40,7 @@ class PVS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def update(self, space, function):
         """Wraps Passing Vehicle Search over all agents and variables.
@@ -96,14 +96,12 @@ class PVS(Optimizer):
                     Vco = V1 / (V1 - V3)
 
                     # Updates the temporary agent's position accordingly (eq. 20)
-                    a.position += Vco * rnd * \
-                        (a.position - space.agents[R[1]].position)
+                    a.position += Vco * rnd * (a.position - space.agents[R[1]].position)
 
                 # If difference between `y` gaps is smaller than `x1`
                 else:
                     # Updates the temporary agent's position accordingly (eq. 21)
-                    a.position += rnd * \
-                        (a.position - space.agents[R[0]].position)
+                    a.position += rnd * (a.position - space.agents[R[0]].position)
 
             # If third agent's velocity is bigger than first agent's velocity
             else:

@@ -6,9 +6,9 @@ from opytimizer.spaces import search
 
 def test_sca_params():
     params = {
-        'r_min': 0,
-        'r_max': 2,
-        'a': 3,
+        "r_min": 0,
+        "r_max": 2,
+        "a": 3,
     }
 
     new_sca = sca.SCA(params=params)
@@ -24,7 +24,7 @@ def test_sca_params_setter():
     new_sca = sca.SCA()
 
     try:
-        new_sca.r_min = 'a'
+        new_sca.r_min = "a"
     except:
         new_sca.r_min = 0.1
 
@@ -36,7 +36,7 @@ def test_sca_params_setter():
     assert new_sca.r_min == 0.1
 
     try:
-        new_sca.r_max = 'b'
+        new_sca.r_max = "b"
     except:
         new_sca.r_max = 2
 
@@ -53,7 +53,7 @@ def test_sca_params_setter():
     assert new_sca.r_max == 2
 
     try:
-        new_sca.a = 'c'
+        new_sca.a = "c"
     except:
         new_sca.a = 0.5
 
@@ -74,8 +74,9 @@ def test_sca_update_position():
 
 
 def test_sca_update():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_sca = sca.SCA()
 

@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ABC(Optimizer):
@@ -35,7 +35,7 @@ class ABC(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ABC.')
+        logger.info("Overriding class: Optimizer -> ABC.")
 
         # Overrides its parent class with the receiving params
         super(ABC, self).__init__()
@@ -46,37 +46,33 @@ class ABC(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_trials(self):
-        """int: Number of trial limits.
-
-        """
+        """int: Number of trial limits."""
 
         return self._n_trials
 
     @n_trials.setter
     def n_trials(self, n_trials):
         if not isinstance(n_trials, int):
-            raise e.TypeError('`n_trials` should be an integer')
+            raise e.TypeError("`n_trials` should be an integer")
         if n_trials <= 0:
-            raise e.ValueError('`n_trials` should be > 0')
+            raise e.ValueError("`n_trials` should be > 0")
 
         self._n_trials = n_trials
 
     @property
     def trial(self):
-        """np.array: Array of trial.
-
-        """
+        """np.array: Array of trial."""
 
         return self._trial
 
     @trial.setter
     def trial(self, trial):
         if not isinstance(trial, np.ndarray):
-            raise e.TypeError('`trial` should be a numpy array')
+            raise e.TypeError("`trial` should be a numpy array")
 
         self._trial = trial
 

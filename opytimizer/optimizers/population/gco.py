@@ -9,10 +9,10 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GCO(Optimizer):
@@ -47,69 +47,61 @@ class GCO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def CR(self):
-        """float: Cross-ratio parameter.
-
-        """
+        """float: Cross-ratio parameter."""
 
         return self._CR
 
     @CR.setter
     def CR(self, CR):
         if not isinstance(CR, (float, int)):
-            raise e.TypeError('`CR` should be a float or integer')
+            raise e.TypeError("`CR` should be a float or integer")
         if CR < 0 or CR > 1:
-            raise e.ValueError('`CR` should be between 0 and 1')
+            raise e.ValueError("`CR` should be between 0 and 1")
 
         self._CR = CR
 
     @property
     def F(self):
-        """float: Mutation factor.
-
-        """
+        """float: Mutation factor."""
 
         return self._F
 
     @F.setter
     def F(self, F):
         if not isinstance(F, (float, int)):
-            raise e.TypeError('`F` should be a float or integer')
+            raise e.TypeError("`F` should be a float or integer")
         if F < 0:
-            raise e.ValueError('`F` should be >= 0')
+            raise e.ValueError("`F` should be >= 0")
 
         self._F = F
 
     @property
     def life(self):
-        """np.array: Array of lives.
-
-        """
+        """np.array: Array of lives."""
 
         return self._life
 
     @life.setter
     def life(self, life):
         if not isinstance(life, np.ndarray):
-            raise e.TypeError('`life` should be a numpy array')
+            raise e.TypeError("`life` should be a numpy array")
 
         self._life = life
 
     @property
     def counter(self):
-        """np.array: Array of counters.
-
-        """
+        """np.array: Array of counters."""
 
         return self._counter
 
     @counter.setter
     def counter(self, counter):
         if not isinstance(counter, np.ndarray):
-            raise e.TypeError('`counter` should be a numpy array')
+            raise e.TypeError("`counter` should be a numpy array")
 
         self._counter = counter
 
@@ -150,7 +142,9 @@ class GCO(Optimizer):
             # If random number is smaller than cross-ratio
             if r2 < self.CR:
                 # Updates the cell position
-                a.position[j] = alpha.position[j] + self.F * (beta.position[j] - gamma.position[j])
+                a.position[j] = alpha.position[j] + self.F * (
+                    beta.position[j] - gamma.position[j]
+                )
 
         return a
 
@@ -179,7 +173,9 @@ class GCO(Optimizer):
                 self.counter[i] = 1
 
             # Generates the counting distribution and pick three cells
-            C = d.generate_choice_distribution(len(agents), self.counter / np.sum(self.counter), size=3)
+            C = d.generate_choice_distribution(
+                len(agents), self.counter / np.sum(self.counter), size=3
+            )
 
             # Mutates a new cell based on current and pre-picked cells
             a = self._mutate_cell(agent, agents[C[0]], agents[C[1]], agents[C[2]])

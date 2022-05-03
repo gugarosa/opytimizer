@@ -5,10 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_aso_params():
-    params = {
-        'alpha': 50.0,
-        'beta': 0.2
-    }
+    params = {"alpha": 50.0, "beta": 0.2}
 
     new_aso = aso.ASO(params=params)
 
@@ -21,12 +18,12 @@ def test_aso_params_setter():
     new_aso = aso.ASO()
 
     try:
-        new_aso.alpha = 'a'
+        new_aso.alpha = "a"
     except:
         new_aso.alpha = 50.0
 
     try:
-        new_aso.beta = 'b'
+        new_aso.beta = "b"
     except:
         new_aso.beta = 0.2
 
@@ -39,8 +36,9 @@ def test_aso_params_setter():
 
 
 def test_aso_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)
@@ -54,8 +52,9 @@ def test_aso_compile():
 
 
 def test_aso_calculate_mass():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)
@@ -66,31 +65,36 @@ def test_aso_calculate_mass():
 
 
 def test_aso_calculate_potential():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)
 
     new_aso._calculate_potential(
-        search_space.agents[0], search_space.agents[1], np.array([1]), 1, 10)
+        search_space.agents[0], search_space.agents[1], np.array([1]), 1, 10
+    )
 
 
 def test_aso_calculate_acceleration():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)
 
     mass = new_aso._calculate_mass(search_space.agents)
     new_aso._calculate_acceleration(
-        search_space.agents, search_space.best_agent, mass, 1, 10)
+        search_space.agents, search_space.best_agent, mass, 1, 10
+    )
 
 
 def test_aso_update():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)

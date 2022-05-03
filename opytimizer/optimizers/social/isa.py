@@ -9,10 +9,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ISA(Optimizer):
@@ -36,7 +36,7 @@ class ISA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> ISA.')
+        logger.info("Overriding class: Optimizer -> ISA.")
 
         # Overrides its parent class with the receiving params
         super(ISA, self).__init__()
@@ -50,69 +50,61 @@ class ISA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def w(self):
-        """float: Inertia weight.
-
-        """
+        """float: Inertia weight."""
 
         return self._w
 
     @w.setter
     def w(self, w):
         if not isinstance(w, (float, int)):
-            raise e.TypeError('`w` should be a float or integer')
+            raise e.TypeError("`w` should be a float or integer")
         if w < 0:
-            raise e.ValueError('`w` should be >= 0')
+            raise e.ValueError("`w` should be >= 0")
 
         self._w = w
 
     @property
     def tau(self):
-        """float: Tendency factor.
-
-        """
+        """float: Tendency factor."""
 
         return self._tau
 
     @tau.setter
     def tau(self, tau):
         if not isinstance(tau, (float, int)):
-            raise e.TypeError('`tau` should be a float or integer')
+            raise e.TypeError("`tau` should be a float or integer")
         if tau < 0:
-            raise e.ValueError('`tau` should be >= 0')
+            raise e.ValueError("`tau` should be >= 0")
 
         self._tau = tau
 
     @property
     def local_position(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._local_position
 
     @local_position.setter
     def local_position(self, local_position):
         if not isinstance(local_position, np.ndarray):
-            raise e.TypeError('`local_position` should be a numpy array')
+            raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -125,8 +117,12 @@ class ISA(Optimizer):
         """
 
         # Arrays of local positions and velocities
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
@@ -173,12 +169,16 @@ class ISA(Optimizer):
         best, worst = space.agents[0], space.agents[-1]
 
         # Calculates the coefficient and weighted coefficient and weighted particle (eq. 1.2)
-        coef = [(best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON)
-                for agent in space.agents]
+        coef = [
+            (best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON)
+            for agent in space.agents
+        ]
         w_coef = [cf / (np.sum(coef) + c.EPSILON) for cf in coef]
 
         # Calculates weighted particle position and fitness (eq. 1.1)
-        w_position = np.sum([cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0)
+        w_position = np.sum(
+            [cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0
+        )
         w_fit = function(w_position)
 
         # Iterates through all agents
@@ -195,10 +195,12 @@ class ISA(Optimizer):
                 phi1 = -(phi2 + phi3) * r.generate_uniform_random_number()
 
                 # Updates the agent's velocity (eq. 6.1)
-                self.velocity[i] = self.w * self.velocity[i] + \
-                    phi1 * (self.local_position[idx] - agent.position) + \
-                    phi2 * (space.best_agent.position - self.local_position[idx]) + \
-                    phi3 * (w_position - self.local_position[idx])
+                self.velocity[i] = (
+                    self.w * self.velocity[i]
+                    + phi1 * (self.local_position[idx] - agent.position)
+                    + phi2 * (space.best_agent.position - self.local_position[idx])
+                    + phi3 * (w_position - self.local_position[idx])
+                )
 
             # If random number is smaller than tendency factor
             else:
@@ -208,12 +210,16 @@ class ISA(Optimizer):
                 # If current agent's fitness is smaller than selected agent
                 if agent.fit < space.agents[idx].fit:
                     # Updates agent's velocity (eq. 6.2 - top)
-                    self.velocity[i] = r2 * (agent.position - space.agents[idx].position)
+                    self.velocity[i] = r2 * (
+                        agent.position - space.agents[idx].position
+                    )
 
                 # If current agent's fitness is bigger than selected agent
                 else:
                     # Updates agent's velocity (eq. 6.2 - bottom)
-                    self.velocity[i] = r2 * (space.agents[idx].position - agent.position)
+                    self.velocity[i] = r2 * (
+                        space.agents[idx].position - agent.position
+                    )
 
             # Updates agent's position and clip its bounds (eq. 6.3)
             agent.position += self.velocity[i]

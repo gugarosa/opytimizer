@@ -20,4 +20,4 @@ def test_pareto_space_build():
 
     new_pareto_space.build(data_points)
 
-    assert new_pareto_space.built == True
+    assert new_pareto_space.built is True

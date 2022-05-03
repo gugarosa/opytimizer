@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MVPA(Optimizer):
@@ -34,7 +34,7 @@ class MVPA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> MVPA.')
+        logger.info("Overriding class: Optimizer -> MVPA.")
 
         # Overrides its parent class with the receiving params
         super(MVPA, self).__init__()
@@ -45,39 +45,35 @@ class MVPA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def n_teams(self):
-        """int: Maximum number of teams.
-
-        """
+        """int: Maximum number of teams."""
 
         return self._n_teams
 
     @n_teams.setter
     def n_teams(self, n_teams):
         if not isinstance(n_teams, int):
-            raise e.TypeError('`n_teams` should be an integer')
+            raise e.TypeError("`n_teams` should be an integer")
         if n_teams < 1:
-            raise e.ValueError('`n_teams` should be > 0')
+            raise e.ValueError("`n_teams` should be > 0")
 
         self._n_teams = n_teams
 
     @property
     def n_p(self):
-        """int: Number of players per team.
-
-        """
+        """int: Number of players per team."""
 
         return self._n_p
 
     @n_p.setter
     def n_p(self, n_p):
         if not isinstance(n_p, int):
-            raise e.TypeError('`n_p` should be an integer')
+            raise e.TypeError("`n_p` should be an integer")
         if n_p < 1:
-            raise e.ValueError('`n_p` should be > 0')
+            raise e.ValueError("`n_p` should be > 0")
 
         self._n_p = n_p
 
@@ -146,8 +142,9 @@ class MVPA(Optimizer):
                 r3 = r.generate_uniform_random_number()
 
                 # Updates temporary agent's position (eq. 9)
-                a.position += r1 * (franchise_i.position - a.position) + \
-                    2 * r1 * (space.best_agent.position - a.position)
+                a.position += r1 * (franchise_i.position - a.position) + 2 * r1 * (
+                    space.best_agent.position - a.position
+                )
 
                 # Calculates the probability of team `i` beating team `j` (eq. 16)
                 Pr = 1 - fitness_i / (fitness_i + fitness_j + c.EPSILON)

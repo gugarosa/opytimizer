@@ -19,8 +19,7 @@ Y = digits.target
 Y += 1
 
 # Splits data into training and testing sets
-X_train, X_test, Y_train, Y_test = s.split(
-    X, Y, percentage=0.5, random_state=1)
+X_train, X_test, Y_train, Y_test = s.split(X, Y, percentage=0.5, random_state=1)
 
 
 def unsupervised_opf_clustering(opytimizer):
@@ -30,7 +29,8 @@ def unsupervised_opf_clustering(opytimizer):
 
     # Creates an UnsupervisedOPF instance
     opf = UnsupervisedOPF(
-        max_k=max_k, distance='log_squared_euclidean', pre_computed_distance=None)
+        max_k=max_k, distance="log_squared_euclidean", pre_computed_distance=None
+    )
 
     # Fits training data into the classifier
     opf.fit(X_train, Y_train)

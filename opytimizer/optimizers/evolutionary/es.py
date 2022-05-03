@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class ES(Optimizer):
@@ -42,54 +42,48 @@ class ES(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def child_ratio(self):
-        """float: Ratio of children in the population.
-
-        """
+        """float: Ratio of children in the population."""
 
         return self._child_ratio
 
     @child_ratio.setter
     def child_ratio(self, child_ratio):
         if not isinstance(child_ratio, (float, int)):
-            raise e.TypeError('`child_ratio` should be a float or integer')
+            raise e.TypeError("`child_ratio` should be a float or integer")
         if child_ratio < 0 or child_ratio > 1:
-            raise e.ValueError('`child_ratio` should be between 0 and 1')
+            raise e.ValueError("`child_ratio` should be between 0 and 1")
 
         self._child_ratio = child_ratio
 
     @property
     def n_children(self):
-        """int: Number of children.
-
-        """
+        """int: Number of children."""
 
         return self._n_children
 
     @n_children.setter
     def n_children(self, n_children):
         if not isinstance(n_children, int):
-            raise e.TypeError('`n_children` should be an integer')
+            raise e.TypeError("`n_children` should be an integer")
         if n_children < 0:
-            raise e.ValueError('`n_children` should be >= 0')
+            raise e.ValueError("`n_children` should be >= 0")
 
         self._n_children = n_children
 
     @property
     def strategy(self):
-        """np.array: Array of strategies.
-
-        """
+        """np.array: Array of strategies."""
 
         return self._strategy
 
     @strategy.setter
     def strategy(self, strategy):
         if not isinstance(strategy, np.ndarray):
-            raise e.TypeError('`strategy` should be a numpy array')
+            raise e.TypeError("`strategy` should be a numpy array")
 
         self._strategy = strategy
 
@@ -103,7 +97,9 @@ class ES(Optimizer):
 
         # Number of children and array of strategies
         self.n_children = int(space.n_agents * self.child_ratio)
-        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.strategy = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
         # Iterates through all agents
         for i in range(self.n_children):
@@ -111,7 +107,8 @@ class ES(Optimizer):
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
                 # Initializes the strategy array with the proposed EP distance
                 self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
-                    0, ub - lb, size=space.agents[i].n_dimensions)
+                    0, ub - lb, size=space.agents[i].n_dimensions
+                )
 
     def _mutate_parent(self, agent, index, function):
         """Mutates a parent into a new child (eq. 2).

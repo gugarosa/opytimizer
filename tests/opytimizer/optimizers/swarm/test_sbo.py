@@ -5,11 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_sbo_params():
-    params = {
-        'alpha': 0.9,
-        'p_mutation': 0.05,
-        'z': 0.02
-    }
+    params = {"alpha": 0.9, "p_mutation": 0.05, "z": 0.02}
 
     new_sbo = sbo.SBO(params=params)
 
@@ -24,7 +20,7 @@ def test_sbo_params_setter():
     new_sbo = sbo.SBO()
 
     try:
-        new_sbo.alpha = 'a'
+        new_sbo.alpha = "a"
     except:
         new_sbo.alpha = 0.75
 
@@ -36,7 +32,7 @@ def test_sbo_params_setter():
     assert new_sbo.alpha == 0.75
 
     try:
-        new_sbo.p_mutation = 'b'
+        new_sbo.p_mutation = "b"
     except:
         new_sbo.p_mutation = 0.05
 
@@ -48,7 +44,7 @@ def test_sbo_params_setter():
     assert new_sbo.p_mutation == 0.05
 
     try:
-        new_sbo.z = 'c'
+        new_sbo.z = "c"
     except:
         new_sbo.z = 0.02
 
@@ -61,8 +57,9 @@ def test_sbo_params_setter():
 
 
 def test_sbo_compile():
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_sbo = sbo.SBO()
     new_sbo.compile(search_space)
@@ -79,8 +76,9 @@ def test_sbo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_sbo = sbo.SBO()
     new_sbo.compile(search_space)

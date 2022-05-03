@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class FSO(Optimizer):
@@ -35,7 +35,7 @@ class FSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> FSO.')
+        logger.info("Overriding class: Optimizer -> FSO.")
 
         # Overrides its parent class with the receiving params
         super(FSO, self).__init__()
@@ -46,22 +46,20 @@ class FSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def beta(self):
-        """float: Lévy distribution parameter.
-
-        """
+        """float: Lévy distribution parameter."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 2:
-            raise e.ValueError('`beta` should be between 0 and 2')
+            raise e.ValueError("`beta` should be between 0 and 2")
 
         self._beta = beta
 
@@ -99,7 +97,11 @@ class FSO(Optimizer):
                 levy_step = d.generate_levy_distribution(BEF)
 
                 # Updates the agent's position
-                a.position[j] += random_step * levy_step * (agent.position[j] - space.best_agent.position[j])
+                a.position[j] += (
+                    random_step
+                    * levy_step
+                    * (agent.position[j] - space.best_agent.position[j])
+                )
 
             # Checks agent's limits
             a.clip_by_bound()

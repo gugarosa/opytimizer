@@ -6,10 +6,10 @@ import copy
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class AEO(Optimizer):
@@ -39,7 +39,7 @@ class AEO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _production(self, agent, best_agent, iteration, n_iterations):
         """Performs the producer update (eq. 1).
@@ -64,8 +64,9 @@ class AEO(Optimizer):
         # For every possible decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             # Updates its position
-            a.position[j] = (1 - alpha) * best_agent.position[j] + alpha * \
-                r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+            a.position[j] = (1 - alpha) * best_agent.position[
+                j
+            ] + alpha * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
 
         return a
 
@@ -111,7 +112,9 @@ class AEO(Optimizer):
         r2 = r.generate_uniform_random_number()
 
         # Updates its position
-        a.position += C * r2 * (a.position - producer.position) + (1 - r2) * (a.position - consumer.position)
+        a.position += C * r2 * (a.position - producer.position) + (1 - r2) * (
+            a.position - consumer.position
+        )
 
         return a
 
@@ -136,7 +139,9 @@ class AEO(Optimizer):
 
         return a
 
-    def _update_composition(self, agents, best_agent, function, iteration, n_iterations):
+    def _update_composition(
+        self, agents, best_agent, function, iteration, n_iterations
+    ):
         """Wraps production and consumption updates over all
         agents and variables (eq. 1-8).
 
@@ -172,12 +177,12 @@ class AEO(Optimizer):
                 C = 0.5 * v1 / np.abs(v2)
 
                 # If random number lies in the first third
-                if r1 < 1/3:
+                if r1 < 1 / 3:
                     # It will surely be a herbivore
                     a = self._herbivore_consumption(agent, agents[0], C)
 
                 # If random number lies in the second third
-                elif 1/3 <= r1 <= 2/3:
+                elif 1 / 3 <= r1 <= 2 / 3:
                     # Generates a random index from the population
                     j = int(r.generate_uniform_random_number(1, i))
 
@@ -233,7 +238,9 @@ class AEO(Optimizer):
             _h = 2 * r3 - 1
 
             # Updates the new agent position
-            a.position = best_agent.position + D * (e * best_agent.position - _h * agent.position)
+            a.position = best_agent.position + D * (
+                e * best_agent.position - _h * agent.position
+            )
 
             # Checks agent's limits
             a.clip_by_bound()
@@ -259,7 +266,9 @@ class AEO(Optimizer):
         """
 
         # Updates agents within the composition step
-        self._update_composition(space.agents, space.best_agent, function, iteration, n_iterations)
+        self._update_composition(
+            space.agents, space.best_agent, function, iteration, n_iterations
+        )
 
         # Updates agents within the decomposition step
         self._update_decomposition(space.agents, space.best_agent, function)

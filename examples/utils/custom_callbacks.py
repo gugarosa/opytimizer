@@ -8,65 +8,47 @@ class CustomCallback(Callback):
     """
 
     def __init__(self):
-        """Initialization method for the customized callback.
-
-        """
+        """Initialization method for the customized callback."""
 
         # You only need to override its parent class
         super(CustomCallback).__init__()
 
     def on_task_begin(self, opt_model):
-        """Called at the beginning of an task.
-
-        """
+        """Called at the beginning of an task."""
 
         pass
 
     def on_task_end(self, opt_model):
-        """Called at the end of an task.
-
-        """
+        """Called at the end of an task."""
 
         pass
 
     def on_iteration_begin(self, iteration, opt_model):
-        """Called at the beginning of an iteration.
-
-        """
+        """Called at the beginning of an iteration."""
 
         pass
 
     def on_iteration_end(self, iteration, opt_model):
-        """Called at the end of an iteration.
-
-        """
+        """Called at the end of an iteration."""
 
         pass
 
     def on_evaluate_before(self, *evaluate_args):
-        """Called before the `evaluate` method.
-
-        """
+        """Called before the `evaluate` method."""
 
         pass
 
     def on_evaluate_after(self, *evaluate_args):
-        """Called after the `evaluate` method.
-
-        """
+        """Called after the `evaluate` method."""
 
         pass
 
     def on_update_before(self, *update_args):
-        """Called before the `update` method.
-
-        """
+        """Called before the `update` method."""
 
         pass
 
     def on_update_after(self, *update_args):
-        """Called after the `update` method.
-
-        """
+        """Called after the `update` method."""
 
         pass

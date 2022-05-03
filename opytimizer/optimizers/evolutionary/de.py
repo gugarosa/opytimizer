@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class DE(Optimizer):
@@ -46,39 +46,35 @@ class DE(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def CR(self):
-        """float: Crossover probability.
-
-        """
+        """float: Crossover probability."""
 
         return self._CR
 
     @CR.setter
     def CR(self, CR):
         if not isinstance(CR, (float, int)):
-            raise e.TypeError('`CR` should be a float or integer')
+            raise e.TypeError("`CR` should be a float or integer")
         if CR < 0 or CR > 1:
-            raise e.ValueError('`CR` should be between 0 and 1')
+            raise e.ValueError("`CR` should be between 0 and 1")
 
         self._CR = CR
 
     @property
     def F(self):
-        """float: Differential weight.
-
-        """
+        """float: Differential weight."""
 
         return self._F
 
     @F.setter
     def F(self, F):
         if not isinstance(F, (float, int)):
-            raise e.TypeError('`F` should be a float or integer')
+            raise e.TypeError("`F` should be a float or integer")
         if F < 0 or F > 2:
-            raise e.ValueError('`F` should be between 0 and 2')
+            raise e.ValueError("`F` should be between 0 and 2")
 
         self._F = F
 
@@ -110,7 +106,9 @@ class DE(Optimizer):
             # If random number is smaller than crossover or `j` equals to the sampled index
             if r1 < self.CR or j == R:
                 # Updates the mutated agent position
-                a.position[j] = alpha.position[j] + self.F * (beta.position[j] - gamma.position[j])
+                a.position[j] = alpha.position[j] + self.F * (
+                    beta.position[j] - gamma.position[j]
+                )
 
         return a
 
@@ -126,10 +124,14 @@ class DE(Optimizer):
         # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Randomly picks three distinct other agents, not including current one
-            C = d.generate_choice_distribution(np.setdiff1d(range(0, len(space.agents)), i), size=3)
+            C = d.generate_choice_distribution(
+                np.setdiff1d(range(0, len(space.agents)), i), size=3
+            )
 
             # Mutates the current agent
-            a = self._mutate_agent(agent, space.agents[C[0]], space.agents[C[1]], space.agents[C[2]])
+            a = self._mutate_agent(
+                agent, space.agents[C[0]], space.agents[C[1]], space.agents[C[2]]
+            )
 
             # Checks agent's limits
             a.clip_by_bound()

@@ -5,9 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_esa_params():
-    params = {
-        'n_electrons': 5
-    }
+    params = {"n_electrons": 5}
 
     new_esa = esa.ESA(params=params)
 
@@ -18,7 +16,7 @@ def test_esa_params_setter():
     new_esa = esa.ESA()
 
     try:
-        new_esa.n_electrons = 'a'
+        new_esa.n_electrons = "a"
     except:
         new_esa.n_electrons = 5
 
@@ -33,8 +31,9 @@ def test_esa_params_setter():
 
 
 def test_esa_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_esa = esa.ESA()
     new_esa.compile(search_space)
@@ -51,8 +50,9 @@ def test_esa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_esa = esa.ESA()
     new_esa.compile(search_space)

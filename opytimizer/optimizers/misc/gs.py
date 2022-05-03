@@ -1,10 +1,10 @@
 """Grid-Search.
 """
 
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GS(Optimizer):
@@ -27,7 +27,7 @@ class GS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> GS.')
+        logger.info("Overriding class: Optimizer -> GS.")
 
         # Overrides its parent class with the receiving params
         super(GS, self).__init__()
@@ -35,4 +35,4 @@ class GS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")

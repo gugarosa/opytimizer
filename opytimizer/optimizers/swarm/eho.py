@@ -7,10 +7,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class EHO(Optimizer):
@@ -33,7 +33,7 @@ class EHO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> EHO.')
+        logger.info("Overriding class: Optimizer -> EHO.")
 
         # Overrides its parent class with the receiving params
         super(EHO, self).__init__()
@@ -50,73 +50,65 @@ class EHO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def alpha(self):
-        """float: Matriarch influence.
-
-        """
+        """float: Matriarch influence."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0 or alpha > 1:
-            raise e.ValueError('`alpha` should be between 0 and 1')
+            raise e.ValueError("`alpha` should be between 0 and 1")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Center influence.
-
-        """
+        """float: Center influence."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0 or beta > 1:
-            raise e.ValueError('`beta` should be between 0 and 1')
+            raise e.ValueError("`beta` should be between 0 and 1")
 
         self._beta = beta
 
     @property
     def n_clans(self):
-        """int: Maximum number of clans.
-
-        """
+        """int: Maximum number of clans."""
 
         return self._n_clans
 
     @n_clans.setter
     def n_clans(self, n_clans):
         if not isinstance(n_clans, int):
-            raise e.TypeError('`n_clans` should be an integer')
+            raise e.TypeError("`n_clans` should be an integer")
         if n_clans < 1:
-            raise e.ValueError('`n_clans` should be > 0')
+            raise e.ValueError("`n_clans` should be > 0")
 
         self._n_clans = n_clans
 
     @property
     def n_ci(self):
-        """int: Number of elephants per clan.
-
-        """
+        """int: Number of elephants per clan."""
 
         return self._n_ci
 
     @n_ci.setter
     def n_ci(self, n_ci):
         if not isinstance(n_ci, int):
-            raise e.TypeError('`n_ci` should be an integer')
+            raise e.TypeError("`n_ci` should be an integer")
         if n_ci < 1:
-            raise e.ValueError('`n_ci` should be > 0')
+            raise e.ValueError("`n_ci` should be > 0")
 
         self._n_ci = n_ci
 
@@ -183,7 +175,9 @@ class EHO(Optimizer):
                 # If it is not the first (best) agent in clan
                 else:
                     # Updates its position (eq. 1)
-                    a.position += self.alpha * (clan_agents[0].position - a.position) * r1
+                    a.position += (
+                        self.alpha * (clan_agents[0].position - a.position) * r1
+                    )
 
                 # Checks the agent's limits
                 a.clip_by_bound()
@@ -234,7 +228,9 @@ class EHO(Optimizer):
             clan_agents = self._get_agents_from_clan(space.agents, i)
 
             # Calculates the clan's center position
-            clan_center = np.mean(np.array([agent.position for agent in clan_agents]), axis=0)
+            clan_center = np.mean(
+                np.array([agent.position for agent in clan_agents]), axis=0
+            )
 
             # Appends the center position to the list
             centers.append(clan_center)

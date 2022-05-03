@@ -8,10 +8,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class BPSO(Optimizer):
@@ -35,7 +35,7 @@ class BPSO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> BPSO.')
+        logger.info("Overriding class: Optimizer -> BPSO.")
 
         # Overrides its parent class with the receiving params
         super(BPSO, self).__init__()
@@ -49,65 +49,57 @@ class BPSO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c1(self):
-        """float: Cognitive constant.
-
-        """
+        """float: Cognitive constant."""
 
         return self._c1
 
     @c1.setter
     def c1(self, c1):
         if not isinstance(c1, np.ndarray):
-            raise e.TypeError('`c1` should be a numpy array')
+            raise e.TypeError("`c1` should be a numpy array")
 
         self._c1 = c1
 
     @property
     def c2(self):
-        """float: Social constant.
-
-        """
+        """float: Social constant."""
 
         return self._c2
 
     @c2.setter
     def c2(self, c2):
         if not isinstance(c2, np.ndarray):
-            raise e.TypeError('`c2` should be a numpy array')
+            raise e.TypeError("`c2` should be a numpy array")
 
         self._c2 = c2
 
     @property
     def local_position(self):
-        """np.array: Array of local positions.
-
-        """
+        """np.array: Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
     def local_position(self, local_position):
         if not isinstance(local_position, np.ndarray):
-            raise e.TypeError('`local_position` should be a numpy array')
+            raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -120,8 +112,12 @@ class BPSO(Optimizer):
         """
 
         # Arrays of local positions and velocities
-        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions), dtype=bool)
+        self.local_position = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool
+        )
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool
+        )
 
     def evaluate(self, space, function):
         """Evaluates the search space according to the objective function.
@@ -167,10 +163,18 @@ class BPSO(Optimizer):
             r2 = r.generate_binary_random_number(agent.position.shape)
 
             # Calculates the local and global partials
-            local_partial = np.logical_and(self.c1, np.logical_xor(
-                r1, np.logical_xor(self.local_position[i], agent.position)))
-            global_partial = np.logical_and(self.c2, np.logical_xor(
-                r2, np.logical_xor(space.best_agent.position, agent.position)))
+            local_partial = np.logical_and(
+                self.c1,
+                np.logical_xor(
+                    r1, np.logical_xor(self.local_position[i], agent.position)
+                ),
+            )
+            global_partial = np.logical_and(
+                self.c2,
+                np.logical_xor(
+                    r2, np.logical_xor(space.best_agent.position, agent.position)
+                ),
+            )
 
             # Updates current agent velocities (eq. 1)
             self.velocity[i] = np.logical_or(local_partial, global_partial)

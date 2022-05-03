@@ -6,7 +6,7 @@ from opytimizer.spaces import search
 
 def test_fso_params():
     params = {
-        'beta': 0.5,
+        "beta": 0.5,
     }
 
     new_fso = fso.FSO(params=params)
@@ -18,7 +18,7 @@ def test_fso_params_setter():
     new_fso = fso.FSO()
 
     try:
-        new_fso.beta = 'a'
+        new_fso.beta = "a"
     except:
         new_fso.beta = 0.5
 
@@ -38,7 +38,8 @@ def test_fso_update():
 
     new_fso = fso.FSO()
 
-    search_space = search.SearchSpace(n_agents=2, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_fso.update(search_space, square, 1, 10)

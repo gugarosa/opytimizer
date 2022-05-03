@@ -10,8 +10,8 @@ from opytimizer.spaces import boolean
 
 def test_bpso_params():
     params = {
-        'c1': r.generate_binary_random_number(size=(1, 1)),
-        'c2': r.generate_binary_random_number(size=(1, 1))
+        "c1": r.generate_binary_random_number(size=(1, 1)),
+        "c2": r.generate_binary_random_number(size=(1, 1)),
     }
 
     new_bpso = bpso.BPSO(params=params)
@@ -25,14 +25,14 @@ def test_bpso_params_setter():
     new_bpso = bpso.BPSO()
 
     try:
-        new_bpso.c1 = 'a'
+        new_bpso.c1 = "a"
     except:
         new_bpso.c1 = r.generate_binary_random_number(size=(1, 1))
 
     assert new_bpso.c1 == 0 or new_bpso.c1 == 1
 
     try:
-        new_bpso.c2 = 'b'
+        new_bpso.c2 = "b"
     except:
         new_bpso.c2 = r.generate_binary_random_number(size=(1, 1))
 
@@ -41,7 +41,7 @@ def test_bpso_params_setter():
 
 def test_bpso_compile():
     boolean_space = boolean.BooleanSpace(n_agents=2, n_variables=5)
-    
+
     new_bpso = bpso.BPSO()
     new_bpso.compile(boolean_space)
 

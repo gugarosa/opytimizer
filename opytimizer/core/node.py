@@ -8,9 +8,7 @@ import opytimizer.utils.exception as e
 
 
 class Node:
-    """A Node instance is used for composing tree-based structures.
-
-    """
+    """A Node instance is used for composing tree-based structures."""
 
     def __init__(self, name, category, value=None, left=None, right=None, parent=None):
         """Initialization method.
@@ -43,175 +41,145 @@ class Node:
         self.flag = True
 
     def __repr__(self):
-        """Representation of a formal string.
+        """Representation of a formal string."""
 
-        """
-
-        return f'{self.category}:{self.name}:{self.flag}'
+        return f"{self.category}:{self.name}:{self.flag}"
 
     def __str__(self):
-        """Representation of an informal string.
-
-        """
+        """Representation of an informal string."""
 
         # Building a formatted string for displaying the nodes
         lines = _build_string(self)[0]
 
-        return '\n' + '\n'.join(lines)
+        return "\n" + "\n".join(lines)
 
     @property
     def name(self):
-        """str: Name of the node.
-
-        """
+        """str: Name of the node."""
 
         return self._name
 
     @name.setter
     def name(self, name):
         if not isinstance(name, (str, int)):
-            raise e.TypeError('`name` should be a string or integer')
+            raise e.TypeError("`name` should be a string or integer")
 
         self._name = name
 
     @property
     def category(self):
-        """str: Category of the node.
-
-        """
+        """str: Category of the node."""
 
         return self._category
 
     @category.setter
     def category(self, category):
-        if category not in ['TERMINAL', 'FUNCTION']:
-            raise e.ValueError('`category` should be `TERMINAL` or `FUNCTION`')
+        if category not in ["TERMINAL", "FUNCTION"]:
+            raise e.ValueError("`category` should be `TERMINAL` or `FUNCTION`")
 
         self._category = category
 
     @property
     def value(self):
-        """np.array: Value of the node.
-
-        """
+        """np.array: Value of the node."""
 
         return self._value
 
     @value.setter
     def value(self, value):
-        if self.category != 'TERMINAL':
+        if self.category != "TERMINAL":
             self._value = None
         else:
             if not isinstance(value, np.ndarray):
-                raise e.TypeError('`value` should be an N-dimensional numpy array')
+                raise e.TypeError("`value` should be an N-dimensional numpy array")
 
             self._value = value
 
     @property
     def left(self):
-        """Node: Pointer to the node's left child.
-
-        """
+        """Node: Pointer to the node's left child."""
 
         return self._left
 
     @left.setter
     def left(self, left):
         if left and not isinstance(left, Node):
-            raise e.TypeError('`left` should be a Node')
+            raise e.TypeError("`left` should be a Node")
 
         self._left = left
 
     @property
     def right(self):
-        """Node: Pointer to the node's right child.
-
-        """
+        """Node: Pointer to the node's right child."""
 
         return self._right
 
     @right.setter
     def right(self, right):
         if right and not isinstance(right, Node):
-            raise e.TypeError('`right` should be a Node')
+            raise e.TypeError("`right` should be a Node")
 
         self._right = right
 
     @property
     def parent(self):
-        """Node: Pointer to the node's parent.
-
-        """
+        """Node: Pointer to the node's parent."""
 
         return self._parent
 
     @parent.setter
     def parent(self, parent):
         if parent and not isinstance(parent, Node):
-            raise e.TypeError('`parent` should be a Node')
+            raise e.TypeError("`parent` should be a Node")
 
         self._parent = parent
 
     @property
     def flag(self):
-        """bool: Flag to identify whether the node is a left child.
-
-        """
+        """bool: Flag to identify whether the node is a left child."""
 
         return self._flag
 
     @flag.setter
     def flag(self, flag):
         if not isinstance(flag, bool):
-            raise e.TypeError('`flag` should be a boolean')
+            raise e.TypeError("`flag` should be a boolean")
 
         self._flag = flag
 
     @property
     def min_depth(self):
-        """int: Minimum depth of node.
+        """int: Minimum depth of node."""
 
-        """
-
-        return _properties(self)['min_depth']
+        return _properties(self)["min_depth"]
 
     @property
     def max_depth(self):
-        """int: Maximum depth of node.
+        """int: Maximum depth of node."""
 
-        """
-
-        return _properties(self)['max_depth']
+        return _properties(self)["max_depth"]
 
     @property
     def n_leaves(self):
-        """int: Number of leaves node.
+        """int: Number of leaves node."""
 
-        """
-
-        return _properties(self)['n_leaves']
+        return _properties(self)["n_leaves"]
 
     @property
     def n_nodes(self):
-        """int: Number of nodes.
+        """int: Number of nodes."""
 
-        """
-
-        return _properties(self)['n_nodes']
+        return _properties(self)["n_nodes"]
 
     @property
     def position(self):
-        """np.array: Position after traversing the node.
-
-        """
+        """np.array: Position after traversing the node."""
 
         return _evaluate(self)
 
     @property
     def post_order(self):
-        """list: Traverses the node in post-order.
-
-        """
+        """list: Traverses the node in post-order."""
 
         # Creates lists for post-order and stacked nodes
         post_order, stacked = [], []
@@ -234,7 +202,11 @@ class Node:
             self = stacked.pop()
 
             # If there is a right node, stacked nodes and the last stacked was a right child
-            if (self.right is not None and len(stacked) > 0 and stacked[-1] is self.right):
+            if (
+                self.right is not None
+                and len(stacked) > 0
+                and stacked[-1] is self.right
+            ):
                 # Pops the stacked node
                 stacked.pop()
 
@@ -258,9 +230,7 @@ class Node:
 
     @property
     def pre_order(self):
-        """list: Traverses the node in pre-order.
-
-        """
+        """list: Traverses the node in pre-order."""
 
         # Creates lists for pre-order and stacked nodes
         pre_order, stacked = [], [self]
@@ -304,10 +274,10 @@ class Node:
             # Gets the node from position
             node = pre_order[position]
 
-            if node.category == 'TERMINAL':
+            if node.category == "TERMINAL":
                 return node.parent, node.flag
 
-            if node.category == 'FUNCTION':
+            if node.category == "FUNCTION":
                 # If it is a function node, we need to return the parent of its parent
                 if node.parent and node.parent.parent:
                     return node.parent.parent, node.parent.flag
@@ -353,12 +323,12 @@ def _build_string(node):
         left = (left_start + left_end) // 2 + 1
 
         # Appends to first line space and underscore chars
-        first_line.append(' ' * (left + 1))
-        first_line.append('_' * (left_width - left))
+        first_line.append(" " * (left + 1))
+        first_line.append("_" * (left_width - left))
 
         # Appends to second line space chars and connecting slash
-        second_line.append(' ' * left + '/')
-        second_line.append(' ' * (left_width - left))
+        second_line.append(" " * left + "/")
+        second_line.append(" " * (left_width - left))
 
         # The start point will be the left width plus one
         start = left_width + 1
@@ -374,19 +344,19 @@ def _build_string(node):
     first_line.append(name)
 
     # Appending space chars to second line based on the node's width
-    second_line.append(' ' * width)
+    second_line.append(" " * width)
 
     if right_width > 0:
         # Calculates the right node
         right = (right_start + right_end) // 2
 
         # Appends to first line underscore and space chars
-        first_line.append('_' * right)
-        first_line.append(' ' * (right_width - right + 1))
+        first_line.append("_" * right)
+        first_line.append(" " * (right_width - right + 1))
 
         # Appends to second line space chars and a connecting backslash
-        second_line.append(' ' * right + '\\')
-        second_line.append(' ' * (right_width - right))
+        second_line.append(" " * right + "\\")
+        second_line.append(" " * (right_width - right))
 
         # Increases the gap size
         gap += 1
@@ -395,10 +365,10 @@ def _build_string(node):
     end = start + width - 1
 
     # Calculates how many gaps are needed
-    gap = ' ' * gap
+    gap = " " * gap
 
     # Combining left and right branches
-    lines = [''.join(first_line), ''.join(second_line)]
+    lines = ["".join(first_line), "".join(second_line)]
 
     # For every possible value in the branches
     for i in range(max(len(left_branch), len(right_branch))):
@@ -409,7 +379,7 @@ def _build_string(node):
 
         else:
             # Apply space chars
-            left_line = ' ' * left_width
+            left_line = " " * left_width
 
         # If current iteration is smaller than right branch's size
         if i < len(right_branch):
@@ -418,7 +388,7 @@ def _build_string(node):
 
         else:
             # Apply space chars
-            right_line = ' ' * right_width
+            right_line = " " * right_width
 
         # Appends the whole line
         lines.append(left_line + gap + right_line)
@@ -443,37 +413,37 @@ def _evaluate(node):
         x = _evaluate(node.left)
         y = _evaluate(node.right)
 
-        if node.category == 'TERMINAL':
+        if node.category == "TERMINAL":
             return node.value
 
-        if node.name == 'SUM':
+        if node.name == "SUM":
             return x + y
 
-        if node.name == 'SUB':
+        if node.name == "SUB":
             return x - y
 
-        if node.name == 'MUL':
+        if node.name == "MUL":
             return x * y
 
-        if node.name == 'DIV':
+        if node.name == "DIV":
             return x / (y + c.EPSILON)
 
-        if node.name == 'EXP':
+        if node.name == "EXP":
             return np.exp(x)
 
-        if node.name == 'SQRT':
+        if node.name == "SQRT":
             return np.sqrt(np.abs(x))
 
-        if node.name == 'LOG':
+        if node.name == "LOG":
             return np.log(np.abs(x) + c.EPSILON)
 
-        if node.name == 'ABS':
+        if node.name == "ABS":
             return np.abs(x)
 
-        if node.name == 'SIN':
+        if node.name == "SIN":
             return np.sin(x)
 
-        if node.name == 'COS':
+        if node.name == "COS":
             return np.cos(x)
 
     return None
@@ -534,8 +504,8 @@ def _properties(node):
         nodes = next_nodes
 
     return {
-        'min_depth': min_depth,
-        'max_depth': max_depth,
-        'n_leaves': n_leaves,
-        'n_nodes': n_nodes
+        "min_depth": min_depth,
+        "max_depth": max_depth,
+        "n_leaves": n_leaves,
+        "n_nodes": n_nodes,
     }

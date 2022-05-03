@@ -9,7 +9,6 @@ from opytimizer.optimizers.evolutionary.es import ES
 from opytimizer.optimizers.evolutionary.foa import FOA
 from opytimizer.optimizers.evolutionary.ga import GA
 from opytimizer.optimizers.evolutionary.gp import GP
-from opytimizer.optimizers.evolutionary.hs import (GHS, GOGHS, HS, IHS, NGHS,
-                                                   SGHS)
+from opytimizer.optimizers.evolutionary.hs import GHS, GOGHS, HS, IHS, NGHS, SGHS
 from opytimizer.optimizers.evolutionary.iwo import IWO
 from opytimizer.optimizers.evolutionary.rra import RRA

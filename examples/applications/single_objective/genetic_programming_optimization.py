@@ -19,13 +19,21 @@ min_depth = 2
 max_depth = 5
 
 # Functions nodes, lower and upper bounds
-functions = ['SUM', 'MUL', 'DIV']
+functions = ["SUM", "MUL", "DIV"]
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
 # Creates the space, optimizer and function
-space = TreeSpace(n_agents, n_variables, lower_bound, upper_bound,
-                  n_terminals, min_depth, max_depth, functions)
+space = TreeSpace(
+    n_agents,
+    n_variables,
+    lower_bound,
+    upper_bound,
+    n_terminals,
+    min_depth,
+    max_depth,
+    functions,
+)
 optimizer = GP()
 function = Function(Sphere())
 

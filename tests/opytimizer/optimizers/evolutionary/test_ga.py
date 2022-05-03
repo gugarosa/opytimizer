@@ -6,9 +6,9 @@ from opytimizer.spaces import search
 
 def test_ga_params():
     params = {
-        'p_selection': 0.75,
-        'p_mutation': 0.25,
-        'p_crossover': 0.5,
+        "p_selection": 0.75,
+        "p_mutation": 0.25,
+        "p_crossover": 0.5,
     }
 
     new_ga = ga.GA(params=params)
@@ -24,7 +24,7 @@ def test_ga_params_setter():
     new_ga = ga.GA()
 
     try:
-        new_ga.p_selection = 'a'
+        new_ga.p_selection = "a"
     except:
         new_ga.p_selection = 0.75
 
@@ -36,7 +36,7 @@ def test_ga_params_setter():
     assert new_ga.p_selection == 0.75
 
     try:
-        new_ga.p_mutation = 'b'
+        new_ga.p_mutation = "b"
     except:
         new_ga.p_mutation = 0.25
 
@@ -48,7 +48,7 @@ def test_ga_params_setter():
     assert new_ga.p_mutation == 0.25
 
     try:
-        new_ga.p_crossover = 'c'
+        new_ga.p_crossover = "c"
     except:
         new_ga.p_crossover = 0.5
 
@@ -71,29 +71,29 @@ def test_ga_roulette_selection():
 
 
 def test_ga_crossover():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_ga = ga.GA()
 
-    alpha, beta = new_ga._crossover(
-        search_space.agents[0], search_space.agents[1])
+    alpha, beta = new_ga._crossover(search_space.agents[0], search_space.agents[1])
 
-    assert type(alpha).__name__ == 'Agent'
-    assert type(beta).__name__ == 'Agent'
+    assert type(alpha).__name__ == "Agent"
+    assert type(beta).__name__ == "Agent"
 
 
 def test_ga_mutation():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_ga = ga.GA()
 
-    alpha, beta = new_ga._mutation(
-        search_space.agents[0], search_space.agents[1])
+    alpha, beta = new_ga._mutation(search_space.agents[0], search_space.agents[1])
 
-    assert type(alpha).__name__ == 'Agent'
-    assert type(beta).__name__ == 'Agent'
+    assert type(alpha).__name__ == "Agent"
+    assert type(beta).__name__ == "Agent"
 
 
 def test_ga_update():
@@ -102,7 +102,8 @@ def test_ga_update():
 
     new_ga = ga.GA()
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[1, 1], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
+    )
 
     new_ga.update(search_space, square)

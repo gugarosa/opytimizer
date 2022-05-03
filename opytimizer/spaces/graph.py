@@ -2,15 +2,13 @@
 """
 
 
-import opytimizer.utils.logging as l
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class GraphSpace:
-    """
-
-    """
+    """ """
 
     def __init__(self, n_blocks):
         """Initialization method.
@@ -20,13 +18,11 @@ class GraphSpace:
 
         """
 
-        logger.info('Creating class: GraphSpace.')
+        logger.info("Creating class: GraphSpace.")
 
         self.n_blocks = n_blocks
 
         self.build()
 
-        logger.debug('Blocks: %d | Built: %s.',
-                     self.n_blocks, self.built)
-        logger.info('Class created.')
-
+        logger.debug("Blocks: %d | Built: %s.", self.n_blocks, self.built)
+        logger.info("Class created.")

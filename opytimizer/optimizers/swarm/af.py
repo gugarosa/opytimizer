@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class AF(Optimizer):
@@ -34,7 +34,7 @@ class AF(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> AF.')
+        logger.info("Overriding class: Optimizer -> AF.")
 
         # Overrides its parent class with the receiving params
         super(AF, self).__init__()
@@ -54,73 +54,65 @@ class AF(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def c1(self):
-        """float: First learning coefficient.
-
-        """
+        """float: First learning coefficient."""
 
         return self._c1
 
     @c1.setter
     def c1(self, c1):
         if not isinstance(c1, (float, int)):
-            raise e.TypeError('`c1` should be a float or integer')
+            raise e.TypeError("`c1` should be a float or integer")
         if c1 < 0:
-            raise e.ValueError('`c1` should be >= 0')
+            raise e.ValueError("`c1` should be >= 0")
 
         self._c1 = c1
 
     @property
     def c2(self):
-        """float: Second learning coefficient.
-
-        """
+        """float: Second learning coefficient."""
 
         return self._c2
 
     @c2.setter
     def c2(self, c2):
         if not isinstance(c2, (float, int)):
-            raise e.TypeError('`c2` should be a float or integer')
+            raise e.TypeError("`c2` should be a float or integer")
         if c2 < 0:
-            raise e.ValueError('`c2` should be >= 0')
+            raise e.ValueError("`c2` should be >= 0")
 
         self._c2 = c2
 
     @property
     def m(self):
-        """int: Amount of branches.
-
-        """
+        """int: Amount of branches."""
 
         return self._m
 
     @m.setter
     def m(self, m):
         if not isinstance(m, int):
-            raise e.TypeError('`m` should be an integer')
+            raise e.TypeError("`m` should be an integer")
         if m <= 0:
-            raise e.ValueError('`m` should be > 0')
+            raise e.ValueError("`m` should be > 0")
 
         self._m = m
 
     @property
     def Q(self):
-        """float: Selective probability.
-
-        """
+        """float: Selective probability."""
 
         return self._Q
 
     @Q.setter
     def Q(self, Q):
         if not isinstance(Q, (float, int)):
-            raise e.TypeError('`Q` should be a float or integer')
+            raise e.TypeError("`Q` should be a float or integer")
         if Q < 0 or Q > 1:
-            raise e.ValueError('`Q` should be between 0 and 1')
+            raise e.ValueError("`Q` should be between 0 and 1")
 
         self._Q = Q
 
@@ -166,11 +158,15 @@ class AF(Optimizer):
                 r3 = r.generate_uniform_random_number()
 
                 # Calculates the new distance (eq. 1)
-                distance = self.g_distance[i] * r1 * \
-                    self.c1 + self.p_distance[i] * r2 * self.c2
+                distance = (
+                    self.g_distance[i] * r1 * self.c1
+                    + self.p_distance[i] * r2 * self.c2
+                )
 
                 # Generates a random gaussian number
-                D = r.generate_gaussian_random_number(0, distance, (space.n_variables, space.n_dimensions))
+                D = r.generate_gaussian_random_number(
+                    0, distance, (space.n_variables, space.n_dimensions)
+                )
 
                 # Updates offspring's position (eq. 5)
                 a.position += D

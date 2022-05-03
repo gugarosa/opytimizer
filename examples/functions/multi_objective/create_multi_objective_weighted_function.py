@@ -18,7 +18,7 @@ x = 0
 h = MultiObjectiveWeightedFunction([test_function1, test_function2], [0.5, 0.5])
 
 # Testing out your new Function class
-print(f'x: {x}')
-print(f'f(x): {h.functions[0](x)}')
-print(f'g(x): {h.functions[1](x)}')
-print(f'h(x) = 0.5f(x) + 0.5g(x): {h(x)}')
+print(f"x: {x}")
+print(f"f(x): {h.functions[0](x)}")
+print(f"g(x): {h.functions[1](x)}")
+print(f"h(x) = 0.5f(x) + 0.5g(x): {h(x)}")

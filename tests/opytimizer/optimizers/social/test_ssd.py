@@ -6,10 +6,7 @@ from opytimizer.utils import constant
 
 
 def test_ssd_params():
-    params = {
-        'c': 2.0,
-        'decay': 0.99
-    }
+    params = {"c": 2.0, "decay": 0.99}
 
     new_ssd = ssd.SSD(params=params)
 
@@ -22,7 +19,7 @@ def test_ssd_params_setter():
     new_ssd = ssd.SSD()
 
     try:
-        new_ssd.c = 'a'
+        new_ssd.c = "a"
     except:
         new_ssd.c = 0.5
 
@@ -34,7 +31,7 @@ def test_ssd_params_setter():
     assert new_ssd.c == 0.5
 
     try:
-        new_ssd.decay = 'b'
+        new_ssd.decay = "b"
     except:
         new_ssd.decay = 0.99
 
@@ -47,8 +44,9 @@ def test_ssd_params_setter():
 
 
 def test_ssd_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)
@@ -77,8 +75,9 @@ def test_ssd_mean_global_solution():
 
 
 def test_ssd_update_position():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)
@@ -89,8 +88,9 @@ def test_ssd_update_position():
 
 
 def test_ssd_update_velocity():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)
@@ -104,8 +104,9 @@ def test_ssd_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)
@@ -119,8 +120,9 @@ def test_ssd_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)

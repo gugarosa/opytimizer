@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class WCA(Optimizer):
@@ -33,7 +33,7 @@ class WCA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> WCA.')
+        logger.info("Overriding class: Optimizer -> WCA.")
 
         # Overrides its parent class with the receiving params
         super(WCA, self).__init__()
@@ -47,54 +47,48 @@ class WCA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def nsr(self):
-        """float: Number of rivers summed with a single sea.
-
-        """
+        """float: Number of rivers summed with a single sea."""
 
         return self._nsr
 
     @nsr.setter
     def nsr(self, nsr):
         if not isinstance(nsr, int):
-            raise e.TypeError('`nsr` should be an integer')
+            raise e.TypeError("`nsr` should be an integer")
         if nsr < 1:
-            raise e.ValueError('`nsr` should be > 1')
+            raise e.ValueError("`nsr` should be > 1")
 
         self._nsr = nsr
 
     @property
     def d_max(self):
-        """float: Maximum evaporation condition.
-
-        """
+        """float: Maximum evaporation condition."""
 
         return self._d_max
 
     @d_max.setter
     def d_max(self, d_max):
         if not isinstance(d_max, (float, int)):
-            raise e.TypeError('`d_max` should be a float or integer')
+            raise e.TypeError("`d_max` should be a float or integer")
         if d_max < 0:
-            raise e.ValueError('`d_max` should be >= 0')
+            raise e.ValueError("`d_max` should be >= 0")
 
         self._d_max = d_max
 
     @property
     def flows(self):
-        """np.array: Array of flows.
-
-        """
+        """np.array: Array of flows."""
 
         return self._flows
 
     @flows.setter
     def flows(self, flows):
         if not isinstance(flows, np.ndarray):
-            raise e.TypeError('`flows` should be a numpy array')
+            raise e.TypeError("`flows` should be a numpy array")
 
         self._flows = flows
 
@@ -123,7 +117,9 @@ class WCA(Optimizer):
         # Iterates again over sea + rivers
         for i in range(self.nsr):
             # Calculates its particular flow intensity
-            self.flows[i] = np.floor(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
+            self.flows[i] = np.floor(
+                np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr)
+            )
 
     def _raining_process(self, agents, best_agent):
         """Performs the raining process (eq. 11-12).
@@ -139,7 +135,7 @@ class WCA(Optimizer):
             # Iterates through all raindrops that belongs to specific sea or river
             for j in range(self.nsr, self.flows[i] + self.nsr):
                 # Calculates the euclidean distance between sea and raindrop / stream
-                distance = (np.linalg.norm(best_agent.position - agents[j].position))
+                distance = np.linalg.norm(best_agent.position - agents[j].position)
 
                 # If distance if smaller than evaporation condition
                 if distance < self.d_max:
@@ -244,4 +240,4 @@ class WCA(Optimizer):
         self._raining_process(space.agents, space.best_agent)
 
         # Updates the evaporation condition
-        self.d_max -= (self.d_max / n_iterations)
+        self.d_max -= self.d_max / n_iterations

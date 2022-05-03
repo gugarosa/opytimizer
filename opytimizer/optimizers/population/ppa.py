@@ -7,10 +7,10 @@ import opytimizer.math.distribution as d
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class PPA(Optimizer):
@@ -33,7 +33,7 @@ class PPA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> PPA.')
+        logger.info("Overriding class: Optimizer -> PPA.")
 
         # Overrides its parent class with the receiving params
         super(PPA, self).__init__()
@@ -41,20 +41,18 @@ class PPA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def velocity(self):
-        """np.array: Array of velocities.
-
-        """
+        """np.array: Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
     def velocity(self, velocity):
         if not isinstance(velocity, np.ndarray):
-            raise e.TypeError('`velocity` should be a numpy array')
+            raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
@@ -67,7 +65,9 @@ class PPA(Optimizer):
         """
 
         # Array of velocities
-        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros(
+            (space.n_agents, space.n_variables, space.n_dimensions)
+        )
 
     def _calculate_population(self, n_agents, iteration, n_iterations):
         """Calculates the number of crows, cats and cuckoos.
@@ -83,10 +83,14 @@ class PPA(Optimizer):
         """
 
         # Calculates the number of crows
-        n_crows = np.round(n_agents * (2/3 - iteration * ((2/3 - 1/2) / n_iterations)))
+        n_crows = np.round(
+            n_agents * (2 / 3 - iteration * ((2 / 3 - 1 / 2) / n_iterations))
+        )
 
         # Calculates the number of cats
-        n_cats = np.round(n_agents * (0.01 + iteration * ((1/3 - 0.01) / n_iterations)))
+        n_cats = np.round(
+            n_agents * (0.01 + iteration * ((1 / 3 - 0.01) / n_iterations))
+        )
 
         # Calculates the number of cuckoos
         n_cuckoos = n_agents - n_crows - n_cats
@@ -131,7 +135,7 @@ class PPA(Optimizer):
         """
 
         # Gathers the cuckoos
-        cuckoos = space.agents[n_crows:n_crows+n_cuckoos]
+        cuckoos = space.agents[n_crows : n_crows + n_cuckoos]
 
         # Calculates a list of cuckoos' fitness
         fitness = [cuckoo.fit for cuckoo in cuckoos]
@@ -160,7 +164,9 @@ class PPA(Optimizer):
             cuckoo.position = space.agents[s].position + S_g * k
             cuckoo.clip_by_bound()
 
-    def _predation_phase(self, space, n_crows, n_cuckoos, n_cats, iteration, n_iterations):
+    def _predation_phase(
+        self, space, n_crows, n_cuckoos, n_cats, iteration, n_iterations
+    ):
         """Performs the predation phase using the current number of cats.
 
         Args:
@@ -174,7 +180,7 @@ class PPA(Optimizer):
         """
 
         # Gathers the cats
-        cats = space.agents[n_crows+n_cuckoos:]
+        cats = space.agents[n_crows + n_cuckoos :]
 
         # Calculates the constant
         constant = 2 - iteration / n_iterations
@@ -186,7 +192,9 @@ class PPA(Optimizer):
 
             # Updates the cat's velocity (eq. 13)
             r1 = r.generate_uniform_random_number()
-            self.velocity[idx] += r1 * constant * (space.best_agent.position - cat.position)
+            self.velocity[idx] += (
+                r1 * constant * (space.best_agent.position - cat.position)
+            )
 
             # Updates the cat's position and clips its limits (eq. 14)
             cat.position += self.velocity[idx]
@@ -203,7 +211,9 @@ class PPA(Optimizer):
         """
 
         # Calculates the number of crows, cats and cuckoos
-        n_crows, n_cats, n_cuckoos = self._calculate_population(space.n_agents, iteration, n_iterations)
+        n_crows, n_cats, n_cuckoos = self._calculate_population(
+            space.n_agents, iteration, n_iterations
+        )
 
         # Performs the nesting phase
         self._nesting_phase(space, n_crows)
@@ -212,4 +222,6 @@ class PPA(Optimizer):
         self._parasitism_phase(space, n_crows, n_cuckoos, iteration, n_iterations)
 
         # Performs the predation phase
-        self._predation_phase(space, n_crows, n_cuckoos, n_cats, iteration, n_iterations)
+        self._predation_phase(
+            space, n_crows, n_cuckoos, n_cats, iteration, n_iterations
+        )

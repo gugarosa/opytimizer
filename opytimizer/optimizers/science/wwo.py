@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class WWO(Optimizer):
@@ -34,7 +34,7 @@ class WWO(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> WWO.')
+        logger.info("Overriding class: Optimizer -> WWO.")
 
         # Overrides its parent class with the receiving params
         super(WWO, self).__init__()
@@ -54,103 +54,91 @@ class WWO(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def h_max(self):
-        """int: Maximum wave height.
-
-        """
+        """int: Maximum wave height."""
 
         return self._h_max
 
     @h_max.setter
     def h_max(self, h_max):
         if not isinstance(h_max, int):
-            raise e.TypeError('`h_max` should be an integer')
+            raise e.TypeError("`h_max` should be an integer")
         if h_max <= 0:
-            raise e.ValueError('`h_max` should be > 0')
+            raise e.ValueError("`h_max` should be > 0")
 
         self._h_max = h_max
 
     @property
     def alpha(self):
-        """float: Wave length reduction coefficient.
-
-        """
+        """float: Wave length reduction coefficient."""
 
         return self._alpha
 
     @alpha.setter
     def alpha(self, alpha):
         if not isinstance(alpha, (float, int)):
-            raise e.TypeError('`alpha` should be a float or integer')
+            raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
-            raise e.ValueError('`alpha` should be >= 0')
+            raise e.ValueError("`alpha` should be >= 0")
 
         self._alpha = alpha
 
     @property
     def beta(self):
-        """float: Breaking coefficient.
-
-        """
+        """float: Breaking coefficient."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
-            raise e.ValueError('`beta` should be >= 0')
+            raise e.ValueError("`beta` should be >= 0")
 
         self._beta = beta
 
     @property
     def k_max(self):
-        """int: Maximum number of breakings.
-
-        """
+        """int: Maximum number of breakings."""
 
         return self._k_max
 
     @k_max.setter
     def k_max(self, k_max):
         if not isinstance(k_max, int):
-            raise e.TypeError('`k_max` should be an integer')
+            raise e.TypeError("`k_max` should be an integer")
         if k_max <= 0:
-            raise e.ValueError('`k_max` should be > 0')
+            raise e.ValueError("`k_max` should be > 0")
 
         self._k_max = k_max
 
     @property
     def height(self):
-        """np.array: Array of heights.
-
-        """
+        """np.array: Array of heights."""
 
         return self._height
 
     @height.setter
     def height(self, height):
         if not isinstance(height, np.ndarray):
-            raise e.TypeError('`height` should be a numpy array')
+            raise e.TypeError("`height` should be a numpy array")
 
         self._height = height
 
     @property
     def length(self):
-        """np.array: Array of lengths.
-
-        """
+        """np.array: Array of lengths."""
 
         return self._length
 
     @length.setter
     def length(self, length):
         if not isinstance(length, np.ndarray):
-            raise e.TypeError('`length` should be a numpy array')
+            raise e.TypeError("`length` should be a numpy array")
 
         self._length = length
 
@@ -163,7 +151,9 @@ class WWO(Optimizer):
         """
 
         # Arrays of heights and lengths
-        self.height = r.generate_uniform_random_number(self.h_max, self.h_max, space.n_agents)
+        self.height = r.generate_uniform_random_number(
+            self.h_max, self.h_max, space.n_agents
+        )
         self.length = r.generate_uniform_random_number(0.5, 0.5, space.n_agents)
 
     def _propagate_wave(self, agent, function, index):
@@ -283,8 +273,10 @@ class WWO(Optimizer):
         # Iterates through all agents
         for i, agent in enumerate(agents):
             # Updates its length
-            self.length[i] *= self.alpha ** -((agent.fit - agents[-1].fit + c.EPSILON) / \
-                              (agents[0].fit - agents[-1].fit + c.EPSILON))
+            self.length[i] *= self.alpha ** -(
+                (agent.fit - agents[-1].fit + c.EPSILON)
+                / (agents[0].fit - agents[-1].fit + c.EPSILON)
+            )
 
     def update(self, space, function):
         """Wraps Water Wave Optimization over all agents and variables.
@@ -319,7 +311,9 @@ class WWO(Optimizer):
                         # Checks if broken wave is better than global one
                         if broken_wave.fit < space.best_agent.fit:
                             # Replaces the best agent with broken wave
-                            space.best_agent.position = copy.deepcopy(broken_wave.position)
+                            space.best_agent.position = copy.deepcopy(
+                                broken_wave.position
+                            )
                             space.best_agent.fit = copy.deepcopy(broken_wave.fit)
 
                 # Replaces current agent's with propagated wave
@@ -337,7 +331,9 @@ class WWO(Optimizer):
                 # If its height reaches zero
                 if self.height[i] == 0:
                     # Refracts the wave and generates a new height and wave length (eq. 8-9)
-                    self.height[i], self.length[i] = self._refract_wave(agent, space.best_agent, function, i)
+                    self.height[i], self.length[i] = self._refract_wave(
+                        agent, space.best_agent, function, i
+                    )
 
         # Updates the wave length for all agents (eq. 7)
         self._update_wave_length(space.agents)

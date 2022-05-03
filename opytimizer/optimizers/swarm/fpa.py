@@ -6,10 +6,10 @@ import copy
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as log
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = log.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class FPA(Optimizer):
@@ -47,56 +47,50 @@ class FPA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def beta(self):
-        """float: Lévy flight control parameter.
-
-        """
+        """float: Lévy flight control parameter."""
 
         return self._beta
 
     @beta.setter
     def beta(self, beta):
         if not isinstance(beta, (float, int)):
-            raise e.TypeError('`beta` should be a float or integer')
+            raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 2:
-            raise e.ValueError('`beta` should be between 0 and 2')
+            raise e.ValueError("`beta` should be between 0 and 2")
 
         self._beta = beta
 
     @property
     def eta(self):
-        """float: Lévy flight scaling factor.
-
-        """
+        """float: Lévy flight scaling factor."""
 
         return self._eta
 
     @eta.setter
     def eta(self, eta):
         if not isinstance(eta, (float, int)):
-            raise e.TypeError('`eta` should be a float or integer')
+            raise e.TypeError("`eta` should be a float or integer")
         if eta < 0:
-            raise e.ValueError('`eta` should be >= 0')
+            raise e.ValueError("`eta` should be >= 0")
 
         self._eta = eta
 
     @property
     def p(self):
-        """float: Probability of local pollination.
-
-        """
+        """float: Probability of local pollination."""
 
         return self._p
 
     @p.setter
     def p(self, p):
         if not isinstance(p, (float, int)):
-            raise e.TypeError('`p` should be a float or integer')
+            raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
-            raise e.ValueError('`p` should be between 0 and 1')
+            raise e.ValueError("`p` should be between 0 and 1")
 
         self._p = p
 
@@ -166,7 +160,8 @@ class FPA(Optimizer):
             if r1 > self.p:
                 # Updates a temporary position according to global pollination
                 a.position = self._global_pollination(
-                    agent.position, space.best_agent.position)
+                    agent.position, space.best_agent.position
+                )
 
             else:
                 # Generates an uniform random number
@@ -174,11 +169,17 @@ class FPA(Optimizer):
 
                 # Generates an index for flower `k` and flower `l`
                 k = r.generate_integer_random_number(0, len(space.agents))
-                l = r.generate_integer_random_number(0, len(space.agents), exclude_value=k)
+                l = r.generate_integer_random_number(
+                    0, len(space.agents), exclude_value=k
+                )
 
                 # Updates a temporary position according to local pollination
-                a.position = self._local_pollination(agent.position, space.agents[k].position,
-                                                     space.agents[l].position, epsilon)
+                a.position = self._local_pollination(
+                    agent.position,
+                    space.agents[k].position,
+                    space.agents[l].position,
+                    epsilon,
+                )
 
             # Checks agent's limits
             a.clip_by_bound()

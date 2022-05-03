@@ -5,10 +5,10 @@ import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class DOA(Optimizer):
@@ -32,7 +32,7 @@ class DOA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> DOA.')
+        logger.info("Overriding class: Optimizer -> DOA.")
 
         # Overrides its parent class with the receiving params
         super(DOA, self).__init__()
@@ -43,37 +43,33 @@ class DOA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def r(self):
-        """float: Chaos multiplier.
-
-        """
+        """float: Chaos multiplier."""
 
         return self._r
 
     @r.setter
     def r(self, r):
         if not isinstance(r, (float, int)):
-            raise e.TypeError('`r` should be a float or integer')
+            raise e.TypeError("`r` should be a float or integer")
         if r < 0:
-            raise e.ValueError('`r` should be >= 0')
+            raise e.ValueError("`r` should be >= 0")
 
         self._r = r
 
     @property
     def chaotic_map(self):
-        """np.array: Array of chaotic maps.
-
-        """
+        """np.array: Array of chaotic maps."""
 
         return self._chaotic_map
 
     @chaotic_map.setter
     def chaotic_map(self, chaotic_map):
         if not isinstance(chaotic_map, np.ndarray):
-            raise e.TypeError('`chaotic_map` should be a numpy array')
+            raise e.TypeError("`chaotic_map` should be a numpy array")
 
         self._chaotic_map = chaotic_map
 
@@ -124,8 +120,15 @@ class DOA(Optimizer):
                 c_map = self._calculate_chaotic_map(lb, ub)
 
                 # Updates the agent's position (eq. 6)
-                agent.position[j] += (2 * (space.best_agent.position[j] - agent.position[j]) / (
-                    c_map - self.chaotic_map[i][j])) * (ub - lb) / len(space.agents)
+                agent.position[j] += (
+                    (
+                        2
+                        * (space.best_agent.position[j] - agent.position[j])
+                        / (c_map - self.chaotic_map[i][j])
+                    )
+                    * (ub - lb)
+                    / len(space.agents)
+                )
 
                 # Updates current chaotic map with newer value
                 self.chaotic_map[i][j] = c_map

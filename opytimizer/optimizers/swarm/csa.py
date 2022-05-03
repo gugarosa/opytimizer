@@ -8,10 +8,10 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class CSA(Optimizer):
@@ -35,7 +35,7 @@ class CSA(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> CSA.')
+        logger.info("Overriding class: Optimizer -> CSA.")
 
         # Overrides its parent class with the receiving params
         super(CSA, self).__init__()
@@ -49,52 +49,46 @@ class CSA(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def fl(self):
-        """float: Flight length.
-
-        """
+        """float: Flight length."""
 
         return self._fl
 
     @fl.setter
     def fl(self, fl):
         if not isinstance(fl, (float, int)):
-            raise e.TypeError('`fl` should be a float or integer')
+            raise e.TypeError("`fl` should be a float or integer")
 
         self._fl = fl
 
     @property
     def AP(self):
-        """float: Awareness probability.
-
-        """
+        """float: Awareness probability."""
 
         return self._AP
 
     @AP.setter
     def AP(self, AP):
         if not isinstance(AP, (float, int)):
-            raise e.TypeError('`AP` should be a float or integer')
+            raise e.TypeError("`AP` should be a float or integer")
         if AP < 0 or AP > 1:
-            raise e.ValueError('`AP` should be between 0 and 1')
+            raise e.ValueError("`AP` should be between 0 and 1")
 
         self._AP = AP
 
     @property
     def memory(self):
-        """np.array: Array of memories.
-
-        """
+        """np.array: Array of memories."""
 
         return self._memory
 
     @memory.setter
     def memory(self, memory):
         if not isinstance(memory, np.ndarray):
-            raise e.TypeError('`memory` should be a numpy array')
+            raise e.TypeError("`memory` should be a numpy array")
 
         self._memory = memory
 

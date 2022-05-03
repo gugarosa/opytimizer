@@ -8,10 +8,10 @@ import numpy as np
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.core import Optimizer
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class HS(Optimizer):
@@ -34,7 +34,7 @@ class HS(Optimizer):
 
         """
 
-        logger.info('Overriding class: Optimizer -> HS.')
+        logger.info("Overriding class: Optimizer -> HS.")
 
         # Overrides its parent class with the receiving params
         super(HS, self).__init__()
@@ -51,56 +51,50 @@ class HS(Optimizer):
         # Builds the class
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def HMCR(self):
-        """float: Harmony memory considering rate.
-
-        """
+        """float: Harmony memory considering rate."""
 
         return self._HMCR
 
     @HMCR.setter
     def HMCR(self, HMCR):
         if not isinstance(HMCR, (float, int)):
-            raise e.TypeError('`HMCR` should be a float or integer')
+            raise e.TypeError("`HMCR` should be a float or integer")
         if HMCR < 0 or HMCR > 1:
-            raise e.ValueError('`HMCR` should be between 0 and 1')
+            raise e.ValueError("`HMCR` should be between 0 and 1")
 
         self._HMCR = HMCR
 
     @property
     def PAR(self):
-        """float: Pitch adjusting rate.
-
-        """
+        """float: Pitch adjusting rate."""
 
         return self._PAR
 
     @PAR.setter
     def PAR(self, PAR):
         if not isinstance(PAR, (float, int)):
-            raise e.TypeError('`PAR` should be a float or integer')
+            raise e.TypeError("`PAR` should be a float or integer")
         if PAR < 0 or PAR > 1:
-            raise e.ValueError('`PAR` should be between 0 and 1')
+            raise e.ValueError("`PAR` should be between 0 and 1")
 
         self._PAR = PAR
 
     @property
     def bw(self):
-        """float: Bandwidth parameter.
-
-        """
+        """float: Bandwidth parameter."""
 
         return self._bw
 
     @bw.setter
     def bw(self, bw):
         if not isinstance(bw, (float, int)):
-            raise e.TypeError('`bw` should be a float or integer')
+            raise e.TypeError("`bw` should be a float or integer")
         if bw < 0:
-            raise e.ValueError('`bw` should be >= 0')
+            raise e.ValueError("`bw` should be >= 0")
 
         self._bw = bw
 
@@ -140,12 +134,14 @@ class HS(Optimizer):
                     r3 = r.generate_uniform_random_number(-1, 1)
 
                     # Updates harmony position
-                    a.position[j] += (r3 * self.bw)
+                    a.position[j] += r3 * self.bw
 
             # If harmony memory is not used
             else:
                 # Generate a uniform random number
-                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=a.n_dimensions
+                )
 
         return a
 
@@ -198,7 +194,7 @@ class IHS(HS):
 
         """
 
-        logger.info('Overriding class: HS -> IHS.')
+        logger.info("Overriding class: HS -> IHS.")
 
         # Minimum pitch adjusting rate
         self.PAR_min = 0
@@ -215,77 +211,69 @@ class IHS(HS):
         # Overrides its parent class with the receiving params
         super(IHS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def PAR_min(self):
-        """float: Minimum pitch adjusting rate.
-
-        """
+        """float: Minimum pitch adjusting rate."""
 
         return self._PAR_min
 
     @PAR_min.setter
     def PAR_min(self, PAR_min):
         if not isinstance(PAR_min, (float, int)):
-            raise e.TypeError('`PAR_min` should be a float or integer')
+            raise e.TypeError("`PAR_min` should be a float or integer")
         if PAR_min < 0 or PAR_min > 1:
-            raise e.ValueError('`PAR_min` should be between 0 and 1')
+            raise e.ValueError("`PAR_min` should be between 0 and 1")
 
         self._PAR_min = PAR_min
 
     @property
     def PAR_max(self):
-        """float: Maximum pitch adjusting rate.
-
-        """
+        """float: Maximum pitch adjusting rate."""
 
         return self._PAR_max
 
     @PAR_max.setter
     def PAR_max(self, PAR_max):
         if not isinstance(PAR_max, (float, int)):
-            raise e.TypeError('`PAR_max` should be a float or integer')
+            raise e.TypeError("`PAR_max` should be a float or integer")
         if PAR_max < 0 or PAR_max > 1:
-            raise e.ValueError('`PAR_max` should be between 0 and 1')
+            raise e.ValueError("`PAR_max` should be between 0 and 1")
         if PAR_max < self.PAR_min:
-            raise e.ValueError('`PAR_max` should be >= `PAR_min`')
+            raise e.ValueError("`PAR_max` should be >= `PAR_min`")
 
         self._PAR_max = PAR_max
 
     @property
     def bw_min(self):
-        """float: Minimum bandwidth parameter.
-
-        """
+        """float: Minimum bandwidth parameter."""
 
         return self._bw_min
 
     @bw_min.setter
     def bw_min(self, bw_min):
         if not isinstance(bw_min, (float, int)):
-            raise e.TypeError('`bw_min` should be a float or integer')
+            raise e.TypeError("`bw_min` should be a float or integer")
         if bw_min < 0:
-            raise e.ValueError('`bw_min` should be >= 0')
+            raise e.ValueError("`bw_min` should be >= 0")
 
         self._bw_min = bw_min
 
     @property
     def bw_max(self):
-        """float: Maximum bandwidth parameter.
-
-        """
+        """float: Maximum bandwidth parameter."""
 
         return self._bw_max
 
     @bw_max.setter
     def bw_max(self, bw_max):
         if not isinstance(bw_max, (float, int)):
-            raise e.TypeError('`bw_max` should be a float or integer')
+            raise e.TypeError("`bw_max` should be a float or integer")
         if bw_max < 0:
-            raise e.ValueError('`bw_max` should be >= 0')
+            raise e.ValueError("`bw_max` should be >= 0")
         if bw_max < self.bw_min:
-            raise e.ValueError('`bw_max` should be >= `bw_min`')
+            raise e.ValueError("`bw_max` should be >= `bw_min`")
 
         self._bw_max = bw_max
 
@@ -301,10 +289,14 @@ class IHS(HS):
         """
 
         # Updates pitch adjusting rate
-        self.PAR = self.PAR_min + (((self.PAR_max - self.PAR_min) / n_iterations) * iteration)
+        self.PAR = self.PAR_min + (
+            ((self.PAR_max - self.PAR_min) / n_iterations) * iteration
+        )
 
         # Updates bandwidth parameter
-        self.bw = self.bw_max * np.exp((np.log(self.bw_min / self.bw_max) / n_iterations) * iteration)
+        self.bw = self.bw_max * np.exp(
+            (np.log(self.bw_min / self.bw_max) / n_iterations) * iteration
+        )
 
         # Generates a new harmony
         agent = self._generate_new_harmony(space.agents)
@@ -345,12 +337,12 @@ class GHS(IHS):
 
         """
 
-        logger.info('Overriding class: IHS -> GHS.')
+        logger.info("Overriding class: IHS -> GHS.")
 
         # Overrides its parent class with the receiving params
         super(GHS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _generate_new_harmony(self, agents):
         """It generates a new harmony.
@@ -393,7 +385,9 @@ class GHS(IHS):
             # If harmony memory is not used
             else:
                 # Generate a uniform random number
-                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=a.n_dimensions
+                )
 
         return a
 
@@ -419,7 +413,7 @@ class SGHS(HS):
 
         """
 
-        logger.info('Overriding class: HS -> SGHS.')
+        logger.info("Overriding class: HS -> SGHS.")
 
         # Learning period
         self.LP = 100
@@ -439,169 +433,149 @@ class SGHS(HS):
         # Overrides its parent class with the receiving params
         super(SGHS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def HMCR(self):
-        """float: Harmony memory considering rate.
-
-        """
+        """float: Harmony memory considering rate."""
 
         return self._HMCR
 
     @HMCR.setter
     def HMCR(self, HMCR):
         if not isinstance(HMCR, (float, int)):
-            raise e.TypeError('`HMCR` should be a float or integer')
+            raise e.TypeError("`HMCR` should be a float or integer")
 
         self._HMCR = HMCR
 
     @property
     def PAR(self):
-        """float: Pitch adjusting rate.
-
-        """
+        """float: Pitch adjusting rate."""
 
         return self._PAR
 
     @PAR.setter
     def PAR(self, PAR):
         if not isinstance(PAR, (float, int)):
-            raise e.TypeError('`PAR` should be a float or integer')
+            raise e.TypeError("`PAR` should be a float or integer")
 
         self._PAR = PAR
 
     @property
     def LP(self):
-        """int: Learning period.
-
-        """
+        """int: Learning period."""
 
         return self._LP
 
     @LP.setter
     def LP(self, LP):
         if not isinstance(LP, int):
-            raise e.TypeError('`LP` should be a integer')
+            raise e.TypeError("`LP` should be a integer")
         if LP <= 0:
-            raise e.ValueError('`LP` should be > 0')
+            raise e.ValueError("`LP` should be > 0")
 
         self._LP = LP
 
     @property
     def HMCRm(self):
-        """float: Mean harmony memory considering rate.
-
-        """
+        """float: Mean harmony memory considering rate."""
 
         return self._HMCRm
 
     @HMCRm.setter
     def HMCRm(self, HMCRm):
         if not isinstance(HMCRm, (float, int)):
-            raise e.TypeError('`HMCRm` should be a float or integer')
+            raise e.TypeError("`HMCRm` should be a float or integer")
         if HMCRm < 0 or HMCRm > 1:
-            raise e.ValueError('`HMCRm` should be between 0 and 1')
+            raise e.ValueError("`HMCRm` should be between 0 and 1")
 
         self._HMCRm = HMCRm
 
     @property
     def PARm(self):
-        """float: Mean pitch adjusting rate.
-
-        """
+        """float: Mean pitch adjusting rate."""
 
         return self._PARm
 
     @PARm.setter
     def PARm(self, PARm):
         if not isinstance(PARm, (float, int)):
-            raise e.TypeError('`PARm` should be a float or integer')
+            raise e.TypeError("`PARm` should be a float or integer")
         if PARm < 0 or PARm > 1:
-            raise e.ValueError('`PARm` should be between 0 and 1')
+            raise e.ValueError("`PARm` should be between 0 and 1")
 
         self._PARm = PARm
 
     @property
     def bw_min(self):
-        """float: Minimum bandwidth parameter.
-
-        """
+        """float: Minimum bandwidth parameter."""
 
         return self._bw_min
 
     @bw_min.setter
     def bw_min(self, bw_min):
         if not isinstance(bw_min, (float, int)):
-            raise e.TypeError('`bw_min` should be a float or integer')
+            raise e.TypeError("`bw_min` should be a float or integer")
         if bw_min < 0:
-            raise e.ValueError('`bw_min` should be >= 0')
+            raise e.ValueError("`bw_min` should be >= 0")
 
         self._bw_min = bw_min
 
     @property
     def bw_max(self):
-        """float: Maximum bandwidth parameter.
-
-        """
+        """float: Maximum bandwidth parameter."""
 
         return self._bw_max
 
     @bw_max.setter
     def bw_max(self, bw_max):
         if not isinstance(bw_max, (float, int)):
-            raise e.TypeError('`bw_max` should be a float or integer')
+            raise e.TypeError("`bw_max` should be a float or integer")
         if bw_max < 0:
-            raise e.ValueError('`bw_max` should be >= 0')
+            raise e.ValueError("`bw_max` should be >= 0")
         if bw_max < self.bw_min:
-            raise e.ValueError('`bw_max` should be >= `bw_min`')
+            raise e.ValueError("`bw_max` should be >= `bw_min`")
 
         self._bw_max = bw_max
 
     @property
     def lp(self):
-        """int: Current learning period.
-
-        """
+        """int: Current learning period."""
 
         return self._lp
 
     @lp.setter
     def lp(self, lp):
         if not isinstance(lp, int):
-            raise e.TypeError('`lp` should be a integer')
+            raise e.TypeError("`lp` should be a integer")
         if lp <= 0:
-            raise e.ValueError('`lp` should be > 0')
+            raise e.ValueError("`lp` should be > 0")
 
         self._lp = lp
 
     @property
     def HMCR_history(self):
-        """list: Historical harmony memory considering rates.
-
-        """
+        """list: Historical harmony memory considering rates."""
 
         return self._HMCR_history
 
     @HMCR_history.setter
     def HMCR_history(self, HMCR_history):
         if not isinstance(HMCR_history, list):
-            raise e.TypeError('`HMCR_history` should be a list')
+            raise e.TypeError("`HMCR_history` should be a list")
 
         self._HMCR_history = HMCR_history
 
     @property
     def PAR_history(self):
-        """list: Historical pitch adjusting rates.
-
-        """
+        """list: Historical pitch adjusting rates."""
 
         return self._PAR_history
 
     @PAR_history.setter
     def PAR_history(self, PAR_history):
         if not isinstance(PAR_history, list):
-            raise e.TypeError('`PAR_history` should be a list')
+            raise e.TypeError("`PAR_history` should be a list")
 
         self._PAR_history = PAR_history
 
@@ -645,7 +619,7 @@ class SGHS(HS):
                 r2 = r.generate_uniform_random_number(-1, 1)
 
                 # Updates harmony position
-                a.position[j] += (r2 * self.bw)
+                a.position[j] += r2 * self.bw
 
                 # Generates a new uniform random number
                 r3 = r.generate_uniform_random_number()
@@ -658,7 +632,9 @@ class SGHS(HS):
             # If harmony memory is not used
             else:
                 # Generate a uniform random number
-                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=a.n_dimensions
+                )
 
         return a
 
@@ -684,7 +660,10 @@ class SGHS(HS):
         # If current iteration is smaller than half
         if iteration < n_iterations // 2:
             # Updates the bandwidth parameter
-            self.bw = self.bw_max - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
+            self.bw = (
+                self.bw_max
+                - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
+            )
         else:
             # Replaces by the minimum bandwidth
             self.bw = self.bw_min
@@ -739,7 +718,7 @@ class NGHS(HS):
 
         """
 
-        logger.info('Overriding class: HS -> NGHS.')
+        logger.info("Overriding class: HS -> NGHS.")
 
         # Mutation probability
         self.pm = 0.1
@@ -747,22 +726,20 @@ class NGHS(HS):
         # Overrides its parent class with the receiving params
         super(NGHS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     @property
     def pm(self):
-        """float: Mutation probability.
-
-        """
+        """float: Mutation probability."""
 
         return self._pm
 
     @pm.setter
     def pm(self, pm):
         if not isinstance(pm, (float, int)):
-            raise e.TypeError('`pm` should be a float or integer')
+            raise e.TypeError("`pm` should be a float or integer")
         if pm < 0 or pm > 1:
-            raise e.ValueError('`pm` should be between 0 and 1')
+            raise e.ValueError("`pm` should be between 0 and 1")
 
         self._pm = pm
 
@@ -801,7 +778,9 @@ class NGHS(HS):
             # Checks if is supposed to be mutated
             if r2 <= self.pm:
                 # Mutates the position
-                a.position[j] = r.generate_uniform_random_number(lb, ub, size=a.n_dimensions)
+                a.position[j] = r.generate_uniform_random_number(
+                    lb, ub, size=a.n_dimensions
+                )
 
         return a
 
@@ -852,12 +831,12 @@ class GOGHS(NGHS):
 
         """
 
-        logger.info('Overriding class: NGHS -> GOGHS.')
+        logger.info("Overriding class: NGHS -> GOGHS.")
 
         # Overrides its parent class with the receiving params
         super(GOGHS, self).__init__(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def _generate_opposition_harmony(self, new_agent, agents):
         """It generates a new opposition-based harmony.

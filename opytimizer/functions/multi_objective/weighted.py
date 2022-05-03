@@ -2,16 +2,14 @@
 """
 
 import opytimizer.utils.exception as e
-import opytimizer.utils.logging as l
 from opytimizer.functions.multi_objective.standard import MultiObjectiveFunction
+from opytimizer.utils import logging
 
-logger = l.get_logger(__name__)
+logger = logging.get_logger(__name__)
 
 
 class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
-    """A MultiObjectiveWeightedFunction class used to hold multi-objective weighted functions.
-
-    """
+    """A MultiObjectiveWeightedFunction class used to hold multi-objective weighted functions."""
 
     def __init__(self, functions, weights):
         """Initialization method.
@@ -22,15 +20,17 @@ class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
 
         """
 
-        logger.info('Overriding class: MultiObjectiveFunction -> MultiObjectiveWeightedFunction.')
+        logger.info(
+            "Overriding class: MultiObjectiveFunction -> MultiObjectiveWeightedFunction."
+        )
 
         super(MultiObjectiveWeightedFunction, self).__init__(functions)
 
         # List of weights
         self.weights = weights or []
 
-        logger.debug('Weights: %s', self.weights)
-        logger.info('Class overrided.')
+        logger.debug("Weights: %s", self.weights)
+        logger.info("Class overrided.")
 
     def __call__(self, x):
         """Callable to avoid using the `pointer` property.
@@ -54,17 +54,15 @@ class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
 
     @property
     def weights(self):
-        """list: Functions' weights.
-
-        """
+        """list: Functions' weights."""
 
         return self._weights
 
     @weights.setter
     def weights(self, weights):
         if not isinstance(weights, list):
-            raise e.TypeError('`weights` should be a list')
+            raise e.TypeError("`weights` should be a list")
         if len(weights) != len(self.functions):
-            raise e.SizeError('`weights` should have the same size of `functions`')
+            raise e.SizeError("`weights` should have the same size of `functions`")
 
         self._weights = weights

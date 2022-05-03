@@ -15,6 +15,7 @@ digits = load_digits()
 X = digits.data
 Y = digits.target
 
+
 def k_means_clustering(opytimizer):
     # Gathers params
     n_clusters = int(opytimizer[0][0])

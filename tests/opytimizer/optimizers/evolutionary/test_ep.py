@@ -5,10 +5,7 @@ from opytimizer.spaces import search
 
 
 def test_ep_params():
-    params = {
-        'bout_size': 0.1,
-        'clip_ratio': 0.05
-    }
+    params = {"bout_size": 0.1, "clip_ratio": 0.05}
 
     new_ep = ep.EP(params=params)
 
@@ -21,7 +18,7 @@ def test_ep_params_setter():
     new_ep = ep.EP()
 
     try:
-        new_ep.bout_size = 'a'
+        new_ep.bout_size = "a"
     except:
         new_ep.bout_size = 0.5
 
@@ -33,7 +30,7 @@ def test_ep_params_setter():
     assert new_ep.bout_size == 0.5
 
     try:
-        new_ep.clip_ratio = 'b'
+        new_ep.clip_ratio = "b"
     except:
         new_ep.clip_ratio = 0.5
 
@@ -46,8 +43,9 @@ def test_ep_params_setter():
 
 
 def test_ep_compile():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ep = ep.EP()
     new_ep.compile(search_space)
@@ -64,8 +62,9 @@ def test_ep_mutate_parent():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ep = ep.EP()
     new_ep.compile(search_space)
@@ -76,8 +75,9 @@ def test_ep_mutate_parent():
 
 
 def test_ep_update_strategy():
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ep = ep.EP()
     new_ep.compile(search_space)
@@ -91,8 +91,9 @@ def test_ep_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(n_agents=10, n_variables=2,
-                                      lower_bound=[0, 0], upper_bound=[10, 10])
+    search_space = search.SearchSpace(
+        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
+    )
 
     new_ep = ep.EP()
     new_ep.compile(search_space)
