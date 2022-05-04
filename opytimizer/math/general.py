@@ -2,21 +2,22 @@
 """
 
 from itertools import islice
+from typing import Any, Iterable, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 
 
-def euclidean_distance(x, y):
+def euclidean_distance(x: np.ndarray, y: np.ndarray) -> float:
     """Calculates the Euclidean distance between two n-dimensional points.
 
     Args:
-        x (np.array): N-dimensional point.
-        y (np.array): N-dimensional point.
+        x: N-dimensional point.
+        y: N-dimensional point.
 
     Returns:
-        Euclidean distance between `x` and `y`.
+        (float): Euclidean distance between `x` and `y`.
 
     """
 
@@ -25,17 +26,22 @@ def euclidean_distance(x, y):
     return distance
 
 
-def kmeans(x, n_clusters=1, max_iterations=100, tol=1e-4):
+def kmeans(
+    x: np.ndarray,
+    n_clusters: Optional[int] = 1,
+    max_iterations: Optional[int] = 100,
+    tol: Optional[float] = 1e-4,
+) -> np.ndarray:
     """Performs the K-Means clustering over the input data.
 
     Args:
-        x (np.array): Input array with a shape equal to (n_samples, n_variables, n_dimensions).
-        n_clusters (int): Number of clusters.
-        max_iterations (int): Maximum number of clustering iterations.
-        tol (float): Tolerance value to stop the clustering.
+        x: Input array with a shape equal to (n_samples, n_variables, n_dimensions).
+        n_clusters: Number of clusters.
+        max_iterations: Maximum number of clustering iterations.
+        tol: Tolerance value to stop the clustering.
 
     Returns:
-        An array holding the assigned cluster per input sample.
+        (np.ndarray): An array holding the assigned cluster per input sample.
 
     """
 
@@ -79,15 +85,15 @@ def kmeans(x, n_clusters=1, max_iterations=100, tol=1e-4):
     return labels
 
 
-def n_wise(x, size=2):
+def n_wise(x: List[Any], size: Optional[int] = 2) -> Iterable:
     """Iterates over an iterator and returns n-wise samples from it.
 
     Args:
         x (list): Values to be iterated over.
-        size (int): Amount of samples per iteration.
+        size: Amount of samples per iteration.
 
     Returns:
-        N-wise samples from the iterator.
+        (Iterable): N-wise samples from the iterator.
 
     """
 
@@ -96,16 +102,18 @@ def n_wise(x, size=2):
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
-def tournament_selection(fitness, n, size=2):
+def tournament_selection(
+    fitness: List[float], n: int, size: Optional[int] = 2
+) -> np.array:
     """Selects n-individuals based on a tournament selection.
 
     Args:
         fitness (list): List of individuals fitness.
-        n (int): Number of individuals to be selected.
-        size (int): Tournament size.
+        n: Number of individuals to be selected.
+        size: Tournament size.
 
     Returns:
-        Indexes of selected individuals.
+        (np.array): Indexes of selected individuals.
 
     """
 
@@ -122,14 +130,14 @@ def tournament_selection(fitness, n, size=2):
     return selected
 
 
-def weighted_wheel_selection(weights):
+def weighted_wheel_selection(weights: List[float]) -> int:
     """Selects an individual from a weight-based roulette.
 
     Args:
-        weights (list): List of individuals weights.
+        weights: List of individuals weights.
 
     Returns:
-        Weight-based roulette individual.
+        (int): Weight-based roulette individual.
 
     """
 

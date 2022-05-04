@@ -1,6 +1,8 @@
 """History-based object that helps in saving the optimization history.
 """
 
+from typing import Any, List, Optional, Tuple, Union
+
 import numpy as np
 
 import opytimizer.utils.exception as e
@@ -14,11 +16,11 @@ class History:
 
     """
 
-    def __init__(self, save_agents=False):
+    def __init__(self, save_agents: Optional[bool] = False) -> None:
         """Initialization method.
 
         Args:
-            save_agents (bool): Saves all agents in the search space.
+            save_agents: Saves all agents in the search space.
 
         """
 
@@ -26,27 +28,27 @@ class History:
         self.save_agents = save_agents
 
     @property
-    def save_agents(self):
-        """bool: Saves all agents in the search space."""
+    def save_agents(self) -> bool:
+        """Saves all agents in the search space."""
 
         return self._save_agents
 
     @save_agents.setter
-    def save_agents(self, save_agents):
+    def save_agents(self, save_agents: bool) -> None:
         if not isinstance(save_agents, bool):
             raise e.TypeError("`save_agents` should be a boolean")
 
         self._save_agents = save_agents
 
-    def _parse(self, key, value):
+    def _parse(self, key: str, value: Any) -> Union[List[Any], Tuple[List[Any], float]]:
         """Parses incoming values with specified formats.
 
         Args:
-            key (str): Key.
-            value (any): Value.
+            key: Key.
+            value: Value.
 
         Returns:
-            Parsed value according to the specified format.
+            (Union[List[Any], Tuple[List[Any], float]]): Parsed value according to the specified format.
 
         """
 
@@ -62,7 +64,7 @@ class History:
             # Returns a list of local positions
             return [v.tolist() for v in value]
 
-    def dump(self, **kwargs):
+    def dump(self, **kwargs) -> None:
         """Dumps keyword pairs into self-class attributes."""
 
         for (key, value) in kwargs.items():
@@ -85,15 +87,17 @@ class History:
             else:
                 getattr(self, key).append(output)
 
-    def get_convergence(self, key, index=0):
+    def get_convergence(
+        self, key: str, index: Optional[Tuple[int, ...]] = 0
+    ) -> np.ndarray:
         """Gets the convergence list of a specified key.
 
         Args:
-            key (str): Key to be retrieved.
-            index (tuple): Index to be retrieved.
+            key: Key to be retrieved.
+            index: Index to be retrieved.
 
         Returns:
-            Values based on key and index.
+            (np.ndarray): Values based on key and index.
 
         """
 

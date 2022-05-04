@@ -13,12 +13,12 @@ class Error(Exception):
 
     """
 
-    def __init__(self, cls, msg):
+    def __init__(self, cls: str, msg: str) -> None:
         """Initialization method.
 
         Args:
-            cls (str): Class identifier.
-            msg (str): Message to be logged.
+            cls: Class identifier.
+            msg: Message to be logged.
 
         """
 
@@ -31,11 +31,11 @@ class Error(Exception):
 class ArgumentError(Error):
     """An ArgumentError class for logging errors related to wrong number of provided arguments."""
 
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         """Initialization method.
 
         Args:
-            error (str): Error message to be logged.
+            error: Error message to be logged.
 
         """
 
@@ -45,11 +45,11 @@ class ArgumentError(Error):
 class BuildError(Error):
     """A BuildError class for logging errors related to classes not being built."""
 
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         """Initialization method.
 
         Args:
-            error (str): Error message to be logged.
+            error: Error message to be logged.
 
         """
 
@@ -59,11 +59,11 @@ class BuildError(Error):
 class SizeError(Error):
     """A SizeError class for logging errors related to wrong length or size of variables."""
 
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         """Initialization method.
 
         Args:
-            error (str): Error message to be logged.
+            error: Error message to be logged.
 
         """
 
@@ -73,11 +73,11 @@ class SizeError(Error):
 class TypeError(Error):
     """A TypeError class for logging errors related to wrong type of variables."""
 
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         """Initialization method.
 
         Args:
-            error (str): Error message to be logged.
+            error: Error message to be logged.
 
         """
 
@@ -87,11 +87,11 @@ class TypeError(Error):
 class ValueError(Error):
     """A ValueError class for logging errors related to wrong value of variables."""
 
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         """Initialization method.
 
         Args:
-            error (str): Error message to be logged.
+            error: Error message to be logged.
 
         """
 

@@ -2,21 +2,24 @@
 """
 
 from math import gamma, pi, sin
+from typing import Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 
 
-def generate_bernoulli_distribution(prob=0.0, size=1):
+def generate_bernoulli_distribution(
+    prob: Optional[float] = 0.0, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates a Bernoulli distribution based on an input probability.
 
     Args:
-        prob (float): Probability of distribution.
-        size (int): Size of array.
+        prob: Probability of distribution.
+        size: Size of array.
 
     Returns:
-        Bernoulli distribution n-dimensional array.
+        (np.ndarray): Bernoulli distribution n-dimensional array.
 
     """
 
@@ -32,16 +35,18 @@ def generate_bernoulli_distribution(prob=0.0, size=1):
     return bernoulli_array
 
 
-def generate_choice_distribution(n=1, probs=None, size=1):
+def generate_choice_distribution(
+    n: Optional[int] = 1, probs: Optional[np.ndarray] = None, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates a random choice distribution based on probabilities.
 
     Args:
-        n (int): Amount of values to be picked from.
-        probs (np.array): Array of probabilities.
-        size (int): Size of array.
+        n: Amount of values to be picked from.
+        probs: Array of probabilities.
+        size: Size of array.
 
     Returns:
-        Choice distribution array.
+        (np.ndarray): Choice distribution array.
 
     """
 
@@ -51,7 +56,9 @@ def generate_choice_distribution(n=1, probs=None, size=1):
     return choice_array
 
 
-def generate_levy_distribution(beta=0.1, size=1):
+def generate_levy_distribution(
+    beta: Optional[float] = 0.1, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates a n-dimensional array based on a Lévy distribution.
 
     References:
@@ -59,11 +66,11 @@ def generate_levy_distribution(beta=0.1, size=1):
         Multiobjective Cuckoo Search for Design Optimization (2013).
 
     Args:
-        beta (float): Skewness parameter.
-        size (int): Size of array.
+        beta: Skewness parameter.
+        size: Size of array.
 
     Returns:
-        Lévy distribution n-dimensional array.
+        (np.ndarray): Lévy distribution n-dimensional array.
 
     """
 

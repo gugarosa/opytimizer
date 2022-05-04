@@ -3,13 +3,17 @@
 
 import time
 from inspect import signature
+from typing import Any, List, Optional
 
 import dill
 from tqdm import tqdm
 
 import opytimizer.utils.exception as e
+from opytimizer.core.function import Function
+from opytimizer.core.optimizer import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
-from opytimizer.utils.callback import CallbackVessel
+from opytimizer.utils.callback import Callback, CallbackVessel
 from opytimizer.utils.history import History
 
 logger = logging.get_logger(__name__)
@@ -21,14 +25,20 @@ class Opytimizer:
 
     """
 
-    def __init__(self, space, optimizer, function, save_agents=False):
+    def __init__(
+        self,
+        space: Space,
+        optimizer: Optimizer,
+        function: Function,
+        save_agents: Optional[bool] = False,
+    ) -> None:
         """Initialization method.
 
         Args:
-            space (Space): Space-child instance.
-            optimizer (Optimizer): Optimizer-child instance.
-            function (Function): Function or Function-child instance.
-            save_agents (bool): Saves all agents in the search space.
+            space: Space-child instance.
+            optimizer: Optimizer-child instance.
+            function: Function or Function-child instance.
+            save_agents: Saves all agents in the search space.
 
         """
 
@@ -62,65 +72,65 @@ class Opytimizer:
         logger.info("Class created.")
 
     @property
-    def space(self):
-        """Space: Space-child instance (SearchSpace, HyperComplexSpace, etc)."""
+    def space(self) -> Space:
+        """Space-child instance (SearchSpace, HyperComplexSpace, etc)."""
 
         return self._space
 
     @space.setter
-    def space(self, space):
+    def space(self, space: Space) -> None:
         if not space.built:
             raise e.BuildError("`space` should be built before using Opytimizer")
 
         self._space = space
 
     @property
-    def optimizer(self):
-        """Optimizer: Optimizer-child instance (PSO, BA, etc)."""
+    def optimizer(self) -> Optimizer:
+        """Optimizer-child instance (PSO, BA, etc)."""
 
         return self._optimizer
 
     @optimizer.setter
-    def optimizer(self, optimizer):
+    def optimizer(self, optimizer: Optimizer) -> None:
         if not optimizer.built:
             raise e.BuildError("`optimizer` should be built before using Opytimizer")
 
         self._optimizer = optimizer
 
     @property
-    def function(self):
-        """Function: Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc)."""
+    def function(self) -> Function:
+        """Function or Function-child instance (ConstrainedFunction, WeightedFunction, etc)."""
 
         return self._function
 
     @function.setter
-    def function(self, function):
+    def function(self, function: Function) -> None:
         if not function.built:
             raise e.BuildError("`function` should be built before using Opytimizer")
 
         self._function = function
 
     @property
-    def history(self):
-        """History: Optimization history."""
+    def history(self) -> History:
+        """Optimization history."""
 
         return self._history
 
     @history.setter
-    def history(self, history):
+    def history(self, history: History) -> None:
         if not isinstance(history, History):
             raise e.TypeError("`history` should be a History")
 
         self._history = history
 
     @property
-    def iteration(self):
-        """int: Current iteration."""
+    def iteration(self) -> int:
+        """Current iteration."""
 
         return self._iteration
 
     @iteration.setter
-    def iteration(self, iteration):
+    def iteration(self, iteration: int) -> None:
         if not isinstance(iteration, int):
             raise e.TypeError("`iteration` should be an integer")
         if iteration < 0:
@@ -129,13 +139,13 @@ class Opytimizer:
         self._iteration = iteration
 
     @property
-    def total_iterations(self):
-        """int: Total number of iterations."""
+    def total_iterations(self) -> int:
+        """Total number of iterations."""
 
         return self._total_iterations
 
     @total_iterations.setter
-    def total_iterations(self, total_iterations):
+    def total_iterations(self, total_iterations: int) -> None:
         if not isinstance(total_iterations, int):
             raise e.TypeError("`total_iterations` should be an integer")
         if total_iterations < 0:
@@ -144,26 +154,36 @@ class Opytimizer:
         self._total_iterations = total_iterations
 
     @property
-    def evaluate_args(self):
-        """Converts the optimizer `evaluate` arguments into real variables."""
+    def evaluate_args(self) -> List[Any]:
+        """Converts the optimizer `evaluate` arguments into real variables.
+
+        Returns:
+            (List[Any]): List of real-attribute variables.
+
+        """
 
         args = signature(self.optimizer.evaluate).parameters
 
         return [getattr(self, v) for v in args]
 
     @property
-    def update_args(self):
-        """Converts the optimizer `update` arguments into real variables."""
+    def update_args(self) -> List[Any]:
+        """Converts the optimizer `update` arguments into real variables.
+
+        Returns:
+            (List[Any]): List of real-attribute variables.
+
+        """
 
         args = signature(self.optimizer.update).parameters
 
         return [getattr(self, v) for v in args]
 
-    def evaluate(self, callbacks):
+    def evaluate(self, callbacks: List[Callback]) -> None:
         """Wraps the `evaluate` pipeline with its corresponding callbacks.
 
         Args:
-            callback (list): List of callbacks.
+            callbacks: List of callbacks.
 
         """
 
@@ -176,11 +196,11 @@ class Opytimizer:
         # Invokes the `on_evaluate_after` callback
         callbacks.on_evaluate_after(*self.evaluate_args)
 
-    def update(self, callbacks):
+    def update(self, callbacks: List[Callback]) -> None:
         """Wraps the `update` pipeline with its corresponding callbacks.
 
         Args:
-            callback (list): List of callbacks.
+            callback: List of callbacks.
 
         """
 
@@ -197,12 +217,16 @@ class Opytimizer:
         # must meet the bounds limits
         self.space.clip_by_bound()
 
-    def start(self, n_iterations=1, callbacks=None):
+    def start(
+        self,
+        n_iterations: Optional[int] = 1,
+        callbacks: Optional[List[Callback]] = None,
+    ) -> None:
         """Starts the optimization task.
 
         Args
-            n_iterations (int): Maximum number of iterations.
-            callback (list): List of callbacks.
+            n_iterations: Maximum number of iterations.
+            callback: List of callbacks.
 
         """
 
@@ -267,11 +291,11 @@ class Opytimizer:
         logger.info("Optimization task ended.")
         logger.info("It took %s seconds.", opt_time)
 
-    def save(self, file_path):
+    def save(self, file_path: str) -> None:
         """Saves the optimization model to a dill (pickle) file.
 
         Args:
-            file_path (str): Path of file to be saved.
+            file_path: Path of file to be saved.
 
         """
 
@@ -279,12 +303,12 @@ class Opytimizer:
             dill.dump(self, output_file)
 
     @classmethod
-    def load(cls, file_path):
+    def load(cls, file_path: str) -> None:
         """Loads the optimization model from a dill (pickle) file without needing
         to instantiate the class.
 
         Args:
-            file_path (str): Path of file to be loaded.
+            file_path: Path of file to be loaded.
 
         """
 

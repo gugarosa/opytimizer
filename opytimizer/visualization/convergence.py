@@ -1,6 +1,8 @@
 """Convergence plots.
 """
 
+from typing import List, Optional
+
 import matplotlib.pyplot as plt
 
 import opytimizer.utils.exception as e
@@ -8,27 +10,27 @@ import opytimizer.utils.exception as e
 
 def plot(
     *args,
-    labels=None,
-    title="",
-    subtitle="",
-    xlabel="iteration",
-    ylabel="value",
-    grid=True,
-    legend=True,
-):
+    labels: Optional[List[str]] = None,
+    title: Optional[str] = "",
+    subtitle: Optional[str] = "",
+    xlabel: Optional[str] = "iteration",
+    ylabel: Optional[str] = "value",
+    grid: Optional[bool] = True,
+    legend: Optional[bool] = True,
+) -> None:
     """Plots the convergence graph of desired variables.
 
     Essentially, each variable is a list or numpy array
     with size equals to `n_iterations`.
 
     Args:
-        labels (list): Labels to be applied for each plot in legend.
-        title (str): Title of the plot.
-        subtitle (str): Subtitle of the plot.
-        xlabel (str): Axis `x` label.
-        ylabel (str): Axis `y` label.
-        grid (bool): If grid should be used or not.
-        legend (bool): If legend should be displayed or not.
+        labels: Labels to be applied for each plot in legend.
+        title: Title of the plot.
+        subtitle: Subtitle of the plot.
+        xlabel: Axis `x` label.
+        ylabel: Axis `y` label.
+        grid: If grid should be used or not.
+        legend: If legend should be displayed or not.
 
     """
 

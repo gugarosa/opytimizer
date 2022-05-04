@@ -1,17 +1,19 @@
 """Random-based mathematical generators.
 """
 
+from typing import Optional
+
 import numpy as np
 
 
-def generate_binary_random_number(size=1):
+def generate_binary_random_number(size: Optional[int] = 1) -> np.ndarray:
     """Generates a binary random number or array based on an uniform distribution.
 
     Args:
-        size (int): Size of array.
+        size: Size of array.
 
     Returns:
-        A binary random number or array.
+        (np.ndarray): A binary random number or array.
 
     """
 
@@ -20,15 +22,17 @@ def generate_binary_random_number(size=1):
     return binary_array
 
 
-def generate_exponential_random_number(scale=1.0, size=1):
+def generate_exponential_random_number(
+    scale: Optional[float] = 1.0, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates a random number or array based on an exponential distribution.
 
     Args:
-        scale (float): Scaling of the distribution.
-        size (int): Size of array.
+        scale: Scaling of the distribution.
+        size: Size of array.
 
     Returns:
-        An exponential random number or array.
+        (np.ndarray): An exponential random number or array.
 
     """
 
@@ -37,16 +41,18 @@ def generate_exponential_random_number(scale=1.0, size=1):
     return exponential_array
 
 
-def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
+def generate_gamma_random_number(
+    shape: Optional[float] = 1.0, scale: Optional[float] = 1.0, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates an Erlang distribution based on gamma values.
 
     Args:
-        shape (float): Shape parameter.
-        scale (float): Scaling of the distribution.
-        size (int): Size of array.
+        shape: Shape parameter.
+        scale: Scaling of the distribution.
+        size: Size of array.
 
     Returns:
-        An Erlang distribution array.
+        (np.ndarray): An Erlang distribution array.
 
     """
 
@@ -55,17 +61,22 @@ def generate_gamma_random_number(shape=1.0, scale=1.0, size=1):
     return gamma_array
 
 
-def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None):
+def generate_integer_random_number(
+    low: Optional[int] = 0,
+    high: Optional[int] = 1,
+    exclude_value: Optional[int] = None,
+    size: Optional[int] = None,
+) -> np.ndarray:
     """Generates a random number or array based on an integer distribution.
 
     Args:
-        low (int): Lower interval.
-        high (int): Higher interval.
-        exclude_value (int): Value to be excluded from array.
-        size (int): Size of array.
+        low: Lower interval.
+        high: Higher interval.
+        exclude_value: Value to be excluded from array.
+        size: Size of array.
 
     Returns:
-        An integer random number or array.
+        (np.ndarray): An integer random number or array.
 
     """
 
@@ -84,16 +95,18 @@ def generate_integer_random_number(low=0, high=1, exclude_value=None, size=None)
     return integer_array
 
 
-def generate_uniform_random_number(low=0.0, high=1.0, size=1):
+def generate_uniform_random_number(
+    low: Optional[float] = 0.0, high: Optional[float] = 1.0, size: Optional[int] = 1
+) -> np.ndarray:
     """Generates a random number or array based on a uniform distribution.
 
     Args:
-        low (float): Lower interval.
-        high (float): Higher interval.
-        size (int): Size of array.
+        low: Lower interval.
+        high: Higher interval.
+        size: Size of array.
 
     Returns:
-        A uniform random number or array.
+        (np.ndarray): A uniform random number or array.
 
     """
 
@@ -102,16 +115,20 @@ def generate_uniform_random_number(low=0.0, high=1.0, size=1):
     return uniform_array
 
 
-def generate_gaussian_random_number(mean=0.0, variance=1.0, size=1):
+def generate_gaussian_random_number(
+    mean: Optional[float] = 0.0,
+    variance: Optional[float] = 1.0,
+    size: Optional[int] = 1,
+) -> np.ndarray:
     """Generates a random number or array based on a gaussian distribution.
 
     Args:
-        mean (float): Gaussian's mean value.
-        variance (float): Gaussian's variance value.
-        size (int): Size of array.
+        mean: Gaussian's mean value.
+        variance: Gaussian's variance value.
+        size: Size of array.
 
     Returns:
-        A gaussian random number or array.
+        (np.ndarray): A gaussian random number or array.
 
     """
 

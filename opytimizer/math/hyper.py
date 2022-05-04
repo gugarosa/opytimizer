@@ -2,19 +2,20 @@
 """
 
 from functools import wraps
+from typing import Any, List, Tuple, Union
 
 import numpy as np
 
 
-def norm(array):
+def norm(array: np.ndarray) -> np.ndarray:
     """Calculates the norm over an array. It is used as the first step to map
     a hypercomplex number to a real-valued space.
 
     Args:
-        array (np.array): A 2-dimensional input array.
+        array: A 2-dimensional input array.
 
     Returns:
-        Norm calculated over the second axis, such as (2, 4) array shape
+        (np.ndarray): Norm calculated over the second axis, such as (2, 4) array shape
         will result in a norm (2, ) shape.
 
     """
@@ -24,16 +25,20 @@ def norm(array):
     return array_norm
 
 
-def span(array, lower_bound, upper_bound):
+def span(
+    array: np.ndarray,
+    lower_bound: Union[List[Any], Tuple[Any, Any], np.ndarray],
+    upper_bound: Union[List, Tuple, np.ndarray],
+) -> np.ndarray:
     """Spans a hypercomplex number between lower and upper bounds.
 
     Args:
-        array (np.array): A 2-dimensional input array.
-        lb (list, tuple, np.array): Lower bounds to be spanned.
-        ub (list, tuple, np.array): Upper bounds to be spanned.
+        array: A 2-dimensional input array.
+        lb: Lower bounds to be spanned.
+        ub: Upper bounds to be spanned.
 
     Returns:
-        Spanned values that can be used as decision variables.
+        (np.ndarray): Spanned values that can be used as decision variables.
 
     """
 
@@ -47,38 +52,41 @@ def span(array, lower_bound, upper_bound):
     return array_span
 
 
-def span_to_hyper_value(lb, ub):
+def span_to_hyper_value(
+    lb: Union[List[Any], Tuple[Any, Any], np.ndarray],
+    ub: Union[List[Any], Tuple[Any, Any], np.ndarray],
+) -> np.ndarray:
     """Spans a hyper-value between lower and upper bounds.
 
     Args:
-        lb (list, tuple, np.array): Lower bounds.
-        ub (list, tuple, np.array): Upper bounds.
+        lb: Lower bounds.
+        ub: Upper bounds.
 
     Returns:
-        The output of the incoming objective function with a spanned input.
+        (np.ndarray): The output of the incoming objective function with a spanned input.
 
     """
 
-    def _span_to_hyper_value(f):
+    def _span_to_hyper_value(f: callable) -> callable:
         """Actually decorates the incoming objective function.
 
         Args:
-            f (callable): Incoming objective function.
+            f: Incoming objective function.
 
         Returns:
-            The wrapped objective function.
+            (callable): The wrapped objective function.
 
         """
 
         @wraps(f)
-        def __span_to_hyper_value(x):
+        def __span_to_hyper_value(x: np.ndarray) -> np.ndarray:
             """Wraps the objective function for calculating its output.
 
             Args:
-                x (np.array): Array of hyper-values.
+                x: Array of hyper-values.
 
             Returns:
-                The objective function itself.
+                (np.ndarray): The objective function itself.
 
             """
 

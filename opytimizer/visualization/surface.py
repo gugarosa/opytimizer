@@ -1,18 +1,27 @@
 """3-D benchmarking functions plots.
 """
 
+from typing import Optional
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-def plot(points, title="", subtitle="", style="winter", colorbar=True):
+def plot(
+    points: np.ndarray,
+    title: Optional[str] = "",
+    subtitle: Optional[str] = "",
+    style: Optional[str] = "winter",
+    colorbar: Optional[bool] = True,
+) -> None:
     """Plots the surface from a 3-dimensional function.
 
     Args:
-        points (np.array): Points to be plotted with shape equal to (3, n, n).
-        title (str): Title of the plot.
-        subtitle (str): Subtitle of the plot.
-        style (str): Surface's style.
-        colorbar (bool): If colorbar should be used or not.
+        points: Points to be plotted with shape equal to (3, n, n).
+        title: Title of the plot.
+        subtitle: Subtitle of the plot.
+        style: Surface's style.
+        colorbar: If colorbar should be used or not.
 
     """
 
