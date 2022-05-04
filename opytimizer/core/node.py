@@ -1,6 +1,10 @@
 """Node.
 """
 
+from __future__ import annotations
+
+from typing import Any, Dict, List, Optional, Union
+
 import numpy as np
 
 import opytimizer.utils.constant as c
@@ -10,16 +14,24 @@ import opytimizer.utils.exception as e
 class Node:
     """A Node instance is used for composing tree-based structures."""
 
-    def __init__(self, name, category, value=None, left=None, right=None, parent=None):
+    def __init__(
+        self,
+        name: Union[str, int],
+        category: str,
+        value: Optional[np.ndarray] = None,
+        left: Optional[Node] = None,
+        right: Optional[Node] = None,
+        parent: Optional[Node] = None,
+    ) -> None:
         """Initialization method.
 
         Args:
-            name (str, int): Name of the node (e.g., it should be the terminal identifier or function name).
-            category (str): Category of the node (e.g., TERMINAL or FUNCTION).
-            value (np.array): Value of the node (only used if it is a terminal).
-            left (Node): Pointer to node's left child.
-            right (Node): Pointer to node's right child.
-            parent (Node): Pointer to node's parent.
+            name: Name of the node (e.g., it should be the terminal identifier or function name).
+            category: Category of the node (e.g., TERMINAL or FUNCTION).
+            value: Value of the node (only used if it is a terminal).
+            left: Pointer to node's left child.
+            right: Pointer to node's right child.
+            parent: Pointer to node's parent.
 
         """
 
@@ -40,12 +52,12 @@ class Node:
         # Flag to identify whether the node is a left child
         self.flag = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Representation of a formal string."""
 
         return f"{self.category}:{self.name}:{self.flag}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Representation of an informal string."""
 
         # Building a formatted string for displaying the nodes
@@ -54,39 +66,39 @@ class Node:
         return "\n" + "\n".join(lines)
 
     @property
-    def name(self):
-        """str: Name of the node."""
+    def name(self) -> Union[str, int]:
+        """Name of the node."""
 
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: Union[str, int]) -> None:
         if not isinstance(name, (str, int)):
             raise e.TypeError("`name` should be a string or integer")
 
         self._name = name
 
     @property
-    def category(self):
-        """str: Category of the node."""
+    def category(self) -> str:
+        """Category of the node."""
 
         return self._category
 
     @category.setter
-    def category(self, category):
+    def category(self, category: str) -> None:
         if category not in ["TERMINAL", "FUNCTION"]:
             raise e.ValueError("`category` should be `TERMINAL` or `FUNCTION`")
 
         self._category = category
 
     @property
-    def value(self):
+    def value(self) -> np.ndarray:
         """np.array: Value of the node."""
 
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value: np.ndarray) -> None:
         if self.category != "TERMINAL":
             self._value = None
         else:
@@ -96,90 +108,90 @@ class Node:
             self._value = value
 
     @property
-    def left(self):
-        """Node: Pointer to the node's left child."""
+    def left(self) -> Node:
+        """Pointer to the node's left child."""
 
         return self._left
 
     @left.setter
-    def left(self, left):
+    def left(self, left: Node) -> None:
         if left and not isinstance(left, Node):
             raise e.TypeError("`left` should be a Node")
 
         self._left = left
 
     @property
-    def right(self):
-        """Node: Pointer to the node's right child."""
+    def right(self) -> Node:
+        """Pointer to the node's right child."""
 
         return self._right
 
     @right.setter
-    def right(self, right):
+    def right(self, right: Node) -> None:
         if right and not isinstance(right, Node):
             raise e.TypeError("`right` should be a Node")
 
         self._right = right
 
     @property
-    def parent(self):
-        """Node: Pointer to the node's parent."""
+    def parent(self) -> Node:
+        """Pointer to the node's parent."""
 
         return self._parent
 
     @parent.setter
-    def parent(self, parent):
+    def parent(self, parent: Node) -> None:
         if parent and not isinstance(parent, Node):
             raise e.TypeError("`parent` should be a Node")
 
         self._parent = parent
 
     @property
-    def flag(self):
-        """bool: Flag to identify whether the node is a left child."""
+    def flag(self) -> bool:
+        """Flag to identify whether the node is a left child."""
 
         return self._flag
 
     @flag.setter
-    def flag(self, flag):
+    def flag(self, flag: bool) -> None:
         if not isinstance(flag, bool):
             raise e.TypeError("`flag` should be a boolean")
 
         self._flag = flag
 
     @property
-    def min_depth(self):
-        """int: Minimum depth of node."""
+    def min_depth(self) -> int:
+        """Minimum depth of node."""
 
         return _properties(self)["min_depth"]
 
     @property
-    def max_depth(self):
-        """int: Maximum depth of node."""
+    def max_depth(self) -> int:
+        """Maximum depth of node."""
 
         return _properties(self)["max_depth"]
 
     @property
-    def n_leaves(self):
-        """int: Number of leaves node."""
+    def n_leaves(self) -> int:
+        """Number of leaves node."""
 
         return _properties(self)["n_leaves"]
 
     @property
-    def n_nodes(self):
-        """int: Number of nodes."""
+    def n_nodes(self) -> int:
+        """Number of nodes."""
 
         return _properties(self)["n_nodes"]
 
     @property
-    def position(self):
-        """np.array: Position after traversing the node."""
+    def position(self) -> np.ndarray:
+        """Position after traversing the node."""
 
         return _evaluate(self)
 
     @property
-    def post_order(self):
-        """list: Traverses the node in post-order."""
+    def post_order(self) -> List[Node]:
+        """Traverses the node in post-order."""
 
         # Creates lists for post-order and stacked nodes
         post_order, stacked = [], []
@@ -229,8 +241,8 @@ class Node:
         return post_order
 
     @property
-    def pre_order(self):
-        """list: Traverses the node in pre-order."""
+    def pre_order(self) -> List[Node]:
+        """Traverses the node in pre-order."""
 
         # Creates lists for pre-order and stacked nodes
         pre_order, stacked = [], [self]
@@ -255,14 +267,14 @@ class Node:
 
         return pre_order
 
-    def find_node(self, position):
+    def find_node(self, position: int) -> Node:
         """Finds a node at a given position.
 
         Args:
-            position (int): Position of the node.
+            position: Position of the node.
 
         Returns:
-            Node at desired position.
+            (Node): Node at desired position.
 
         """
 
@@ -287,17 +299,17 @@ class Node:
         return None, False
 
 
-def _build_string(node):
+def _build_string(node: Node) -> str:
     """Builds a formatted string for displaying the nodes.
 
     References:
         https://github.com/joowani/binarytree/blob/master/binarytree/__init__.py#L153
 
     Args:
-        node (Node): An instance of the Node class (can be a tree of Nodes).
+        node: An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        Formatted string ready to be printed.
+        (str): Formatted string ready to be printed.
 
     """
 
@@ -397,14 +409,14 @@ def _build_string(node):
     return lines, len(lines[0]), start, end
 
 
-def _evaluate(node):
+def _evaluate(node: Node) -> np.ndarray:
     """Evaluates a node and outputs its solution array.
 
     Args:
-        node (Node): An instance of the Node class (can be a tree of Nodes).
+        node: An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        Output solution of size (n_variables x n_dimensions).
+        (np.ndarray): Output solution of size (n_variables x n_dimensions).
 
     """
 
@@ -449,14 +461,14 @@ def _evaluate(node):
     return None
 
 
-def _properties(node):
+def _properties(node: Node) -> Dict[str, Any]:
     """Traverses the node and returns some useful properties.
 
     Args:
-        node (Node): An instance of the Node class (can be a tree of Nodes).
+        node: An instance of the Node class (can be a tree of Nodes).
 
     Returns:
-        Dictionary containing some useful properties: `min_depth`, `max_depth`,
+        (Dict[str, Any]): Dictionary containing some useful properties: `min_depth`, `max_depth`,
         `n_leaves` and `n_nodes`.
 
     """

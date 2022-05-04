@@ -17,12 +17,12 @@ class BooleanSpace(Space):
 
     """
 
-    def __init__(self, n_agents, n_variables):
+    def __init__(self, n_agents: int, n_variables: int) -> None:
         """Initialization method.
 
         Args:
-            n_agents (int): Number of agents.
-            n_variables (int): Number of decision variables.
+            n_agents: Number of agents.
+            n_variables: Number of decision variables.
 
         """
 
@@ -41,7 +41,7 @@ class BooleanSpace(Space):
 
         logger.info("Class overrided.")
 
-    def _initialize_agents(self):
+    def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:

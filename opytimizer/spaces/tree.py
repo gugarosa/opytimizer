@@ -2,6 +2,9 @@
 """
 
 import copy
+from typing import List, Optional, Tuple, Union
+
+import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
@@ -20,26 +23,26 @@ class TreeSpace(Space):
 
     def __init__(
         self,
-        n_agents,
-        n_variables,
-        lower_bound,
-        upper_bound,
-        n_terminals=1,
-        min_depth=1,
-        max_depth=3,
-        functions=None,
-    ):
+        n_agents: int,
+        n_variables: int,
+        lower_bound: Union[float, List, Tuple, np.ndarray],
+        upper_bound: Union[float, List, Tuple, np.ndarray],
+        n_terminals: Optional[int] = 1,
+        min_depth: Optional[int] = 1,
+        max_depth: Optional[int] = 3,
+        functions: Optional[List[str]] = None,
+    ) -> None:
         """Initialization method.
 
         Args:
-            n_agents (int): Number of agents (trees).
-            n_variables (int): Number of decision variables.
-            lower_bound (float, list, tuple, np.array): Minimum possible values.
-            upper_bound (float, list, tuple, np.array): Maximum possible values.
-            n_terminals (int): Number of terminal nodes.
-            min_depth (int): Minimum depth of the trees.
-            max_depth (int): Maximum depth of the trees.
-            functions (list): Function nodes.
+            n_agents: Number of agents (trees).
+            n_variables: Number of decision variables.
+            lower_bound: Minimum possible values.
+            upper_bound: Maximum possible values.
+            n_terminals: Number of terminal nodes.
+            min_depth: Minimum depth of the trees.
+            max_depth: Maximum depth of the trees.
+            functions: Function nodes.
 
         """
 
@@ -75,13 +78,13 @@ class TreeSpace(Space):
         logger.info("Class overrided.")
 
     @property
-    def n_terminals(self):
-        """int: Number of terminal nodes."""
+    def n_terminals(self) -> int:
+        """Number of terminal nodes."""
 
         return self._n_terminals
 
     @n_terminals.setter
-    def n_terminals(self, n_terminals):
+    def n_terminals(self, n_terminals: int) -> None:
         if not isinstance(n_terminals, int):
             raise e.TypeError("`n_terminals` should be an integer")
         if n_terminals <= 0:
@@ -90,13 +93,13 @@ class TreeSpace(Space):
         self._n_terminals = n_terminals
 
     @property
-    def min_depth(self):
-        """int: Minimum depth of the trees."""
+    def min_depth(self) -> int:
+        """Minimum depth of the trees."""
 
         return self._min_depth
 
     @min_depth.setter
-    def min_depth(self, min_depth):
+    def min_depth(self, min_depth: int) -> None:
         if not isinstance(min_depth, int):
             raise e.TypeError("`min_depth` should be an integer")
         if min_depth <= 0:
@@ -105,13 +108,13 @@ class TreeSpace(Space):
         self._min_depth = min_depth
 
     @property
-    def max_depth(self):
-        """int: Maximum depth of the trees."""
+    def max_depth(self) -> int:
+        """Maximum depth of the trees."""
 
         return self._max_depth
 
     @max_depth.setter
-    def max_depth(self, max_depth):
+    def max_depth(self, max_depth: int) -> None:
         if not isinstance(max_depth, int):
             raise e.TypeError("`max_depth` should be an integer")
         if max_depth < self.min_depth:
@@ -120,58 +123,58 @@ class TreeSpace(Space):
         self._max_depth = max_depth
 
     @property
-    def functions(self):
-        """list: Function nodes."""
+    def functions(self) -> List[str]:
+        """Function nodes."""
 
         return self._functions
 
     @functions.setter
-    def functions(self, functions):
+    def functions(self, functions: List[str]) -> None:
         if not isinstance(functions, list):
             raise e.TypeError("`functions` should be a list")
 
         self._functions = functions
 
     @property
-    def terminals(self):
-        """list: Terminals nodes."""
+    def terminals(self) -> List[str]:
+        """Terminals nodes."""
 
         return self._terminals
 
     @terminals.setter
-    def terminals(self, terminals):
+    def terminals(self, terminals: List[str]) -> None:
         if not isinstance(terminals, list):
             raise e.TypeError("`terminals` should be a list")
 
         self._terminals = terminals
 
     @property
-    def trees(self):
-        """list: Trees (derived from the Node class)."""
+    def trees(self) -> List[Node]:
+        """Trees (derived from the Node class)."""
 
         return self._trees
 
     @trees.setter
-    def trees(self, trees):
+    def trees(self, trees: List[Node]) -> None:
         if not isinstance(trees, list):
             raise e.TypeError("`trees` should be a list")
 
         self._trees = trees
 
     @property
-    def best_tree(self):
-        """Node: Best tree."""
+    def best_tree(self) -> Node:
+        """Best tree."""
 
         return self._best_tree
 
     @best_tree.setter
-    def best_tree(self, best_tree):
+    def best_tree(self, best_tree: Node) -> None:
         if not isinstance(best_tree, Node):
             raise e.TypeError("`best_tree` should be a Node")
 
         self._best_tree = best_tree
 
-    def _create_terminals(self):
+    def _create_terminals(self) -> None:
         """Creates a list of terminals."""
 
         self.terminals = [
@@ -179,7 +182,7 @@ class TreeSpace(Space):
             for _ in range(self.n_terminals)
         ]
 
-    def _create_trees(self):
+    def _create_trees(self) -> None:
         """Creates a list of trees based on the GROW algorithm."""
 
         self.trees = [
@@ -196,7 +199,7 @@ class TreeSpace(Space):
             self.functions,
         )
 
-    def _initialize_agents(self):
+    def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:
@@ -204,13 +207,13 @@ class TreeSpace(Space):
 
         self.best_agent = copy.deepcopy(self.agents[0])
 
-    def _initialize_terminals(self):
+    def _initialize_terminals(self) -> None:
         """Initializes terminals with their positions."""
 
         for terminal in self.terminals:
             terminal.fill_with_uniform()
 
-    def grow(self, min_depth=1, max_depth=3):
+    def grow(self, min_depth: Optional[int] = 1, max_depth: Optional[int] = 3) -> Node:
         """Creates a random tree based on the GROW algorithm.
 
         References:
@@ -218,11 +221,11 @@ class TreeSpace(Space):
             IEEE Transactions on Evolutionary Computation (2000).
 
         Args:
-            min_depth (int): Minimum depth of the tree.
-            max_depth (int): Maximum depth of the tree.
+            min_depth: Minimum depth of the tree.
+            max_depth: Maximum depth of the tree.
 
         Returns:
-            Random tree based on the GROW algorithm.
+            (Node): Random tree based on the GROW algorithm.
 
         """
 

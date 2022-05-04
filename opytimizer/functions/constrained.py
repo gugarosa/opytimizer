@@ -1,6 +1,10 @@
 """Constrained single-objective functions.
 """
 
+from typing import List, Optional
+
+import numpy as np
+
 import opytimizer.utils.exception as e
 from opytimizer.core import Function
 from opytimizer.utils import logging
@@ -11,13 +15,18 @@ logger = logging.get_logger(__name__)
 class ConstrainedFunction(Function):
     """A ConstrainedFunction class used to hold constrained single-objective functions."""
 
-    def __init__(self, pointer, constraints, penalty=0.0):
+    def __init__(
+        self,
+        pointer: List[callable],
+        constraints: List[callable],
+        penalty: Optional[float] = 0.0,
+    ) -> None:
         """Initialization method.
 
         Args:
-            pointer (callable): Pointer to a function that will return the fitness value.
-            constraints (list): Constraints to be applied to the fitness function.
-            penalty (float): Penalization factor when a constraint is not valid.
+            pointer: Pointer to a function that will return the fitness value.
+            constraints: Constraints to be applied to the fitness function.
+            penalty: Penalization factor when a constraint is not valid.
 
         """
 
@@ -35,26 +44,26 @@ class ConstrainedFunction(Function):
         logger.info("Class overrided.")
 
     @property
-    def constraints(self):
-        """list: Constraints to be applied to the fitness function."""
+    def constraints(self) -> List[callable]:
+        """Constraints to be applied to the fitness function."""
 
         return self._constraints
 
     @constraints.setter
-    def constraints(self, constraints):
+    def constraints(self, constraints: List[callable]) -> None:
         if not isinstance(constraints, list):
             raise e.TypeError("`constraints` should be a list")
 
         self._constraints = constraints
 
     @property
-    def penalty(self):
-        """float: Penalization factor."""
+    def penalty(self) -> float:
+        """Penalization factor."""
 
         return self._penalty
 
     @penalty.setter
-    def penalty(self, penalty):
+    def penalty(self, penalty: float) -> None:
         if not isinstance(penalty, (float, int)):
             raise e.TypeError("`penalty` should be a float or integer")
         if penalty < 0:
@@ -62,14 +71,14 @@ class ConstrainedFunction(Function):
 
         self._penalty = penalty
 
-    def __call__(self, x):
+    def __call__(self, x: np.ndarray) -> float:
         """Callable to avoid using the `pointer` property.
 
         Args:
-            x (np.array): Array of positions.
+            x: Array of positions.
 
         Returns:
-            Constrained single-objective function fitness.
+            (float): Constrained single-objective function fitness.
 
         """
 

@@ -2,11 +2,13 @@
 """
 
 import copy
+from typing import Generator, Tuple
 
 import networkx as nx
 from networkx import DiGraph
 
 from opytimizer.core import InnerBlock, InputBlock, OutputBlock
+from opytimizer.core.block import Block
 
 
 class Cell(DiGraph):
@@ -15,12 +17,12 @@ class Cell(DiGraph):
 
     """
 
-    def __init__(self, blocks, edges):
+    def __init__(self, blocks: Block, edges: Tuple[Block, Block]) -> None:
         """Initialization method.
 
         Args:
-            type (str): Type of the block.
-            pointer (callable): Any type of callable to be applied when block is called.
+            type: Type of the block.
+            pointer: Any type of callable to be applied when block is called.
 
         """
 
@@ -41,11 +43,11 @@ class Cell(DiGraph):
                     # Adds edge to the DAG
                     self.add_edge(u, v)
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> Generator:
         """Performs a forward pass over the cell.
 
         Returns:
-            List holding an output for each possible path in DAG.
+            (Generator): Output for each possible path in DAG.
 
         """
 
@@ -78,8 +80,8 @@ class Cell(DiGraph):
         return outputs
 
     @property
-    def input_idx(self):
-        """int: Index of the input node."""
+    def input_idx(self) -> int:
+        """Index of the input node."""
 
         for node in self.nodes:
             if self.nodes[node]["block"].type == "input":
@@ -88,8 +90,8 @@ class Cell(DiGraph):
         return -1
 
     @property
-    def output_idx(self):
-        """int: Index of the output node."""
+    def output_idx(self) -> int:
+        """Index of the output node."""
 
         for node in self.nodes:
             if self.nodes[node]["block"].type == "output":
@@ -98,8 +100,8 @@ class Cell(DiGraph):
         return -1
 
     @property
-    def valid(self):
-        """bool: Whether cell is valid or not."""
+    def valid(self) -> bool:
+        """Whether cell is valid or not."""
 
         if self.input_idx == -1 or self.output_idx == -1:
             return False

@@ -2,6 +2,9 @@
 """
 
 import copy
+from typing import List, Tuple, Union
+
+import numpy as np
 
 from opytimizer.core import Space
 from opytimizer.utils import logging
@@ -15,14 +18,20 @@ class SearchSpace(Space):
 
     """
 
-    def __init__(self, n_agents, n_variables, lower_bound, upper_bound):
+    def __init__(
+        self,
+        n_agents: int,
+        n_variables: int,
+        lower_bound: Union[float, List, Tuple, np.ndarray],
+        upper_bound: Union[float, List, Tuple, np.ndarray],
+    ) -> None:
         """Initialization method.
 
         Args:
-            n_agents (int): Number of agents.
-            n_variables (int): Number of decision variables.
-            lower_bound (float, list, tuple, np.array): Minimum possible values.
-            upper_bound (float, list, tuple, np.array): Maximum possible values.
+            n_agents: Number of agents.
+            n_variables: Number of decision variables.
+            lower_bound: Minimum possible values.
+            upper_bound: Maximum possible values.
 
         """
 
@@ -39,7 +48,7 @@ class SearchSpace(Space):
 
         logger.info("Class overrided.")
 
-    def _initialize_agents(self):
+    def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:

@@ -17,11 +17,11 @@ class ParetoSpace(Space):
 
     """
 
-    def __init__(self, data_points):
+    def __init__(self, data_points: np.ndarray) -> None:
         """Initialization method.
 
         Args:
-            data_points (np.array): Pre-defined data points.
+            data_points: Pre-defined data points.
 
         """
 
@@ -41,11 +41,11 @@ class ParetoSpace(Space):
 
         logger.info("Class overrided.")
 
-    def _load_agents(self, data_points):
+    def _load_agents(self, data_points: np.ndarray) -> None:
         """Loads agents from pre-defined data points.
 
         Args:
-            data_points (np.array): Pre-defined data points.
+            data_points: Pre-defined data points.
 
         """
 
@@ -54,11 +54,11 @@ class ParetoSpace(Space):
 
         self.best_agent = copy.deepcopy(self.agents[0])
 
-    def build(self, data_points):
+    def build(self, data_points: np.ndarray) -> None:
         """Builds the object by creating and pre-loading the agents.
 
         Args:
-            data_points (np.array): Pre-defined data points.
+            data_points: Pre-defined data points.
 
         """
 
@@ -76,7 +76,7 @@ class ParetoSpace(Space):
             self.built,
         )
 
-    def clip_by_bound(self):
+    def clip_by_bound(self) -> None:
         """Overrides default function as no clipping should be performed."""
 
         pass

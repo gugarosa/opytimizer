@@ -1,6 +1,10 @@
 """Standard multi-objective functions.
 """
 
+from typing import List
+
+import numpy as np
+
 import opytimizer.utils.exception as e
 from opytimizer.core import Function
 from opytimizer.utils import logging
@@ -11,11 +15,11 @@ logger = logging.get_logger(__name__)
 class MultiObjectiveFunction:
     """A MultiObjectiveFunction class used to hold multi-objective functions."""
 
-    def __init__(self, functions):
+    def __init__(self, functions: List[callable]) -> None:
         """Initialization method.
 
         Args:
-            functions (list): Pointers to functions that will return the fitness value.
+            functions: Pointers to functions that will return the fitness value.
 
         """
 
@@ -32,14 +36,14 @@ class MultiObjectiveFunction:
         )
         logger.info("Class created.")
 
-    def __call__(self, x):
+    def __call__(self, x: np.ndarray) -> float:
         """Callable to avoid using the `pointer` property.
 
         Args:
-            x (np.array): Array of positions.
+            x: Array of positions.
 
         Returns:
-            Multi-objective function fitness.
+            (float): Multi-objective function fitness.
 
         """
 
@@ -53,13 +57,13 @@ class MultiObjectiveFunction:
         return z
 
     @property
-    def functions(self):
-        """list: Function's instances."""
+    def functions(self) -> List[callable]:
+        """Function's instances."""
 
         return self._functions
 
     @functions.setter
-    def functions(self, functions):
+    def functions(self, functions: List[callable]) -> None:
         if not isinstance(functions, list):
             raise e.TypeError("`functions` should be a list")
 

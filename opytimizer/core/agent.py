@@ -2,6 +2,7 @@
 """
 
 import time
+from typing import List, Union
 
 import numpy as np
 
@@ -16,14 +17,20 @@ logger = logging.get_logger(__name__)
 class Agent:
     """An Agent class for all optimization techniques."""
 
-    def __init__(self, n_variables, n_dimensions, lower_bound, upper_bound):
+    def __init__(
+        self,
+        n_variables: int,
+        n_dimensions: int,
+        lower_bound: List[Union[int, float]],
+        upper_bound: List[Union[int, float]],
+    ) -> None:
         """Initialization method.
 
         Args:
-            n_variables (int): Number of decision variables.
-            n_dimensions (int): Number of dimensions.
-            lower_bound (list, tuple, np.array): Minimum possible values.
-            upper_bound (list, tuple, np.array): Maximum possible values.
+            n_variables: Number of decision variables.
+            n_dimensions: Number of dimensions.
+            lower_bound: Minimum possible values.
+            upper_bound: Maximum possible values.
 
         """
 
@@ -49,13 +56,13 @@ class Agent:
         self.ts = int(time.time())
 
     @property
-    def n_variables(self):
-        """int: Number of decision variables."""
+    def n_variables(self) -> int:
+        """Number of decision variables."""
 
         return self._n_variables
 
     @n_variables.setter
-    def n_variables(self, n_variables):
+    def n_variables(self, n_variables: int) -> None:
         if not isinstance(n_variables, int):
             raise e.TypeError("`n_variables` should be an integer")
         if n_variables <= 0:
@@ -64,13 +71,13 @@ class Agent:
         self._n_variables = n_variables
 
     @property
-    def n_dimensions(self):
-        """int: Number of dimensions."""
+    def n_dimensions(self) -> int:
+        """Number of dimensions."""
 
         return self._n_dimensions
 
     @n_dimensions.setter
-    def n_dimensions(self, n_dimensions):
+    def n_dimensions(self, n_dimensions: int) -> None:
         if not isinstance(n_dimensions, int):
             raise e.TypeError("`n_dimensions` should be an integer")
         if n_dimensions <= 0:
@@ -79,39 +86,39 @@ class Agent:
         self._n_dimensions = n_dimensions
 
     @property
-    def position(self):
-        """np.array: N-dimensional array of positions."""
+    def position(self) -> np.ndarray:
+        """N-dimensional array of positions."""
 
         return self._position
 
     @position.setter
-    def position(self, position):
+    def position(self, position: np.ndarray) -> None:
         if not isinstance(position, np.ndarray):
             raise e.TypeError("`position` should be a numpy array")
 
         self._position = position
 
     @property
-    def fit(self):
+    def fit(self) -> Union[int, float]:
         """float: Fitness value."""
 
         return self._fit
 
     @fit.setter
-    def fit(self, fit):
+    def fit(self, fit: Union[int, float]) -> None:
         if not isinstance(fit, (float, int, np.int32, np.int64)):
             raise e.TypeError("`fit` should be a float or integer")
 
         self._fit = fit
 
     @property
-    def lb(self):
-        """np.array: Lower bounds."""
+    def lb(self) -> np.ndarray:
+        """Lower bounds."""
 
         return self._lb
 
     @lb.setter
-    def lb(self, lb):
+    def lb(self, lb: np.ndarray) -> None:
         if not isinstance(lb, np.ndarray):
             raise e.TypeError("`lb` should be a numpy array")
         if not lb.shape:
@@ -122,13 +129,13 @@ class Agent:
         self._lb = lb
 
     @property
-    def ub(self):
-        """np.array: Upper bounds."""
+    def ub(self) -> np.ndarray:
+        """Upper bounds."""
 
         return self._ub
 
     @ub.setter
-    def ub(self, ub):
+    def ub(self, ub: np.ndarray) -> None:
         if not isinstance(ub, np.ndarray):
             raise e.TypeError("`ub` should be a numpy array")
         if not ub.shape:
@@ -139,19 +146,19 @@ class Agent:
         self._ub = ub
 
     @property
-    def ts(self):
-        """int: Timestamp of the agent."""
+    def ts(self) -> int:
+        """Timestamp of the agent."""
 
         return self._ts
 
     @ts.setter
-    def ts(self, ts):
+    def ts(self, ts: int) -> None:
         if not isinstance(ts, int):
             raise e.TypeError("`ts` should be an integer")
 
         self._ts = ts
 
-    def clip_by_bound(self):
+    def clip_by_bound(self) -> None:
         """Clips the agent's decision variables to the bounds limits."""
 
         # Iterates through all the decision variables
@@ -159,7 +166,7 @@ class Agent:
             # Clips the array based on variable's lower and upper bounds
             self.position[j] = np.clip(self.position[j], lb, ub)
 
-    def fill_with_binary(self):
+    def fill_with_binary(self) -> None:
         """Fills the agent's decision variables with a binary distribution."""
 
         # Iterates through all the decision variables
@@ -167,12 +174,12 @@ class Agent:
             # Fills the array based on a binary distribution
             self.position[j] = r.generate_binary_random_number(self.n_dimensions)
 
-    def fill_with_static(self, values):
+    def fill_with_static(self, values: np.ndarray) -> None:
         """Fills the agent's decision variables with static values. Note that this
         method ignore the agent's bounds, so use it carefully.
 
         Args:
-            values (list, tuple, np.array): Values to be filled.
+            values: Values to be filled.
 
         """
 
@@ -189,7 +196,7 @@ class Agent:
             # Fills the array based on a static value
             self.position[j] = value
 
-    def fill_with_uniform(self):
+    def fill_with_uniform(self) -> None:
         """Fills the agent's decision variables with a uniform distribution
         based on bounds limits.
 

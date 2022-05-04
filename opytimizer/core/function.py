@@ -3,6 +3,8 @@
 
 from inspect import signature
 
+import numpy as np
+
 import opytimizer.utils.exception as e
 from opytimizer.utils import logging
 
@@ -12,11 +14,11 @@ logger = logging.get_logger(__name__)
 class Function:
     """A Function class used to hold single-objective functions."""
 
-    def __init__(self, pointer):
+    def __init__(self, pointer: callable) -> None:
         """Initialization method.
 
         Args:
-            pointer (callable): Pointer to a function that will return the fitness value.
+            pointer: Pointer to a function that will return the fitness value.
 
         """
 
@@ -37,27 +39,27 @@ class Function:
         logger.debug("Function: %s | Built: %s.", self.name, self.built)
         logger.info("Class created.")
 
-    def __call__(self, x):
+    def __call__(self, x: np.ndarray) -> float:
         """Callable to avoid using the `pointer` property.
 
         Args:
-            x (np.array): Array of positions.
+            x: Array of positions.
 
         Returns:
-            Single-objective function fitness.
+            (float): Single-objective function fitness.
 
         """
 
         return self.pointer(x)
 
     @property
-    def pointer(self):
+    def pointer(self) -> callable:
         """callable: Points to the actual function."""
 
         return self._pointer
 
     @pointer.setter
-    def pointer(self, pointer):
+    def pointer(self, pointer: callable) -> None:
         if not callable(pointer):
             raise e.TypeError("`pointer` should be a callable")
         if len(signature(pointer).parameters) > 1:
@@ -66,24 +68,24 @@ class Function:
         self._pointer = pointer
 
     @property
-    def name(self):
-        """str: Name of the function."""
+    def name(self) -> str:
+        """Name of the function."""
 
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str) -> None:
         if not isinstance(name, str):
             raise e.TypeError("`name` should be a string")
 
         self._name = name
 
     @property
-    def built(self):
-        """bool: Indicates whether the function is built."""
+    def built(self) -> bool:
+        """Indicates whether the function is built."""
 
         return self._built
 
     @built.setter
-    def built(self, built):
+    def built(self, built: bool) -> None:
         self._built = built

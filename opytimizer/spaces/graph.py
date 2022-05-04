@@ -10,11 +10,11 @@ logger = logging.get_logger(__name__)
 class GraphSpace:
     """ """
 
-    def __init__(self, n_blocks):
+    def __init__(self, n_blocks: int) -> None:
         """Initialization method.
 
         Args:
-            n_blocks (int): Number of blocks.
+            n_blocks: Number of blocks.
 
         """
 

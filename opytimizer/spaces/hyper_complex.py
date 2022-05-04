@@ -17,13 +17,13 @@ class HyperComplexSpace(Space):
 
     """
 
-    def __init__(self, n_agents, n_variables, n_dimensions):
+    def __init__(self, n_agents: int, n_variables: int, n_dimensions: int) -> None:
         """Initialization method.
 
         Args:
-            n_agents (int): Number of agents.
-            n_variables (int): Number of decision variables.
-            n_dimensions (int): Number of search space dimensions.
+            n_agents: Number of agents.
+            n_variables: Number of decision variables.
+            n_dimensions: Number of search space dimensions.
 
         """
 
@@ -41,7 +41,7 @@ class HyperComplexSpace(Space):
 
         logger.info("Class overrided.")
 
-    def _initialize_agents(self):
+    def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""
 
         for agent in self.agents:

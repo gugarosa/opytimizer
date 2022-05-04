@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import List, Tuple, Union
 
 import numpy as np
 
@@ -18,14 +19,20 @@ class GridSpace(Space):
 
     """
 
-    def __init__(self, n_variables, step, lower_bound, upper_bound):
+    def __init__(
+        self,
+        n_variables: int,
+        step: Union[float, List, Tuple, np.ndarray],
+        lower_bound: Union[float, List, Tuple, np.ndarray],
+        upper_bound: Union[float, List, Tuple, np.ndarray],
+    ) -> None:
         """Initialization method.
 
         Args:
-            n_variables (int): Number of decision variables.
-            step (float, list, tuple, np.array): Variables' steps.
-            lower_bound (float, list, tuple, np.array): Minimum possible values.
-            upper_bound (float, list, tuple, np.array): Maximum possible values.
+            n_variables: Number of decision variables.
+            step: Variables' steps.
+            lower_bound: Minimum possible values.
+            upper_bound: Maximum possible values.
 
         """
 
@@ -50,13 +57,13 @@ class GridSpace(Space):
         logger.info("Class overrided.")
 
     @property
-    def step(self):
-        """np.array: Step size of each variable."""
+    def step(self) -> np.ndarray:
+        """Step size of each variable."""
 
         return self._step
 
     @step.setter
-    def step(self, step):
+    def step(self, step: np.ndarray) -> None:
         if not isinstance(step, np.ndarray):
             raise e.TypeError("`step` should be a numpy array")
         if not step.shape:
@@ -67,19 +74,19 @@ class GridSpace(Space):
         self._step = step
 
     @property
-    def grid(self):
-        """np.array: Grid with possible search values."""
+    def grid(self) -> np.ndarray:
+        """Grid with possible search values."""
 
         return self._grid
 
     @grid.setter
-    def grid(self, grid):
+    def grid(self, grid: np.ndarray) -> None:
         if not isinstance(grid, np.ndarray):
             raise e.TypeError("`grid` should be a numpy array")
 
         self._grid = grid
 
-    def _create_grid(self):
+    def _create_grid(self) -> None:
         """Creates a grid of possible search values."""
 
         # Creates a meshgrid with all possible search values
@@ -95,7 +102,7 @@ class GridSpace(Space):
         self.grid = np.array(([m.ravel() for m in mesh])).T
         self.n_agents = len(self.grid)
 
-    def _initialize_agents(self):
+    def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""
 
         for agent, grid in zip(self.agents, self.grid):
