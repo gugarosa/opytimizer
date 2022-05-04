@@ -3,12 +3,15 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +30,11 @@ class CSA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -52,26 +55,26 @@ class CSA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def fl(self):
-        """float: Flight length."""
+    def fl(self) -> float:
+        """Flight length."""
 
         return self._fl
 
     @fl.setter
-    def fl(self, fl):
+    def fl(self, fl: float) -> None:
         if not isinstance(fl, (float, int)):
             raise e.TypeError("`fl` should be a float or integer")
 
         self._fl = fl
 
     @property
-    def AP(self):
-        """float: Awareness probability."""
+    def AP(self) -> float:
+        """Awareness probability."""
 
         return self._AP
 
     @AP.setter
-    def AP(self, AP):
+    def AP(self, AP: float) -> None:
         if not isinstance(AP, (float, int)):
             raise e.TypeError("`AP` should be a float or integer")
         if AP < 0 or AP > 1:
@@ -80,35 +83,35 @@ class CSA(Optimizer):
         self._AP = AP
 
     @property
-    def memory(self):
-        """np.array: Array of memories."""
+    def memory(self) -> np.ndarray:
+        """Array of memories."""
 
         return self._memory
 
     @memory.setter
-    def memory(self, memory):
+    def memory(self, memory: np.ndarray) -> None:
         if not isinstance(memory, np.ndarray):
             raise e.TypeError("`memory` should be a numpy array")
 
         self._memory = memory
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Arrays of memories
         self.memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -132,11 +135,11 @@ class CSA(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Crow Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

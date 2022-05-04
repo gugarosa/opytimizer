@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class CS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,13 +58,13 @@ class CS(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Step size."""
+    def alpha(self) -> float:
+        """Step size."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -69,13 +73,13 @@ class CS(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Lévy distribution parameter."""
+    def beta(self) -> float:
+        """Lévy distribution parameter."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 2:
@@ -84,13 +88,13 @@ class CS(Optimizer):
         self._beta = beta
 
     @property
-    def p(self):
-        """float: Probability of replacing worst nests."""
+    def p(self) -> float:
+        """Probability of replacing worst nests."""
 
         return self._p
 
     @p.setter
-    def p(self, p):
+    def p(self, p: float) -> None:
         if not isinstance(p, (float, int)):
             raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
@@ -98,15 +102,17 @@ class CS(Optimizer):
 
         self._p = p
 
-    def _generate_new_nests(self, agents, best_agent):
+    def _generate_new_nests(
+        self, agents: List[Agent], best_agent: Agent
+    ) -> List[Agent]:
         """Generate new nests (eq. 1).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            agents: List of agents.
+            best_agent: Global best agent.
 
         Returns:
-            A new list of agents which can be seen as new nests.
+            (List[Agent]): A new list of agents which can be seen as new nests.
 
         """
 
@@ -136,15 +142,17 @@ class CS(Optimizer):
 
         return new_agents
 
-    def _generate_abandoned_nests(self, agents, prob):
+    def _generate_abandoned_nests(
+        self, agents: List[Agent], prob: float
+    ) -> List[Agent]:
         """Generate a fraction of nests to be replaced.
 
         Args:
-            agents (list): List of agents.
-            prob (float): Probability of replacing worst nests.
+            agents: List of agents.
+            prob: Probability of replacing worst nests.
 
         Returns:
-            A new list of agents which can be seen as the new nests to be replaced.
+            (List[Agent]): A new list of agents which can be seen as the new nests to be replaced.
 
         """
 
@@ -173,13 +181,15 @@ class CS(Optimizer):
 
         return new_agents
 
-    def _evaluate_nests(self, agents, new_agents, function):
+    def _evaluate_nests(
+        self, agents: List[Agent], new_agents: List[Agent], function: Function
+    ) -> None:
         """Evaluate new nests according to a fitness function.
 
         Args:
-            agents (list): List of current agents.
-            new_agents (list): List of new agents to be evaluated.
-            function (Function): Fitness function used to evaluate.
+            agents: List of current agents.
+            new_agents: List of new agents to be evaluated.
+            function: Fitness function used to evaluate.
 
         """
 
@@ -197,12 +207,12 @@ class CS(Optimizer):
                 agent.position = copy.deepcopy(new_agent.position)
                 agent.fit = copy.deepcopy(new_agent.fit)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Cuckoo Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

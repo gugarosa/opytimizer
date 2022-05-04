@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -10,6 +11,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -29,11 +33,11 @@ class RRA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -66,13 +70,13 @@ class RRA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def d_runner(self):
-        """int: Length of runners."""
+    def d_runner(self) -> int:
+        """Length of runners."""
 
         return self._d_runner
 
     @d_runner.setter
-    def d_runner(self, d_runner):
+    def d_runner(self, d_runner: int) -> None:
         if not isinstance(d_runner, int):
             raise e.TypeError("`d_runner` should be an integer")
         if d_runner <= 0:
@@ -81,13 +85,13 @@ class RRA(Optimizer):
         self._d_runner = d_runner
 
     @property
-    def d_root(self):
-        """float: Length of roots."""
+    def d_root(self) -> float:
+        """Length of roots."""
 
         return self._d_root
 
     @d_root.setter
-    def d_root(self, d_root):
+    def d_root(self, d_root: float) -> None:
         if not isinstance(d_root, (float, int)):
             raise e.TypeError("`d_root` should be a float or integer")
         if d_root < 0:
@@ -96,13 +100,13 @@ class RRA(Optimizer):
         self._d_root = d_root
 
     @property
-    def tol(self):
-        """float: Cost function tolerance."""
+    def tol(self) -> float:
+        """Cost function tolerance."""
 
         return self._tol
 
     @tol.setter
-    def tol(self, tol):
+    def tol(self, tol: float) -> None:
         if not isinstance(tol, (float, int)):
             raise e.TypeError("`tol` should be a float or integer")
         if tol < 0:
@@ -111,13 +115,13 @@ class RRA(Optimizer):
         self._tol = tol
 
     @property
-    def max_stall(self):
-        """int: Maximum number of stalls."""
+    def max_stall(self) -> int:
+        """Maximum number of stalls."""
 
         return self._max_stall
 
     @max_stall.setter
-    def max_stall(self, max_stall):
+    def max_stall(self, max_stall: int) -> None:
         if not isinstance(max_stall, int):
             raise e.TypeError("`max_stall` should be an integer")
         if max_stall <= 0:
@@ -126,13 +130,13 @@ class RRA(Optimizer):
         self._max_stall = max_stall
 
     @property
-    def n_stall(self):
-        """int: Current number of stalls."""
+    def n_stall(self) -> int:
+        """Current number of stalls."""
 
         return self._n_stall
 
     @n_stall.setter
-    def n_stall(self, n_stall):
+    def n_stall(self, n_stall: int) -> None:
         if not isinstance(n_stall, int):
             raise e.TypeError("`n_stall` should be an integer")
         if n_stall < 0:
@@ -143,25 +147,30 @@ class RRA(Optimizer):
         self._n_stall = n_stall
 
     @property
-    def last_best_fit(self):
-        """float: Previous best fitness value."""
+    def last_best_fit(self) -> float:
+        """Previous best fitness value."""
 
         return self._last_best_fit
 
     @last_best_fit.setter
-    def last_best_fit(self, last_best_fit):
+    def last_best_fit(self, last_best_fit: float) -> None:
         if not isinstance(last_best_fit, (float, int)):
             raise e.TypeError("`last_best_fit` should be a float or integer")
 
         self._last_best_fit = last_best_fit
 
-    def _stalling_search(self, daughters, function, is_large=True):
+    def _stalling_search(
+        self,
+        daughters: List[Agent],
+        function: Function,
+        is_large: Optional[bool] = True,
+    ) -> None:
         """Performs the stalling random larrge or small search (eq. 4 and 5).
 
         Args:
-            daughters (list): Daughters.
-            function (Function): A Function object that will be used as the objective function.
-            is_large (bool): Whether to perform the large or small search.
+            daughters: Daughters.
+            function: A Function object that will be used as the objective function.
+            is_large: Whether to perform the large or small search.
 
         """
 
@@ -195,15 +204,17 @@ class RRA(Optimizer):
                 daughters[0].position = copy.deepcopy(temp_daughter.position)
                 daughters[0].fit = copy.deepcopy(temp_daughter.fit)
 
-    def _roulette_selection(self, fitness, a=0.1):
+    def _roulette_selection(
+        self, fitness: List[float], a: Optional[float] = 0.1
+    ) -> int:
         """Performs a roulette selection on the population (eq. 8).
 
         Args:
-            fitness (list): A fitness list of every agent.
-            a (float): Selection regularizer.
+            fitness: A fitness list of every agent.
+            a: Selection regularizer.
 
         Returns:
-            The selected index of the population.
+            (int): The selected index of the population.
 
         """
 
@@ -224,12 +235,12 @@ class RRA(Optimizer):
 
         return selected[0]
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Runner-Root Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

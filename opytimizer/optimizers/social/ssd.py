@@ -3,12 +3,15 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +30,11 @@ class SSD(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -52,13 +55,13 @@ class SSD(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def c(self):
-        """float: Exploration parameter."""
+    def c(self) -> float:
+        """Exploration parameter."""
 
         return self._c
 
     @c.setter
-    def c(self, c):
+    def c(self, c: float) -> None:
         if not isinstance(c, (float, int)):
             raise e.TypeError("`c` should be a float or integer")
         if c < 0:
@@ -67,13 +70,13 @@ class SSD(Optimizer):
         self._c = c
 
     @property
-    def decay(self):
-        """float: Decay rate."""
+    def decay(self) -> float:
+        """Decay rate."""
 
         return self._decay
 
     @decay.setter
-    def decay(self, decay):
+    def decay(self, decay: float) -> None:
         if not isinstance(decay, (float, int)):
             raise e.TypeError("`decay` should be a float or integer")
         if decay < 0 or decay > 1:
@@ -81,36 +84,36 @@ class SSD(Optimizer):
         self._decay = decay
 
     @property
-    def local_position(self):
-        """np.array: Array of local positions."""
+    def local_position(self) -> np.ndarray:
+        """Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
-    def local_position(self, local_position):
+    def local_position(self, local_position: np.ndarray) -> None:
         if not isinstance(local_position, np.ndarray):
             raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -122,16 +125,18 @@ class SSD(Optimizer):
             size=(space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _mean_global_solution(self, alpha, beta, gamma):
+    def _mean_global_solution(
+        self, alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarray
+    ) -> np.ndarray:
         """Calculates the mean global solution (eq. 9).
 
         Args:
-            alpha (np.array): 1st agent's current position.
-            beta (np.array): 2nd agent's current position.
-            gamma (np.array): 3rd agent's current position.
+            alpha: 1st agent's current position.
+            beta: 2nd agent's current position.
+            gamma: 3rd agent's current position.
 
         Returns:
-            Mean global solution.
+            (np.ndarray): Mean global solution.
 
         """
 
@@ -140,15 +145,15 @@ class SSD(Optimizer):
 
         return mean
 
-    def _update_position(self, position, index):
+    def _update_position(self, position: np.ndarray, index: int) -> np.ndarray:
         """Updates a particle position (eq. 10).
 
         Args:
-            position (np.array): Agent's current position.
-            index (int): Index of current agent.
+            position: Agent's current position.
+            index: Index of current agent.
 
         Returns:
-            A new position.
+            (np.ndarray): A new position.
 
         """
 
@@ -157,16 +162,18 @@ class SSD(Optimizer):
 
         return new_position
 
-    def _update_velocity(self, position, mean, index):
+    def _update_velocity(
+        self, position: np.ndarray, mean: np.ndarray, index: int
+    ) -> np.ndarray:
         """Updates a particle velocity (eq. 11).
 
         Args:
-            position (np.array): Agent's current position.
-            mean (np.array): Mean global best position.
-            index (int): Index of current agent.
+            position: Agent's current position.
+            mean: Mean global best position.
+            index: Index of current agent.
 
         Returns:
-            A new velocity.
+            (np.ndarray): A new velocity.
 
         """
 
@@ -190,12 +197,12 @@ class SSD(Optimizer):
 
         return new_velocity
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -219,12 +226,12 @@ class SSD(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Social Ski Driver over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -1,6 +1,8 @@
 """Gravitational Search Algorithm.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.general as g
@@ -8,6 +10,8 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class GSA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -47,13 +51,13 @@ class GSA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def G(self):
-        """float: Initial gravity."""
+    def G(self) -> float:
+        """Initial gravity."""
 
         return self._G
 
     @G.setter
-    def G(self, G):
+    def G(self, G: float) -> None:
         if not isinstance(G, (float, int)):
             raise e.TypeError("`G` should be a float or integer")
         if G < 0:
@@ -62,23 +66,23 @@ class GSA(Optimizer):
         self._G = G
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -87,14 +91,14 @@ class GSA(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _calculate_mass(self, agents):
+    def _calculate_mass(self, agents: List[Agent]) -> float:
         """Calculates agents' mass (eq. 16).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            The agents' mass.
+            (float): The agents' mass.
 
         """
 
@@ -109,16 +113,18 @@ class GSA(Optimizer):
 
         return norm_mass
 
-    def _calculate_force(self, agents, mass, gravity):
+    def _calculate_force(
+        self, agents: List[Agent], mass: np.ndarray, gravity: float
+    ) -> float:
         """Calculates agents' force (eq. 7-9).
 
         Args:
-            agents (list): List of agents.
-            mass (np.array): An array of agents' mass.
-            gravity (float): Current gravity value.
+            agents: List of agents.
+            mass: An array of agents' mass.
+            gravity: Current gravity value.
 
         Returns:
-            The attraction force between all agents.
+            (float): The attraction force between all agents.
 
         """
 
@@ -145,12 +151,12 @@ class GSA(Optimizer):
 
         return force
 
-    def update(self, space, iteration):
+    def update(self, space: Space, iteration: int) -> None:
         """Wraps Gravitational Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
 
         """
 

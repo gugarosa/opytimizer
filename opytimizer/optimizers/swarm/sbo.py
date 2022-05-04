@@ -1,12 +1,16 @@
 """Satin Bowerbird Optimizer.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class SBO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the mp_mutation-heuristics.
+            params: Contains key-value parameters to the mp_mutation-heuristics.
 
         """
 
@@ -52,13 +56,13 @@ class SBO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Step size."""
+    def alpha(self) -> float:
+        """Step size."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -67,13 +71,13 @@ class SBO(Optimizer):
         self._alpha = alpha
 
     @property
-    def p_mutation(self):
-        """float: Probability of mutation."""
+    def p_mutation(self) -> float:
+        """Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
-    def p_mutation(self, p_mutation):
+    def p_mutation(self, p_mutation: float) -> None:
         if not isinstance(p_mutation, (float, int)):
             raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
@@ -82,13 +86,13 @@ class SBO(Optimizer):
         self._p_mutation = p_mutation
 
     @property
-    def z(self):
-        """float: Percentage of width between lower and upper bounds."""
+    def z(self) -> float:
+        """Percentage of width between lower and upper bounds."""
 
         return self._z
 
     @z.setter
-    def z(self, z):
+    def z(self, z: float) -> None:
         if not isinstance(z, (float, int)):
             raise e.TypeError("`z` should be a float or integer")
         if z < 0 or z > 1:
@@ -97,35 +101,35 @@ class SBO(Optimizer):
         self._z = z
 
     @property
-    def sigma(self):
-        """list: List of widths."""
+    def sigma(self) -> List[float]:
+        """List of widths."""
 
         return self._sigma
 
     @sigma.setter
-    def sigma(self, sigma):
+    def sigma(self, sigma: List[float]) -> None:
         if not isinstance(sigma, list):
             raise e.TypeError("`sigma` should be a list")
 
         self._sigma = sigma
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # List of widths
         self.sigma = [self.z * (ub - lb) for lb, ub in zip(space.lb, space.ub)]
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Satin Bowerbird Optimizer over all agents and variables (eq. 1-7).
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

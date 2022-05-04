@@ -3,6 +3,7 @@
 
 import copy
 import itertools
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -12,6 +13,8 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Agent, Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,17 +27,23 @@ class Lion(Agent):
     """
 
     def __init__(
-        self, n_variables, n_dimensions, lower_bound, upper_bound, position, fit
-    ):
+        self,
+        n_variables: int,
+        n_dimensions: int,
+        lower_bound: Union[List, Tuple, np.ndarray],
+        upper_bound: Union[List, Tuple, np.ndarray],
+        position: np.ndarray,
+        fit: float,
+    ) -> None:
         """Initialization method.
 
         Args:
-            n_variables (int): Number of decision variables.
-            n_dimensions (int): Number of dimensions.
-            lower_bound (list, tuple, np.array): Minimum possible values.
-            upper_bound (list, tuple, np.array): Maximum possible values.
-            position (np.array): Position array.
-            fit (float): Fitness value.
+            n_variables: Number of decision variables.
+            n_dimensions: Number of dimensions.
+            lower_bound: Minimum possible values.
+            upper_bound: Maximum possible values.
+            position: Position array.
+            fit: Fitness value.
 
         """
 
@@ -64,65 +73,65 @@ class Lion(Agent):
         self.group = 0
 
     @property
-    def best_position(self):
-        """np.array: N-dimensional array of best positions."""
+    def best_position(self) -> np.ndarray:
+        """N-dimensional array of best positions."""
 
         return self._best_position
 
     @best_position.setter
-    def best_position(self, best_position):
+    def best_position(self, best_position: np.ndarray) -> None:
         if not isinstance(best_position, np.ndarray):
             raise e.TypeError("`best_position` should be a numpy array")
 
         self._best_position = best_position
 
     @property
-    def p_fit(self):
-        """float: Previous fitness value."""
+    def p_fit(self) -> float:
+        """Previous fitness value."""
 
         return self._p_fit
 
     @p_fit.setter
-    def p_fit(self, p_fit):
+    def p_fit(self, p_fit: float) -> None:
         if not isinstance(p_fit, (float, int, np.int32, np.int64)):
             raise e.TypeError("`p_fit` should be a float or integer")
 
         self._p_fit = p_fit
 
     @property
-    def nomad(self):
+    def nomad(self) -> bool:
         """bool: Whether lion is nomad or not."""
 
         return self._nomad
 
     @nomad.setter
-    def nomad(self, nomad):
+    def nomad(self, nomad: bool) -> None:
         if not isinstance(nomad, bool):
             raise e.TypeError("`nomad` should be a boolean")
 
         self._nomad = nomad
 
     @property
-    def female(self):
-        """bool: Whether lion is female or not."""
+    def female(self) -> bool:
+        """Whether lion is female or not."""
 
         return self._female
 
     @female.setter
-    def female(self, female):
+    def female(self, female: bool) -> None:
         if not isinstance(female, bool):
             raise e.TypeError("`female` should be a boolean")
 
         self._female = female
 
     @property
-    def pride(self):
-        """int: Index of pride."""
+    def pride(self) -> int:
+        """Index of pride."""
 
         return self._pride
 
     @pride.setter
-    def pride(self, pride):
+    def pride(self, pride: int) -> None:
         if not isinstance(pride, int):
             raise e.TypeError("`pride` should be an integer")
         if pride < 0:
@@ -131,13 +140,13 @@ class Lion(Agent):
         self._pride = pride
 
     @property
-    def group(self):
-        """int: Index of hunting group."""
+    def group(self) -> int:
+        """Index of hunting group."""
 
         return self._group
 
     @group.setter
-    def group(self, group):
+    def group(self, group: int) -> None:
         if not isinstance(group, int):
             raise e.TypeError("`group` should be an integer")
         if group < 0:
@@ -158,11 +167,11 @@ class LOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -198,13 +207,13 @@ class LOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def N(self):
-        """float: Percentage of nomad lions."""
+    def N(self) -> float:
+        """Percentage of nomad lions."""
 
         return self._N
 
     @N.setter
-    def N(self, N):
+    def N(self, N: float) -> None:
         if not isinstance(N, (float, int)):
             raise e.TypeError("`N` should be a float or integer")
         if N < 0 or N > 1:
@@ -213,13 +222,13 @@ class LOA(Optimizer):
         self._N = N
 
     @property
-    def P(self):
-        """int: Number of prides."""
+    def P(self) -> int:
+        """Number of prides."""
 
         return self._P
 
     @P.setter
-    def P(self, P):
+    def P(self, P: int) -> None:
         if not isinstance(P, int):
             raise e.TypeError("`P` should be an integer")
         if P <= 0:
@@ -228,13 +237,13 @@ class LOA(Optimizer):
         self._P = P
 
     @property
-    def S(self):
-        """float: Percentage of female lions."""
+    def S(self) -> float:
+        """Percentage of female lions."""
 
         return self._S
 
     @S.setter
-    def S(self, S):
+    def S(self, S: float) -> None:
         if not isinstance(S, (float, int)):
             raise e.TypeError("`S` should be a float or integer")
         if S < 0 or S > 1:
@@ -243,13 +252,13 @@ class LOA(Optimizer):
         self._S = S
 
     @property
-    def R(self):
-        """float: Percentage of roaming lions."""
+    def R(self) -> float:
+        """Percentage of roaming lions."""
 
         return self._R
 
     @R.setter
-    def R(self, R):
+    def R(self, R: float) -> None:
         if not isinstance(R, (float, int)):
             raise e.TypeError("`R` should be a float or integer")
         if R < 0 or R > 1:
@@ -258,13 +267,13 @@ class LOA(Optimizer):
         self._R = R
 
     @property
-    def I(self):
-        """float: Immigrate rate."""
+    def I(self) -> float:
+        """Immigrate rate."""
 
         return self._I
 
     @I.setter
-    def I(self, I):
+    def I(self, I: float) -> None:
         if not isinstance(I, (float, int)):
             raise e.TypeError("`I` should be a float or integer")
         if I < 0 or I > 1:
@@ -273,13 +282,13 @@ class LOA(Optimizer):
         self._I = I
 
     @property
-    def Ma(self):
-        """float: Mating probability."""
+    def Ma(self) -> float:
+        """Mating probability."""
 
         return self._Ma
 
     @Ma.setter
-    def Ma(self, Ma):
+    def Ma(self, Ma: float) -> None:
         if not isinstance(Ma, (float, int)):
             raise e.TypeError("`Ma` should be a float or integer")
         if Ma < 0 or Ma > 1:
@@ -288,13 +297,13 @@ class LOA(Optimizer):
         self._Ma = Ma
 
     @property
-    def Mu(self):
-        """float: Mutation probability."""
+    def Mu(self) -> float:
+        """Mutation probability."""
 
         return self._Mu
 
     @Mu.setter
-    def Mu(self, Mu):
+    def Mu(self, Mu: float) -> None:
         if not isinstance(Mu, (float, int)):
             raise e.TypeError("`Mu` should be a float or integer")
         if Mu < 0 or Mu > 1:
@@ -302,11 +311,11 @@ class LOA(Optimizer):
 
         self._Mu = Mu
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -348,28 +357,28 @@ class LOA(Optimizer):
             # Allocates to the corresponding pride
             agent.pride = i % self.P
 
-    def _get_nomad_lions(self, agents):
+    def _get_nomad_lions(self, agents: List[Lion]) -> List[Lion]:
         """Gets all nomad lions.
 
         Args:
-            agents (list): Agents.
+            agents: Agents.
 
         Returns:
-            A list of nomad lions.
+            (List[Lion]): A list of nomad lions.
 
         """
 
         # Returns a list of nomad lions
         return [agent for agent in agents if agent.nomad]
 
-    def _get_pride_lions(self, agents):
+    def _get_pride_lions(self, agents: List[Lion]) -> List[List[Lion]]:
         """Gets all non-nomad (pride) lions.
 
         Args:
-            agents (list): Agents.
+            agents: Agents.
 
         Returns:
-            A list of lists, where each one indicates a particular pride with its lions.
+            (List[List[Lion]]): A list of lists, where each one indicates a particular pride with its lions.
 
         """
 
@@ -379,12 +388,12 @@ class LOA(Optimizer):
         # Returns a list of lists of prides
         return [[agent for agent in agents if agent.pride == i] for i in range(self.P)]
 
-    def _hunting(self, prides, function):
+    def _hunting(self, prides: List[Lion], function: Function) -> None:
         """Performs the hunting procedure (s. 2.2.2).
 
         Args:
-            prides (list): List of prides holding their corresponding lions.
-            function (Function): A Function object that will be used as the objective function.
+            prides: List of prides holding their corresponding lions.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -475,11 +484,11 @@ class LOA(Optimizer):
                     r1 = r.generate_uniform_random_number()
                     prey += r1 * p_improvement * (prey - agent.position)
 
-    def _moving_safe_place(self, prides):
+    def _moving_safe_place(self, prides: List[Lion]) -> None:
         """Move prides to safe locations (s. 2.2.3).
 
         Args:
-            prides (list): List of prides holding their corresponding lions.
+            prides: List of prides holding their corresponding lions.
 
         """
 
@@ -519,12 +528,12 @@ class LOA(Optimizer):
                         2 * distance * rand * R1 + u * np.tan(theta) * distance * R2
                     )
 
-    def _roaming(self, prides, function):
+    def _roaming(self, prides: List[Lion], function: Function) -> None:
         """Performs the roaming procedure (s. 2.2.4).
 
         Args:
-            prides (list): List of prides holding their corresponding lions.
-            function (Function): A Function object that will be used as the objective function.
+            prides: List of prides holding their corresponding lions.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -568,16 +577,18 @@ class LOA(Optimizer):
                             # Updates its best position
                             agent.best_position = copy.deepcopy(agent.position)
 
-    def _mating_operator(self, agent, males, function):
+    def _mating_operator(
+        self, agent: List[Lion], males: List[Lion], function: Function
+    ) -> Tuple[Lion, Lion]:
         """Wraps the mating operator.
 
         Args:
-            agent (Agent): Current agent.
-            males (list): List of males that will be breed.
-            function (Function): A Function object that will be used as the objective function.
+            agent: Current agent.
+            males: List of males that will be breed.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            A pair of offsprings that resulted from mating.
+            (Tuple[Lion, Lion]): A pair of offsprings that resulted from mating.
 
         """
 
@@ -628,15 +639,15 @@ class LOA(Optimizer):
 
         return a1, a2
 
-    def _mating(self, prides, function):
+    def _mating(self, prides: List[Lion], function: Function) -> Lion:
         """Generates offsprings from mating (s. 2.2.5).
 
         Args:
-            prides (list): List of prides holding their corresponding lions.
-            function (Function): A Function object that will be used as the objective function.
+            prides: List of prides holding their corresponding lions.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            Cubs generated from the mating procedure.
+            (Lion): Cubs generated from the mating procedure.
 
         """
 
@@ -671,16 +682,18 @@ class LOA(Optimizer):
 
         return prides_cubs
 
-    def _defense(self, nomads, prides, cubs):
+    def _defense(
+        self, nomads: List[Lion], prides: List[List[Lion]], cubs: List[Lion]
+    ) -> Tuple[List[Lion], List[List[Lion]]]:
         """Performs the defense procedure (s. 2.2.6).
 
         Args:
-            nomads (list): Nomad lions.
-            prides (list): List of prides holding their corresponding lions.
-            cubs (Function): List of cubs holding their corresponding lions.
+            nomads: Nomad lions.
+            prides: List of prides holding their corresponding lions.
+            cubs: List of cubs holding their corresponding lions.
 
         Returns:
-            Both updated nomad and pride lions.
+            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
 
         """
 
@@ -711,12 +724,12 @@ class LOA(Optimizer):
 
         return nomads, new_prides
 
-    def _nomad_roaming(self, nomads, function):
+    def _nomad_roaming(self, nomads: List[Lion], function: Function) -> None:
         """Performs the roaming procedure for nomad lions (s. 2.2.4).
 
         Args:
-            nomads (list): Nomad lions.
-            function (Function): A Function object that will be used as the objective function.
+            nomads: Nomad lions.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -757,15 +770,15 @@ class LOA(Optimizer):
                 # Updates its best position
                 agent.best_position = copy.deepcopy(agent.position)
 
-    def _nomad_mating(self, nomads, function):
+    def _nomad_mating(self, nomads: List[Lion], function: Function) -> List[Lion]:
         """Generates offsprings from nomad lions mating (s. 2.2.5).
 
         Args:
-            nomads (list): Nomad lions.
-            function (Function): A Function object that will be used as the objective function.
+            nomads: Nomad lions.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            Updated nomad lions.
+            (List[Lion]): Updated nomad lions.
 
         """
 
@@ -801,15 +814,17 @@ class LOA(Optimizer):
 
         return nomads
 
-    def _nomad_attack(self, nomads, prides):
+    def _nomad_attack(
+        self, nomads: List[Lion], prides: List[List[Lion]]
+    ) -> Tuple[List[Lion], List[List[Lion]]]:
         """Performs the nomad's attacking procedure (s. 2.2.6).
 
         Args:
-            nomads (list): Nomad lions.
-            prides (list): List of prides holding their corresponding lions.
+            nomads: Nomad lions.
+            prides: List of prides holding their corresponding lions.
 
         Returns:
-            Both updated nomad and pride lions.
+            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
 
         """
 
@@ -838,15 +853,17 @@ class LOA(Optimizer):
 
         return nomads, prides
 
-    def _migrating(self, nomads, prides):
+    def _migrating(
+        self, nomads: List[Lion], prides: List[List[Lion]]
+    ) -> Tuple[List[Lion], List[List[Lion]]]:
         """Performs the nomad's migration procedure (s. 2.2.7).
 
         Args:
-            nomads (list): Nomad lions.
-            prides (list): List of prides holding their corresponding lions.
+            nomads: Nomad lions.
+            prides: List of prides holding their corresponding lions.
 
         Returns:
-            Both updated nomad and pride lions.
+            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
 
         """
 
@@ -881,15 +898,17 @@ class LOA(Optimizer):
 
         return nomads, new_prides
 
-    def _equilibrium(self, nomads, prides, n_agents):
+    def _equilibrium(
+        self, nomads: List[Lion], prides: List[List[Lion]], n_agents: List[Agent]
+    ) -> Tuple[List[Lion], List[List[Lion]]]:
         """Performs the population's equilibrium procedure (s. 2.2.8).
 
         Args:
-            nomads (list): Nomad lions.
-            prides (list): List of prides holding their corresponding lions.
+            nomads: Nomad lions.
+            prides: List of prides holding their corresponding lions.
 
         Returns:
-            Both updated nomad and pride lions.
+            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
 
         """
 
@@ -930,11 +949,11 @@ class LOA(Optimizer):
 
         return nomads, prides
 
-    def _check_prides_for_males(self, prides):
+    def _check_prides_for_males(self, prides: List[List[Lion]]) -> None:
         """Checks if there is at least one male per pride.
 
         Args:
-            prides (list): List of prides holding their corresponding lions.
+            prides: List of prides holding their corresponding lions.
 
         """
 
@@ -951,12 +970,12 @@ class LOA(Optimizer):
                 idx = r.generate_integer_random_number(high=len(pride))
                 pride[idx].female = False
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Lion Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

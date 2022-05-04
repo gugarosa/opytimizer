@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -11,6 +12,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class GA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +57,13 @@ class GA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def p_selection(self):
-        """float: Probability of selection."""
+    def p_selection(self) -> float:
+        """Probability of selection."""
 
         return self._p_selection
 
     @p_selection.setter
-    def p_selection(self, p_selection):
+    def p_selection(self, p_selection: float) -> None:
         if not isinstance(p_selection, (float, int)):
             raise e.TypeError("`p_selection` should be a float or integer")
         if p_selection < 0 or p_selection > 1:
@@ -68,13 +72,13 @@ class GA(Optimizer):
         self._p_selection = p_selection
 
     @property
-    def p_mutation(self):
-        """float: Probability of mutation."""
+    def p_mutation(self) -> float:
+        """Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
-    def p_mutation(self, p_mutation):
+    def p_mutation(self, p_mutation: float) -> None:
         if not isinstance(p_mutation, (float, int)):
             raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
@@ -83,13 +87,13 @@ class GA(Optimizer):
         self._p_mutation = p_mutation
 
     @property
-    def p_crossover(self):
-        """float: Probability of crossover."""
+    def p_crossover(self) -> float:
+        """Probability of crossover."""
 
         return self._p_crossover
 
     @p_crossover.setter
-    def p_crossover(self, p_crossover):
+    def p_crossover(self, p_crossover: float) -> None:
         if not isinstance(p_crossover, (float, int)):
             raise e.TypeError("`p_crossover` should be a float or integer")
         if p_crossover < 0 or p_crossover > 1:
@@ -97,15 +101,15 @@ class GA(Optimizer):
 
         self._p_crossover = p_crossover
 
-    def _roulette_selection(self, n_agents, fitness):
+    def _roulette_selection(self, n_agents: int, fitness: List[float]) -> List[int]:
         """Performs a roulette selection on the population (p. 8).
 
         Args:
-            n_agents (int): Number of agents allowed in the space.
-            fitness (list): A fitness list of every agent.
+            n_agents: Number of agents allowed in the space.
+            fitness: A fitness list of every agent.
 
         Returns:
-            The selected indexes of the population.
+            (List[int]): The selected indexes of the population.
 
         """
 
@@ -136,15 +140,15 @@ class GA(Optimizer):
 
         return selected
 
-    def _crossover(self, father, mother):
+    def _crossover(self, father: Agent, mother: Agent) -> Tuple[Agent, Agent]:
         """Performs the crossover between a pair of parents (p. 8).
 
         Args:
-            father (Agent): Father to produce the offsprings.
-            mother (Agent): Mother to produce the offsprings.
+            father: Father to produce the offsprings.
+            mother: Mother to produce the offsprings.
 
         Returns:
-            Two generated offsprings based on parents.
+            (Tuple[Agent, Agent]): Two generated offsprings based on parents.
 
         """
 
@@ -167,15 +171,15 @@ class GA(Optimizer):
 
         return alpha, beta
 
-    def _mutation(self, alpha, beta):
+    def _mutation(self, alpha: Agent, beta: Agent) -> Tuple[Agent, Agent]:
         """Performs the mutation over offsprings (p. 8).
 
         Args:
-            alpha (Agent): First offspring.
-            beta (Agent): Second offspring.
+            alpha: First offspring.
+            beta: Second offspring.
 
         Returns:
-            Two mutated offsprings.
+            (Tuple[Agent, Agent]): Two mutated offsprings.
 
         """
 
@@ -199,12 +203,12 @@ class GA(Optimizer):
 
         return alpha, beta
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Genetic Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

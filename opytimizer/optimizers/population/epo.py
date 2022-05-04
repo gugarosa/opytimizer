@@ -1,11 +1,14 @@
 """Emperor Penguin Optimizer.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +26,11 @@ class EPO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -48,38 +51,38 @@ class EPO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def f(self):
-        """float: Exploration control parameter."""
+    def f(self) -> float:
+        """Exploration control parameter."""
 
         return self._f
 
     @f.setter
-    def f(self, f):
+    def f(self, f: float) -> None:
         if not isinstance(f, (float, int)):
             raise e.TypeError("`f` should be a float or integer")
 
         self._f = f
 
     @property
-    def l(self):
-        """float: Exploitation control parameter."""
+    def l(self) -> float:
+        """Exploitation control parameter."""
 
         return self._l
 
     @l.setter
-    def l(self, l):
+    def l(self, l: float) -> None:
         if not isinstance(l, (float, int)):
             raise e.TypeError("`l` should be a float or integer")
 
         self._l = l
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Emperor Penguin Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

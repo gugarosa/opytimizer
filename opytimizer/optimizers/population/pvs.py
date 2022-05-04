@@ -2,11 +2,14 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +27,11 @@ class PVS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -42,12 +45,12 @@ class PVS(Optimizer):
 
         logger.info("Class overrided.")
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Passing Vehicle Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

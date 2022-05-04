@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,8 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class AO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -60,13 +63,13 @@ class AO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: First exploitation adjustment coefficient."""
+    def alpha(self) -> float:
+        """First exploitation adjustment coefficient."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -75,13 +78,13 @@ class AO(Optimizer):
         self._alpha = alpha
 
     @property
-    def delta(self):
-        """float: Second exploitation adjustment coefficient."""
+    def delta(self) -> float:
+        """Second exploitation adjustment coefficient."""
 
         return self._delta
 
     @delta.setter
-    def delta(self, delta):
+    def delta(self, delta: float) -> None:
         if not isinstance(delta, (float, int)):
             raise e.TypeError("`delta` should be a float or integer")
         if delta < 0:
@@ -90,13 +93,13 @@ class AO(Optimizer):
         self._delta = delta
 
     @property
-    def n_cycles(self):
-        """int: Number of cycles."""
+    def n_cycles(self) -> int:
+        """Number of cycles."""
 
         return self._n_cycles
 
     @n_cycles.setter
-    def n_cycles(self, n_cycles):
+    def n_cycles(self, n_cycles: int) -> None:
         if not isinstance(n_cycles, int):
             raise e.TypeError("`n_cycles` should be an integer")
         if n_cycles <= 0:
@@ -105,13 +108,13 @@ class AO(Optimizer):
         self._n_cycles = n_cycles
 
     @property
-    def U(self):
-        """float: Cycle regularizer."""
+    def U(self) -> float:
+        """Cycle regularizer."""
 
         return self._U
 
     @U.setter
-    def U(self, U):
+    def U(self, U: float) -> None:
         if not isinstance(U, (float, int)):
             raise e.TypeError("`U` should be a float or integer")
         if U < 0:
@@ -120,13 +123,13 @@ class AO(Optimizer):
         self._U = U
 
     @property
-    def w(self):
-        """float: Angle regularizer."""
+    def w(self) -> float:
+        """Angle regularizer."""
 
         return self._w
 
     @w.setter
-    def w(self, w):
+    def w(self, w: float) -> None:
         if not isinstance(w, (float, int)):
             raise e.TypeError("`w` should be a float or integer")
         if w < 0:
@@ -134,14 +137,16 @@ class AO(Optimizer):
 
         self._w = w
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Aquila Optimizer over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

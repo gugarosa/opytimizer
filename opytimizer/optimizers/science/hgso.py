@@ -1,12 +1,17 @@
 """Henry Gas Solubility Optimization.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +29,11 @@ class HGSO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -64,13 +69,13 @@ class HGSO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_clusters(self):
-        """int: Number of clusters."""
+    def n_clusters(self) -> int:
+        """Number of clusters."""
 
         return self._n_clusters
 
     @n_clusters.setter
-    def n_clusters(self, n_clusters):
+    def n_clusters(self, n_clusters: int) -> None:
         if not isinstance(n_clusters, int):
             raise e.TypeError("`n_clusters` should be an integer")
         if n_clusters <= 0:
@@ -79,13 +84,13 @@ class HGSO(Optimizer):
         self._n_clusters = n_clusters
 
     @property
-    def l1(self):
-        """float: Henry's coefficient constant."""
+    def l1(self) -> float:
+        """Henry's coefficient constant."""
 
         return self._l1
 
     @l1.setter
-    def l1(self, l1):
+    def l1(self, l1: float) -> None:
         if not isinstance(l1, (float, int)):
             raise e.TypeError("`l1` should be a float or integer")
         if l1 < 0:
@@ -94,13 +99,13 @@ class HGSO(Optimizer):
         self._l1 = l1
 
     @property
-    def l2(self):
-        """int: Partial pressure constant."""
+    def l2(self) -> int:
+        """Partial pressure constant."""
 
         return self._l2
 
     @l2.setter
-    def l2(self, l2):
+    def l2(self, l2: int) -> None:
         if not isinstance(l2, int):
             raise e.TypeError("`l2` should be an integer")
         if l2 <= 0:
@@ -109,13 +114,13 @@ class HGSO(Optimizer):
         self._l2 = l2
 
     @property
-    def l3(self):
-        """float: Constant."""
+    def l3(self) -> float:
+        """Constant."""
 
         return self._l3
 
     @l3.setter
-    def l3(self, l3):
+    def l3(self, l3: float) -> None:
         if not isinstance(l3, (float, int)):
             raise e.TypeError("`l3` should be a float or integer")
         if l3 < 0:
@@ -124,13 +129,13 @@ class HGSO(Optimizer):
         self._l3 = l3
 
     @property
-    def alpha(self):
-        """float: Influence of gases."""
+    def alpha(self) -> float:
+        """Influence of gases."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -139,13 +144,13 @@ class HGSO(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Gas constant."""
+    def beta(self) -> float:
+        """Gas constant."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
@@ -154,13 +159,13 @@ class HGSO(Optimizer):
         self._beta = beta
 
     @property
-    def K(self):
-        """float: Solubility constant."""
+    def K(self) -> float:
+        """Solubility constant."""
 
         return self._K
 
     @K.setter
-    def K(self, K):
+    def K(self, K: float) -> None:
         if not isinstance(K, (float, int)):
             raise e.TypeError("`K` should be a float or integer")
         if K < 0:
@@ -169,49 +174,49 @@ class HGSO(Optimizer):
         self._K = K
 
     @property
-    def coefficient(self):
-        """np.array: Array of coefficients."""
+    def coefficient(self) -> np.ndarray:
+        """Array of coefficients."""
 
         return self._coefficient
 
     @coefficient.setter
-    def coefficient(self, coefficient):
+    def coefficient(self, coefficient: np.ndarray) -> None:
         if not isinstance(coefficient, np.ndarray):
             raise e.TypeError("`coefficient` should be a numpy array")
 
         self._coefficient = coefficient
 
     @property
-    def pressure(self):
-        """np.array: Array of pressures."""
+    def pressure(self) -> np.ndarray:
+        """Array of pressures."""
 
         return self._pressure
 
     @pressure.setter
-    def pressure(self, pressure):
+    def pressure(self, pressure: np.ndarray) -> None:
         if not isinstance(pressure, np.ndarray):
             raise e.TypeError("`pressure` should be a numpy array")
 
         self._pressure = pressure
 
     @property
-    def constant(self):
-        """np.array: Array of constants."""
+    def constant(self) -> np.ndarray:
+        """Array of constants."""
 
         return self._constant
 
     @constant.setter
-    def constant(self, constant):
+    def constant(self, constant: np.ndarray) -> None:
         if not isinstance(constant, np.ndarray):
             raise e.TypeError("`constant` should be a numpy array")
 
         self._constant = constant
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -227,17 +232,19 @@ class HGSO(Optimizer):
         )
         self.constant = self.l3 * r.generate_uniform_random_number(size=self.n_clusters)
 
-    def _update_position(self, agent, cluster_agent, best_agent, solubility):
+    def _update_position(
+        self, agent: Agent, cluster_agent: Agent, best_agent: Agent, solubility: float
+    ) -> np.ndarray:
         """Updates the position of a single gas (eq. 10).
 
         Args:
-            agent (Agent): Current agent.
-            cluster_agent (Agent): Best cluster's agent.
-            best_agent (Agent): Best agent.
-            solubility (float): Solubility for current agent.
+            agent: Current agent.
+            cluster_agent: Best cluster's agent.
+            best_agent: Best agent.
+            solubility: Solubility for current agent.
 
         Returns:
-            An updated position.
+            (np.ndarray): An updated position.
 
         """
 
@@ -262,14 +269,16 @@ class HGSO(Optimizer):
 
         return new_position
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Henry Gas Solubility Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

@@ -2,11 +2,14 @@
 """
 
 import copy
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +27,11 @@ class GWO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -42,14 +45,14 @@ class GWO(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _calculate_coefficients(self, a):
+    def _calculate_coefficients(self, a: float) -> Tuple[float, float]:
         """Calculates the mathematical coefficients.
 
         Args:
-            a (float): Linear constant.
+            a: Linear constant.
 
         Returns:
-            Both `A` and `C` coefficients.
+            (Tuple[float, float]): Both `A` and `C` coefficients.
 
         """
 
@@ -65,14 +68,16 @@ class GWO(Optimizer):
 
         return A, C
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Grey Wolf Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class ABC(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -49,13 +53,13 @@ class ABC(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_trials(self):
-        """int: Number of trial limits."""
+    def n_trials(self) -> int:
+        """Number of trial limits."""
 
         return self._n_trials
 
     @n_trials.setter
-    def n_trials(self, n_trials):
+    def n_trials(self, n_trials: int) -> None:
         if not isinstance(n_trials, int):
             raise e.TypeError("`n_trials` should be an integer")
         if n_trials <= 0:
@@ -64,37 +68,39 @@ class ABC(Optimizer):
         self._n_trials = n_trials
 
     @property
-    def trial(self):
-        """np.array: Array of trial."""
+    def trial(self) -> np.ndarray:
+        """Array of trial."""
 
         return self._trial
 
     @trial.setter
-    def trial(self, trial):
+    def trial(self, trial: np.ndarray) -> None:
         if not isinstance(trial, np.ndarray):
             raise e.TypeError("`trial` should be a numpy array")
 
         self._trial = trial
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Arrays of trials
         self.trial = np.zeros(space.n_agents)
 
-    def _evaluate_location(self, agent, neighbour, function, index):
+    def _evaluate_location(
+        self, agent: Agent, neighbour: Agent, function: Function, index: int
+    ) -> None:
         """Evaluates a food source location and update its value if possible (eq. 2.2).
 
         Args:
-            agent (Agent): An agent.
-            neighbour (Agent): A neightbour agent.
-            function (Function): A function object.
-            index (int): Index of trial.
+            agent: An agent.
+            neighbour: A neightbour agent.
+            function: A function object.
+            index: Index of trial.
 
         """
 
@@ -127,12 +133,12 @@ class ABC(Optimizer):
             # We increse the trials counter
             self.trial[index] += 1
 
-    def _send_employee(self, agents, function):
+    def _send_employee(self, agents: List[Agent], function: Function) -> None:
         """Sends employee bees onto food source to evaluate its nectar.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            agents: List of agents.
+            function: A function object.
 
         """
 
@@ -144,12 +150,12 @@ class ABC(Optimizer):
             # Measuring food source location
             self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_onlooker(self, agents, function):
+    def _send_onlooker(self, agents: List[Agent], function: Function) -> None:
         """Sends onlooker bees to select new food sources (eq. 2.1).
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            agents: List of agents.
+            function: A function object.
 
         """
 
@@ -180,12 +186,12 @@ class ABC(Optimizer):
                     # Evaluate its location
                     self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_scout(self, agents, function):
+    def _send_scout(self, agents: List[Agent], function: Function) -> None:
         """Sends scout bees to scout for new possible food sources.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A function object.
+            agents: List of agents.
+            function: A function object.
 
         """
 
@@ -214,12 +220,12 @@ class ABC(Optimizer):
                 # We copy the temporary agent to the current one
                 agents[max_index] = copy.deepcopy(a)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Artificial Bee Colony over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

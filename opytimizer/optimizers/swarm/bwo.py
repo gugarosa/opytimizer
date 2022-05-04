@@ -2,10 +2,14 @@
 """
 
 import copy
+from typing import Any, Dict, Optional, Tuple
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class BWO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +57,13 @@ class BWO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def pp(self):
-        """float: Procreating rate."""
+    def pp(self) -> float:
+        """Procreating rate."""
 
         return self._pp
 
     @pp.setter
-    def pp(self, pp):
+    def pp(self, pp: float) -> None:
         if not isinstance(pp, (float, int)):
             raise e.TypeError("`pp` should be a float or integer")
         if pp < 0 or pp > 1:
@@ -68,13 +72,13 @@ class BWO(Optimizer):
         self._pp = pp
 
     @property
-    def cr(self):
-        """float: Cannibalism rate."""
+    def cr(self) -> float:
+        """Cannibalism rate."""
 
         return self._cr
 
     @cr.setter
-    def cr(self, cr):
+    def cr(self, cr: float) -> None:
         if not isinstance(cr, (float, int)):
             raise e.TypeError("`cr` should be a float or integer")
         if cr < 0 or cr > 1:
@@ -83,13 +87,13 @@ class BWO(Optimizer):
         self._cr = cr
 
     @property
-    def pm(self):
-        """float: Mutation rate."""
+    def pm(self) -> float:
+        """Mutation rate."""
 
         return self._pm
 
     @pm.setter
-    def pm(self, pm):
+    def pm(self, pm: float) -> None:
         if not isinstance(pm, (float, int)):
             raise e.TypeError("`pm` should be a float or integer")
         if pm < 0 or pm > 1:
@@ -97,15 +101,15 @@ class BWO(Optimizer):
 
         self._pm = pm
 
-    def _procreating(self, x1, x2):
+    def _procreating(self, x1: Agent, x2: Agent) -> Tuple[Agent, Agent]:
         """Procreates a pair of parents into offsprings (eq. 1).
 
         Args:
-            x1 (Agent): Father to produce the offsprings.
-            x2 (Agent): Mother to produce the offsprings.
+            x1: Father to produce the offsprings.
+            x2: Mother to produce the offsprings.
 
         Returns:
-            Two generated offsprings based on parents.
+            (Tuple[Agent, Agent]): Two generated offsprings based on parents.
 
         """
 
@@ -121,14 +125,14 @@ class BWO(Optimizer):
 
         return y1, y2
 
-    def _mutation(self, alpha):
+    def _mutation(self, alpha: Agent) -> Agent:
         """Performs the mutation over an offspring (s. 3.4).
 
         Args:
-            alpha (Agent): Offspring to be mutated.
+            alpha: Offspring to be mutated.
 
         Returns:
-            The mutated offspring.
+            (Agent): The mutated offspring.
 
         """
 
@@ -148,12 +152,12 @@ class BWO(Optimizer):
 
         return alpha
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Black Widow Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

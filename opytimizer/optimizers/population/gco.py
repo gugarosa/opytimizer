@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -10,6 +11,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class GCO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,13 +54,13 @@ class GCO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def CR(self):
-        """float: Cross-ratio parameter."""
+    def CR(self) -> float:
+        """Cross-ratio parameter."""
 
         return self._CR
 
     @CR.setter
-    def CR(self, CR):
+    def CR(self, CR: float) -> None:
         if not isinstance(CR, (float, int)):
             raise e.TypeError("`CR` should be a float or integer")
         if CR < 0 or CR > 1:
@@ -65,13 +69,13 @@ class GCO(Optimizer):
         self._CR = CR
 
     @property
-    def F(self):
-        """float: Mutation factor."""
+    def F(self) -> float:
+        """Mutation factor."""
 
         return self._F
 
     @F.setter
-    def F(self, F):
+    def F(self, F: float) -> None:
         if not isinstance(F, (float, int)):
             raise e.TypeError("`F` should be a float or integer")
         if F < 0:
@@ -80,36 +84,36 @@ class GCO(Optimizer):
         self._F = F
 
     @property
-    def life(self):
-        """np.array: Array of lives."""
+    def life(self) -> np.ndarray:
+        """Array of lives."""
 
         return self._life
 
     @life.setter
-    def life(self, life):
+    def life(self, life: np.ndarray) -> None:
         if not isinstance(life, np.ndarray):
             raise e.TypeError("`life` should be a numpy array")
 
         self._life = life
 
     @property
-    def counter(self):
-        """np.array: Array of counters."""
+    def counter(self) -> np.ndarray:
+        """Array of counters."""
 
         return self._counter
 
     @counter.setter
-    def counter(self, counter):
+    def counter(self, counter: np.ndarray) -> None:
         if not isinstance(counter, np.ndarray):
             raise e.TypeError("`counter` should be a numpy array")
 
         self._counter = counter
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -117,17 +121,19 @@ class GCO(Optimizer):
         self.life = r.generate_uniform_random_number(70, 70, space.n_agents)
         self.counter = np.ones(space.n_agents)
 
-    def _mutate_cell(self, agent, alpha, beta, gamma):
+    def _mutate_cell(
+        self, agent: Agent, alpha: Agent, beta: Agent, gamma: Agent
+    ) -> Agent:
         """Mutates a new cell based on distinct cells (alg. 2).
 
         Args:
-            agent (Agent): Current agent.
-            alpha (Agent): 1st picked agent.
-            beta (Agent): 2nd picked agent.
-            gamma (Agent): 3rd picked agent.
+            agent: Current agent.
+            alpha: 1st picked agent.
+            beta: 2nd picked agent.
+            gamma: 3rd picked agent.
 
         Returns:
-            A mutated cell.
+            (Agent): A mutated cell.
 
         """
 
@@ -148,12 +154,12 @@ class GCO(Optimizer):
 
         return a
 
-    def _dark_zone(self, agents, function):
+    def _dark_zone(self, agents: List[Agent], function: Function) -> None:
         """Performs the dark-zone update process (alg. 1).
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -195,11 +201,11 @@ class GCO(Optimizer):
                 # Increases the life of cell by ten
                 self.life[i] += 10
 
-    def _light_zone(self, agents):
+    def _light_zone(self, agents: List[Agent]) -> None:
         """Performs the light-zone update process (alg. 1).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -220,12 +226,12 @@ class GCO(Optimizer):
             # Adds 10 * new life fitness to cell's life
             self.life[i] += 10 * life_fit
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Germinal Center Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

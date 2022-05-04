@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class COA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -47,13 +51,13 @@ class COA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_p(self):
-        """int: Number of packs."""
+    def n_p(self) -> int:
+        """Number of packs."""
 
         return self._n_p
 
     @n_p.setter
-    def n_p(self, n_p):
+    def n_p(self, n_p: int) -> None:
         if not isinstance(n_p, int):
             raise e.TypeError("`n_p` should be an integer")
         if n_p <= 0:
@@ -62,13 +66,13 @@ class COA(Optimizer):
         self._n_p = n_p
 
     @property
-    def n_c(self):
-        """int: Number of coyotes per pack."""
+    def n_c(self) -> int:
+        """Number of coyotes per pack."""
 
         return self._n_c
 
     @n_c.setter
-    def n_c(self, n_c):
+    def n_c(self, n_c: int) -> None:
         if not isinstance(n_c, int):
             raise e.TypeError("`n_c` should be an integer")
         if n_c <= 0:
@@ -76,26 +80,26 @@ class COA(Optimizer):
 
         self._n_c = n_c
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Calculates the number of coyotes per pack
         self.n_c = space.n_agents // self.n_p
 
-    def _get_agents_from_pack(self, agents, index):
+    def _get_agents_from_pack(self, agents: List[Agent], index: int) -> List[Agent]:
         """Gets a set of agents from a specified pack.
 
         Args:
-            agents (list): List of agents.
-            index (int): Index of pack.
+            agents: List of agents.
+            index: Index of pack.
 
         Returns:
-            A sorted list of agents that belongs to the specified pack.
+            (List[Agent]): A sorted list of agents that belongs to the specified pack.
 
         """
 
@@ -108,11 +112,11 @@ class COA(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _transition_packs(self, agents):
+    def _transition_packs(self, agents: List[Agent]) -> None:
         """Transits coyotes between packs (eq. 4).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -139,12 +143,12 @@ class COA(Optimizer):
             # Performs a swap between them
             agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Coyote Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -1,11 +1,16 @@
 """Cross-Entropy Method.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +28,11 @@ class CEM(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -46,13 +51,13 @@ class CEM(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_updates(self):
-        """int: Number of positions to employ in update formulae."""
+    def n_updates(self) -> int:
+        """Number of positions to employ in update formulae."""
 
         return self._n_updates
 
     @n_updates.setter
-    def n_updates(self, n_updates):
+    def n_updates(self, n_updates: int) -> None:
         if not isinstance(n_updates, int):
             raise e.TypeError("`n_updates` should be an integer")
         if n_updates <= 0:
@@ -61,13 +66,13 @@ class CEM(Optimizer):
         self._n_updates = n_updates
 
     @property
-    def alpha(self):
-        """float: Learning rate."""
+    def alpha(self) -> float:
+        """Learning rate."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -76,36 +81,36 @@ class CEM(Optimizer):
         self._alpha = alpha
 
     @property
-    def mean(self):
-        """np.array: Array of means."""
+    def mean(self) -> np.ndarray:
+        """Array of means."""
 
         return self._mean
 
     @mean.setter
-    def mean(self, mean):
+    def mean(self, mean: np.ndarray) -> None:
         if not isinstance(mean, np.ndarray):
             raise e.TypeError("`mean` should be a numpy array")
 
         self._mean = mean
 
     @property
-    def std(self):
-        """np.array: Array of standard deviations."""
+    def std(self) -> np.ndarray:
+        """Array of standard deviations."""
 
         return self._std
 
     @std.setter
-    def std(self, std):
+    def std(self, std: np.ndarray) -> None:
         if not isinstance(std, np.ndarray):
             raise e.TypeError("`std` should be a numpy array")
 
         self._std = std
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -119,12 +124,12 @@ class CEM(Optimizer):
             self.mean[j] = r.generate_uniform_random_number(lb, ub)
             self.std[j] = ub - lb
 
-    def _create_new_samples(self, agents, function):
+    def _create_new_samples(self, agents: List[Agent], function: Function) -> None:
         """Creates new agents based on current mean and standard deviation.
 
         Args:
             agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -143,14 +148,14 @@ class CEM(Optimizer):
             # Calculates its new fitness
             agent.fit = function(agent.position)
 
-    def _update_mean(self, updates):
+    def _update_mean(self, updates: np.ndarray) -> np.ndarray:
         """Calculates and updates mean.
 
         Args:
-            updates (np.array): An array of updates' positions.
+            updates: An array of updates' positions.
 
         Returns:
-            The new mean values.
+            (np.ndarray): The new mean values.
 
         """
 
@@ -159,14 +164,14 @@ class CEM(Optimizer):
 
         return new_mean
 
-    def _update_std(self, updates):
+    def _update_std(self, updates: np.ndarray) -> np.ndarray:
         """Calculates and updates standard deviation.
 
         Args:
-            updates (np.array): An array of updates' positions.
+            updates: An array of updates' positions.
 
         Returns:
-            The new standard deviation values.
+            (np.ndarray): The new standard deviation values.
 
         """
 
@@ -177,12 +182,12 @@ class CEM(Optimizer):
 
         return new_std
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Cross-Entropy Method over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

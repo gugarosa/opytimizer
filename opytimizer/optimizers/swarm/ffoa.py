@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class FFOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -45,36 +49,36 @@ class FFOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def x_axis(self):
-        """list: `x` axis."""
+    def x_axis(self) -> List[Agent]:
+        """`x` axis."""
 
         return self._x_axis
 
     @x_axis.setter
-    def x_axis(self, x_axis):
+    def x_axis(self, x_axis: List[Agent]) -> None:
         if not isinstance(x_axis, list):
             raise e.TypeError("`x_axis` should be a list")
 
         self._x_axis = x_axis
 
     @property
-    def y_axis(self):
-        """list: `y` axis."""
+    def y_axis(self) -> List[Agent]:
+        """`y` axis."""
 
         return self._y_axis
 
     @y_axis.setter
-    def y_axis(self, y_axis):
+    def y_axis(self, y_axis: List[Agent]) -> None:
         if not isinstance(y_axis, list):
             raise e.TypeError("`y_axis` should be a list")
 
         self._y_axis = y_axis
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -82,12 +86,12 @@ class FFOA(Optimizer):
         self.x_axis = copy.deepcopy(space.agents)
         self.y_axis = copy.deepcopy(space.agents)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Fruit-Fly Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

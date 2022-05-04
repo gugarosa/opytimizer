@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class ES(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -45,13 +49,13 @@ class ES(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def child_ratio(self):
-        """float: Ratio of children in the population."""
+    def child_ratio(self) -> float:
+        """Ratio of children in the population."""
 
         return self._child_ratio
 
     @child_ratio.setter
-    def child_ratio(self, child_ratio):
+    def child_ratio(self, child_ratio: float) -> None:
         if not isinstance(child_ratio, (float, int)):
             raise e.TypeError("`child_ratio` should be a float or integer")
         if child_ratio < 0 or child_ratio > 1:
@@ -60,13 +64,13 @@ class ES(Optimizer):
         self._child_ratio = child_ratio
 
     @property
-    def n_children(self):
-        """int: Number of children."""
+    def n_children(self) -> int:
+        """Number of children."""
 
         return self._n_children
 
     @n_children.setter
-    def n_children(self, n_children):
+    def n_children(self, n_children: int) -> None:
         if not isinstance(n_children, int):
             raise e.TypeError("`n_children` should be an integer")
         if n_children < 0:
@@ -75,23 +79,23 @@ class ES(Optimizer):
         self._n_children = n_children
 
     @property
-    def strategy(self):
-        """np.array: Array of strategies."""
+    def strategy(self) -> np.ndarray:
+        """Array of strategies."""
 
         return self._strategy
 
     @strategy.setter
-    def strategy(self, strategy):
+    def strategy(self, strategy: np.ndarray) -> None:
         if not isinstance(strategy, np.ndarray):
             raise e.TypeError("`strategy` should be a numpy array")
 
         self._strategy = strategy
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -110,16 +114,16 @@ class ES(Optimizer):
                     0, ub - lb, size=space.agents[i].n_dimensions
                 )
 
-    def _mutate_parent(self, agent, index, function):
+    def _mutate_parent(self, agent: Agent, index: int, function: Function) -> Agent:
         """Mutates a parent into a new child (eq. 2).
 
         Args:
-            agent (Agent): An agent instance to be reproduced.
-            index (int): Index of current agent.
-            function (Function): A Function object that will be used as the objective function.
+            agent: An agent instance to be reproduced.
+            index: Index of current agent.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            A mutated child.
+            (Agent): A mutated child.
 
         """
 
@@ -140,14 +144,14 @@ class ES(Optimizer):
 
         return a
 
-    def _update_strategy(self, index):
+    def _update_strategy(self, index: int) -> np.ndarray:
         """Updates the strategy (eq. 5-10).
 
         Args:
-            index (int): Index of current agent.
+            index: Index of current agent.
 
         Returns:
-            The updated strategy.
+            (np.ndarray): The updated strategy.
 
         """
 
@@ -165,12 +169,12 @@ class ES(Optimizer):
         # Calculates the new strategy
         self.strategy[index] *= np.exp(tau_p * r1 + tau * r2)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Evolution Strategies over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

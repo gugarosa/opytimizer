@@ -1,11 +1,16 @@
 """Water Cycle Algorithm.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +30,11 @@ class WCA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,13 +55,13 @@ class WCA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def nsr(self):
-        """float: Number of rivers summed with a single sea."""
+    def nsr(self) -> float:
+        """Number of rivers summed with a single sea."""
 
         return self._nsr
 
     @nsr.setter
-    def nsr(self, nsr):
+    def nsr(self, nsr: float) -> None:
         if not isinstance(nsr, int):
             raise e.TypeError("`nsr` should be an integer")
         if nsr < 1:
@@ -65,13 +70,13 @@ class WCA(Optimizer):
         self._nsr = nsr
 
     @property
-    def d_max(self):
-        """float: Maximum evaporation condition."""
+    def d_max(self) -> float:
+        """Maximum evaporation condition."""
 
         return self._d_max
 
     @d_max.setter
-    def d_max(self, d_max):
+    def d_max(self, d_max: float) -> None:
         if not isinstance(d_max, (float, int)):
             raise e.TypeError("`d_max` should be a float or integer")
         if d_max < 0:
@@ -80,34 +85,34 @@ class WCA(Optimizer):
         self._d_max = d_max
 
     @property
-    def flows(self):
-        """np.array: Array of flows."""
+    def flows(self) -> np.ndarray:
+        """Array of flows."""
 
         return self._flows
 
     @flows.setter
-    def flows(self, flows):
+    def flows(self, flows: np.ndarray) -> None:
         if not isinstance(flows, np.ndarray):
             raise e.TypeError("`flows` should be a numpy array")
 
         self._flows = flows
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Array of flows
         self.flows = np.zeros(self.nsr, dtype=int)
 
-    def _flow_intensity(self, agents):
+    def _flow_intensity(self, agents: List[Agent]) -> None:
         """Calculates the intensity of each possible flow (eq. 6).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -121,12 +126,12 @@ class WCA(Optimizer):
                 np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr)
             )
 
-    def _raining_process(self, agents, best_agent):
+    def _raining_process(self, agents: List[Agent], best_agent: Agent) -> None:
         """Performs the raining process (eq. 11-12).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
+            agents: List of agents.
+            best_agent: Global best agent.
 
         """
 
@@ -150,12 +155,12 @@ class WCA(Optimizer):
                         # Updates position (eq. 11)
                         agents[j].fill_with_uniform()
 
-    def _update_stream(self, agents, function):
+    def _update_stream(self, agents: List[Agent], function: Function) -> None:
         """Updates every stream position (eq. 8).
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -179,13 +184,15 @@ class WCA(Optimizer):
                 agents[j].clip_by_bound()
                 agents[j].fit = function(agents[j].position)
 
-    def _update_river(self, agents, best_agent, function):
+    def _update_river(
+        self, agents: List[Agent], best_agent: Agent, function: Function
+    ) -> None:
         """Updates every river position (eq. 9).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            best_agent: Global best agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -201,13 +208,13 @@ class WCA(Optimizer):
             agents[i].clip_by_bound()
             agents[i].fit = function(agents[i].position)
 
-    def update(self, space, function, n_iterations):
+    def update(self, space: Space, function: Function, n_iterations: int) -> None:
         """Wraps Water Cycle Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            n_iterations: Maximum number of iterations.
 
         """
 

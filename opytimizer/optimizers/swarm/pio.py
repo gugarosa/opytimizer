@@ -1,12 +1,16 @@
 """Pigeon-Inspired Optimization.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class PIO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +57,13 @@ class PIO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_c1(self):
-        """int: Number of mapping iterations."""
+    def n_c1(self) -> int:
+        """Number of mapping iterations."""
 
         return self._n_c1
 
     @n_c1.setter
-    def n_c1(self, n_c1):
+    def n_c1(self, n_c1: int) -> None:
         if not isinstance(n_c1, int):
             raise e.TypeError("`n_c1` should be an integer")
         if n_c1 <= 0:
@@ -68,13 +72,13 @@ class PIO(Optimizer):
         self._n_c1 = n_c1
 
     @property
-    def n_c2(self):
-        """int: Number of landmark iterations."""
+    def n_c2(self) -> int:
+        """Number of landmark iterations."""
 
         return self._n_c2
 
     @n_c2.setter
-    def n_c2(self, n_c2):
+    def n_c2(self, n_c2: int) -> None:
         if not isinstance(n_c2, int):
             raise e.TypeError("`n_c2` should be an integer")
         if n_c2 < self.n_c1:
@@ -83,13 +87,13 @@ class PIO(Optimizer):
         self._n_c2 = n_c2
 
     @property
-    def R(self):
-        """float: Map and compass factor."""
+    def R(self) -> float:
+        """Map and compass factor."""
 
         return self._R
 
     @R.setter
-    def R(self, R):
+    def R(self, R: float) -> None:
         if not isinstance(R, (float, int)):
             raise e.TypeError("`R` should be a float or integer")
         if R < 0:
@@ -98,13 +102,13 @@ class PIO(Optimizer):
         self._R = R
 
     @property
-    def n_p(self):
-        """int: Number of pigeons."""
+    def n_p(self) -> int:
+        """Number of pigeons."""
 
         return self._n_p
 
     @n_p.setter
-    def n_p(self, n_p):
+    def n_p(self, n_p: int) -> None:
         if not isinstance(n_p, int):
             raise e.TypeError("`n_p` should be an integer")
         if n_p <= 0:
@@ -113,23 +117,23 @@ class PIO(Optimizer):
         self._n_p = n_p
 
     @property
-    def velocity(self):
-        """np.array: Array of pulse rates."""
+    def velocity(self) -> np.ndarray:
+        """Array of pulse rates."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -141,14 +145,14 @@ class PIO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _calculate_center(self, agents):
+    def _calculate_center(self, agents: List[Agent]) -> np.ndarray:
         """Calculates the center position (eq. 8).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            The center position.
+            (np.ndarray): The center position.
 
         """
 
@@ -171,15 +175,15 @@ class PIO(Optimizer):
 
         return center
 
-    def _update_center_position(self, position, center):
+    def _update_center_position(self, position: np.ndarray, center: np.ndarray) -> None:
         """Updates a pigeon position based on the center (eq. 9).
 
         Args:
-            position (np.array): Agent's current position.
-            center (np.array): Center position.
+            position: Agent's current position.
+            center: Center position.
 
         Returns:
-            A new center-based position.
+            (np.ndarray): A new center-based position.
 
         """
 
@@ -191,12 +195,12 @@ class PIO(Optimizer):
 
         return new_position
 
-    def update(self, space, iteration):
+    def update(self, space: Space, iteration: int) -> None:
         """Wraps Pigeon-Inspired Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
 
         """
 

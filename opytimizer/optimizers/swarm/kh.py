@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -10,6 +11,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class KH(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -71,13 +75,13 @@ class KH(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def N_max(self):
-        """float: Maximum induced speed."""
+    def N_max(self) -> float:
+        """Maximum induced speed."""
 
         return self._N_max
 
     @N_max.setter
-    def N_max(self, N_max):
+    def N_max(self, N_max: float) -> None:
         if not isinstance(N_max, (float, int)):
             raise e.TypeError("`N_max` should be a float or integer")
         if N_max < 0:
@@ -86,13 +90,13 @@ class KH(Optimizer):
         self._N_max = N_max
 
     @property
-    def w_n(self):
-        """float: Inertia weight of the neighbours' motion."""
+    def w_n(self) -> float:
+        """Inertia weight of the neighbours' motion."""
 
         return self._w_n
 
     @w_n.setter
-    def w_n(self, w_n):
+    def w_n(self, w_n: float) -> None:
         if not isinstance(w_n, (float, int)):
             raise e.TypeError("`w_n` should be a float or integer")
         if w_n < 0 or w_n > 1:
@@ -101,13 +105,13 @@ class KH(Optimizer):
         self._w_n = w_n
 
     @property
-    def NN(self):
-        """int: Number of neighbours."""
+    def NN(self) -> int:
+        """Number of neighbours."""
 
         return self._NN
 
     @NN.setter
-    def NN(self, NN):
+    def NN(self, NN: int) -> None:
         if not isinstance(NN, int):
             raise e.TypeError("`NN` should be a integer")
         if NN < 0:
@@ -116,13 +120,13 @@ class KH(Optimizer):
         self._NN = NN
 
     @property
-    def V_f(self):
-        """float: Foraging speed."""
+    def V_f(self) -> float:
+        """Foraging speed."""
 
         return self._V_f
 
     @V_f.setter
-    def V_f(self, V_f):
+    def V_f(self, V_f: float) -> None:
         if not isinstance(V_f, (float, int)):
             raise e.TypeError("`V_f` should be a float or integer")
         if V_f < 0:
@@ -131,13 +135,13 @@ class KH(Optimizer):
         self._V_f = V_f
 
     @property
-    def w_f(self):
-        """float: Inertia weight of the foraging motion."""
+    def w_f(self) -> float:
+        """Inertia weight of the foraging motion."""
 
         return self._w_f
 
     @w_f.setter
-    def w_f(self, w_f):
+    def w_f(self, w_f: float) -> None:
         if not isinstance(w_f, (float, int)):
             raise e.TypeError("`w_f` should be a float or integer")
         if w_f < 0 or w_f > 1:
@@ -146,13 +150,13 @@ class KH(Optimizer):
         self._w_f = w_f
 
     @property
-    def D_max(self):
-        """float: Maximum diffusion speed."""
+    def D_max(self) -> float:
+        """Maximum diffusion speed."""
 
         return self._D_max
 
     @D_max.setter
-    def D_max(self, D_max):
+    def D_max(self, D_max: float) -> None:
         if not isinstance(D_max, (float, int)):
             raise e.TypeError("`D_max` should be a float or integer")
         if D_max < 0:
@@ -161,13 +165,13 @@ class KH(Optimizer):
         self._D_max = D_max
 
     @property
-    def C_t(self):
-        """float: Position constant."""
+    def C_t(self) -> float:
+        """Position constant."""
 
         return self._C_t
 
     @C_t.setter
-    def C_t(self, C_t):
+    def C_t(self, C_t: float) -> None:
         if not isinstance(C_t, (float, int)):
             raise e.TypeError("`C_t` should be a float or integer")
         if C_t < 0 or C_t > 2:
@@ -176,13 +180,13 @@ class KH(Optimizer):
         self._C_t = C_t
 
     @property
-    def Cr(self):
-        """float: Crossover probability."""
+    def Cr(self) -> float:
+        """Crossover probability."""
 
         return self._Cr
 
     @Cr.setter
-    def Cr(self, Cr):
+    def Cr(self, Cr: float) -> None:
         if not isinstance(Cr, (float, int)):
             raise e.TypeError("`Cr` should be a float or integer")
         if Cr < 0 or Cr > 1:
@@ -191,13 +195,13 @@ class KH(Optimizer):
         self._Cr = Cr
 
     @property
-    def Mu(self):
-        """float: Mutation probability."""
+    def Mu(self) -> float:
+        """Mutation probability."""
 
         return self._Mu
 
     @Mu.setter
-    def Mu(self, Mu):
+    def Mu(self, Mu: float) -> None:
         if not isinstance(Mu, (float, int)):
             raise e.TypeError("`Mu` should be a float or integer")
         if Mu < 0 or Mu > 1:
@@ -206,36 +210,36 @@ class KH(Optimizer):
         self._Mu = Mu
 
     @property
-    def motion(self):
-        """np.array: Array of motions."""
+    def motion(self) -> np.ndarray:
+        """Array of motions."""
 
         return self._motion
 
     @motion.setter
-    def motion(self, motion):
+    def motion(self, motion: np.ndarray) -> None:
         if not isinstance(motion, np.ndarray):
             raise e.TypeError("`motion` should be a numpy array")
 
         self._motion = motion
 
     @property
-    def foraging(self):
-        """np.array: Array of foragings."""
+    def foraging(self) -> np.ndarray:
+        """Array of foragings."""
 
         return self._foraging
 
     @foraging.setter
-    def foraging(self, foraging):
+    def foraging(self, foraging: np.ndarray) -> None:
         if not isinstance(foraging, np.ndarray):
             raise e.TypeError("`foraging` should be a numpy array")
 
         self._foraging = foraging
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -245,15 +249,15 @@ class KH(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _food_location(self, agents, function):
+    def _food_location(self, agents: List[Agent], function: Function) -> Agent:
         """Calculates the food location.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            A new food location.
+           (Agent): A new food location.
 
         """
 
@@ -279,15 +283,15 @@ class KH(Optimizer):
 
         return food
 
-    def _sensing_distance(self, agents, idx):
+    def _sensing_distance(self, agents: List[Agent], idx: int) -> Tuple[float, float]:
         """Calculates the sensing distance for an individual krill (eq. 7).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
+            agents: List of agents.
+            idx: Selected agent.
 
         Returns:
-            The sensing distance for an individual krill.
+            (Tuple[float, float]): The sensing distance for an individual krill.
 
         """
 
@@ -302,17 +306,23 @@ class KH(Optimizer):
 
         return distance, eucl_distance
 
-    def _get_neighbours(self, agents, idx, sensing_distance, eucl_distance):
+    def _get_neighbours(
+        self,
+        agents: List[Agent],
+        idx: int,
+        sensing_distance: float,
+        eucl_distance: List[float],
+    ) -> List[Agent]:
         """Gathers the neighbours based on the sensing distance.
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
-            sensing_distance (float): Sensing distanced used to gather the krill's neighbours.
-            eucl_distance (list): List of euclidean distances.
+            agents: List of agents.
+            idx: Selected agent.
+            sensing_distance: Sensing distanced used to gather the krill's neighbours.
+            eucl_distance: List of euclidean distances.
 
         Returns:
-            A list containing the krill's neighbours.
+            (List[Agent]): A list containing the krill's neighbours.
 
         """
 
@@ -329,17 +339,19 @@ class KH(Optimizer):
 
         return neighbours
 
-    def _local_alpha(self, agent, worst, best, neighbours):
+    def _local_alpha(
+        self, agent: Agent, worst: Agent, best: Agent, neighbours: List[Agent]
+    ) -> float:
         """Calculates the local alpha (eq. 4).
 
         Args:
-            agent (Agent): Selected agent.
-            worst (Agent): Worst agent.
-            best (Agent): Best agent.
-            neighbours (list): List of neighbours.
+            agent: Selected agent.
+            worst: Worst agent.
+            best: Best agent.
+            neighbours: List of neighbours.
 
         Returns:
-            The local alpha.
+            (float): The local alpha.
 
         """
 
@@ -361,17 +373,19 @@ class KH(Optimizer):
 
         return alpha
 
-    def _target_alpha(self, agent, worst, best, C_best):
+    def _target_alpha(
+        self, agent: Agent, worst: Agent, best: Agent, C_best: float
+    ) -> float:
         """Calculates the target alpha (eq. 8).
 
         Args:
-            agent (Agent): Selected agent.
-            worst (Agent): Worst agent.
-            best (Agent): Best agent.
-            C_best (float): Effectiveness coefficient.
+            agent: Selected agent.
+            worst: Worst agent.
+            best: Best agent.
+            C_best: Effectiveness coefficient.
 
         Returns:
-            The target alpha.
+            (float): The target alpha.
 
         """
 
@@ -388,18 +402,25 @@ class KH(Optimizer):
 
         return alpha
 
-    def _neighbour_motion(self, agents, idx, iteration, n_iterations, motion):
+    def _neighbour_motion(
+        self,
+        agents: List[Agent],
+        idx: int,
+        iteration: int,
+        n_iterations: int,
+        motion: np.ndarray,
+    ) -> np.ndarray:
         """Performs the motion induced by other krill individuals (eq. 2).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
-            motion (np.array): Array of motions.
+            agents: List of agents.
+            idx: Selected agent.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
+            motion: Array of motions.
 
         Returns:
-            The krill's neighbour motion.
+            (np.ndarray): The krill's neighbour motion.
 
         """
 
@@ -423,18 +444,20 @@ class KH(Optimizer):
 
         return neighbour_motion
 
-    def _food_beta(self, agent, worst, best, food, C_food):
+    def _food_beta(
+        self, agent: Agent, worst: Agent, best: Agent, food: np.ndarray, C_food: float
+    ) -> np.ndarray:
         """Calculates the food attraction (eq. 13).
 
         Args:
-            agent (Agent): Selected agent.
-            worst (Agent): Worst agent.
-            best (Agent): Best agent.
-            food (Agent): Food location.
-            C_food (float): Food coefficient.
+            agent: Selected agent.
+            worst: Worst agent.
+            best: Best agent.
+            food: Food location.
+            C_food: Food coefficient.
 
         Returns:
-            The food attraction.
+            (np.ndarray): The food attraction.
 
         """
 
@@ -451,16 +474,16 @@ class KH(Optimizer):
 
         return beta
 
-    def _best_beta(self, agent, worst, best):
+    def _best_beta(self, agent: Agent, worst: Agent, best: Agent) -> np.ndarray:
         """Calculates the best attraction (eq. 15).
 
         Args:
-            agent (Agent): Selected agent.
-            worst (Agent): Worst agent.
-            best (Agent): Best agent.
+            agent: Selected agent.
+            worst: Worst agent.
+            best: Best agent.
 
         Returns:
-            The best attraction.
+            (np.ndarray): The best attraction.
 
         """
 
@@ -477,19 +500,27 @@ class KH(Optimizer):
 
         return beta
 
-    def _foraging_motion(self, agents, idx, iteration, n_iterations, food, foraging):
+    def _foraging_motion(
+        self,
+        agents: List[Agent],
+        idx: int,
+        iteration: int,
+        n_iterations: int,
+        food: np.ndarray,
+        foraging: np.ndarray,
+    ) -> np.ndarray:
         """Performs the foraging induced by the food location (eq. 10).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
-            food (np.array): Food location.
-            foraging (np.array): Array of foraging motions.
+            agents: List of agents.
+            idx: Selected agent.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
+            food: Food location.
+            foraging: Array of foraging motions.
 
         Returns:
-            The krill's foraging motion.
+            (np.ndarray): The krill's foraging motion.
 
         """
 
@@ -507,17 +538,19 @@ class KH(Optimizer):
 
         return foraging_motion
 
-    def _physical_diffusion(self, n_variables, n_dimensions, iteration, n_iterations):
+    def _physical_diffusion(
+        self, n_variables: int, n_dimensions: int, iteration: int, n_iterations: int
+    ) -> float:
         """Performs the physical diffusion of individual krills (eq. 16-17).
 
         Args:
-            n_variables (int): Number of decision variables.
-            n_dimensions (int): Number of dimensions.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            n_variables: Number of decision variables.
+            n_dimensions: Number of dimensions.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         Returns:
-            The physical diffusion.
+            (float): The physical diffusion.
 
         """
 
@@ -530,21 +563,28 @@ class KH(Optimizer):
         return physical_diffusion
 
     def _update_position(
-        self, agents, idx, iteration, n_iterations, food, motion, foraging
-    ):
+        self,
+        agents: List[Agent],
+        idx: int,
+        iteration: int,
+        n_iterations: int,
+        food: np.ndarray,
+        motion: np.ndarray,
+        foraging: np.ndarray,
+    ) -> np.ndarray:
         """Updates a single krill position (eq. 18-19).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
-            food (np.array): Food location.
-            motion (np.array): Array of motions.
-            foraging (np.array): Array of foraging motions.
+            agents: List of agents.
+            idx: Selected agent.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
+            food: Food location.
+            motion: Array of motions.
+            foraging: Array of foraging motions.
 
         Returns:
-            The updated position.
+            (np.ndarray): The updated position.
 
         """
 
@@ -573,15 +613,15 @@ class KH(Optimizer):
 
         return new_position
 
-    def _crossover(self, agents, idx):
+    def _crossover(self, agents: List[Agent], idx: int) -> Agent:
         """Performs the crossover between selected agent and a randomly agent (eq. 21).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
+            agents: List of agents.
+            idx: Selected agent.
 
         Returns:
-            An agent after suffering a crossover operator.
+            (Agent): An agent after suffering a crossover operator.
 
         """
 
@@ -609,15 +649,15 @@ class KH(Optimizer):
 
         return a
 
-    def _mutation(self, agents, idx):
+    def _mutation(self, agents: List[Agent], idx: int) -> Agent:
         """Performs the mutation between selected agent and randomly agents (eq. 22).
 
         Args:
-            agents (list): List of agents.
-            idx (int): Selected agent.
+            agents: List of agents.
+            idx: Selected agent.
 
         Returns:
-            An agent after suffering a mutation operator.
+            (Agent): An agent after suffering a mutation operator.
 
         """
 
@@ -652,14 +692,16 @@ class KH(Optimizer):
 
         return a
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps motion and genetic updates over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

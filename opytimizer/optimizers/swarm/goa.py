@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,8 @@ import opytimizer.math.general as g
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class GOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -57,13 +60,13 @@ class GOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def c_min(self):
-        """float: Minimum comfort zone."""
+    def c_min(self) -> float:
+        """Minimum comfort zone."""
 
         return self._c_min
 
     @c_min.setter
-    def c_min(self, c_min):
+    def c_min(self, c_min: float) -> None:
         if not isinstance(c_min, (float, int)):
             raise e.TypeError("`c_min` should be a float or integer")
         if c_min < 0:
@@ -72,13 +75,13 @@ class GOA(Optimizer):
         self._c_min = c_min
 
     @property
-    def c_max(self):
-        """float: Maximum comfort zone."""
+    def c_max(self) -> float:
+        """Maximum comfort zone."""
 
         return self._c_max
 
     @c_max.setter
-    def c_max(self, c_max):
+    def c_max(self, c_max: float) -> None:
         if not isinstance(c_max, (float, int)):
             raise e.TypeError("`c_max` should be a float or integer")
         if c_max < self.c_min:
@@ -87,13 +90,13 @@ class GOA(Optimizer):
         self._c_max = c_max
 
     @property
-    def f(self):
-        """float: Intensity of attraction."""
+    def f(self) -> float:
+        """Intensity of attraction."""
 
         return self._f
 
     @f.setter
-    def f(self, f):
+    def f(self, f: float) -> None:
         if not isinstance(f, (float, int)):
             raise e.TypeError("`f` should be a float or integer")
         if f < 0:
@@ -102,13 +105,13 @@ class GOA(Optimizer):
         self._f = f
 
     @property
-    def l(self):
-        """float: Attractive length scale."""
+    def l(self) -> float:
+        """Attractive length scale."""
 
         return self._l
 
     @l.setter
-    def l(self, l):
+    def l(self, l: float) -> None:
         if not isinstance(l, (float, int)):
             raise e.TypeError("`l` should be a float or integer")
         if l < 0:
@@ -116,14 +119,14 @@ class GOA(Optimizer):
 
         self._l = l
 
-    def _social_force(self, r):
+    def _social_force(self, r: np.ndarray) -> np.ndarray:
         """Calculates the social force based on an input value.
 
         Args:
-            r (np.array): Array of values.
+            r: Array of values.
 
         Returns:
-            The social force based on the input value.
+            (np.ndarray): The social force based on the input value.
 
         """
 
@@ -132,14 +135,16 @@ class GOA(Optimizer):
 
         return s
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Grasshopper Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

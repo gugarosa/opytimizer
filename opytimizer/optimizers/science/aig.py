@@ -2,12 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class AIG(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -51,13 +54,13 @@ class AIG(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: First maximum correction angle."""
+    def alpha(self) -> float:
+        """First maximum correction angle."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0 or alpha > np.pi * 2:
@@ -66,13 +69,13 @@ class AIG(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Second maximum correction angle."""
+    def beta(self) -> float:
+        """Second maximum correction angle."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0 or beta > np.pi * 2:
@@ -80,12 +83,12 @@ class AIG(Optimizer):
 
         self._beta = beta
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Algorithm of the Innovative Gunner over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -2,12 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class EFO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -61,13 +64,13 @@ class EFO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def positive_field(self):
-        """float: Positive field proportion."""
+    def positive_field(self) -> float:
+        """Positive field proportion."""
 
         return self._positive_field
 
     @positive_field.setter
-    def positive_field(self, positive_field):
+    def positive_field(self, positive_field: float) -> None:
         if not isinstance(positive_field, (float, int)):
             raise e.TypeError("`positive_field` should be a float or integer")
         if positive_field < 0 or positive_field > 1:
@@ -76,13 +79,13 @@ class EFO(Optimizer):
         self._positive_field = positive_field
 
     @property
-    def negative_field(self):
-        """float: Negative field proportion."""
+    def negative_field(self) -> float:
+        """Negative field proportion."""
 
         return self._negative_field
 
     @negative_field.setter
-    def negative_field(self, negative_field):
+    def negative_field(self, negative_field: float) -> None:
         if not isinstance(negative_field, (float, int)):
             raise e.TypeError("`negative_field` should be a float or integer")
         if negative_field < 0 or negative_field > 1:
@@ -95,13 +98,13 @@ class EFO(Optimizer):
         self._negative_field = negative_field
 
     @property
-    def ps_ratio(self):
-        """float: Probability of selecting eletromagnets."""
+    def ps_ratio(self) -> float:
+        """Probability of selecting eletromagnets."""
 
         return self._ps_ratio
 
     @ps_ratio.setter
-    def ps_ratio(self, ps_ratio):
+    def ps_ratio(self, ps_ratio: float) -> None:
         if not isinstance(ps_ratio, (float, int)):
             raise e.TypeError("`ps_ratio` should be a float or integer")
         if ps_ratio < 0 or ps_ratio > 1:
@@ -110,13 +113,13 @@ class EFO(Optimizer):
         self._ps_ratio = ps_ratio
 
     @property
-    def r_ratio(self):
-        """float: Probability of selecting a random eletromagnet."""
+    def r_ratio(self) -> float:
+        """Probability of selecting a random eletromagnet."""
 
         return self._r_ratio
 
     @r_ratio.setter
-    def r_ratio(self, r_ratio):
+    def r_ratio(self, r_ratio: float) -> None:
         if not isinstance(r_ratio, (float, int)):
             raise e.TypeError("`r_ratio` should be a float or integer")
         if r_ratio < 0 or r_ratio > 1:
@@ -125,26 +128,26 @@ class EFO(Optimizer):
         self._r_ratio = r_ratio
 
     @property
-    def phi(self):
-        """float: Golden ratio."""
+    def phi(self) -> float:
+        """Golden ratio."""
 
         return self._phi
 
     @phi.setter
-    def phi(self, phi):
+    def phi(self, phi: float) -> None:
         if not isinstance(phi, (float, int)):
             raise e.TypeError("`phi` should be a float or integer")
 
         self._phi = phi
 
     @property
-    def RI(self):
-        """float: Eletromagnetic index."""
+    def RI(self) -> float:
+        """Eletromagnetic index."""
 
         return self._RI
 
     @RI.setter
-    def RI(self, RI):
+    def RI(self, RI: float) -> None:
         if not isinstance(RI, int):
             raise e.TypeError("`RI` should be an integer")
         if RI < 0:
@@ -152,14 +155,14 @@ class EFO(Optimizer):
 
         self._RI = RI
 
-    def _calculate_indexes(self, n_agents):
+    def _calculate_indexes(self, n_agents: int) -> Tuple[int, int, int]:
         """Calculates the indexes of positive, negative and neutral particles.
 
         Args:
-            n_agents (int): Number of agents in the space.
+            n_agents: Number of agents in the space.
 
         Returns:
-            Positive, negative and neutral particles' indexes.
+            (Tuple[int, int, int]): Positive, negative and neutral particles' indexes.
 
         """
 
@@ -184,12 +187,12 @@ class EFO(Optimizer):
 
         return positive_index, negative_index, neutral_index
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Electromagnetic Field Optimization over all agents and variables (eq. 1-4).
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

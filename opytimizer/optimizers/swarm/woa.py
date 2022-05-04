@@ -2,12 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +28,11 @@ class WOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -45,26 +48,26 @@ class WOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def b(self):
-        """float: Logarithmic spiral."""
+    def b(self) -> float:
+        """Logarithmic spiral."""
 
         return self._b
 
     @b.setter
-    def b(self, b):
+    def b(self, b: float) -> None:
         if not isinstance(b, (float, int)):
             raise e.TypeError("`b` should be a float or integer")
 
         self._b = b
 
-    def _generate_random_agent(self, agent):
+    def _generate_random_agent(self, agent: Agent) -> Agent:
         """Generates a new random-based agent.
 
         Args:
-            agent (Agent): Agent to be copied.
+            agent: Agent to be copied.
 
         Returns:
-            Random-based agent.
+            (Agent): Random-based agent.
 
         """
 
@@ -76,12 +79,12 @@ class WOA(Optimizer):
 
         return a
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Whale Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
             n_iterations (int): Maximum number of iterations
 
         """

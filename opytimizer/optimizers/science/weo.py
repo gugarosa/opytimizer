@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,8 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +30,11 @@ class WEO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -58,26 +61,26 @@ class WEO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def E_min(self):
-        """float: Minimum substrate energy."""
+    def E_min(self) -> float:
+        """Minimum substrate energy."""
 
         return self._E_min
 
     @E_min.setter
-    def E_min(self, E_min):
+    def E_min(self, E_min: float) -> None:
         if not isinstance(E_min, (float, int)):
             raise e.TypeError("`E_min` should be a float or integer")
 
         self._E_min = E_min
 
     @property
-    def E_max(self):
-        """float: Maximum substrate energy."""
+    def E_max(self) -> float:
+        """Maximum substrate energy."""
 
         return self._E_max
 
     @E_max.setter
-    def E_max(self, E_max):
+    def E_max(self, E_max: float) -> None:
         if not isinstance(E_max, (float, int)):
             raise e.TypeError("`E_max` should be a float or integer")
         if E_max < self.E_min:
@@ -86,26 +89,26 @@ class WEO(Optimizer):
         self._E_max = E_max
 
     @property
-    def theta_min(self):
-        """float: Minimum contact angle."""
+    def theta_min(self) -> float:
+        """Minimum contact angle."""
 
         return self._theta_min
 
     @theta_min.setter
-    def theta_min(self, theta_min):
+    def theta_min(self, theta_min: float) -> None:
         if not isinstance(theta_min, (float, int)):
             raise e.TypeError("`theta_min` should be a float or integer")
 
         self._theta_min = theta_min
 
     @property
-    def theta_max(self):
-        """float: Maximum contact angle."""
+    def theta_max(self) -> float:
+        """Maximum contact angle."""
 
         return self._theta_max
 
     @theta_max.setter
-    def theta_max(self, theta_max):
+    def theta_max(self, theta_max: float) -> None:
         if not isinstance(theta_max, (float, int)):
             raise e.TypeError("`theta_max` should be a float or integer")
         if theta_max < self.theta_min:
@@ -113,14 +116,14 @@ class WEO(Optimizer):
 
         self._theta_max = theta_max
 
-    def _evaporation_flux(self, theta):
+    def _evaporation_flux(self, theta: float) -> float:
         """Calculates the evaporation flux (eq. 7).
 
         Args:
-            theta (float): Radian-based angle.
+            theta: Radian-based angle.
 
         Returns:
-            Evaporation flux.
+            (float): Evaporation flux.
 
         """
 
@@ -133,14 +136,16 @@ class WEO(Optimizer):
 
         return J
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Water Evaporation Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

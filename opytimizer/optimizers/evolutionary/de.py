@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class DE(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -49,13 +53,13 @@ class DE(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def CR(self):
-        """float: Crossover probability."""
+    def CR(self) -> float:
+        """Crossover probability."""
 
         return self._CR
 
     @CR.setter
-    def CR(self, CR):
+    def CR(self, CR: float) -> None:
         if not isinstance(CR, (float, int)):
             raise e.TypeError("`CR` should be a float or integer")
         if CR < 0 or CR > 1:
@@ -64,13 +68,13 @@ class DE(Optimizer):
         self._CR = CR
 
     @property
-    def F(self):
-        """float: Differential weight."""
+    def F(self) -> float:
+        """Differential weight."""
 
         return self._F
 
     @F.setter
-    def F(self, F):
+    def F(self, F: float) -> None:
         if not isinstance(F, (float, int)):
             raise e.TypeError("`F` should be a float or integer")
         if F < 0 or F > 2:
@@ -78,17 +82,19 @@ class DE(Optimizer):
 
         self._F = F
 
-    def _mutate_agent(self, agent, alpha, beta, gamma):
+    def _mutate_agent(
+        self, agent: Agent, alpha: Agent, beta: Agent, gamma: Agent
+    ) -> Agent:
         """Mutates a new agent based on pre-picked distinct agents (eq. 4).
 
         Args:
-            agent (Agent): Current agent.
-            alpha (Agent): 1st picked agent.
-            beta (Agent): 2nd picked agent.
-            gamma (Agent): 3rd picked agent.
+            agent: Current agent.
+            alpha: 1st picked agent.
+            beta: 2nd picked agent.
+            gamma: 3rd picked agent.
 
         Returns:
-            A mutated agent.
+            (Agent): A mutated agent.
 
         """
 
@@ -112,12 +118,12 @@ class DE(Optimizer):
 
         return a
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Differential Evolution over all agents and variables (eq. 1-4).
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

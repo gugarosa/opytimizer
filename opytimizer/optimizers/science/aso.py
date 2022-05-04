@@ -1,12 +1,16 @@
 """Atom Search Optimization.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class ASO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,26 +54,26 @@ class ASO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Depth weight."""
+    def alpha(self) -> float:
+        """Depth weight."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
 
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Multiplier weight."""
+    def beta(self) -> float:
+        """Multiplier weight."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0 or beta > 1:
@@ -78,23 +82,23 @@ class ASO(Optimizer):
         self._beta = beta
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -103,14 +107,14 @@ class ASO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _calculate_mass(self, agents):
+    def _calculate_mass(self, agents: List[Agent]) -> List[float]:
         """Calculates the atoms' masses (eq. 17 and 18).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            A list holding the atoms' masses.
+            (List[float]): A list holding the atoms' masses.
 
         """
 
@@ -137,15 +141,22 @@ class ASO(Optimizer):
 
         return mass
 
-    def _calculate_potential(self, agent, K_agent, average, iteration, n_iterations):
+    def _calculate_potential(
+        self,
+        agent: Agent,
+        K_agent: Agent,
+        average: np.ndarray,
+        iteration: int,
+        n_iterations: int,
+    ) -> None:
         """Calculates the potential of an agent based on its neighbour and average positioning.
 
         Args:
-            agent (Agent): Agent to have its potential calculated.
-            K_agent (Agent): Neighbour agent.
-            average (np.array): Array of average positions.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            agent: Agent to have its potential calculated.
+            K_agent: Neighbour agent.
+            average: Array of average positions.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -191,19 +202,24 @@ class ASO(Optimizer):
         return potential
 
     def _calculate_acceleration(
-        self, agents, best_agent, mass, iteration, n_iterations
-    ):
+        self,
+        agents: List[Agent],
+        best_agent: Agent,
+        mass: np.ndarray,
+        iteration: int,
+        n_iterations: int,
+    ) -> np.ndarray:
         """Calculates the atoms' acceleration.
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            mass (np.array): Array of masses.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            agents: List of agents.
+            best_agent: Global best agent.
+            mass: Array of masses.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         Returns:
-            An array holding the atoms' acceleration.
+            (np.ndarray): An array holding the atoms' acceleration.
 
         """
 
@@ -246,13 +262,13 @@ class ASO(Optimizer):
 
         return acceleration
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Atom Search Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

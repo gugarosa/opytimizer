@@ -2,11 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as ex
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +28,11 @@ class IWO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -59,13 +63,13 @@ class IWO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def min_seeds(self):
-        """int: Minimum number of seeds."""
+    def min_seeds(self) -> int:
+        """Minimum number of seeds."""
 
         return self._min_seeds
 
     @min_seeds.setter
-    def min_seeds(self, min_seeds):
+    def min_seeds(self, min_seeds: int) -> None:
         if not isinstance(min_seeds, int):
             raise ex.TypeError("`min_seeds` should be an integer")
         if min_seeds < 0:
@@ -74,13 +78,13 @@ class IWO(Optimizer):
         self._min_seeds = min_seeds
 
     @property
-    def max_seeds(self):
-        """int: Maximum number of seeds."""
+    def max_seeds(self) -> int:
+        """Maximum number of seeds."""
 
         return self._max_seeds
 
     @max_seeds.setter
-    def max_seeds(self, max_seeds):
+    def max_seeds(self, max_seeds: int) -> None:
         if not isinstance(max_seeds, int):
             raise ex.TypeError("`max_seeds` should be an integer")
         if max_seeds < self.min_seeds:
@@ -89,13 +93,13 @@ class IWO(Optimizer):
         self._max_seeds = max_seeds
 
     @property
-    def e(self):
-        """float: Exponent used to calculate the Spatial Dispersal."""
+    def e(self) -> float:
+        """Exponent used to calculate the Spatial Dispersal."""
 
         return self._e
 
     @e.setter
-    def e(self, e):
+    def e(self, e: float) -> None:
         if not isinstance(e, (float, int)):
             raise ex.TypeError("`e` should be a float or integer")
         if e < 0:
@@ -104,13 +108,13 @@ class IWO(Optimizer):
         self._e = e
 
     @property
-    def final_sigma(self):
-        """float: Final standard deviation."""
+    def final_sigma(self) -> float:
+        """Final standard deviation."""
 
         return self._final_sigma
 
     @final_sigma.setter
-    def final_sigma(self, final_sigma):
+    def final_sigma(self, final_sigma: float) -> None:
         if not isinstance(final_sigma, (float, int)):
             raise ex.TypeError("`final_sigma` should be a float or integer")
         if final_sigma < 0:
@@ -119,13 +123,13 @@ class IWO(Optimizer):
         self._final_sigma = final_sigma
 
     @property
-    def init_sigma(self):
-        """float: Initial standard deviation."""
+    def init_sigma(self) -> float:
+        """Initial standard deviation."""
 
         return self._init_sigma
 
     @init_sigma.setter
-    def init_sigma(self, init_sigma):
+    def init_sigma(self, init_sigma: float) -> None:
         if not isinstance(init_sigma, (float, int)):
             raise ex.TypeError("`init_sigma` should be a float or integer")
         if init_sigma < 0:
@@ -136,24 +140,24 @@ class IWO(Optimizer):
         self._init_sigma = init_sigma
 
     @property
-    def sigma(self):
-        """float: Standard deviation."""
+    def sigma(self) -> float:
+        """Standard deviation."""
 
         return self._sigma
 
     @sigma.setter
-    def sigma(self, sigma):
+    def sigma(self, sigma: float) -> None:
         if not isinstance(sigma, (float, int)):
             raise ex.TypeError("`sigma` should be a float or integer")
 
         self._sigma = sigma
 
-    def _spatial_dispersal(self, iteration, n_iterations):
+    def _spatial_dispersal(self, iteration: int, n_iterations: int) -> None:
         """Calculates the Spatial Dispersal coefficient (eq. 1).
 
         Args:
-            iteration (int): Current iteration number.
-            n_iterations (int): Maximum number of iterations.
+            iteration: Current iteration number.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -165,15 +169,15 @@ class IWO(Optimizer):
         # Updates the Spatial Dispersial
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
 
-    def _produce_offspring(self, agent, function):
+    def _produce_offspring(self, agent: Agent, function: Function) -> Agent:
         """Reproduces and flowers a seed into a new offpsring.
 
         Args:
-            agent (Agent): An agent instance to be reproduced.
-            function (Function): A Function object that will be used as the objective function.
+            agent: An agent instance to be reproduced.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            An evolved offspring.
+            (Agent): An evolved offspring.
 
         """
 
@@ -195,14 +199,16 @@ class IWO(Optimizer):
 
         return a
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Invasive Weed Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

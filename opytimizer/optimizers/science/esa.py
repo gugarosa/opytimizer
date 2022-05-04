@@ -2,12 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +28,11 @@ class ESA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -47,13 +50,13 @@ class ESA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_electrons(self):
-        """int: Number of electrons per atom."""
+    def n_electrons(self) -> int:
+        """Number of electrons per atom."""
 
         return self._n_electrons
 
     @n_electrons.setter
-    def n_electrons(self, n_electrons):
+    def n_electrons(self, n_electrons: int) -> None:
         if not isinstance(n_electrons, int):
             raise e.TypeError("`n_electrons` should be an integer")
         if n_electrons <= 0:
@@ -62,23 +65,23 @@ class ESA(Optimizer):
         self._n_electrons = n_electrons
 
     @property
-    def D(self):
-        """np.array: Orbital radius."""
+    def D(self) -> np.ndarray:
+        """Orbital radius."""
 
         return self._D
 
     @D.setter
-    def D(self, D):
+    def D(self, D: np.ndarray) -> None:
         if not isinstance(D, np.ndarray):
             raise e.TypeError("`D` should be a numpy array")
 
         self._D = D
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -87,12 +90,12 @@ class ESA(Optimizer):
             size=(space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps EElectro-Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

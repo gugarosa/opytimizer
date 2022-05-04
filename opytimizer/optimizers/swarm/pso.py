@@ -3,6 +3,7 @@
 
 import copy
 import time
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -10,6 +11,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -55,13 +59,13 @@ class PSO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def w(self):
-        """float: Inertia weight."""
+    def w(self) -> float:
+        """Inertia weight."""
 
         return self._w
 
     @w.setter
-    def w(self, w):
+    def w(self, w: float) -> None:
         if not isinstance(w, (float, int)):
             raise e.TypeError("`w` should be a float or integer")
         if w < 0:
@@ -70,13 +74,13 @@ class PSO(Optimizer):
         self._w = w
 
     @property
-    def c1(self):
-        """float: Cognitive constant."""
+    def c1(self) -> float:
+        """Cognitive constant."""
 
         return self._c1
 
     @c1.setter
-    def c1(self, c1):
+    def c1(self, c1: float) -> None:
         if not isinstance(c1, (float, int)):
             raise e.TypeError("`c1` should be a float or integer")
         if c1 < 0:
@@ -85,13 +89,13 @@ class PSO(Optimizer):
         self._c1 = c1
 
     @property
-    def c2(self):
-        """float: Social constant."""
+    def c2(self) -> float:
+        """Social constant."""
 
         return self._c2
 
     @c2.setter
-    def c2(self, c2):
+    def c2(self, c2: float) -> None:
         if not isinstance(c2, (float, int)):
             raise e.TypeError("`c2` should be a float or integer")
         if c2 < 0:
@@ -100,36 +104,36 @@ class PSO(Optimizer):
         self._c2 = c2
 
     @property
-    def local_position(self):
-        """np.array: Array of velocities."""
+    def local_position(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._local_position
 
     @local_position.setter
-    def local_position(self, local_position):
+    def local_position(self, local_position: np.ndarray) -> None:
         if not isinstance(local_position, np.ndarray):
             raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -141,12 +145,12 @@ class PSO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -170,11 +174,11 @@ class PSO(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 
@@ -208,11 +212,11 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -230,13 +234,13 @@ class AIWPSO(PSO):
         logger.info("Class overrided.")
 
     @property
-    def w_min(self):
-        """float: Minimum inertia weight."""
+    def w_min(self) -> float:
+        """Minimum inertia weight."""
 
         return self._w_min
 
     @w_min.setter
-    def w_min(self, w_min):
+    def w_min(self, w_min: float) -> None:
         if not isinstance(w_min, (float, int)):
             raise e.TypeError("`w_min` should be a float or integer")
         if w_min < 0:
@@ -245,13 +249,13 @@ class AIWPSO(PSO):
         self._w_min = w_min
 
     @property
-    def w_max(self):
-        """float: Maximum inertia weight."""
+    def w_max(self) -> float:
+        """Maximum inertia weight."""
 
         return self._w_max
 
     @w_max.setter
-    def w_max(self, w_max):
+    def w_max(self, w_max: float) -> None:
         if not isinstance(w_max, (float, int)):
             raise e.TypeError("`w_max` should be a float or integer")
         if w_max < 0:
@@ -262,23 +266,23 @@ class AIWPSO(PSO):
         self._w_max = w_max
 
     @property
-    def fitness(self):
-        """list: List of fitnesses."""
+    def fitness(self) -> List[float]:
+        """List of fitnesses."""
 
         return self._fitness
 
     @fitness.setter
-    def fitness(self, fitness):
+    def fitness(self, fitness: List[float]) -> None:
         if not isinstance(fitness, list):
             raise e.TypeError("`fitness` should be a list")
 
         self._fitness = fitness
 
-    def _compute_success(self, agents):
+    def _compute_success(self, agents: List[Agent]) -> None:
         """Computes the particles' success for updating inertia weight (eq. 16).
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -298,12 +302,12 @@ class AIWPSO(PSO):
         # Update inertia weight value
         self.w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
 
-    def update(self, space, iteration):
+    def update(self, space: Space, iteration: int) -> None:
         """Wraps Adaptive Inertia Weight Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
 
         """
 
@@ -345,11 +349,11 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -361,23 +365,23 @@ class RPSO(PSO):
         logger.info("Class overrided.")
 
     @property
-    def mass(self):
-        """np.array: Array of masses."""
+    def mass(self) -> np.ndarray:
+        """Array of masses."""
 
         return self._mass
 
     @mass.setter
-    def mass(self, mass):
+    def mass(self, mass: np.ndarray) -> None:
         if not isinstance(mass, np.ndarray):
             raise e.TypeError("`mass` should be a numpy array")
 
         self._mass = mass
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -392,11 +396,11 @@ class RPSO(PSO):
             size=(space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Relativistic Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 
@@ -434,11 +438,11 @@ class SAVPSO(PSO):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -449,11 +453,11 @@ class SAVPSO(PSO):
 
         logger.info("Class overrided.")
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Self-adaptive Velocity Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 
@@ -520,11 +524,11 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -536,23 +540,23 @@ class VPSO(PSO):
         logger.info("Class overrided.")
 
     @property
-    def v_velocity(self):
-        """np.array: Array of vertical velocities."""
+    def v_velocity(self) -> np.ndarray:
+        """Array of vertical velocities."""
 
         return self._v_velocity
 
     @v_velocity.setter
-    def v_velocity(self, v_velocity):
+    def v_velocity(self, v_velocity: np.ndarray) -> None:
         if not isinstance(v_velocity, np.ndarray):
             raise e.TypeError("`v_velocity` should be a numpy array")
 
         self._v_velocity = v_velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -567,11 +571,11 @@ class VPSO(PSO):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Vertical Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

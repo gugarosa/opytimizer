@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class MVPA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -48,13 +52,13 @@ class MVPA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def n_teams(self):
-        """int: Maximum number of teams."""
+    def n_teams(self) -> int:
+        """Maximum number of teams."""
 
         return self._n_teams
 
     @n_teams.setter
-    def n_teams(self, n_teams):
+    def n_teams(self, n_teams: int) -> None:
         if not isinstance(n_teams, int):
             raise e.TypeError("`n_teams` should be an integer")
         if n_teams < 1:
@@ -63,13 +67,13 @@ class MVPA(Optimizer):
         self._n_teams = n_teams
 
     @property
-    def n_p(self):
-        """int: Number of players per team."""
+    def n_p(self) -> int:
+        """Number of players per team."""
 
         return self._n_p
 
     @n_p.setter
-    def n_p(self, n_p):
+    def n_p(self, n_p: int) -> None:
         if not isinstance(n_p, int):
             raise e.TypeError("`n_p` should be an integer")
         if n_p < 1:
@@ -77,26 +81,26 @@ class MVPA(Optimizer):
 
         self._n_p = n_p
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Number of players per team
         self.n_p = space.n_agents // self.n_teams
 
-    def _get_agents_from_team(self, agents, index):
+    def _get_agents_from_team(self, agents: List[Agent], index: int) -> List[Agent]:
         """Gets a set of agents from a specified team.
 
         Args:
-            agents (list): List of agents.
-            index (int): Index of team.
+            agents: List of agents.
+            index: Index of team.
 
         Returns:
-            A sorted list of agents that belongs to the specified team.
+            (List[Agent]): A sorted list of agents that belongs to the specified team.
 
         """
 
@@ -109,12 +113,12 @@ class MVPA(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Most Valuable Player Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

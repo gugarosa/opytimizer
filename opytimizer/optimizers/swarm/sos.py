@@ -2,11 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +28,11 @@ class SOS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -42,14 +46,16 @@ class SOS(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _mutualism(self, agent_i, agent_j, best_agent, function):
+    def _mutualism(
+        self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Function
+    ) -> None:
         """Performs the mutualism operation.
 
         Args:
-            agent_i (Agent): Selected `i` agent.
-            agent_j (Agent): Selected `j` agent.
-            best_agent (Agent): Global best agent.
-            function (Function): A Function object that will be used as the objective function.
+            agent_i: Selected `i` agent.
+            agent_j: Selected `j` agent.
+            best_agent: Global best agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -90,14 +96,16 @@ class SOS(Optimizer):
             agent_j.position = copy.deepcopy(b.position)
             agent_j.fit = copy.deepcopy(b.fit)
 
-    def _commensalism(self, agent_i, agent_j, best_agent, function):
+    def _commensalism(
+        self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Function
+    ) -> None:
         """Performs the commensalism operation.
 
         Args:
-            agent_i (Agent): Selected `i` agent.
-            agent_j (Agent): Selected `j` agent.
-            best_agent (Agent): Global best agent.
-            function (Function): A Function object that will be used as the objective function.
+            agent_i: Selected `i` agent.
+            agent_j: Selected `j` agent.
+            best_agent: Global best agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -122,13 +130,13 @@ class SOS(Optimizer):
             agent_i.position = copy.deepcopy(a.position)
             agent_i.fit = copy.deepcopy(a.fit)
 
-    def _parasitism(self, agent_i, agent_j, function):
+    def _parasitism(self, agent_i: Agent, agent_j: Agent, function: Function) -> None:
         """Performs the parasitism operation.
 
         Args:
-            agent_i (Agent): Selected `i` agent.
-            agent_j (Agent): Selected `j` agent.
-            function (Function): A Function object that will be used as the objective function.
+            agent_i: Selected `i` agent.
+            agent_j: Selected `j` agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -153,12 +161,12 @@ class SOS(Optimizer):
             agent_j.position = copy.deepcopy(p.position)
             agent_j.fit = copy.deepcopy(p.fit)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Symbiotic Organisms Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

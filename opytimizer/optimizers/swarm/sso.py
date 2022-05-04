@@ -3,12 +3,15 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class SSO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,13 +57,13 @@ class SSO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def C_w(self):
-        """float: Weighing constant."""
+    def C_w(self) -> float:
+        """Weighing constant."""
 
         return self._C_w
 
     @C_w.setter
-    def C_w(self, C_w):
+    def C_w(self, C_w: float) -> None:
         if not isinstance(C_w, (float, int)):
             raise e.TypeError("`C_w` should be a float or integer")
         if C_w < 0 or C_w > 1:
@@ -69,13 +72,13 @@ class SSO(Optimizer):
         self._C_w = C_w
 
     @property
-    def C_p(self):
-        """float: Local constant."""
+    def C_p(self) -> float:
+        """Local constant."""
 
         return self._C_p
 
     @C_p.setter
-    def C_p(self, C_p):
+    def C_p(self, C_p: float) -> None:
         if not isinstance(C_p, (float, int)):
             raise e.TypeError("`C_p` should be a float or integer")
         if C_p < self.C_w:
@@ -84,13 +87,13 @@ class SSO(Optimizer):
         self._C_p = C_p
 
     @property
-    def C_g(self):
-        """float: Global constant."""
+    def C_g(self) -> float:
+        """Global constant."""
 
         return self._C_g
 
     @C_g.setter
-    def C_g(self, C_g):
+    def C_g(self, C_g: float) -> None:
         if not isinstance(C_g, (float, int)):
             raise e.TypeError("`C_g` should be a float or integer")
         if C_g < self.C_p:
@@ -99,23 +102,23 @@ class SSO(Optimizer):
         self._C_g = C_g
 
     @property
-    def local_position(self):
-        """np.array: Array of local positions."""
+    def local_position(self) -> np.ndarray:
+        """Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
-    def local_position(self, local_position):
+    def local_position(self, local_position: np.ndarray) -> None:
         if not isinstance(local_position, np.ndarray):
             raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -124,12 +127,12 @@ class SSO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -153,11 +156,11 @@ class SSO(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Simplified Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class EHO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +57,13 @@ class EHO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Matriarch influence."""
+    def alpha(self) -> float:
+        """Matriarch influence."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0 or alpha > 1:
@@ -68,13 +72,13 @@ class EHO(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Center influence."""
+    def beta(self) -> float:
+        """Center influence."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0 or beta > 1:
@@ -83,13 +87,13 @@ class EHO(Optimizer):
         self._beta = beta
 
     @property
-    def n_clans(self):
-        """int: Maximum number of clans."""
+    def n_clans(self) -> int:
+        """Maximum number of clans."""
 
         return self._n_clans
 
     @n_clans.setter
-    def n_clans(self, n_clans):
+    def n_clans(self, n_clans: int) -> None:
         if not isinstance(n_clans, int):
             raise e.TypeError("`n_clans` should be an integer")
         if n_clans < 1:
@@ -98,13 +102,13 @@ class EHO(Optimizer):
         self._n_clans = n_clans
 
     @property
-    def n_ci(self):
-        """int: Number of elephants per clan."""
+    def n_ci(self) -> int:
+        """Number of elephants per clan."""
 
         return self._n_ci
 
     @n_ci.setter
-    def n_ci(self, n_ci):
+    def n_ci(self, n_ci: int) -> None:
         if not isinstance(n_ci, int):
             raise e.TypeError("`n_ci` should be an integer")
         if n_ci < 1:
@@ -112,26 +116,26 @@ class EHO(Optimizer):
 
         self._n_ci = n_ci
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Number of elephants per clan
         self.n_ci = space.n_agents // self.n_clans
 
-    def _get_agents_from_clan(self, agents, index):
+    def _get_agents_from_clan(self, agents: List[Agent], index: int) -> List[Agent]:
         """Gets a set of agents from a specified clan.
 
         Args:
-            agents (list): List of agents.
-            index (int): Index of clan.
+            agents: List of agents.
+            index: Index of clan.
 
         Returns:
-            A sorted list of agents that belongs to the specified clan.
+            (List[Agent]): A sorted list of agents that belongs to the specified clan.
 
         """
 
@@ -144,13 +148,15 @@ class EHO(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _updating_operator(self, agents, centers, function):
+    def _updating_operator(
+        self, agents: List[Agent], centers: np.ndarray, function: Function
+    ) -> None:
         """Performs the separating operator.
 
         Args:
-            agents (list): List of agents.
-            centers (list): List of centers.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            centers: List of centers.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -191,11 +197,11 @@ class EHO(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _separating_operator(self, agents):
+    def _separating_operator(self, agents: List[Agent]) -> None:
         """Performs the separating operator.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -210,12 +216,12 @@ class EHO(Optimizer):
             # Generates a new position for the worst agent in clan (eq. 4)
             worst.fill_with_uniform()
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Elephant Herd Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -1,11 +1,16 @@
 """Harris Hawks Optimization.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +28,11 @@ class HHO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -41,15 +46,17 @@ class HHO(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _calculate_initial_coefficients(self, iteration, n_iterations):
+    def _calculate_initial_coefficients(
+        self, iteration: int, n_iterations: int
+    ) -> Tuple[float, float]:
         """Calculates the initial coefficients, i.e., energy and jump's strength.
 
         Args:
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         Returns:
-            Absolute value of energy and jump's strength.
+            (Tuple[float, float]): Absolute value of energy and jump's strength.
 
         """
 
@@ -67,16 +74,18 @@ class HHO(Optimizer):
 
         return np.fabs(E), J
 
-    def _exploration_phase(self, agents, current_agent, best_agent):
+    def _exploration_phase(
+        self, agents: List[Agent], current_agent: Agent, best_agent: Agent
+    ) -> np.ndarray:
         """Performs the exploration phase.
 
         Args:
-            agents (list): List of agents.
-            current_agent (Agent): Current agent to be updated (or not).
-            best_agent (Agent): Best population's agent.
+            agents: List of agents.
+            current_agent: Current agent to be updated (or not).
+            best_agent: Best population's agent.
 
         Returns:
-            A location vector containing the updated position.
+            (np.ndarray): A location vector containing the updated position.
 
         """
 
@@ -118,20 +127,26 @@ class HHO(Optimizer):
         return location_vector
 
     def _exploitation_phase(
-        self, energy, jump, agents, current_agent, best_agent, function
-    ):
+        self,
+        energy: float,
+        jump: float,
+        agents: List[Agent],
+        current_agent: Agent,
+        best_agent: Agent,
+        function: Function,
+    ) -> np.ndarray:
         """Performs the exploitation phase.
 
         Args:
-            energy (float): Energy coefficient.
-            jump (float): Jump's strength.
-            agents (list): List of agents.
-            current_agent (Agent): Current agent to be updated (or not).
-            best_agent (Agent): Best population's agent.
-            function (Function): A function object.
+            energy: Energy coefficient.
+            jump: Jump's strength.
+            agents: List of agents.
+            current_agent: Current agent to be updated (or not).
+            best_agent: Best population's agent.
+            function: A function object.
 
         Returns:
-            A location vector containing the updated position.
+            (np.ndarray): A location vector containing the updated position.
 
         """
 
@@ -228,14 +243,16 @@ class HHO(Optimizer):
 
         return current_agent.position
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Harris Hawks Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

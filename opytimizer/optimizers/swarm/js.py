@@ -1,11 +1,15 @@
 """Jellyfish Search-based algorithms.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +27,11 @@ class JS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -51,13 +55,13 @@ class JS(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def eta(self):
-        """float: Chaotic map coefficient."""
+    def eta(self) -> float:
+        """Chaotic map coefficient."""
 
         return self._eta
 
     @eta.setter
-    def eta(self, eta):
+    def eta(self, eta: float) -> None:
         if not isinstance(eta, (float, int)):
             raise e.TypeError("`eta` should be a float or integer")
         if eta <= 0:
@@ -66,13 +70,13 @@ class JS(Optimizer):
         self._eta = eta
 
     @property
-    def beta(self):
-        """float: Distribution coeffiecient."""
+    def beta(self) -> float:
+        """Distribution coeffiecient."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0:
@@ -81,13 +85,13 @@ class JS(Optimizer):
         self._beta = beta
 
     @property
-    def gamma(self):
-        """float: Motion coeffiecient."""
+    def gamma(self) -> float:
+        """Motion coeffiecient."""
 
         return self._gamma
 
     @gamma.setter
-    def gamma(self, gamma):
+    def gamma(self, gamma: float) -> None:
         if not isinstance(gamma, (float, int)):
             raise e.TypeError("`gamma` should be a float or integer")
         if gamma <= 0:
@@ -95,11 +99,11 @@ class JS(Optimizer):
 
         self._gamma = gamma
 
-    def _initialize_chaotic_map(self, agents):
+    def _initialize_chaotic_map(self, agents: List[Agent]) -> None:
         """Initializes a set of agents using a logistic chaotic map.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -125,26 +129,26 @@ class JS(Optimizer):
                         * (1 - agents[i - 1].position[j])
                     )
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Initializes the chaotic map
         self._initialize_chaotic_map(space.agents)
 
-    def _ocean_current(self, agents, best_agent):
+    def _ocean_current(self, agents: List[Agent], best_agent: Agent) -> np.ndarray:
         """Calculates the ocean current (eq. 9).
 
         Args:
-            agents (Agent): List of agents.
-            best_agent (Agent): Best agent.
+            agents: List of agents.
+            best_agent: Best agent.
 
         Returns:
-            A trend value for the ocean current.
+            (np.ndarray): A trend value for the ocean current.
 
         """
 
@@ -159,15 +163,15 @@ class JS(Optimizer):
 
         return trend
 
-    def _motion_a(self, lb, ub):
+    def _motion_a(self, lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
         """Calculates type A motion (eq. 12).
 
         Args:
-            lb (np.array): Array of lower bounds.
-            ub (np.array): Array of upper bounds.
+            lb: Array of lower bounds.
+            ub: Array of upper bounds.
 
         Returns:
-            A type A motion array.
+            (np.ndarray): A type A motion array.
 
         """
 
@@ -179,15 +183,15 @@ class JS(Optimizer):
 
         return motion
 
-    def _motion_b(self, agent_i, agent_j):
+    def _motion_b(self, agent_i: Agent, agent_j: Agent) -> np.ndarray:
         """Calculates type B motion (eq. 15).
 
         Args:
-            agent_i (Agent): Current agent to be updated.
-            agent_j (Agent): Selected agent.
+            agent_i: Current agent to be updated.
+            agent_j: Selected agent.
 
         Returns:
-            A type B motion array.
+            (np.ndarray): A type B motion array.
 
         """
 
@@ -209,13 +213,13 @@ class JS(Optimizer):
 
         return motion
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Jellyfish Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -271,11 +275,11 @@ class NBJS(JS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -286,15 +290,15 @@ class NBJS(JS):
 
         logger.info("Class overrided.")
 
-    def _motion_a(self, lb, ub):
+    def _motion_a(self, lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
         """Calculates type A motion.
 
         Args:
-            lb (np.array): Array of lower bounds.
-            ub (np.array): Array of upper bounds.
+            lb: Array of lower bounds.
+            ub: Array of upper bounds.
 
         Returns:
-            A type A motion array.
+            (np.ndarray): A type A motion array.
 
         """
 

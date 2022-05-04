@@ -3,12 +3,15 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +30,11 @@ class BPSO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -52,62 +55,62 @@ class BPSO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def c1(self):
-        """float: Cognitive constant."""
+    def c1(self) -> np.ndarray:
+        """Cognitive constant."""
 
         return self._c1
 
     @c1.setter
-    def c1(self, c1):
+    def c1(self, c1: np.ndarray) -> None:
         if not isinstance(c1, np.ndarray):
             raise e.TypeError("`c1` should be a numpy array")
 
         self._c1 = c1
 
     @property
-    def c2(self):
-        """float: Social constant."""
+    def c2(self) -> np.ndarray:
+        """Social constant."""
 
         return self._c2
 
     @c2.setter
-    def c2(self, c2):
+    def c2(self, c2: np.ndarray) -> None:
         if not isinstance(c2, np.ndarray):
             raise e.TypeError("`c2` should be a numpy array")
 
         self._c2 = c2
 
     @property
-    def local_position(self):
-        """np.array: Array of local positions."""
+    def local_position(self) -> np.ndarray:
+        """Array of local positions."""
 
         return self._local_position
 
     @local_position.setter
-    def local_position(self, local_position):
+    def local_position(self, local_position: np.ndarray) -> None:
         if not isinstance(local_position, np.ndarray):
             raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -119,12 +122,12 @@ class BPSO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool
         )
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -148,11 +151,11 @@ class BPSO(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Boolean Particle Swarm Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

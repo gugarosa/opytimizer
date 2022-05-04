@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class ABO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,13 +54,13 @@ class ABO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def sunspot_ratio(self):
-        """float: Ratio of sunspot butterflies."""
+    def sunspot_ratio(self) -> float:
+        """Ratio of sunspot butterflies."""
 
         return self._sunspot_ratio
 
     @sunspot_ratio.setter
-    def sunspot_ratio(self, sunspot_ratio):
+    def sunspot_ratio(self, sunspot_ratio: float) -> None:
         if not isinstance(sunspot_ratio, (float, int)):
             raise e.TypeError("`sunspot_ratio` should be a float or integer")
         if sunspot_ratio < 0 or sunspot_ratio > 1:
@@ -65,13 +69,13 @@ class ABO(Optimizer):
         self._sunspot_ratio = sunspot_ratio
 
     @property
-    def a(self):
-        """float: Free flight constant."""
+    def a(self) -> float:
+        """Free flight constant."""
 
         return self._a
 
     @a.setter
-    def a(self, a):
+    def a(self, a: float) -> None:
         if not isinstance(a, (float, int)):
             raise e.TypeError("`a` should be a float or integer")
         if a < 0:
@@ -79,16 +83,18 @@ class ABO(Optimizer):
 
         self._a = a
 
-    def _flight_mode(self, agent, neighbour, function):
+    def _flight_mode(
+        self, agent: Agent, neighbour: Agent, function: Function
+    ) -> Tuple[Agent, bool]:
         """Flies to a new location according to the flight mode (eq. 1).
 
         Args:
-            agent (Agent): Current agent.
-            neighbour (Agent): Selected neigbour.
-            function (Function): A Function object that will be used as the objective function.
+            agent: Current agent.
+            neighbour: Selected neigbour.
+            function: A Function object that will be used as the objective function.
 
         Returns:
-            Current agent or an agent with updated position, along with a boolean that indicates whether
+            (Tuple[Agent, bool]): Current agent or an agent with updated position, along with a boolean that indicates whether
             agent is better or not than current one.
 
         """
@@ -121,14 +127,16 @@ class ABO(Optimizer):
         # Return current agent as well as a false variable
         return agent.position, agent.fit, False
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Artificial Butterfly Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

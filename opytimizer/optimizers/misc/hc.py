@@ -1,9 +1,12 @@
 """Hill-Climbing.
 """
 
+from typing import Any, Dict, Optional
+
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -20,11 +23,11 @@ class HC(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -45,26 +48,26 @@ class HC(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def r_mean(self):
-        """float: Mean of noise distribution."""
+    def r_mean(self) -> float:
+        """Mean of noise distribution."""
 
         return self._r_mean
 
     @r_mean.setter
-    def r_mean(self, r_mean):
+    def r_mean(self, r_mean: float) -> None:
         if not isinstance(r_mean, (float, int)):
             raise e.TypeError("`r_mean` should be a float or integer")
 
         self._r_mean = r_mean
 
     @property
-    def r_var(self):
-        """float: Variance of noise distribution."""
+    def r_var(self) -> float:
+        """Variance of noise distribution."""
 
         return self._r_var
 
     @r_var.setter
-    def r_var(self, r_var):
+    def r_var(self, r_var: float) -> None:
         if not isinstance(r_var, (float, int)):
             raise e.TypeError("`r_var` should be a float or integer")
         if r_var < 0:
@@ -72,11 +75,11 @@ class HC(Optimizer):
 
         self._r_var = r_var
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Hill Climbing over all agents and variables (p. 252).
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

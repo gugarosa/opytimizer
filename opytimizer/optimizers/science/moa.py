@@ -1,6 +1,8 @@
 """Magnetic Optimization Algorithm.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.general as g
@@ -8,6 +10,7 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +28,11 @@ class MOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,13 +53,13 @@ class MOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Particle moviment first constant."""
+    def alpha(self) -> float:
+        """Particle moviment first constant."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -65,13 +68,13 @@ class MOA(Optimizer):
         self._alpha = alpha
 
     @property
-    def rho(self):
-        """float: Particle moviment second constant."""
+    def rho(self) -> float:
+        """Particle moviment second constant."""
 
         return self._rho
 
     @rho.setter
-    def rho(self, rho):
+    def rho(self, rho: float) -> None:
         if not isinstance(rho, (float, int)):
             raise e.TypeError("`rho` should be a float or integer")
         if rho < 0:
@@ -79,11 +82,11 @@ class MOA(Optimizer):
 
         self._rho = rho
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -91,11 +94,11 @@ class MOA(Optimizer):
         if not np.sqrt(space.n_agents).is_integer():
             raise e.SizeError("`n_agents` should have a perfect square")
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Magnetic Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

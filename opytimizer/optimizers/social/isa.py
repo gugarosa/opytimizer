@@ -3,6 +3,7 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -10,6 +11,8 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -28,11 +31,11 @@ class ISA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +56,13 @@ class ISA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def w(self):
-        """float: Inertia weight."""
+    def w(self) -> float:
+        """Inertia weight."""
 
         return self._w
 
     @w.setter
-    def w(self, w):
+    def w(self, w: float) -> None:
         if not isinstance(w, (float, int)):
             raise e.TypeError("`w` should be a float or integer")
         if w < 0:
@@ -68,13 +71,13 @@ class ISA(Optimizer):
         self._w = w
 
     @property
-    def tau(self):
-        """float: Tendency factor."""
+    def tau(self) -> float:
+        """Tendency factor."""
 
         return self._tau
 
     @tau.setter
-    def tau(self, tau):
+    def tau(self, tau: float) -> None:
         if not isinstance(tau, (float, int)):
             raise e.TypeError("`tau` should be a float or integer")
         if tau < 0:
@@ -83,36 +86,36 @@ class ISA(Optimizer):
         self._tau = tau
 
     @property
-    def local_position(self):
-        """np.array: Array of velocities."""
+    def local_position(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._local_position
 
     @local_position.setter
-    def local_position(self, local_position):
+    def local_position(self, local_position: np.ndarray) -> None:
         if not isinstance(local_position, np.ndarray):
             raise e.TypeError("`local_position` should be a numpy array")
 
         self._local_position = local_position
 
     @property
-    def velocity(self):
-        """np.array: Array of velocities."""
+    def velocity(self) -> np.ndarray:
+        """Array of velocities."""
 
         return self._velocity
 
     @velocity.setter
-    def velocity(self, velocity):
+    def velocity(self, velocity: np.ndarray) -> None:
         if not isinstance(velocity, np.ndarray):
             raise e.TypeError("`velocity` should be a numpy array")
 
         self._velocity = velocity
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -124,12 +127,12 @@ class ISA(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (Space): A Space object that will be evaluated.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object that will be evaluated.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -153,12 +156,12 @@ class ISA(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Interactive Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

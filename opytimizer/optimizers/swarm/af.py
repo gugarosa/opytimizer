@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,8 @@ import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class AF(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -57,13 +60,13 @@ class AF(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def c1(self):
-        """float: First learning coefficient."""
+    def c1(self) -> float:
+        """First learning coefficient."""
 
         return self._c1
 
     @c1.setter
-    def c1(self, c1):
+    def c1(self, c1: float) -> None:
         if not isinstance(c1, (float, int)):
             raise e.TypeError("`c1` should be a float or integer")
         if c1 < 0:
@@ -72,13 +75,13 @@ class AF(Optimizer):
         self._c1 = c1
 
     @property
-    def c2(self):
-        """float: Second learning coefficient."""
+    def c2(self) -> float:
+        """Second learning coefficient."""
 
         return self._c2
 
     @c2.setter
-    def c2(self, c2):
+    def c2(self, c2: float) -> None:
         if not isinstance(c2, (float, int)):
             raise e.TypeError("`c2` should be a float or integer")
         if c2 < 0:
@@ -87,13 +90,13 @@ class AF(Optimizer):
         self._c2 = c2
 
     @property
-    def m(self):
-        """int: Amount of branches."""
+    def m(self) -> int:
+        """Amount of branches."""
 
         return self._m
 
     @m.setter
-    def m(self, m):
+    def m(self, m: int) -> None:
         if not isinstance(m, int):
             raise e.TypeError("`m` should be an integer")
         if m <= 0:
@@ -102,13 +105,13 @@ class AF(Optimizer):
         self._m = m
 
     @property
-    def Q(self):
-        """float: Selective probability."""
+    def Q(self) -> float:
+        """Selective probability."""
 
         return self._Q
 
     @Q.setter
-    def Q(self, Q):
+    def Q(self, Q: float) -> None:
         if not isinstance(Q, (float, int)):
             raise e.TypeError("`Q` should be a float or integer")
         if Q < 0 or Q > 1:
@@ -116,11 +119,11 @@ class AF(Optimizer):
 
         self._Q = Q
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -130,12 +133,12 @@ class AF(Optimizer):
         # Array of grand-parent distances
         self.g_distance = r.generate_uniform_random_number(size=space.n_agents)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Artificial Flora over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

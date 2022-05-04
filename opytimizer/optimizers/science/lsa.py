@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class LSA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +57,13 @@ class LSA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def max_time(self):
-        """int: Maximum channel time."""
+    def max_time(self) -> int:
+        """Maximum channel time."""
 
         return self._max_time
 
     @max_time.setter
-    def max_time(self, max_time):
+    def max_time(self, max_time: int) -> None:
         if not isinstance(max_time, int):
             raise e.TypeError("`max_time` should be an integer")
         if max_time <= 0:
@@ -68,13 +72,13 @@ class LSA(Optimizer):
         self._max_time = max_time
 
     @property
-    def E(self):
-        """float: Initial energy."""
+    def E(self) -> float:
+        """Initial energy."""
 
         return self._E
 
     @E.setter
-    def E(self, E):
+    def E(self, E: float) -> None:
         if not isinstance(E, (float, int)):
             raise e.TypeError("`E` should be a float or integer")
         if E < 0:
@@ -83,13 +87,13 @@ class LSA(Optimizer):
         self._E = E
 
     @property
-    def p_fork(self):
-        """float: Probability of forking."""
+    def p_fork(self) -> float:
+        """Probability of forking."""
 
         return self._p_fork
 
     @p_fork.setter
-    def p_fork(self, p_fork):
+    def p_fork(self, p_fork: float) -> None:
         if not isinstance(p_fork, (float, int)):
             raise e.TypeError("`p_fork` should be a float or integer")
         if p_fork < 0 or p_fork > 1:
@@ -98,13 +102,13 @@ class LSA(Optimizer):
         self._p_fork = p_fork
 
     @property
-    def time(self):
-        """int: Channel time."""
+    def time(self) -> int:
+        """Channel time."""
 
         return self._time
 
     @time.setter
-    def time(self, time):
+    def time(self, time: int) -> None:
         if not isinstance(time, int):
             raise e.TypeError("`time` should be an integer")
         if time < 0:
@@ -113,23 +117,23 @@ class LSA(Optimizer):
         self._time = time
 
     @property
-    def direction(self):
-        """np.array: Array of directions."""
+    def direction(self) -> np.ndarray:
+        """Array of directions."""
 
         return self._direction
 
     @direction.setter
-    def direction(self, direction):
+    def direction(self, direction: np.ndarray) -> np.ndarray:
         if not isinstance(direction, np.ndarray):
             raise e.TypeError("`direction` should be a numpy array")
 
         self._direction = direction
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -143,12 +147,12 @@ class LSA(Optimizer):
             )
         )
 
-    def _update_direction(self, agent, function):
+    def _update_direction(self, agent: Agent, function: Function) -> None:
         """Updates the direction array by shaking agent's direction.
 
         Args:
-            agent (Agent): An agent instance.
-            function (Function): A Function object that will be used as the objective function.
+            agent: An agent instance.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -173,14 +177,16 @@ class LSA(Optimizer):
                 # Inverts the direction
                 self.direction[j] *= -1
 
-    def _update_position(self, agent, best_agent, function, energy):
+    def _update_position(
+        self, agent: Agent, best_agent: Agent, function: Function, energy: float
+    ) -> None:
         """Updates agent's position.
 
         Args:
-            agent (Agent): An agent instance.
-            best_agent (Agent): A best agent instance.
-            function (Function): A Function object that will be used as the objective function.
-            energy (float): Current energy value.
+            agent: An agent instance.
+            best_agent: A best agent instance.
+            function: A Function object that will be used as the objective function.
+            energy: Current energy value.
 
         """
 
@@ -248,14 +254,16 @@ class LSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Lightning Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

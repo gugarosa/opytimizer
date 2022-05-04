@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as ex
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -27,11 +31,11 @@ class SFO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -55,13 +59,13 @@ class SFO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def PP(self):
-        """float: Percentage of initial sailfishes."""
+    def PP(self) -> float:
+        """Percentage of initial sailfishes."""
 
         return self._PP
 
     @PP.setter
-    def PP(self, PP):
+    def PP(self, PP: float) -> None:
         if not isinstance(PP, (float, int)):
             raise ex.TypeError("`PP` should be a float or integer")
         if PP < 0 or PP > 1:
@@ -70,13 +74,13 @@ class SFO(Optimizer):
         self._PP = PP
 
     @property
-    def A(self):
-        """int: Attack power coefficient."""
+    def A(self) -> int:
+        """Attack power coefficient."""
 
         return self._A
 
     @A.setter
-    def A(self, A):
+    def A(self, A: int) -> None:
         if not isinstance(A, int):
             raise ex.TypeError("`A` should be an integer")
         if A <= 0:
@@ -85,13 +89,13 @@ class SFO(Optimizer):
         self._A = A
 
     @property
-    def e(self):
-        """float: Attack power decrease."""
+    def e(self) -> float:
+        """Attack power decrease."""
 
         return self._e
 
     @e.setter
-    def e(self, e):
+    def e(self, e: float) -> None:
         if not isinstance(e, (float, int)):
             raise ex.TypeError("`e` should be a float or integer")
         if e < 0:
@@ -100,23 +104,23 @@ class SFO(Optimizer):
         self._e = e
 
     @property
-    def sardines(self):
-        """list: List of sardines."""
+    def sardines(self) -> List[Agent]:
+        """List of sardines."""
 
         return self._sardines
 
     @sardines.setter
-    def sardines(self, sardines):
+    def sardines(self, sardines: List[Agent]) -> None:
         if not isinstance(sardines, list):
             raise ex.TypeError("`sardines` should be a list")
 
         self._sardines = sardines
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -129,14 +133,14 @@ class SFO(Optimizer):
         # Sorts the population of sardines
         self.sardines.sort(key=lambda x: x.fit)
 
-    def _generate_random_agent(self, agent):
+    def _generate_random_agent(self, agent: Agent) -> Agent:
         """Generates a new random-based agent.
 
         Args:
-            agent (Agent): Agent to be copied.
+            agent: Agent to be copied.
 
         Returns:
-            Random-based agent.
+            (Agent): Random-based agent.
 
         """
 
@@ -148,7 +152,7 @@ class SFO(Optimizer):
 
         return a
 
-    def _calculate_lambda_i(self, n_sailfishes, n_sardines):
+    def _calculate_lambda_i(self, n_sailfishes: int, n_sardines: int) -> float:
         """Calculates the lambda value (eq. 7).
 
         Args:
@@ -156,7 +160,7 @@ class SFO(Optimizer):
             n_sardines (int): Number of sardines.
 
         Returns:
-            Lambda value from current iteration.
+            (float): Lambda value from current iteration.
 
         """
 
@@ -171,17 +175,19 @@ class SFO(Optimizer):
 
         return lambda_i
 
-    def _update_sailfish(self, agent, best_agent, best_sardine, lambda_i):
+    def _update_sailfish(
+        self, agent: Agent, best_agent: Agent, best_sardine: Agent, lambda_i: float
+    ) -> np.ndarray:
         """Updates the sailfish's position (eq. 6).
 
         Args:
-            agent (Agent): Current agent's.
-            best_agent (Agent): Best sailfish.
-            best_sardine (Agent): Best sardine.
-            lambda_i (float): Lambda value.
+            agent: Current agent's.
+            best_agent: Best sailfish.
+            best_sardine: Best sardine.
+            lambda_i: Lambda value.
 
         Returns:
-            An updated position.
+            (np.ndarray): An updated position.
 
         """
 
@@ -195,13 +201,13 @@ class SFO(Optimizer):
 
         return new_position
 
-    def update(self, space, function, iteration):
+    def update(self, space: Space, function: Function, iteration: int) -> None:
         """Wraps Sailfish Optimizer over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
 
         """
 

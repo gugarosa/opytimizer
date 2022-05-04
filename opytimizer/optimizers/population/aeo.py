@@ -2,11 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class AEO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -41,17 +45,19 @@ class AEO(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _production(self, agent, best_agent, iteration, n_iterations):
+    def _production(
+        self, agent: Agent, best_agent: Agent, iteration: int, n_iterations: int
+    ) -> Agent:
         """Performs the producer update (eq. 1).
 
         Args:
-            agent (Agent): Current agent.
-            best_agent (Agent): Best agent.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            agent: Current agent.
+            best_agent: Best agent.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         Returns:
-            An updated producer.
+            (Agent): An updated producer.
 
         """
 
@@ -70,16 +76,16 @@ class AEO(Optimizer):
 
         return a
 
-    def _herbivore_consumption(self, agent, producer, C):
+    def _herbivore_consumption(self, agent: Agent, producer: Agent, C: float) -> Agent:
         """Performs the consumption update by a herbivore (eq. 6).
 
         Args:
-            agent (Agent): Current agent.
-            producer (Agent): Producer agent.
-            C (float): Consumption factor.
+            agent: Current agent.
+            producer: Producer agent.
+            C: Consumption factor.
 
         Returns:
-            An updated consumption by a herbivore/
+            An updated consumption by a herbivore.
 
         """
 
@@ -91,17 +97,19 @@ class AEO(Optimizer):
 
         return a
 
-    def _omnivore_consumption(self, agent, producer, consumer, C):
+    def _omnivore_consumption(
+        self, agent: Agent, producer: Agent, consumer: Agent, C: float
+    ) -> Agent:
         """Performs the consumption update by an omnivore (eq. 8)
 
         Args:
-            agent (Agent): Current agent.
-            producer (Agent): Producer agent.
-            consumer (Agent): Consumer agent.
-            C (float): Consumption factor.
+            agent: Current agent.
+            producer: Producer agent.
+            consumer: Consumer agent.
+            C: Consumption factor.
 
         Returns:
-            An updated consumption by an omnivore.
+            (Agent): An updated consumption by an omnivore.
 
         """
 
@@ -118,16 +126,16 @@ class AEO(Optimizer):
 
         return a
 
-    def _carnivore_consumption(self, agent, consumer, C):
+    def _carnivore_consumption(self, agent: Agent, consumer: Agent, C: float) -> Agent:
         """Performs the consumption update by a carnivore (eq. 7).
 
         Args:
-            agent (Agent): Current agent.
-            consumer (Agent): Consumer agent.
-            C (float): Consumption factor.
+            agent: Current agent.
+            consumer: Consumer agent.
+            C: Consumption factor.
 
         Returns:
-            An updated consumption by a carnivore.
+            (Agent): An updated consumption by a carnivore.
 
         """
 
@@ -140,17 +148,22 @@ class AEO(Optimizer):
         return a
 
     def _update_composition(
-        self, agents, best_agent, function, iteration, n_iterations
-    ):
+        self,
+        agents: List[Agent],
+        best_agent: Agent,
+        function: Function,
+        iteration: int,
+        n_iterations: int,
+    ) -> None:
         """Wraps production and consumption updates over all
         agents and variables (eq. 1-8).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            agents: List of agents.
+            best_agent: Global best agent.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -209,14 +222,16 @@ class AEO(Optimizer):
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
-    def _update_decomposition(self, agents, best_agent, function):
+    def _update_decomposition(
+        self, agents: List[Agent], best_agent: Agent, function: Function
+    ) -> None:
         """Wraps decomposition updates over all
         agents and variables (eq. 9).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            best_agent: Global best agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -254,14 +269,16 @@ class AEO(Optimizer):
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Artificial Ecosystem-based Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

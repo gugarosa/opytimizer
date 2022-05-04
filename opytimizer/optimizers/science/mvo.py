@@ -1,12 +1,16 @@
 """Multi-Verse Optimizer.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +29,11 @@ class MVO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -51,13 +55,13 @@ class MVO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def WEP_min(self):
-        """float: Minimum Wormhole Existence Probability."""
+    def WEP_min(self) -> float:
+        """Minimum Wormhole Existence Probability."""
 
         return self._WEP_min
 
     @WEP_min.setter
-    def WEP_min(self, WEP_min):
+    def WEP_min(self, WEP_min: float) -> None:
         if not isinstance(WEP_min, (float, int)):
             raise e.TypeError("`WEP_min` should be a float or integer")
         if WEP_min < 0 or WEP_min > 1:
@@ -66,13 +70,13 @@ class MVO(Optimizer):
         self._WEP_min = WEP_min
 
     @property
-    def WEP_max(self):
-        """float: Maximum Wormhole Existence Probability."""
+    def WEP_max(self) -> float:
+        """Maximum Wormhole Existence Probability."""
 
         return self._WEP_max
 
     @WEP_max.setter
-    def WEP_max(self, WEP_max):
+    def WEP_max(self, WEP_max: float) -> None:
         if not isinstance(WEP_max, (float, int)):
             raise e.TypeError("`WEP_max` should be a float or integer")
         if WEP_max < 0 or WEP_max > 1:
@@ -83,13 +87,13 @@ class MVO(Optimizer):
         self._WEP_max = WEP_max
 
     @property
-    def p(self):
-        """float: Exploitation accuracy."""
+    def p(self) -> float:
+        """Exploitation accuracy."""
 
         return self._p
 
     @p.setter
-    def p(self, p):
+    def p(self, p: float) -> None:
         if not isinstance(p, (float, int)):
             raise e.TypeError("`p` should be a float or integer")
         if p < 0:
@@ -97,14 +101,16 @@ class MVO(Optimizer):
 
         self._p = p
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Multi-Verse Optimizer over all agents and variables (eq. 3.1-3.4).
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

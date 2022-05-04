@@ -1,11 +1,14 @@
 """Darcy Optimization Algorithm.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +27,11 @@ class DOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -46,13 +49,13 @@ class DOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def r(self):
-        """float: Chaos multiplier."""
+    def r(self) -> float:
+        """Chaos multiplier."""
 
         return self._r
 
     @r.setter
-    def r(self, r):
+    def r(self, r: float) -> None:
         if not isinstance(r, (float, int)):
             raise e.TypeError("`r` should be a float or integer")
         if r < 0:
@@ -61,38 +64,38 @@ class DOA(Optimizer):
         self._r = r
 
     @property
-    def chaotic_map(self):
-        """np.array: Array of chaotic maps."""
+    def chaotic_map(self) -> np.ndarray:
+        """Array of chaotic maps."""
 
         return self._chaotic_map
 
     @chaotic_map.setter
-    def chaotic_map(self, chaotic_map):
+    def chaotic_map(self, chaotic_map: np.ndarray) -> None:
         if not isinstance(chaotic_map, np.ndarray):
             raise e.TypeError("`chaotic_map` should be a numpy array")
 
         self._chaotic_map = chaotic_map
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Array of chaotic maps
         self.chaotic_map = np.zeros((space.n_agents, space.n_variables))
 
-    def _calculate_chaotic_map(self, lb, ub):
+    def _calculate_chaotic_map(self, lb: float, ub: float) -> float:
         """Calculates the chaotic map (eq. 3).
 
         Args:
-            lb (float): Lower bound value.
-            ub (float): Upper bound value.
+            lb: Lower bound value.
+            ub: Upper bound value.
 
         Returns:
-            A new value for the chaotic map.
+            (float): A new value for the chaotic map.
 
         """
 
@@ -104,11 +107,11 @@ class DOA(Optimizer):
 
         return c_map
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Darcy Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

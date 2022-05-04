@@ -3,6 +3,7 @@
 
 import copy
 import time
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
@@ -10,6 +11,10 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.node import Node
+from opytimizer.core.space import Space
+from opytimizer.spaces.tree import TreeSpace
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +31,11 @@ class GP(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -57,13 +62,13 @@ class GP(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def p_reproduction(self):
-        """float: Probability of reproduction."""
+    def p_reproduction(self) -> float:
+        """Probability of reproduction."""
 
         return self._p_reproduction
 
     @p_reproduction.setter
-    def p_reproduction(self, p_reproduction):
+    def p_reproduction(self, p_reproduction: float) -> None:
         if not isinstance(p_reproduction, (float, int)):
             raise e.TypeError("`p_reproduction` should be a float or integer")
         if p_reproduction < 0 or p_reproduction > 1:
@@ -72,13 +77,13 @@ class GP(Optimizer):
         self._p_reproduction = p_reproduction
 
     @property
-    def p_mutation(self):
-        """float: Probability of mutation."""
+    def p_mutation(self) -> float:
+        """Probability of mutation."""
 
         return self._p_mutation
 
     @p_mutation.setter
-    def p_mutation(self, p_mutation):
+    def p_mutation(self, p_mutation: float) -> None:
         if not isinstance(p_mutation, (float, int)):
             raise e.TypeError("`p_mutation` should be a float or integer")
         if p_mutation < 0 or p_mutation > 1:
@@ -87,13 +92,13 @@ class GP(Optimizer):
         self._p_mutation = p_mutation
 
     @property
-    def p_crossover(self):
-        """float: Probability of crossover."""
+    def p_crossover(self) -> float:
+        """Probability of crossover."""
 
         return self._p_crossover
 
     @p_crossover.setter
-    def p_crossover(self, p_crossover):
+    def p_crossover(self, p_crossover: float) -> None:
         if not isinstance(p_crossover, (float, int)):
             raise e.TypeError("`p_crossover` should be a float or integer")
         if p_crossover < 0 or p_crossover > 1:
@@ -102,13 +107,13 @@ class GP(Optimizer):
         self._p_crossover = p_crossover
 
     @property
-    def prunning_ratio(self):
-        """float: Nodes' prunning ratio."""
+    def prunning_ratio(self) -> float:
+        """Nodes' prunning ratio."""
 
         return self._prunning_ratio
 
     @prunning_ratio.setter
-    def prunning_ratio(self, prunning_ratio):
+    def prunning_ratio(self, prunning_ratio: float) -> None:
         if not isinstance(prunning_ratio, (float, int)):
             raise e.TypeError("`prunning_ratio` should be a float or integer")
         if prunning_ratio < 0 or prunning_ratio > 1:
@@ -116,14 +121,14 @@ class GP(Optimizer):
 
         self._prunning_ratio = prunning_ratio
 
-    def _prune_nodes(self, n_nodes):
+    def _prune_nodes(self, n_nodes: int) -> int:
         """Prunes the amount of possible nodes used for mutation and crossover.
 
         Args:
-            n_nodes (int): Number of current nodes.
+            n_nodes: Number of current nodes.
 
         Returns:
-            Amount of prunned nodes.
+            (int): Amount of prunned nodes.
 
         """
 
@@ -136,11 +141,11 @@ class GP(Optimizer):
 
         return prunned_nodes
 
-    def _reproduction(self, space):
+    def _reproduction(self, space: TreeSpace) -> None:
         """Reproducts a number of individuals pre-selected through a tournament procedure (p. 99).
 
         Args:
-            space (TreeSpace): A TreeSpace object.
+            space: A TreeSpace object.
 
         """
 
@@ -167,11 +172,11 @@ class GP(Optimizer):
             # Replaces the worst individual fitness with a minimum value
             fitness[worst] = 0
 
-    def _mutation(self, space):
+    def _mutation(self, space: TreeSpace) -> None:
         """Mutates a number of individuals pre-selected through a tournament procedure.
 
         Args:
-            space (TreeSpace): A TreeSpace object.
+            space: A TreeSpace object.
 
         """
 
@@ -202,16 +207,16 @@ class GP(Optimizer):
                 # Re-create it with a random tree
                 space.trees[s] = space.grow(space.min_depth, space.max_depth)
 
-    def _mutate(self, space, tree, max_nodes):
-        """Actually performs the mutation on a single tree (Node) (p. 105).
+    def _mutate(self, space: TreeSpace, tree: Node, max_nodes: int) -> Node:
+        """Actually performs the mutation on a single tree (p. 105).
 
         Args:
-            space (TreeSpace): A TreeSpace object.
-            trees (Node): A Node instance to be mutated.
-            max_nodes (int): Maximum number of nodes to be searched.
+            space: A TreeSpace object.
+            trees: A Node instance to be mutated.
+            max_nodes: Maximum number of nodes to be searched.
 
         Returns:
-            A mutated tree (Node).
+            (Node): A mutated tree.
 
         """
 
@@ -256,13 +261,11 @@ class GP(Optimizer):
 
         return mutated_tree
 
-    def _crossover(self, space):
+    def _crossover(self, space: TreeSpace) -> None:
         """Crossover a number of individuals pre-selected through a tournament procedure (p. 101).
 
         Args:
-            space (TreeSpace): A TreeSpace object.
-            agents (list): Current iteration agents.
-            trees (list): Current iteration trees.
+            space: A TreeSpace object.
 
         """
 
@@ -297,17 +300,19 @@ class GP(Optimizer):
                     space.trees[s[0]], space.trees[s[1]], max_f_nodes, max_m_nodes
                 )
 
-    def _cross(self, father, mother, max_father, max_mother):
+    def _cross(
+        self, father: Node, mother: Node, max_father: int, max_mother: int
+    ) -> Tuple[Node, Node]:
         """Actually performs the crossover over a father and mother nodes.
 
         Args:
-            father (Node): A father's node to be crossed.
-            mother (Node): A mother's node to be crossed.
-            max_father (int): Maximum of nodes from father to be used.
-            max_mother (int): Maximum of nodes from mother to be used.
+            father: A father's node to be crossed.
+            mother: A mother's node to be crossed.
+            max_father: Maximum of nodes from father to be used.
+            max_mother: Maximum of nodes from mother to be used.
 
         Returns:
-            Two offsprings based on the crossover operator.
+            (Tuple[Node, Node]): Two offsprings based on the crossover operator.
 
         """
 
@@ -398,12 +403,12 @@ class GP(Optimizer):
 
         return father, mother
 
-    def evaluate(self, space, function):
+    def evaluate(self, space: Space, function: Function) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
-            space (TreeSpace): A TreeSpace object.
-            function (Function): A Function object that will be used as the objective function.
+            space: A TreeSpace object.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -426,11 +431,11 @@ class GP(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Genetic Programming over all trees and variables.
 
         Args:
-            space (TreeSpace): TreeSpace containing agents and update-related information.
+            space: TreeSpace containing agents and update-related information.
 
         """
 

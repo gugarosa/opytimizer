@@ -1,10 +1,15 @@
 """Black Hole.
 """
 
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import constant, logging
 
 logger = logging.get_logger(__name__)
@@ -22,11 +27,11 @@ class BH(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -40,16 +45,18 @@ class BH(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _update_position(self, agents, best_agent, function):
+    def _update_position(
+        self, agents: List[Agent], best_agent: Agent, function: Function
+    ) -> float:
         """It updates every star position and calculates their event's horizon cost (eq. 3).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
+            agents: List of agents.
+            best_agent: Global best agent.
+            function: A function object.
 
         Returns:
-            The cost of the event horizon.
+            (float): The cost of the event horizon.
 
         """
 
@@ -84,13 +91,15 @@ class BH(Optimizer):
 
         return cost
 
-    def _event_horizon(self, agents, best_agent, cost):
+    def _event_horizon(
+        self, agents: List[Agent], best_agent: Agent, cost: float
+    ) -> None:
         """It calculates the stars' crossing an event horizon (eq. 4).
 
         Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            cost (float): The event's horizon cost.
+            agents: List of agents.
+            best_agent: Global best agent.
+            cost: The event's horizon cost.
 
         """
 
@@ -107,12 +116,12 @@ class BH(Optimizer):
                 # Fills agent with new random positions
                 agent.fill_with_uniform()
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Black Hole over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -2,11 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
+
+import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -24,11 +29,11 @@ class FPA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -50,13 +55,13 @@ class FPA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def beta(self):
-        """float: Lévy flight control parameter."""
+    def beta(self) -> float:
+        """Lévy flight control parameter."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta <= 0 or beta > 2:
@@ -65,13 +70,13 @@ class FPA(Optimizer):
         self._beta = beta
 
     @property
-    def eta(self):
-        """float: Lévy flight scaling factor."""
+    def eta(self) -> float:
+        """Lévy flight scaling factor."""
 
         return self._eta
 
     @eta.setter
-    def eta(self, eta):
+    def eta(self, eta: float) -> None:
         if not isinstance(eta, (float, int)):
             raise e.TypeError("`eta` should be a float or integer")
         if eta < 0:
@@ -80,13 +85,13 @@ class FPA(Optimizer):
         self._eta = eta
 
     @property
-    def p(self):
-        """float: Probability of local pollination."""
+    def p(self) -> float:
+        """Probability of local pollination."""
 
         return self._p
 
     @p.setter
-    def p(self, p):
+    def p(self, p: float) -> None:
         if not isinstance(p, (float, int)):
             raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
@@ -94,15 +99,17 @@ class FPA(Optimizer):
 
         self._p = p
 
-    def _global_pollination(self, agent_position, best_position):
+    def _global_pollination(
+        self, agent_position: np.ndarray, best_position: np.ndarray
+    ) -> np.ndarray:
         """Updates the agent's position based on a global pollination (eq. 1).
 
         Args:
-            agent_position (np.array): Agent's current position.
-            best_position (np.array): Best agent's current position.
+            agent_position: Agent's current position.
+            best_position: Best agent's current position.
 
         Returns:
-            A new position.
+            (np.ndarray): A new position.
 
         """
 
@@ -117,17 +124,23 @@ class FPA(Optimizer):
 
         return new_position
 
-    def _local_pollination(self, agent_position, k_position, l_position, epsilon):
+    def _local_pollination(
+        self,
+        agent_position: np.ndarray,
+        k_position: np.ndarray,
+        l_position: np.ndarray,
+        epsilon: float,
+    ) -> np.ndarray:
         """Updates the agent's position based on a local pollination (eq. 3).
 
         Args:
-            agent_position (np.array): Agent's current position.
-            k_position (np.array): Agent's (index k) current position.
-            l_position (np.array): Agent's (index l) current position.
-            epsilon (float): An uniform random generated number.
+            agent_position: Agent's current position.
+            k_position: Agent's (index k) current position.
+            l_position: Agent's (index l) current position.
+            epsilon: An uniform random generated number.
 
         Returns:
-            A new position.
+            (np.ndarray): A new position.
 
         """
 
@@ -139,12 +152,12 @@ class FPA(Optimizer):
 
         return new_position
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Flower Pollination Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

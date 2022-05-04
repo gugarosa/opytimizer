@@ -1,10 +1,13 @@
 """Arithmetic Optimization Algorithm.
 """
 
+from typing import Any, Dict, Optional
+
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -22,11 +25,11 @@ class AOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -53,13 +56,13 @@ class AOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def a_min(self):
-        """float: Minimum accelerated function."""
+    def a_min(self) -> float:
+        """Minimum accelerated function."""
 
         return self._a_min
 
     @a_min.setter
-    def a_min(self, a_min):
+    def a_min(self, a_min: float) -> None:
         if not isinstance(a_min, (float, int)):
             raise e.TypeError("`a_min` should be a float or integer")
         if a_min < 0:
@@ -68,13 +71,13 @@ class AOA(Optimizer):
         self._a_min = a_min
 
     @property
-    def a_max(self):
-        """float: Maximum accelerated function."""
+    def a_max(self) -> float:
+        """Maximum accelerated function."""
 
         return self._a_max
 
     @a_max.setter
-    def a_max(self, a_max):
+    def a_max(self, a_max: float) -> None:
         if not isinstance(a_max, (float, int)):
             raise e.TypeError("`a_max` should be a float or integer")
         if a_max < 0:
@@ -85,13 +88,13 @@ class AOA(Optimizer):
         self._a_max = a_max
 
     @property
-    def alpha(self):
-        """float: Sensitive parameter."""
+    def alpha(self) -> float:
+        """Sensitive parameter."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -100,13 +103,13 @@ class AOA(Optimizer):
         self._alpha = alpha
 
     @property
-    def mu(self):
-        """float: Control parameter."""
+    def mu(self) -> float:
+        """Control parameter."""
 
         return self._mu
 
     @mu.setter
-    def mu(self, mu):
+    def mu(self, mu: float) -> None:
         if not isinstance(mu, (float, int)):
             raise e.TypeError("`mu` should be a float or integer")
         if mu < 0:
@@ -114,13 +117,13 @@ class AOA(Optimizer):
 
         self._mu = mu
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Arithmetic Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

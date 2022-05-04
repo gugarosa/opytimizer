@@ -2,10 +2,14 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +27,11 @@ class FOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -57,13 +61,13 @@ class FOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def life_time(self):
-        """int: Maximum age of trees."""
+    def life_time(self) -> int:
+        """Maximum age of trees."""
 
         return self._life_time
 
     @life_time.setter
-    def life_time(self, life_time):
+    def life_time(self, life_time: int) -> None:
         if not isinstance(life_time, int):
             raise e.TypeError("`life_time` should be an integer")
         if life_time <= 0:
@@ -72,13 +76,13 @@ class FOA(Optimizer):
         self._life_time = life_time
 
     @property
-    def area_limit(self):
-        """int: Maximum number of trees in the florest."""
+    def area_limit(self) -> int:
+        """Maximum number of trees in the florest."""
 
         return self._area_limit
 
     @area_limit.setter
-    def area_limit(self, area_limit):
+    def area_limit(self, area_limit: int) -> None:
         if not isinstance(area_limit, int):
             raise e.TypeError("`area_limit` should be an integer")
         if area_limit <= 0:
@@ -87,13 +91,13 @@ class FOA(Optimizer):
         self._area_limit = area_limit
 
     @property
-    def LSC(self):
-        """int: Local Seeding Changes."""
+    def LSC(self) -> int:
+        """Local Seeding Changes."""
 
         return self._LSC
 
     @LSC.setter
-    def LSC(self, LSC):
+    def LSC(self, LSC: int) -> None:
         if not isinstance(LSC, int):
             raise e.TypeError("`LSC` should be an integer")
         if LSC <= 0:
@@ -102,13 +106,13 @@ class FOA(Optimizer):
         self._LSC = LSC
 
     @property
-    def GSC(self):
-        """int: Global Seeding Changes."""
+    def GSC(self) -> int:
+        """Global Seeding Changes."""
 
         return self._GSC
 
     @GSC.setter
-    def GSC(self, GSC):
+    def GSC(self, GSC: int) -> None:
         if not isinstance(GSC, int):
             raise e.TypeError("`GSC` should be an integer")
         if GSC <= 0:
@@ -117,13 +121,13 @@ class FOA(Optimizer):
         self._GSC = GSC
 
     @property
-    def transfer_rate(self):
-        """float: Global seeding percentage."""
+    def transfer_rate(self) -> float:
+        """Global seeding percentage."""
 
         return self._transfer_rate
 
     @transfer_rate.setter
-    def transfer_rate(self, transfer_rate):
+    def transfer_rate(self, transfer_rate: float) -> None:
         if not isinstance(transfer_rate, (float, int)):
             raise e.TypeError("`transfer_rate` should be a float or integer")
         if transfer_rate < 0 or transfer_rate > 1:
@@ -132,35 +136,35 @@ class FOA(Optimizer):
         self._transfer_rate = transfer_rate
 
     @property
-    def age(self):
-        """list: Trees ages."""
+    def age(self) -> List[int]:
+        """Trees ages."""
 
         return self._age
 
     @age.setter
-    def age(self, age):
+    def age(self, age: List[int]) -> None:
         if not isinstance(age, list):
             raise e.TypeError("`age` should be a list")
 
         self._age = age
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Lists of ages
         self.age = [0] * space.n_agents
 
-    def _local_seeding(self, space, function):
+    def _local_seeding(self, space: Space, function: Function) -> None:
         """Performs the local seeding on zero-aged trees.
 
         Args:
-            space (Space): A Space object containing meta-information.
-            function (Function): A Function object that will be used as the objective function.
+            space: A Space object containing meta-information.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -200,14 +204,14 @@ class FOA(Optimizer):
         # Adds the age of new trees as zero
         self.age += [0] * len(new_agents)
 
-    def _population_limiting(self, space):
+    def _population_limiting(self, space: Space) -> List[Agent]:
         """Limits the population by removing old trees.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         Returns:
-            A list of candidate trees that were removed from the forest.
+            (List[Agent]): A list of candidate trees that were removed from the forest.
 
         """
 
@@ -241,13 +245,15 @@ class FOA(Optimizer):
 
         return candidate
 
-    def _global_seeding(self, space, function, candidate):
+    def _global_seeding(
+        self, space: Space, function: Function, candidate: List[Agent]
+    ) -> None:
         """Performs the global seeding.
 
         Args:
-            space (Space): A Space object containing meta-information.
-            function (Function): A Function object that will be used as the objective function.
-            candidate (list): Candidate trees.
+            space: A Space object containing meta-information.
+            function: A Function object that will be used as the objective function.
+            candidate: Candidate trees.
 
         """
 
@@ -283,12 +289,12 @@ class FOA(Optimizer):
         # Adds the age of new trees as zero
         self.age += [0] * len(new_agents)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Forest Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

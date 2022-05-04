@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class QSA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -44,17 +48,19 @@ class QSA(Optimizer):
 
         logger.info("Class overrided.")
 
-    def _calculate_queue(self, n_agents, t_1, t_2, t_3):
+    def _calculate_queue(
+        self, n_agents: int, t_1: float, t_2: float, t_3: float
+    ) -> Tuple[int, int, int]:
         """Calculates the number of agents that belongs to each queue.
 
         Args:
-            n_agents (int): Number of agents.
-            t_1 (float): Fitness value of first agent in the population.
-            t_2 (float): Fitness value of second agent in the population.
-            t_3 (float): Fitness value of third agent in the population.
+            n_agents: Number of agents.
+            t_1: Fitness value of first agent in the population.
+            t_2: Fitness value of second agent in the population.
+            t_3: Fitness value of third agent in the population.
 
         Returns:
-            The number of agents in first, second and third queues.
+            (Tuple[int, int, int]): The number of agents in first, second and third queues.
 
         """
 
@@ -79,13 +85,15 @@ class QSA(Optimizer):
 
         return q_1, q_2, q_3
 
-    def _business_one(self, agents, function, beta):
+    def _business_one(
+        self, agents: List[Agent], function: Function, beta: float
+    ) -> None:
         """Performs the first business phase.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
-            beta (float): Range of fluctuation.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
+            beta: Range of fluctuation.
 
         """
 
@@ -203,12 +211,12 @@ class QSA(Optimizer):
                     # Defines the case as one
                     case = 1
 
-    def _business_two(self, agents, function):
+    def _business_two(self, agents: List[Agent], function: Function) -> None:
         """Performs the second business phase.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -290,12 +298,12 @@ class QSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _business_three(self, agents, function):
+    def _business_three(self, agents: List[Agent], function: Function) -> None:
         """Performs the third business phase.
 
         Args:
-            agents (list): List of agents.
-            function (Function): A Function object that will be used as the objective function.
+            agents: List of agents.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -337,14 +345,16 @@ class QSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Queue Search Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

@@ -2,12 +2,14 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as rnd
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -25,11 +27,11 @@ class MFO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -47,13 +49,13 @@ class MFO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def b(self):
-        """float: Spiral constant."""
+    def b(self) -> float:
+        """Spiral constant."""
 
         return self._b
 
     @b.setter
-    def b(self, b):
+    def b(self, b: float) -> None:
         if not isinstance(b, (float, int)):
             raise e.TypeError("`b` should be a float or integer")
         if b < 0:
@@ -61,13 +63,13 @@ class MFO(Optimizer):
 
         self._b = b
 
-    def update(self, space, iteration, n_iterations):
+    def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Moth-Flame Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

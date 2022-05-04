@@ -2,12 +2,16 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class MRFO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -48,13 +52,13 @@ class MRFO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def S(self):
-        """float: Somersault foraging."""
+    def S(self) -> float:
+        """Somersault foraging."""
 
         return self._S
 
     @S.setter
-    def S(self, S):
+    def S(self, S: float) -> None:
         if not isinstance(S, (float, int)):
             raise e.TypeError("`S` should be a float or integer")
         if S < 0:
@@ -62,18 +66,25 @@ class MRFO(Optimizer):
 
         self._S = S
 
-    def _cyclone_foraging(self, agents, best_position, i, iteration, n_iterations):
+    def _cyclone_foraging(
+        self,
+        agents: List[Agent],
+        best_position: np.ndarray,
+        i: int,
+        iteration: int,
+        n_iterations: int,
+    ) -> np.ndarray:
         """Performs the cyclone foraging procedure (eq. 3-7).
 
         Args:
-            agents (list): List of agents.
-            best_position (np.array): Global best position.
-            i (int): Index of current manta ray.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            agents: List of agents.
+            best_position: Global best position.
+            i: Index of current manta ray.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         Returns:
-            A new cyclone foraging.
+            (np.ndarray): A new cyclone foraging.
 
         """
 
@@ -137,16 +148,18 @@ class MRFO(Optimizer):
 
         return cyclone_foraging
 
-    def _chain_foraging(self, agents, best_position, i):
+    def _chain_foraging(
+        self, agents: List[Agent], best_position: np.ndarray, i: int
+    ) -> np.ndarray:
         """Performs the chain foraging procedure (eq. 1-2).
 
         Args:
-            agents (list): List of agents.
-            best_position (np.array): Global best position.
-            i (int): Index of current manta ray.
+            agents: List of agents.
+            best_position: Global best position.
+            i: Index of current manta ray.
 
         Returns:
-            A new chain foraging.
+            (np.ndarray): A new chain foraging.
 
         """
 
@@ -177,15 +190,17 @@ class MRFO(Optimizer):
 
         return chain_foraging
 
-    def _somersault_foraging(self, position, best_position):
+    def _somersault_foraging(
+        self, position: np.ndarray, best_position: np.ndarray
+    ) -> np.ndarray:
         """Performs the somersault foraging procedure (eq. 8).
 
         Args:
-            position (np.array): Agent's current position.
-            best_position (np.array): Global best position.
+            position: Agent's current position.
+            best_position: Global best position.
 
         Returns:
-            A new somersault foraging.
+            (np.ndarray): A new somersault foraging.
 
         """
 
@@ -198,14 +213,16 @@ class MRFO(Optimizer):
 
         return somersault_foraging
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Manta Ray Foraging Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 

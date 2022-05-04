@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class HS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,13 +58,13 @@ class HS(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def HMCR(self):
-        """float: Harmony memory considering rate."""
+    def HMCR(self) -> float:
+        """Harmony memory considering rate."""
 
         return self._HMCR
 
     @HMCR.setter
-    def HMCR(self, HMCR):
+    def HMCR(self, HMCR: float) -> None:
         if not isinstance(HMCR, (float, int)):
             raise e.TypeError("`HMCR` should be a float or integer")
         if HMCR < 0 or HMCR > 1:
@@ -69,13 +73,13 @@ class HS(Optimizer):
         self._HMCR = HMCR
 
     @property
-    def PAR(self):
-        """float: Pitch adjusting rate."""
+    def PAR(self) -> float:
+        """Pitch adjusting rate."""
 
         return self._PAR
 
     @PAR.setter
-    def PAR(self, PAR):
+    def PAR(self, PAR: float) -> None:
         if not isinstance(PAR, (float, int)):
             raise e.TypeError("`PAR` should be a float or integer")
         if PAR < 0 or PAR > 1:
@@ -84,13 +88,13 @@ class HS(Optimizer):
         self._PAR = PAR
 
     @property
-    def bw(self):
-        """float: Bandwidth parameter."""
+    def bw(self) -> float:
+        """Bandwidth parameter."""
 
         return self._bw
 
     @bw.setter
-    def bw(self, bw):
+    def bw(self, bw: float) -> None:
         if not isinstance(bw, (float, int)):
             raise e.TypeError("`bw` should be a float or integer")
         if bw < 0:
@@ -98,14 +102,14 @@ class HS(Optimizer):
 
         self._bw = bw
 
-    def _generate_new_harmony(self, agents):
+    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
         """It generates a new harmony.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            A new agent (harmony) based on music generation process.
+            (Agent): A new agent (harmony) based on music generation process.
 
         """
 
@@ -145,12 +149,12 @@ class HS(Optimizer):
 
         return a
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Harmony Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -186,11 +190,11 @@ class IHS(HS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -214,13 +218,13 @@ class IHS(HS):
         logger.info("Class overrided.")
 
     @property
-    def PAR_min(self):
-        """float: Minimum pitch adjusting rate."""
+    def PAR_min(self) -> float:
+        """Minimum pitch adjusting rate."""
 
         return self._PAR_min
 
     @PAR_min.setter
-    def PAR_min(self, PAR_min):
+    def PAR_min(self, PAR_min: float) -> None:
         if not isinstance(PAR_min, (float, int)):
             raise e.TypeError("`PAR_min` should be a float or integer")
         if PAR_min < 0 or PAR_min > 1:
@@ -229,13 +233,13 @@ class IHS(HS):
         self._PAR_min = PAR_min
 
     @property
-    def PAR_max(self):
-        """float: Maximum pitch adjusting rate."""
+    def PAR_max(self) -> float:
+        """Maximum pitch adjusting rate."""
 
         return self._PAR_max
 
     @PAR_max.setter
-    def PAR_max(self, PAR_max):
+    def PAR_max(self, PAR_max: float) -> None:
         if not isinstance(PAR_max, (float, int)):
             raise e.TypeError("`PAR_max` should be a float or integer")
         if PAR_max < 0 or PAR_max > 1:
@@ -246,13 +250,13 @@ class IHS(HS):
         self._PAR_max = PAR_max
 
     @property
-    def bw_min(self):
-        """float: Minimum bandwidth parameter."""
+    def bw_min(self) -> float:
+        """Minimum bandwidth parameter."""
 
         return self._bw_min
 
     @bw_min.setter
-    def bw_min(self, bw_min):
+    def bw_min(self, bw_min: float) -> None:
         if not isinstance(bw_min, (float, int)):
             raise e.TypeError("`bw_min` should be a float or integer")
         if bw_min < 0:
@@ -261,13 +265,13 @@ class IHS(HS):
         self._bw_min = bw_min
 
     @property
-    def bw_max(self):
-        """float: Maximum bandwidth parameter."""
+    def bw_max(self) -> float:
+        """Maximum bandwidth parameter."""
 
         return self._bw_max
 
     @bw_max.setter
-    def bw_max(self, bw_max):
+    def bw_max(self, bw_max: float) -> None:
         if not isinstance(bw_max, (float, int)):
             raise e.TypeError("`bw_max` should be a float or integer")
         if bw_max < 0:
@@ -277,14 +281,16 @@ class IHS(HS):
 
         self._bw_max = bw_max
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Improved Harmony Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -329,11 +335,11 @@ class GHS(IHS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -344,14 +350,14 @@ class GHS(IHS):
 
         logger.info("Class overrided.")
 
-    def _generate_new_harmony(self, agents):
+    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
         """It generates a new harmony.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            A new agent (harmony) based on music generation process.
+            (Agent): A new agent (harmony) based on music generation process.
 
         """
 
@@ -405,11 +411,11 @@ class SGHS(HS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -436,39 +442,39 @@ class SGHS(HS):
         logger.info("Class overrided.")
 
     @property
-    def HMCR(self):
-        """float: Harmony memory considering rate."""
+    def HMCR(self) -> float:
+        """Harmony memory considering rate."""
 
         return self._HMCR
 
     @HMCR.setter
-    def HMCR(self, HMCR):
+    def HMCR(self, HMCR: float) -> None:
         if not isinstance(HMCR, (float, int)):
             raise e.TypeError("`HMCR` should be a float or integer")
 
         self._HMCR = HMCR
 
     @property
-    def PAR(self):
-        """float: Pitch adjusting rate."""
+    def PAR(self) -> float:
+        """Pitch adjusting rate."""
 
         return self._PAR
 
     @PAR.setter
-    def PAR(self, PAR):
+    def PAR(self, PAR: float) -> None:
         if not isinstance(PAR, (float, int)):
             raise e.TypeError("`PAR` should be a float or integer")
 
         self._PAR = PAR
 
     @property
-    def LP(self):
-        """int: Learning period."""
+    def LP(self) -> int:
+        """Learning period."""
 
         return self._LP
 
     @LP.setter
-    def LP(self, LP):
+    def LP(self, LP: int) -> None:
         if not isinstance(LP, int):
             raise e.TypeError("`LP` should be a integer")
         if LP <= 0:
@@ -477,13 +483,13 @@ class SGHS(HS):
         self._LP = LP
 
     @property
-    def HMCRm(self):
-        """float: Mean harmony memory considering rate."""
+    def HMCRm(self) -> float:
+        """Mean harmony memory considering rate."""
 
         return self._HMCRm
 
     @HMCRm.setter
-    def HMCRm(self, HMCRm):
+    def HMCRm(self, HMCRm: float) -> None:
         if not isinstance(HMCRm, (float, int)):
             raise e.TypeError("`HMCRm` should be a float or integer")
         if HMCRm < 0 or HMCRm > 1:
@@ -492,13 +498,13 @@ class SGHS(HS):
         self._HMCRm = HMCRm
 
     @property
-    def PARm(self):
-        """float: Mean pitch adjusting rate."""
+    def PARm(self) -> float:
+        """Mean pitch adjusting rate."""
 
         return self._PARm
 
     @PARm.setter
-    def PARm(self, PARm):
+    def PARm(self, PARm: float) -> None:
         if not isinstance(PARm, (float, int)):
             raise e.TypeError("`PARm` should be a float or integer")
         if PARm < 0 or PARm > 1:
@@ -507,13 +513,13 @@ class SGHS(HS):
         self._PARm = PARm
 
     @property
-    def bw_min(self):
-        """float: Minimum bandwidth parameter."""
+    def bw_min(self) -> float:
+        """Minimum bandwidth parameter."""
 
         return self._bw_min
 
     @bw_min.setter
-    def bw_min(self, bw_min):
+    def bw_min(self, bw_min: float) -> None:
         if not isinstance(bw_min, (float, int)):
             raise e.TypeError("`bw_min` should be a float or integer")
         if bw_min < 0:
@@ -522,13 +528,13 @@ class SGHS(HS):
         self._bw_min = bw_min
 
     @property
-    def bw_max(self):
-        """float: Maximum bandwidth parameter."""
+    def bw_max(self) -> float:
+        """Maximum bandwidth parameter."""
 
         return self._bw_max
 
     @bw_max.setter
-    def bw_max(self, bw_max):
+    def bw_max(self, bw_max: float) -> None:
         if not isinstance(bw_max, (float, int)):
             raise e.TypeError("`bw_max` should be a float or integer")
         if bw_max < 0:
@@ -539,13 +545,13 @@ class SGHS(HS):
         self._bw_max = bw_max
 
     @property
-    def lp(self):
-        """int: Current learning period."""
+    def lp(self) -> int:
+        """Current learning period."""
 
         return self._lp
 
     @lp.setter
-    def lp(self, lp):
+    def lp(self, lp: int) -> None:
         if not isinstance(lp, int):
             raise e.TypeError("`lp` should be a integer")
         if lp <= 0:
@@ -554,36 +560,36 @@ class SGHS(HS):
         self._lp = lp
 
     @property
-    def HMCR_history(self):
-        """list: Historical harmony memory considering rates."""
+    def HMCR_history(self) -> List[float]:
+        """Historical harmony memory considering rates."""
 
         return self._HMCR_history
 
     @HMCR_history.setter
-    def HMCR_history(self, HMCR_history):
+    def HMCR_history(self, HMCR_history: List[float]) -> None:
         if not isinstance(HMCR_history, list):
             raise e.TypeError("`HMCR_history` should be a list")
 
         self._HMCR_history = HMCR_history
 
     @property
-    def PAR_history(self):
-        """list: Historical pitch adjusting rates."""
+    def PAR_history(self) -> List[float]:
+        """Historical pitch adjusting rates."""
 
         return self._PAR_history
 
     @PAR_history.setter
-    def PAR_history(self, PAR_history):
+    def PAR_history(self, PAR_history: List[float]) -> None:
         if not isinstance(PAR_history, list):
             raise e.TypeError("`PAR_history` should be a list")
 
         self._PAR_history = PAR_history
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -594,14 +600,14 @@ class SGHS(HS):
         self.HMCR_history = []
         self.PAR_history = []
 
-    def _generate_new_harmony(self, agents):
+    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
         """It generates a new harmony.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         Returns:
-            A new agent (harmony) based on music generation process.
+            (Agent): A new agent (harmony) based on music generation process.
 
         """
 
@@ -638,14 +644,16 @@ class SGHS(HS):
 
         return a
 
-    def update(self, space, function, iteration, n_iterations):
+    def update(
+        self, space: Space, function: Function, iteration: int, n_iterations: int
+    ) -> None:
         """Wraps Self-Adaptive Global-Best Harmony Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
-            iteration (int): Current iteration.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
+            iteration: Current iteration.
+            n_iterations: Maximum number of iterations.
 
         """
 
@@ -710,11 +718,11 @@ class NGHS(HS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -729,13 +737,13 @@ class NGHS(HS):
         logger.info("Class overrided.")
 
     @property
-    def pm(self):
-        """float: Mutation probability."""
+    def pm(self) -> float:
+        """Mutation probability."""
 
         return self._pm
 
     @pm.setter
-    def pm(self, pm):
+    def pm(self, pm: float) -> None:
         if not isinstance(pm, (float, int)):
             raise e.TypeError("`pm` should be a float or integer")
         if pm < 0 or pm > 1:
@@ -743,15 +751,15 @@ class NGHS(HS):
 
         self._pm = pm
 
-    def _generate_new_harmony(self, best, worst):
+    def _generate_new_harmony(self, best: Agent, worst: Agent) -> Agent:
         """It generates a new harmony.
 
         Args:
-            best (Agent): Best agent.
-            worst (Agent): Worst agent.
+            best: Best agent.
+            worst: Worst agent.
 
         Returns:
-            A new agent (harmony) based on music generation process.
+            (Agent): A new agent (harmony) based on music generation process.
 
         """
 
@@ -784,12 +792,12 @@ class NGHS(HS):
 
         return a
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Novel Global Harmony Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -823,11 +831,11 @@ class GOGHS(NGHS):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -838,15 +846,17 @@ class GOGHS(NGHS):
 
         logger.info("Class overrided.")
 
-    def _generate_opposition_harmony(self, new_agent, agents):
+    def _generate_opposition_harmony(
+        self, new_agent: Agent, agents: List[Agent]
+    ) -> Agent:
         """It generates a new opposition-based harmony.
 
         Args:
-            new_agent (Agent): Newly created agent.
-            agents (list): List of agents.
+            new_agent: Newly created agent.
+            agents: List of agents.
 
         Returns:
-            A new agent (harmony) based on opposition generation process.
+            (Agent): A new agent (harmony) based on opposition generation process.
 
         """
 
@@ -882,12 +892,12 @@ class GOGHS(NGHS):
 
         return a
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Generalized Opposition Global-Best Harmony Search over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

@@ -1,11 +1,14 @@
 """Butterfly Optimization Algorithm.
 """
 
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -23,11 +26,11 @@ class BOA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -51,13 +54,13 @@ class BOA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def c(self):
-        """float: Sensor modality."""
+    def c(self) -> float:
+        """Sensor modality."""
 
         return self._c
 
     @c.setter
-    def c(self, c):
+    def c(self, c: float) -> None:
         if not isinstance(c, (float, int)):
             raise e.TypeError("`c` should be a float or integer")
         if c < 0:
@@ -66,13 +69,13 @@ class BOA(Optimizer):
         self._c = c
 
     @property
-    def a(self):
-        """float: Power exponent."""
+    def a(self) -> float:
+        """Power exponent."""
 
         return self._a
 
     @a.setter
-    def a(self, a):
+    def a(self, a: float) -> None:
         if not isinstance(a, (float, int)):
             raise e.TypeError("`a` should be a float or integer")
         if a < 0:
@@ -81,13 +84,13 @@ class BOA(Optimizer):
         self._a = a
 
     @property
-    def p(self):
-        """float: Switch probability."""
+    def p(self) -> float:
+        """Switch probability."""
 
         return self._p
 
     @p.setter
-    def p(self, p):
+    def p(self, p: float) -> None:
         if not isinstance(p, (float, int)):
             raise e.TypeError("`p` should be a float or integer")
         if p < 0 or p > 1:
@@ -96,40 +99,46 @@ class BOA(Optimizer):
         self._p = p
 
     @property
-    def fragrance(self):
-        """np.array: Array of fragrances."""
+    def fragrance(self) -> np.ndarray:
+        """Array of fragrances."""
 
         return self._fragrance
 
     @fragrance.setter
-    def fragrance(self, fragrance):
+    def fragrance(self, fragrance: np.ndarray) -> None:
         if not isinstance(fragrance, np.ndarray):
             raise e.TypeError("`fragrance` should be a numpy array")
 
         self._fragrance = fragrance
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Arrays of fragances
         self.fragrance = np.zeros(space.n_agents)
 
-    def _best_movement(self, agent_position, best_position, fragrance, random):
+    def _best_movement(
+        self,
+        agent_position: np.ndarray,
+        best_position: np.ndarray,
+        fragrance: np.ndarray,
+        random: float,
+    ) -> np.ndarray:
         """Updates the agent's position towards the best butterfly (eq. 2).
 
         Args:
-            agent_position (np.array): Agent's current position.
-            best_position (np.array): Best agent's current position.
-            fragrance (np.array): Agent's current fragrance value.
-            random (float): A random number between 0 and 1.
+            agent_positio: Agent's current position.
+            best_positio: Best agent's current position.
+            fragrance: Agent's current fragrance value.
+            random: A random number between 0 and 1.
 
         Returns:
-            A new position based on best movement.
+            (np.ndarray): A new position based on best movement.
 
         """
 
@@ -141,19 +150,24 @@ class BOA(Optimizer):
         return new_position
 
     def _local_movement(
-        self, agent_position, j_position, k_position, fragrance, random
-    ):
+        self,
+        agent_position: np.ndarray,
+        j_position: np.ndarray,
+        k_position: np.ndarray,
+        fragrance: np.ndarray,
+        random: float,
+    ) -> np.ndarray:
         """Updates the agent's position using a local movement (eq. 3).
 
         Args:
-            agent_position (np.array): Agent's current position.
-            j_position (np.array): Agent `j` current position.
-            k_position (np.array): Agent `k` current position.
-            fragrance (np.array): Agent's current fragrance value.
-            random (float): A random number between 0 and 1.
+            agent_positio: Agent's current position.
+            j_positio: Agent `j` current position.
+            k_positio: Agent `k` current position.
+            fragrance: Agent's current fragrance value.
+            random: A random number between 0 and 1.
 
         Returns:
-            A new position based on local movement.
+            (np.ndarray): A new position based on local movement.
 
         """
 
@@ -164,11 +178,11 @@ class BOA(Optimizer):
 
         return new_position
 
-    def update(self, space):
+    def update(self, space: Space) -> None:
         """Wraps Butterfly Optimization Algorithm over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
+            space: Space containing agents and update-related information.
 
         """
 

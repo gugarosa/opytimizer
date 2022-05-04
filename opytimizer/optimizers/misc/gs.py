@@ -1,6 +1,8 @@
 """Grid-Search.
 """
 
+from typing import Any, Dict, Optional
+
 from opytimizer.core import Optimizer
 from opytimizer.utils import logging
 
@@ -19,11 +21,11 @@ class GS(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 

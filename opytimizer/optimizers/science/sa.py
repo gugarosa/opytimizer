@@ -2,12 +2,15 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +29,11 @@ class SA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -51,13 +54,13 @@ class SA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def T(self):
-        """float: System's temperature."""
+    def T(self) -> float:
+        """System's temperature."""
 
         return self._T
 
     @T.setter
-    def T(self, T):
+    def T(self, T: float) -> None:
         if not isinstance(T, (float, int)):
             raise e.TypeError("`T` should be a float or integer")
         if T < 0:
@@ -66,13 +69,13 @@ class SA(Optimizer):
         self._T = T
 
     @property
-    def beta(self):
-        """float: Temperature decay."""
+    def beta(self) -> float:
+        """Temperature decay."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
@@ -80,12 +83,12 @@ class SA(Optimizer):
 
         self._beta = beta
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Simulated Annealing over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A function object.
+            space: Space containing agents and update-related information.
+            function: A function object.
 
         """
 

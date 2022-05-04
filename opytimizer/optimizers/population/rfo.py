@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class RFO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,13 +58,13 @@ class RFO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def phi(self):
-        """float: Observation angle."""
+    def phi(self) -> float:
+        """Observation angle."""
 
         return self._phi
 
     @phi.setter
-    def phi(self, phi):
+    def phi(self, phi: float) -> None:
         if not isinstance(phi, (float, int)):
             raise e.TypeError("`phi` should be a float or integer")
         if phi < 0 or phi > 2 * np.pi:
@@ -69,13 +73,13 @@ class RFO(Optimizer):
         self._phi = phi
 
     @property
-    def theta(self):
-        """float: Weather condition."""
+    def theta(self) -> float:
+        """Weather condition."""
 
         return self._theta
 
     @theta.setter
-    def theta(self, theta):
+    def theta(self, theta: float) -> None:
         if not isinstance(theta, (float, int)):
             raise e.TypeError("`theta` should be a float or integer")
         if theta < 0 or theta > 1:
@@ -84,13 +88,13 @@ class RFO(Optimizer):
         self._theta = theta
 
     @property
-    def p_replacement(self):
-        """float: Percentual of foxes replacement."""
+    def p_replacement(self) -> float:
+        """Percentual of foxes replacement."""
 
         return self._p_replacement
 
     @p_replacement.setter
-    def p_replacement(self, p_replacement):
+    def p_replacement(self, p_replacement: float) -> None:
         if not isinstance(p_replacement, (float, int)):
             raise e.TypeError("`p_replacement` should be a float or integer")
         if p_replacement < 0 or p_replacement > 1:
@@ -99,13 +103,13 @@ class RFO(Optimizer):
         self._p_replacement = p_replacement
 
     @property
-    def n_replacement(self):
-        """int: Number of foxes to be replaced."""
+    def n_replacement(self) -> int:
+        """Number of foxes to be replaced."""
 
         return self._n_replacement
 
     @n_replacement.setter
-    def n_replacement(self, n_replacement):
+    def n_replacement(self, n_replacement: int) -> None:
         if not isinstance(n_replacement, int):
             raise e.TypeError("`n_replacement` should be an integer")
         if n_replacement < 0:
@@ -113,24 +117,24 @@ class RFO(Optimizer):
 
         self._n_replacement = n_replacement
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
         # Calculates the number of foxes to be replaced
         self.n_replacement = int(self.p_replacement * space.n_agents)
 
-    def _rellocation(self, agent, best_agent, function):
+    def _rellocation(self, agent: Agent, best_agent: Agent, function: Function) -> None:
         """Performs the fox rellocation procedure.
 
         Args:
-            agent (Agent): Current agent.
-            best_agent (Agent): Best agent.
-            function (Function): A Function object that will be used as the objective function.
+            agent: Current agent.
+            best_agent: Best agent.
+            function: A Function object that will be used as the objective function.
 
         """
 
@@ -158,13 +162,13 @@ class RFO(Optimizer):
             agent.position = copy.deepcopy(temp.position)
             agent.fit = copy.deepcopy(temp.fit)
 
-    def _noticing(self, agent, function, alpha):
+    def _noticing(self, agent: Agent, function: Function, alpha: float) -> None:
         """Performs the fox noticing procedure.
 
         Args:
-            agent (Agent): Current agent.
-            function (Function): A Function object that will be used as the objective function.
-            alpha (float): Scaling parameter.
+            agent: Current agent.
+            function: A Function object that will be used as the objective function.
+            alpha: Scaling parameter.
 
         """
 
@@ -205,12 +209,12 @@ class RFO(Optimizer):
             # Re-evaluates its fitness
             agent.fit = function(agent.position)
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Red Fox Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A Function object that will be used as the objective function.
+            space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
 
         """
 

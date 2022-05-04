@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -9,6 +10,9 @@ import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.agent import Agent
+from opytimizer.core.function import Function
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +30,11 @@ class WWO(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -57,13 +61,13 @@ class WWO(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def h_max(self):
-        """int: Maximum wave height."""
+    def h_max(self) -> int:
+        """Maximum wave height."""
 
         return self._h_max
 
     @h_max.setter
-    def h_max(self, h_max):
+    def h_max(self, h_max: int) -> None:
         if not isinstance(h_max, int):
             raise e.TypeError("`h_max` should be an integer")
         if h_max <= 0:
@@ -72,13 +76,13 @@ class WWO(Optimizer):
         self._h_max = h_max
 
     @property
-    def alpha(self):
-        """float: Wave length reduction coefficient."""
+    def alpha(self) -> float:
+        """Wave length reduction coefficient."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -87,13 +91,13 @@ class WWO(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Breaking coefficient."""
+    def beta(self) -> float:
+        """Breaking coefficient."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
@@ -102,13 +106,13 @@ class WWO(Optimizer):
         self._beta = beta
 
     @property
-    def k_max(self):
-        """int: Maximum number of breakings."""
+    def k_max(self) -> int:
+        """Maximum number of breakings."""
 
         return self._k_max
 
     @k_max.setter
-    def k_max(self, k_max):
+    def k_max(self, k_max: int) -> None:
         if not isinstance(k_max, int):
             raise e.TypeError("`k_max` should be an integer")
         if k_max <= 0:
@@ -117,36 +121,36 @@ class WWO(Optimizer):
         self._k_max = k_max
 
     @property
-    def height(self):
-        """np.array: Array of heights."""
+    def height(self) -> np.ndarray:
+        """Array of heights."""
 
         return self._height
 
     @height.setter
-    def height(self, height):
+    def height(self, height: np.ndarray) -> None:
         if not isinstance(height, np.ndarray):
             raise e.TypeError("`height` should be a numpy array")
 
         self._height = height
 
     @property
-    def length(self):
-        """np.array: Array of lengths."""
+    def length(self) -> np.ndarray:
+        """Array of lengths."""
 
         return self._length
 
     @length.setter
-    def length(self, length):
+    def length(self, length: np.ndarray) -> None:
         if not isinstance(length, np.ndarray):
             raise e.TypeError("`length` should be a numpy array")
 
         self._length = length
 
-    def compile(self, space):
+    def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
         Args:
-            space (Space): A Space object containing meta-information.
+            space: A Space object containing meta-information.
 
         """
 
@@ -156,15 +160,16 @@ class WWO(Optimizer):
         )
         self.length = r.generate_uniform_random_number(0.5, 0.5, space.n_agents)
 
-    def _propagate_wave(self, agent, function, index):
+    def _propagate_wave(self, agent: Agent, function: Function, index: int) -> Agent:
         """Propagates wave into a new position (eq. 6).
 
         Args:
-            function (Function): A function object.
-            index (int): Index of wave length.
+            agent: Current wave.
+            function: A function object.
+            index: Index of wave length.
 
         Returns:
-            Propagated wave.
+            (Agent): Propagated wave.
 
         """
 
@@ -187,17 +192,19 @@ class WWO(Optimizer):
 
         return wave
 
-    def _refract_wave(self, agent, best_agent, function, index):
+    def _refract_wave(
+        self, agent: Agent, best_agent: Agent, function: Function, index: int
+    ) -> Tuple[float, float]:
         """Refract wave into a new position (eq. 8-9).
 
         Args:
-            agent (Agent): Agent to be refracted.
-            best_agent (Agent): Global best agent.
-            function (Function): A function object.
-            index (int): Index of wave length.
+            agent: Agent to be refracted.
+            best_agent: Global best agent.
+            function: A function object.
+            index: Index of wave length.
 
         Returns:
-            New height and length values.
+            (Tuple[float, float]): New height and length values.
 
         """
 
@@ -229,16 +236,16 @@ class WWO(Optimizer):
 
         return new_height, new_length
 
-    def _break_wave(self, wave, function, j):
+    def _break_wave(self, wave: Agent, function: Function, j: int) -> Agent:
         """Breaks current wave into a new one (eq. 10).
 
         Args:
-            wave (Agent): Wave to be broken.
-            function (Function): A function object.
-            j (int): Index of dimension to be broken.
+            wave: Wave to be broken.
+            function: A function object.
+            j: Index of dimension to be broken.
 
         Returns:
-            Broken wave.
+            (Agent): Broken wave.
 
         """
 
@@ -259,11 +266,11 @@ class WWO(Optimizer):
 
         return broken_wave
 
-    def _update_wave_length(self, agents):
+    def _update_wave_length(self, agents: List[Agent]) -> None:
         """Updates the wave length of current population.
 
         Args:
-            agents (list): List of agents.
+            agents: List of agents.
 
         """
 
@@ -278,12 +285,12 @@ class WWO(Optimizer):
                 / (agents[0].fit - agents[-1].fit + c.EPSILON)
             )
 
-    def update(self, space, function):
+    def update(self, space: Space, function: Function) -> None:
         """Wraps Water Wave Optimization over all agents and variables.
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            function (Function): A function object.
+            space: Space containing agents and update-related information.
+            function: A function object.
 
         """
 

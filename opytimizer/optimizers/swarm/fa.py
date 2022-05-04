@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -9,6 +10,7 @@ import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
@@ -26,11 +28,11 @@ class FA(Optimizer):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
         """Initialization method.
 
         Args:
-            params (dict): Contains key-value parameters to the meta-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
 
         """
 
@@ -54,13 +56,13 @@ class FA(Optimizer):
         logger.info("Class overrided.")
 
     @property
-    def alpha(self):
-        """float: Randomization parameter."""
+    def alpha(self) -> float:
+        """Randomization parameter."""
 
         return self._alpha
 
     @alpha.setter
-    def alpha(self, alpha):
+    def alpha(self, alpha: float) -> None:
         if not isinstance(alpha, (float, int)):
             raise e.TypeError("`alpha` should be a float or integer")
         if alpha < 0:
@@ -69,13 +71,13 @@ class FA(Optimizer):
         self._alpha = alpha
 
     @property
-    def beta(self):
-        """float: Attractiveness parameter."""
+    def beta(self) -> float:
+        """Attractiveness parameter."""
 
         return self._beta
 
     @beta.setter
-    def beta(self, beta):
+    def beta(self, beta: float) -> None:
         if not isinstance(beta, (float, int)):
             raise e.TypeError("`beta` should be a float or integer")
         if beta < 0:
@@ -84,13 +86,13 @@ class FA(Optimizer):
         self._beta = beta
 
     @property
-    def gamma(self):
-        """float: Light absorption coefficient."""
+    def gamma(self) -> float:
+        """Light absorption coefficient."""
 
         return self._gamma
 
     @gamma.setter
-    def gamma(self, gamma):
+    def gamma(self, gamma: float) -> None:
         if not isinstance(gamma, (float, int)):
             raise e.TypeError("`gamma` should be a float or integer")
         if gamma < 0:
@@ -98,12 +100,12 @@ class FA(Optimizer):
 
         self._gamma = gamma
 
-    def update(self, space, n_iterations):
+    def update(self, space: Space, n_iterations: int) -> None:
         """Wraps Firefly Algorithm over all agents and variables (eq. 3-9).
 
         Args:
-            space (Space): Space containing agents and update-related information.
-            n_iterations (int): Maximum number of iterations.
+            space: Space containing agents and update-related information.
+            n_iterations: Maximum number of iterations.
 
         """
 
