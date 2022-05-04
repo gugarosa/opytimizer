@@ -1,8 +1,6 @@
 """Node.
 """
 
-from __future__ import annotations
-
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
@@ -19,9 +17,9 @@ class Node:
         name: Union[str, int],
         category: str,
         value: Optional[np.ndarray] = None,
-        left: Optional[Node] = None,
-        right: Optional[Node] = None,
-        parent: Optional[Node] = None,
+        left: Optional["Node"] = None,
+        right: Optional["Node"] = None,
+        parent: Optional["Node"] = None,
     ) -> None:
         """Initialization method.
 
@@ -108,39 +106,39 @@ class Node:
             self._value = value
 
     @property
-    def left(self) -> Node:
+    def left(self) -> "Node":
         """Pointer to the node's left child."""
 
         return self._left
 
     @left.setter
-    def left(self, left: Node) -> None:
+    def left(self, left: "Node") -> None:
         if left and not isinstance(left, Node):
             raise e.TypeError("`left` should be a Node")
 
         self._left = left
 
     @property
-    def right(self) -> Node:
+    def right(self) -> "Node":
         """Pointer to the node's right child."""
 
         return self._right
 
     @right.setter
-    def right(self, right: Node) -> None:
+    def right(self, right: "Node") -> None:
         if right and not isinstance(right, Node):
             raise e.TypeError("`right` should be a Node")
 
         self._right = right
 
     @property
-    def parent(self) -> Node:
+    def parent(self) -> "Node":
         """Pointer to the node's parent."""
 
         return self._parent
 
     @parent.setter
-    def parent(self, parent: Node) -> None:
+    def parent(self, parent: "Node") -> None:
         if parent and not isinstance(parent, Node):
             raise e.TypeError("`parent` should be a Node")
 
@@ -190,7 +188,7 @@ class Node:
         return _evaluate(self)
 
     @property
-    def post_order(self) -> List[Node]:
+    def post_order(self) -> List["Node"]:
         """Traverses the node in post-order."""
 
         # Creates lists for post-order and stacked nodes
@@ -241,7 +239,7 @@ class Node:
         return post_order
 
     @property
-    def pre_order(self) -> List[Node]:
+    def pre_order(self) -> List["Node"]:
         """Traverses the node in pre-order."""
 
         # Creates lists for pre-order and stacked nodes
@@ -267,7 +265,7 @@ class Node:
 
         return pre_order
 
-    def find_node(self, position: int) -> Node:
+    def find_node(self, position: int) -> "Node":
         """Finds a node at a given position.
 
         Args:
