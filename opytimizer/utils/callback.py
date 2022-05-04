@@ -1,13 +1,14 @@
 """Callbacks.
 """
 
-from typing import List, Optional, Union
+from typing import List, Optional, TypeVar, Union
 
 import numpy as np
 
 import opytimizer.utils.exception as e
 from opytimizer.core.space import Space
-from opytimizer.opytimizer import Opytimizer
+
+Opytimizer = TypeVar("Opytimizer")
 
 
 class Callback:
