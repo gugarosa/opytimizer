@@ -27,3 +27,8 @@ opt = Opytimizer(space, optimizer, function, save_agents=False)
 
 # Runs the optimization task
 opt.start(n_iterations=1000)
+
+# Prints out information about the best agent that has been found
+print(
+    f"Best Agent: {opt.space.best_agent.mapped_position} | Fitness: {opt.space.best_agent.fit}"
+)
