@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import List, Optional
 
 import numpy as np
 
@@ -17,13 +18,20 @@ class HyperComplexSpace(Space):
 
     """
 
-    def __init__(self, n_agents: int, n_variables: int, n_dimensions: int) -> None:
+    def __init__(
+        self,
+        n_agents: int,
+        n_variables: int,
+        n_dimensions: int,
+        mapping: Optional[List[str]] = None,
+    ) -> None:
         """Initialization method.
 
         Args:
             n_agents: Number of agents.
             n_variables: Number of decision variables.
             n_dimensions: Number of search space dimensions.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -34,7 +42,7 @@ class HyperComplexSpace(Space):
         upper_bound = np.ones(n_variables)
 
         super(HyperComplexSpace, self).__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build()

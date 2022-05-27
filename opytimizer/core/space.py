@@ -25,6 +25,7 @@ class Space:
         n_dimensions: Optional[int] = 1,
         lower_bound: Optional[Union[float, List, Tuple, np.ndarray]] = 0.0,
         upper_bound: Optional[Union[float, List, Tuple, np.ndarray]] = 1.0,
+        mapping: Optional[List[str]] = None,
     ) -> None:
         """Initialization method.
 
@@ -34,6 +35,7 @@ class Space:
             n_dimensions: Dimension of search space.
             lower_bound: Minimum possible values.
             upper_bound: Maximum possible values.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -51,6 +53,9 @@ class Space:
 
         # Upper bounds
         self.ub = np.asarray(upper_bound)
+
+        # Variables mapping
+        self.mapping = mapping
 
         # Agents
         self.agents = []
@@ -141,6 +146,23 @@ class Space:
         self._ub = ub
 
     @property
+    def mapping(self) -> List[str]:
+        """Variables mapping."""
+
+        return self._mapping
+
+    @mapping.setter
+    def mapping(self, mapping: List[str]) -> None:
+        if mapping is not None:
+            if not isinstance(mapping, list):
+                raise e.TypeError("`mapping` should be a list")
+            if len(mapping) != self.n_variables:
+                raise e.SizeError("`mapping` should be the same size as `n_variables`")
+            self._mapping = mapping
+        else:
+            self._mapping = [f"x{i}" for i in range(self.n_variables)]
+
+    @property
     def agents(self) -> List[Agent]:
         """list: Agents that belongs to the space."""
 
@@ -208,12 +230,14 @@ class Space:
 
         logger.debug(
             "Agents: %d | Size: (%d, %d) | "
-            "Lower Bound: %s | Upper Bound: %s | Built: %s.",
+            "Lower Bound: %s | Upper Bound: %s | "
+            "Mapping: %s | Built: %s.",
             self.n_agents,
             self.n_variables,
             self.n_dimensions,
             self.lb,
             self.ub,
+            self.mapping,
             self.built,
         )
 

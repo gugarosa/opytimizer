@@ -146,6 +146,30 @@ def test_space_ub_setter():
     assert new_space.ub[0] == 1
 
 
+def test_space_mapping():
+    new_space = space.Space(n_variables=1)
+
+    assert len(new_space.mapping) == 1
+
+
+def test_space_mapping_setter():
+    new_space = space.Space(n_variables=1)
+
+    try:
+        new_space.mapping = "a"
+    except:
+        new_space.mapping = ["x1"]
+
+    assert len(new_space.mapping) == 1
+
+    try:
+        new_space.mapping = []
+    except:
+        new_space.mapping = ["x1"]
+
+    assert len(new_space.mapping) == 1
+
+
 def test_space_built():
     new_space = space.Space()
 

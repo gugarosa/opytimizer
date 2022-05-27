@@ -2,7 +2,7 @@
 """
 
 import copy
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -25,6 +25,7 @@ class GridSpace(Space):
         step: Union[float, List, Tuple, np.ndarray],
         lower_bound: Union[float, List, Tuple, np.ndarray],
         upper_bound: Union[float, List, Tuple, np.ndarray],
+        mapping: Optional[List[str]] = None,
     ) -> None:
         """Initialization method.
 
@@ -33,6 +34,7 @@ class GridSpace(Space):
             step: Variables' steps.
             lower_bound: Minimum possible values.
             upper_bound: Maximum possible values.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -44,7 +46,7 @@ class GridSpace(Space):
         n_dimensions = 1
 
         super(GridSpace, self).__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         # Step size of each variable

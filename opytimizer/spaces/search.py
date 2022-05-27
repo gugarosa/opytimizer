@@ -2,7 +2,7 @@
 """
 
 import copy
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -24,6 +24,7 @@ class SearchSpace(Space):
         n_variables: int,
         lower_bound: Union[float, List, Tuple, np.ndarray],
         upper_bound: Union[float, List, Tuple, np.ndarray],
+        mapping: Optional[List[str]] = None,
     ) -> None:
         """Initialization method.
 
@@ -32,6 +33,7 @@ class SearchSpace(Space):
             n_variables: Number of decision variables.
             lower_bound: Minimum possible values.
             upper_bound: Maximum possible values.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -41,7 +43,7 @@ class SearchSpace(Space):
         n_dimensions = 1
 
         super(SearchSpace, self).__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build()

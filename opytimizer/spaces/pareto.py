@@ -2,6 +2,7 @@
 """
 
 import copy
+from typing import List, Optional
 
 import numpy as np
 
@@ -17,11 +18,14 @@ class ParetoSpace(Space):
 
     """
 
-    def __init__(self, data_points: np.ndarray) -> None:
+    def __init__(
+        self, data_points: np.ndarray, mapping: Optional[List[str]] = None
+    ) -> None:
         """Initialization method.
 
         Args:
             data_points: Pre-defined data points.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -34,7 +38,7 @@ class ParetoSpace(Space):
         upper_bound = [0] * n_variables
 
         super(ParetoSpace, self).__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build(data_points)

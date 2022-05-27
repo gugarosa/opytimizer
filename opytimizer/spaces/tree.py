@@ -31,6 +31,7 @@ class TreeSpace(Space):
         min_depth: Optional[int] = 1,
         max_depth: Optional[int] = 3,
         functions: Optional[List[str]] = None,
+        mapping: Optional[List[str]] = None,
     ) -> None:
         """Initialization method.
 
@@ -43,6 +44,7 @@ class TreeSpace(Space):
             min_depth: Minimum depth of the trees.
             max_depth: Maximum depth of the trees.
             functions: Function nodes.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -52,7 +54,7 @@ class TreeSpace(Space):
         n_dimensions = 1
 
         super(TreeSpace, self).__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound
+            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         # Number of terminal nodes
