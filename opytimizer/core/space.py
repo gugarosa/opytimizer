@@ -61,7 +61,9 @@ class Space:
         self.agents = []
 
         # Best agent
-        self.best_agent = Agent(n_variables, n_dimensions, lower_bound, upper_bound)
+        self.best_agent = Agent(
+            n_variables, n_dimensions, lower_bound, upper_bound, mapping
+        )
 
         # Indicates whether the space is built or not
         self.built = False
@@ -205,7 +207,7 @@ class Space:
         """Creates a list of agents."""
 
         self.agents = [
-            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub)
+            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub, self.mapping)
             for _ in range(self.n_agents)
         ]
 

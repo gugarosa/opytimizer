@@ -144,6 +144,36 @@ def test_agent_ts_setter():
     assert new_agent.ts == 0
 
 
+def test_agent_mapping():
+    new_agent = agent.Agent(1, 1, 0, 1)
+
+    assert len(new_agent.mapping) == 1
+
+
+def test_agent_mapping_setter():
+    new_agent = agent.Agent(1, 1, 0, 1)
+
+    try:
+        new_agent.mapping = "a"
+    except:
+        new_agent.mapping = ["x1"]
+
+    assert len(new_agent.mapping) == 1
+
+    try:
+        new_agent.mapping = []
+    except:
+        new_agent.mapping = ["x1"]
+
+    assert len(new_agent.mapping) == 1
+
+
+def test_agent_mapped_position():
+    new_agent = agent.Agent(1, 1, 0, 1)
+
+    assert new_agent.mapped_position["x0"].shape == (1,)
+
+
 def test_agent_clip_by_bound():
     new_agent = agent.Agent(1, 1, 0, 1)
 

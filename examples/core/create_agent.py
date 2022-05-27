@@ -15,3 +15,4 @@ a = Agent(n_variables, n_dimensions, lower_bound, upper_bound)
 # Prints out some properties
 print(a.n_variables, a.n_dimensions)
 print(a.position, a.fit)
+print(a.mapped_position)

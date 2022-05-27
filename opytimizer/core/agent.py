@@ -2,7 +2,7 @@
 """
 
 import time
-from typing import List, Union
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 
@@ -23,6 +23,7 @@ class Agent:
         n_dimensions: int,
         lower_bound: List[Union[int, float]],
         upper_bound: List[Union[int, float]],
+        mapping: Optional[List[str]] = None,
     ) -> None:
         """Initialization method.
 
@@ -31,6 +32,7 @@ class Agent:
             n_dimensions: Number of dimensions.
             lower_bound: Minimum possible values.
             upper_bound: Maximum possible values.
+            mapping: String-based identifiers for mapping variables' names.
 
         """
 
@@ -51,6 +53,9 @@ class Agent:
 
         # Upper bounds
         self.ub = np.asarray(upper_bound)
+
+        # Variables mapping
+        self.mapping = mapping
 
         # Timestamp
         self.ts = int(time.time())
@@ -157,6 +162,29 @@ class Agent:
             raise e.TypeError("`ts` should be an integer")
 
         self._ts = ts
+
+    @property
+    def mapping(self) -> List[str]:
+        """Variables mapping."""
+
+        return self._mapping
+
+    @mapping.setter
+    def mapping(self, mapping: List[str]) -> None:
+        if mapping is not None:
+            if not isinstance(mapping, list):
+                raise e.TypeError("`mapping` should be a list")
+            if len(mapping) != self.n_variables:
+                raise e.SizeError("`mapping` should be the same size as `n_variables`")
+            self._mapping = mapping
+        else:
+            self._mapping = [f"x{i}" for i in range(self.n_variables)]
+
+    @property
+    def mapped_position(self) -> Dict[str, np.ndarray]:
+        """Dictionary mapping variables names and array of positions."""
+
+        return {m: p for (m, p) in zip(self.mapping, self.position)}
 
     def clip_by_bound(self) -> None:
         """Clips the agent's decision variables to the bounds limits."""

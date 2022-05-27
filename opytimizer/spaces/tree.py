@@ -180,7 +180,7 @@ class TreeSpace(Space):
         """Creates a list of terminals."""
 
         self.terminals = [
-            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub)
+            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub, self.mapping)
             for _ in range(self.n_terminals)
         ]
 
