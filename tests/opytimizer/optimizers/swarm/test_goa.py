@@ -77,7 +77,7 @@ def test_goa_social_force():
 
     r = new_goa._social_force(np.array([1, 1, 1]))
 
-    assert r[0] == -0.11117088165514633
+    assert np.round(r[0], 2) == -0.11
 
 
 def test_goa_update():
