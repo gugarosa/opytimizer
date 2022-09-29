@@ -41,13 +41,9 @@ class PIO(Optimizer):
 
         super(PIO, self).__init__()
 
-        # Number of mapping iterations
         self.n_c1 = 150
-
-        # Number of landmark iterations
         self.n_c2 = 200
 
-        # Map and compass factor
         self.R = 0.2
 
         self.build(params)
@@ -135,10 +131,8 @@ class PIO(Optimizer):
 
         """
 
-        # Number of pigeons
         self.n_p = space.n_agents
 
-        # Array of velocities
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -154,21 +148,13 @@ class PIO(Optimizer):
 
         """
 
-        # Creates an array to hold the cummulative position
         total_pos = np.zeros((agents[0].n_variables, agents[0].n_dimensions))
-
-        # Initializes total fitness as zero
         total_fit = 0.0
 
-        # Iterates through all agents
         for agent in agents:
-            # Accumulates the position
             total_pos += agent.position * agent.fit
-
-            # Accumulates the fitness
             total_fit += agent.fit
 
-        # Calculates the center position
         center = total_pos / (self.n_p * total_fit + c.EPSILON)
 
         return center
@@ -185,10 +171,7 @@ class PIO(Optimizer):
 
         """
 
-        # Generates random number
         r1 = r.generate_uniform_random_number()
-
-        # Calculates new position based on center
         new_position = position + r1 * (center - position)
 
         return new_position
@@ -202,9 +185,7 @@ class PIO(Optimizer):
 
         """
 
-        # Checks if current iteration is smaller than mapping operator
         if iteration < self.n_c1:
-            # Iterates through all agents
             for i, agent in enumerate(space.agents):
                 # Updates current agent velocity (eq. 5)
                 r1 = r.generate_uniform_random_number()
@@ -214,19 +195,12 @@ class PIO(Optimizer):
 
                 # Updates current agent position (eq. 6)
                 agent.position += self.velocity[i]
-
-        # Checks if current iteration is smaller than landmark operator
         elif iteration < self.n_c2:
             # Calculates the number of possible pigeons (eq. 7)
             self.n_p = int(self.n_p / 2) + 1
 
-            # Sorts agents according to their fitness
             space.agents.sort(key=lambda x: x.fit)
-
-            # Calculates the center position
             center = self._calculate_center(space.agents[: self.n_p])
 
-            # Iterates through all agents
             for agent in space.agents:
-                # Updates current agent position
                 agent.position = self._update_center_position(agent.position, center)

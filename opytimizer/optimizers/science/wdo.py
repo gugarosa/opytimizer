@@ -39,19 +39,10 @@ class WDO(Optimizer):
 
         super(WDO, self).__init__()
 
-        # Maximum velocity
         self.v_max = 0.3
-
-        # Friction coefficient
         self.alpha = 0.8
-
-        # Gravitational force coefficient
         self.g = 0.6
-
-        # Coriolis force
         self.c = 1.0
-
-        # Pressure constant
         self.RT = 1.5
 
         self.build(params)
@@ -154,7 +145,6 @@ class WDO(Optimizer):
 
         """
 
-        # Arrays of velocities
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -168,9 +158,7 @@ class WDO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates a random index based on the number of agents
             index = r.generate_integer_random_number(0, len(space.agents))
 
             # Updates velocity (eq. 15)
@@ -185,14 +173,10 @@ class WDO(Optimizer):
                 + (self.c * self.velocity[index] / (index + 1))
             )
 
-            # Clips the velocity values between [-v_max, v_max]
             self.velocity = np.clip(self.velocity, -self.v_max, self.v_max)
 
             # Updates agent's position (eq. 16)
             agent.position += self.velocity[i]
-
-            # Checks agent limits
             agent.clip_by_bound()
 
-            # Evaluates agent
             agent.fit = function(agent.position)

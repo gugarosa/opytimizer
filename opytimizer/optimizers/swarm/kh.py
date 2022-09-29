@@ -41,31 +41,17 @@ class KH(Optimizer):
 
         super(KH, self).__init__()
 
-        # Maximum induced speed
         self.N_max = 0.01
-
-        # Inertia weight of the neighbours' motion
         self.w_n = 0.42
 
-        # Number of neighbours
         self.NN = 5
 
-        # Foraging speed
         self.V_f = 0.02
-
-        # Inertia weight of the foraging motion
         self.w_f = 0.38
-
-        # Maximum diffusion speed
         self.D_max = 0.002
-
-        # Position constant
         self.C_t = 0.5
 
-        # Crossover rate
         self.Cr = 0.2
-
-        # Mutation probability
         self.Mu = 0.05
 
         self.build(params)
@@ -241,7 +227,6 @@ class KH(Optimizer):
 
         """
 
-        # Arrays of motions and foragings
         self.motion = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
         self.foraging = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
@@ -259,24 +244,16 @@ class KH(Optimizer):
 
         """
 
-        # Making a deepcopy of an agent
         food = copy.deepcopy(agents[0])
 
-        # Calculates the sum of inverse of agents' fitness * agents' position
         sum_fitness_pos = np.sum(
             [1 / (agent.fit + c.EPSILON) * agent.position for agent in agents], axis=0
         )
-
-        # Calculates the sum of inverse of agents' fitness
         sum_fitness = np.sum([1 / (agent.fit + c.EPSILON) for agent in agents])
 
-        # Calculates the new food's position
         food.position = sum_fitness_pos / sum_fitness
-
-        # Clips the food's position
         food.clip_by_bound()
 
-        # Evaluates the food
         food.fit = function(food.position)
 
         return food
@@ -293,13 +270,10 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the euclidean distances between selected krill and other krills
         eucl_distance = [
             g.euclidean_distance(agents[idx].position, agent.position)
             for agent in agents
         ]
-
-        # Calculates the sensing distance
         distance = np.sum(eucl_distance) / (self.NN * len(agents))
 
         return distance, eucl_distance
@@ -324,15 +298,10 @@ class KH(Optimizer):
 
         """
 
-        # Creates a list to hold the neighbours
         neighbours = []
 
-        # Iterates through all agents and euclidean distances
         for i, dist in enumerate(eucl_distance):
-            # If selected agent is different from current agent
-            # and the sensing distance is greather than its euclidean distance
             if idx != i and sensing_distance > dist:
-                # Appends the agent to the neighbours' list
                 neighbours.append(agents[i])
 
         return neighbours
@@ -353,20 +322,17 @@ class KH(Optimizer):
 
         """
 
-        # Calculates a list of neighbours' fitness
         fitness = [
             (agent.fit - neighbour.fit) / (worst.fit - best.fit + c.EPSILON)
             for neighbour in neighbours
         ]
 
-        # Calculates a list of krills' position based on neighbours
         position = [
             (neighbour.position - agent.position)
             / (g.euclidean_distance(neighbour.position, agent.position) + c.EPSILON)
             for neighbour in neighbours
         ]
 
-        # Calculates the local alpha
         alpha = np.sum([fit * pos for (fit, pos) in zip(fitness, position)], axis=0)
 
         return alpha
@@ -387,15 +353,12 @@ class KH(Optimizer):
 
         """
 
-        # Calculates a list of neighbours' fitness
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
-        # Calculates a list of krills' position based on neighbours
         position = (best.position - agent.position) / (
             g.euclidean_distance(best.position, agent.position) + c.EPSILON
         )
 
-        # Calculates the target alpha
         alpha = C_best * fitness * position
 
         return alpha
@@ -425,10 +388,8 @@ class KH(Optimizer):
         # Calculates the sensing distance (eq. 7)
         sensing_distance, eucl_distance = self._sensing_distance(agents, idx)
 
-        # Gathers the neighbours
-        neighbours = self._get_neighbours(agents, idx, sensing_distance, eucl_distance)
-
         # Calculates the local alpha (eq. 4)
+        neighbours = self._get_neighbours(agents, idx, sensing_distance, eucl_distance)
         alpha_l = self._local_alpha(agents[idx], agents[-1], agents[0], neighbours)
 
         # Calculates the effective coefficient (eq. 9)
@@ -459,15 +420,12 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the fitness
         fitness = (agent.fit - food.fit) / (worst.fit - best.fit + c.EPSILON)
 
-        # Calculates the positioning
         position = (food.position - agent.position) / (
             g.euclidean_distance(food.position, agent.position) + c.EPSILON
         )
 
-        # Calculates the food attraction
         beta = C_food * fitness * position
 
         return beta
@@ -485,15 +443,12 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the fitness
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
-        # Calculates the positioning
         position = (best.position - agent.position) / (
             g.euclidean_distance(best.position, agent.position) + c.EPSILON
         )
 
-        # Calculates the food attraction
         beta = fitness * position
 
         return beta
@@ -552,10 +507,8 @@ class KH(Optimizer):
 
         """
 
-        # Generates uniform random numbers
-        r1 = r.generate_uniform_random_number(-1, 1, size=(n_variables, n_dimensions))
-
         # Calculates the physical diffusion (eq. 17)
+        r1 = r.generate_uniform_random_number(-1, 1, size=(n_variables, n_dimensions))
         physical_diffusion = self.D_max * (1 - iteration / n_iterations) * r1
 
         return physical_diffusion
@@ -586,17 +539,14 @@ class KH(Optimizer):
 
         """
 
-        # Calculates the neighbour motion
         neighbour_motion = self._neighbour_motion(
             agents, idx, iteration, n_iterations, motion
         )
 
-        # Calculates the foraging motion
         foraging_motion = self._foraging_motion(
             agents, idx, iteration, n_iterations, food, foraging
         )
 
-        # Calculates the physical diffusion
         physical_diffusion = self._physical_diffusion(
             agents[idx].n_variables, agents[idx].n_dimensions, iteration, n_iterations
         )
@@ -623,26 +573,17 @@ class KH(Optimizer):
 
         """
 
-        # Makes a deep copy of an agent
         a = copy.deepcopy(agents[idx])
-
-        # Samples a random integer
         m = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
-        # Calculates the current crossover probability
         Cr = self.Cr * (
             (agents[idx].fit - agents[0].fit)
             / (agents[-1].fit - agents[0].fit + c.EPSILON)
         )
 
-        # Iterates through all variables
         for j in range(a.n_variables):
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If sampled uniform number if smaller than crossover probability
             if r1 < Cr:
-                # Gathers the position from the selected agent
                 a.position[j] = copy.deepcopy(agents[m].position[j])
 
         return a
@@ -659,31 +600,21 @@ class KH(Optimizer):
 
         """
 
-        # Makes a deep copy of agent
         a = copy.deepcopy(agents[idx])
 
-        # Samples random integers
         p = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
         q = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
 
-        # Calculates the current mutation probability
         Mu = self.Mu / (
             (agents[idx].fit - agents[0].fit)
             / (agents[-1].fit - agents[0].fit + c.EPSILON)
             + c.EPSILON
         )
 
-        # Iterates through all variables
         for j in range(a.n_variables):
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If sampled uniform number if smaller than mutation probability
             if r1 < Mu:
-                # Generates another uniform random number
                 r2 = r.generate_uniform_random_number()
-
-                # Mutates the current position
                 a.position[j] = agents[0].position[j] + r2 * (
                     agents[p].position[j] - agents[q].position[j]
                 )
@@ -703,15 +634,12 @@ class KH(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the food location (eq. 12)
         food = self._food_location(space.agents, function)
 
-        # Iterates through all agents
         for i, _ in enumerate(space.agents):
-            # Updates current agent's position
             space.agents[i].position = self._update_position(
                 space.agents,
                 i,
@@ -722,6 +650,5 @@ class KH(Optimizer):
                 self.foraging[i],
             )
 
-            # Performs the crossover and mutation
             space.agents[i] = self._crossover(space.agents, i)
             space.agents[i] = self._mutation(space.agents, i)

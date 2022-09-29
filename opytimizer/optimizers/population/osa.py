@@ -42,7 +42,6 @@ class OSA(Optimizer):
 
         super(OSA, self).__init__()
 
-        # Exploration intensity
         self.beta = 1.9
 
         self.build(params)
@@ -74,17 +73,14 @@ class OSA(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers best and worst agents (eq. 5 and 6)
         best = copy.deepcopy(space.agents[0])
         worst = copy.deepcopy(space.agents[-1])
 
-        # Linearly decreases the `beta` coefficient
         beta = self.beta - ((iteration + 1) / n_iterations) * self.beta
 
-        # Iterates through all agents
         for agent in space.agents:
             # Calculates the normalized intensity (eq. 4)
             intensity = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
@@ -96,13 +92,8 @@ class OSA(Optimizer):
             noise = r.generate_uniform_random_number()
             intensity_change = intensity / (distance**2 + c.EPSILON) + noise
 
-            # print(agent.fit, worst.fit, best.fit, intensity, intensity_change)
-
-            # Generates the probability of vole movement and random `alpha`
             p_vm = r.generate_uniform_random_number()
             alpha = r.generate_uniform_random_number(high=0.5)
-
-            # If probability of vole movement is smaller than 0.5
             if p_vm < 0.5:
                 # Updates current's owl position (eq. 9 - top)
                 agent.position += (
@@ -110,8 +101,6 @@ class OSA(Optimizer):
                     * intensity_change
                     * np.fabs(alpha * best.position - agent.position)
                 )
-
-            # If probability is bigger or equal to 0.5
             else:
                 # Updates current's owl position (eq. 9 - bottom)
                 agent.position -= (

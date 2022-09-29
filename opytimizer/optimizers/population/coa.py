@@ -41,7 +41,6 @@ class COA(Optimizer):
 
         super(COA, self).__init__()
 
-        # Number of packs
         self.n_p = 2
 
         self.build(params)
@@ -86,7 +85,6 @@ class COA(Optimizer):
 
         """
 
-        # Calculates the number of coyotes per pack
         self.n_c = space.n_agents // self.n_p
 
     def _get_agents_from_pack(self, agents: List[Agent], index: int) -> List[Agent]:
@@ -101,10 +99,8 @@ class COA(Optimizer):
 
         """
 
-        # Defines the starting and ending points
         start, end = index * self.n_c, (index + 1) * self.n_c
 
-        # If it is the last index, there is no need to return an ending point
         if (index + 1) == self.n_p:
             return sorted(agents[start:], key=lambda x: x.fit)
 
@@ -118,27 +114,19 @@ class COA(Optimizer):
 
         """
 
-        # Calculates the eviction probability
         p_e = 0.005 * len(agents)
-
-        # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # If random number is smaller than eviction probability
         if r1 < p_e:
-            # Gathers two random packs
             p1 = r.generate_integer_random_number(high=self.n_p)
             p2 = r.generate_integer_random_number(high=self.n_p)
 
-            # Gathers two random coyotes
             c1 = r.generate_integer_random_number(high=self.n_c)
             c2 = r.generate_integer_random_number(high=self.n_c)
 
-            # Calculates their indexes
             i = self.n_c * p1 + c1
             j = self.n_c * p2 + c2
 
-            # Performs a swap between them
             agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
     def update(self, space: Space, function: Function) -> None:
@@ -150,9 +138,7 @@ class COA(Optimizer):
 
         """
 
-        # Iterates through all packs
         for i in range(self.n_p):
-            # Gets the agents for the specified pack
             pack_agents = self._get_agents_from_pack(space.agents, i)
 
             # Gathers the alpha coyote (eq. 5)
@@ -163,27 +149,20 @@ class COA(Optimizer):
                 np.array([agent.position for agent in pack_agents]), axis=0
             )
 
-            # Iterates through all coyotes in the pack
             for agent in pack_agents:
-                # Makes a deep copy of current coyote
                 a = copy.deepcopy(agent)
 
-                # Generates two random integers
                 cr1 = r.generate_integer_random_number(high=len(pack_agents))
                 cr2 = r.generate_integer_random_number(high=len(pack_agents))
 
-                # Calculates the alpha and pack influences
                 lambda_1 = alpha.position - pack_agents[cr1].position
                 lambda_2 = tendency - pack_agents[cr2].position
 
-                # Generates two random uniform numbers
                 r1 = r.generate_uniform_random_number()
                 r2 = r.generate_uniform_random_number()
 
                 # Updates the social condition (eq. 12)
                 a.position += r1 * lambda_1 + r2 * lambda_2
-
-                # Checks the agent's limits
                 a.clip_by_bound()
 
                 # Evaluates the agent (eq. 13)
@@ -191,7 +170,6 @@ class COA(Optimizer):
 
                 # If the new potision is better than current agent's position (eq. 14)
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 

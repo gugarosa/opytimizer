@@ -39,13 +39,9 @@ class MVO(Optimizer):
 
         super(MVO, self).__init__()
 
-        # Minimum value for the Wormhole Existence Probability
         self.WEP_min = 0.2
-
-        # Maximum value for the Wormhole Existence Probability
         self.WEP_max = 1.0
 
-        # Exploitation accuracy
         self.p = 6.0
 
         self.build(params)
@@ -112,61 +108,32 @@ class MVO(Optimizer):
 
         """
 
-        # Calculates the Wormhole Existence Probability
         WEP = self.WEP_min + (iteration + 1) * (
             (self.WEP_max - self.WEP_min) / n_iterations
         )
-
-        # Calculates the Travelling Distance Rate
         TDR = 1 - ((iteration + 1) ** (1 / self.p) / n_iterations ** (1 / self.p))
 
-        # Gathers the fitness for each individual
         fitness = [agent.fit for agent in space.agents]
 
-        # Calculates the norm of the fitness
         norm = np.linalg.norm(fitness)
-
-        # Normalizes every individual's fitness
         norm_fitness = fitness / norm
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # For every decision variable
             for j in range(agent.n_variables):
-                # Generates a uniform random number
                 r1 = r.generate_uniform_random_number()
-
-                # If random number is smaller than agent's normalized fitness
                 if r1 < norm_fitness[i]:
-                    # Selects a white hole through weight-based roulette wheel
                     white_hole = g.weighted_wheel_selection(norm_fitness)
-
-                    # Gathers current agent's position as white hole's position
                     agent.position[j] = space.agents[white_hole].position[j]
 
-                # Generates a second uniform random number
                 r2 = r.generate_uniform_random_number()
-
-                # If random number is smaller than WEP
                 if r2 < WEP:
-                    # Generates a third uniform random number
-                    r3 = r.generate_uniform_random_number()
-
-                    # Calculates the width between lower and upper bounds
                     width = r.generate_uniform_random_number(agent.lb[j], agent.ub[j])
 
-                    # If random number is smaller than 0.5
+                    r3 = r.generate_uniform_random_number()
                     if r3 < 0.5:
-                        # Updates the agent's position with `+`
                         agent.position[j] = space.best_agent.position[j] + TDR * width
-
-                    # If not
                     else:
-                        # Updates the agent's position with `-`
                         agent.position[j] = space.best_agent.position[j] - TDR * width
-
-            # Clips the agent limits
             agent.clip_by_bound()
 
-            # Calculates its fitness
             agent.fit = function(agent.position)

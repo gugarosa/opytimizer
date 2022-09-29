@@ -42,13 +42,8 @@ class RFO(Optimizer):
 
         super(RFO, self).__init__()
 
-        # Observation angle
         self.phi = r.generate_uniform_random_number(0, 2 * np.pi)[0]
-
-        # Weather condition
         self.theta = r.generate_uniform_random_number()[0]
-
-        # Percentual of foxes replacement
         self.p_replacement = 0.05
 
         self.build(params)
@@ -123,7 +118,6 @@ class RFO(Optimizer):
 
         """
 
-        # Calculates the number of foxes to be replaced
         self.n_replacement = int(self.p_replacement * space.n_agents)
 
     def _rellocation(self, agent: Agent, best_agent: Agent, function: Function) -> None:
@@ -136,27 +130,18 @@ class RFO(Optimizer):
 
         """
 
-        # Creates a temporary agent
         temp = copy.deepcopy(agent)
 
         # Calculates the square root of euclidean distance between agent and best agent (eq. 1)
         distance = np.sqrt(g.euclidean_distance(temp.position, best_agent.position))
 
-        # Randomly selects the scaling hyperparameter
-        alpha = r.generate_uniform_random_number(0, distance)
-
         # Calculates individual reallocation (eq. 2)
+        alpha = r.generate_uniform_random_number(0, distance)
         temp.position += alpha * np.sign(best_agent.position - temp.position)
-
-        # Checks agent's limits
         temp.clip_by_bound()
 
-        # Calculates the fitness for the temporary position
         temp.fit = function(temp.position)
-
-        # If new fitness is better than agent's fitness
         if temp.fit < agent.fit:
-            # Copies its position and fitness to the agent
             agent.position = copy.deepcopy(temp.position)
             agent.fit = copy.deepcopy(temp.fit)
 
@@ -170,41 +155,27 @@ class RFO(Optimizer):
 
         """
 
-        # Defines the noticing parameter
         mu = r.generate_uniform_random_number()
-
-        # If noticing is higher than 0.75
         if mu > 0.75:
-            # If observation angle is different than zero
             if self.phi != 0:
                 # Calculates fox observation radius (eq. 4 - top)
                 radius = alpha * np.sin(self.phi) / self.phi
-
-            # If observation angle equals to zero
             else:
                 # Calculates fox observation radius (eq. 4 - bottom)
                 radius = self.theta
 
-            # Generates `phi` values for all variables
             phi = r.generate_uniform_random_number(0, 2 * np.pi, agent.n_variables)
 
-            # Iterates through all decision variables
             for j in range(agent.n_variables):
-                # Defines the total sum
                 total_sum = 0
 
-                # Iterates from `k` to `j`
                 for k in range(j):
-                    # Accumulates the sum
                     total_sum += np.sin(phi[k])
 
                 # Updates the corresponding position (eq. 5)
                 agent.position[j] += alpha * radius * (total_sum + np.cos(phi[j]))
-
-            # Checks agent's limits
             agent.clip_by_bound()
 
-            # Re-evaluates its fitness
             agent.fit = function(agent.position)
 
     def update(self, space: Space, function: Function) -> None:
@@ -216,18 +187,12 @@ class RFO(Optimizer):
 
         """
 
-        # Defines the scaling parameter
         alpha = r.generate_uniform_random_number(0, 0.2)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Performs the fox rellocation procedure
             self._rellocation(agent, space.best_agent, function)
-
-            # Performs the fox noticing procedure
             self._noticing(agent, function, alpha)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the habitat's center and diameter (eq. 6 and 7)
@@ -236,14 +201,11 @@ class RFO(Optimizer):
             g.euclidean_distance(space.agents[0].position, space.agents[1].position)
         )
 
-        # Samples a random number
         k = r.generate_uniform_random_number()
 
-        # Iterates through all foxes that will be replaced
         for agent in space.agents[-self.n_replacement :]:
             # If sampled number is bigger than 0.45 (eq. 8 - top)
             if k >= 0.45:
-                # Samples new position
                 agent.fill_with_uniform()
                 agent.position += habitat_center + habitat_diameter / 2
 
@@ -254,5 +216,4 @@ class RFO(Optimizer):
                     k * (space.agents[0].position + space.agents[1].position) / 2
                 )
 
-            # Checks agent's limits
             agent.clip_by_bound()

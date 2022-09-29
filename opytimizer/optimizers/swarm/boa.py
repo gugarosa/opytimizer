@@ -38,13 +38,8 @@ class BOA(Optimizer):
 
         super(BOA, self).__init__()
 
-        # Sensor modality
         self.c = 0.01
-
-        # Power exponent
         self.a = 0.1
-
-        # Switch probability
         self.p = 0.8
 
         self.build(params)
@@ -117,7 +112,6 @@ class BOA(Optimizer):
 
         """
 
-        # Arrays of fragances
         self.fragrance = np.zeros(space.n_agents)
 
     def _best_movement(
@@ -140,7 +134,6 @@ class BOA(Optimizer):
 
         """
 
-        # Calculates the new position based on best movement
         new_position = (
             agent_position + (random**2 * best_position - agent_position) * fragrance
         )
@@ -169,7 +162,6 @@ class BOA(Optimizer):
 
         """
 
-        # Calculates the new position based on local movement
         new_position = (
             agent_position + (random**2 * j_position - k_position) * fragrance
         )
@@ -184,26 +176,18 @@ class BOA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Calculates fragrance for current agent (eq. 1)
             self.fragrance[i] = self.c * agent.fit**self.a
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If random number is smaller than switch probability
             if r1 < self.p:
                 # Moves current agent towards the best one (eq. 2)
                 agent.position = self._best_movement(
                     agent.position, space.best_agent.position, self.fragrance[i], r1
                 )
-
-            # If random number is bigger than switch probability
             else:
-                # Generates `j` and `k` indexes
                 j = r.generate_integer_random_number(0, len(space.agents))
                 k = r.generate_integer_random_number(
                     0, len(space.agents), exclude_value=j

@@ -41,10 +41,7 @@ class SA(Optimizer):
 
         super(SA, self).__init__()
 
-        # System's temperature
         self.T = 100
-
-        # Temperature decay
         self.beta = 0.999
 
         self.build(params)
@@ -90,39 +87,23 @@ class SA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Mimics its position
             a = copy.deepcopy(agent)
 
-            # Generates a random noise from a gaussian distribution
             noise = r.generate_gaussian_random_number(
                 0, 0.1, size=((agent.n_variables, agent.n_dimensions))
             )
 
-            # Applies the noise
             a.position += noise
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Calculates the fitness for the temporary position
-            a.fit = function(a.position)
-
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If new fitness is better than agent's fitness
+            a.fit = function(a.position)
             if a.fit < agent.fit:
-                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
-
-            # Checks if state should be updated or not
             elif r1 < np.exp(-(a.fit - agent.fit) / self.T):
-                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)
 
-        # Decay the temperature
         self.T *= self.beta

@@ -42,10 +42,7 @@ class CSA(Optimizer):
 
         super(CSA, self).__init__()
 
-        # Flight length
         self.fl = 2.0
-
-        # Awareness probability
         self.AP = 0.1
 
         self.build(params)
@@ -101,7 +98,6 @@ class CSA(Optimizer):
 
         """
 
-        # Arrays of memories
         self.memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
     def evaluate(self, space: Space, function: Function) -> None:
@@ -113,22 +109,15 @@ class CSA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
             fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
             if fit < agent.fit:
-                # Updates its current fitness to the newer one
                 agent.fit = fit
 
-                # Also updates the memory to current's agent position (eq. 5)
+                # Updates the memory to current's agent position (eq. 5)
                 self.memory[i] = copy.deepcopy(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.memory[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
@@ -141,21 +130,15 @@ class CSA(Optimizer):
 
         """
 
-        # Iterates through every agent
         for agent in space.agents:
-            # Generates uniform random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
             # Generates a random integer (e.g. selects the crow)
             j = r.generate_integer_random_number(high=len(space.agents))
 
-            # Checks if first random number is greater than awareness probability
             if r1 >= self.AP:
                 # Updates agent's position (eq. 2)
                 agent.position += r2 * self.fl * (self.memory[j] - agent.position)
-
-            # If random number is smaller than probability
             else:
-                # Fills agent with new random positions
                 agent.fill_with_uniform()

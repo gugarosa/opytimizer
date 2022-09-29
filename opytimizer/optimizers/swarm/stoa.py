@@ -38,13 +38,8 @@ class STOA(Optimizer):
 
         super(STOA, self).__init__()
 
-        # Controlling variable
         self.Cf = 2.0
-
-        # Spiral shape first constant
         self.u = 1.0
-
-        # Spiral shape second constant
         self.v = 1.0
 
         self.build(params)
@@ -112,7 +107,6 @@ class STOA(Optimizer):
         # Calculates the exploration variable (eq. 4)
         Cb = 0.5 * r.generate_uniform_random_number()
 
-        # Iterates through all agents
         for agent in space.agents:
             # Calculates the collision avoidance (eq. 1)
             C = Sa * agent.position

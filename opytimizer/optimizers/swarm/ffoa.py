@@ -93,9 +93,7 @@ class FFOA(Optimizer):
 
         """
 
-        # Iterates through all agents and their axis
         for a, x_axis, y_axis in zip(space.agents, self.x_axis, self.y_axis):
-            # Generates random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
@@ -112,12 +110,10 @@ class FFOA(Optimizer):
             # Evaluates the smell's position (eq. 4)
             smell = function(s)
 
-            # If smell's fitness is better than agent's fitness
             if smell < a.fit:
                 # Updates its corresponding `axis` positions (eq. 6)
                 x_axis.position = copy.deepcopy(x)
                 y_axis.position = copy.deepcopy(y)
 
-                # Updates the agent's position and fitness
                 a.position = copy.deepcopy(s)
                 a.fit = copy.deepcopy(smell)

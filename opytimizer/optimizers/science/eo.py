@@ -41,16 +41,9 @@ class EO(Optimizer):
 
         super(EO, self).__init__()
 
-        # Exploration constant
         self.a1 = 2.0
-
-        # Exploitation constant
         self.a2 = 1.0
-
-        # Generation probability
         self.GP = 0.5
-
-        # Velocity
         self.V = 1.0
 
         self.build(params)
@@ -138,7 +131,6 @@ class EO(Optimizer):
 
         """
 
-        # List of concentrations (agents)
         self.C = [copy.deepcopy(space.agents[0]) for _ in range(4)]
 
     def _calculate_equilibrium(self, agents: List[Agent]) -> None:
@@ -149,26 +141,14 @@ class EO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in agents:
-            # If current agent's fitness is smaller than C0
             if agent.fit < self.C[0].fit:
-                # Replaces C0 object
                 self.C[0] = copy.deepcopy(agent)
-
-            # If current agent's fitness is between C0 and C1
             elif agent.fit < self.C[1].fit:
-                # Replaces C1 object
                 self.C[1] = copy.deepcopy(agent)
-
-            # If current agent's fitness is between C1 and C2
             elif agent.fit < self.C[2].fit:
-                # Replaces C2 object
                 self.C[2] = copy.deepcopy(agent)
-
-            # If current agent's fitness is between C2 and C3
             elif agent.fit < self.C[3].fit:
-                # Replaces C3 object
                 self.C[3] = copy.deepcopy(agent)
 
     def _average_concentration(self, function: Function) -> Agent:
@@ -182,16 +162,10 @@ class EO(Optimizer):
 
         """
 
-        # Makes a deep copy to withhold the future update
         C_avg = copy.deepcopy(self.C[0])
-
-        # Update the position with concentrations' averager
         C_avg.position = np.mean([c.position for c in self.C], axis=0)
-
-        # Clips its limits
         C_avg.clip_by_bound()
 
-        # Re-calculate its fitness
         C_avg.fit = function(C_avg.position)
 
         return C_avg
@@ -209,7 +183,6 @@ class EO(Optimizer):
 
         """
 
-        # Calculates the equilibrium and average concentrations
         self._calculate_equilibrium(space.agents)
         C_avg = self._average_concentration(function)
 
@@ -219,9 +192,7 @@ class EO(Optimizer):
         # Calculates the time (eq. 9)
         t = (1 - iteration / n_iterations) ** (self.a2 * iteration / n_iterations)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Generates a integer between [0, 5) to select the concentration
             i = rnd.generate_integer_random_number(0, 5)
 
             # Generates two uniform random vectors (eq. 11)
@@ -235,18 +206,13 @@ class EO(Optimizer):
             # Calculates the exponential term (eq. 11)
             F = self.a1 * np.sign(r - 0.5) * (np.exp(-lambd * t) - 1)
 
-            # Generates two uniform random numbers
             r1 = rnd.generate_uniform_random_number()
             r2 = rnd.generate_uniform_random_number()
 
             # If `r2` is bigger than generation probability (eq. 15)
             if r2 >= self.GP:
-                # Defines generation control parameter as 0.5 * r1
                 GCP = 0.5 * r1
-
-            # If `r2` is smaller than generation probability
             else:
-                # Defines generation control parameter as zero
                 GCP = 0
 
             # Calculates the initial generation value (eq. 14)

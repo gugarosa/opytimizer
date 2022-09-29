@@ -41,16 +41,11 @@ class AF(Optimizer):
 
         super(AF, self).__init__()
 
-        # First learning coefficient
         self.c1 = 0.75
-
-        # Second learning coefficient
         self.c2 = 1.25
 
-        # Amount of branches
         self.m = 10
 
-        # Selective probability
         self.Q = 0.75
 
         self.build(params)
@@ -125,10 +120,7 @@ class AF(Optimizer):
 
         """
 
-        # Array of parent distances
         self.p_distance = r.generate_uniform_random_number(size=space.n_agents)
-
-        # Array of grand-parent distances
         self.g_distance = r.generate_uniform_random_number(size=space.n_agents)
 
     def update(self, space: Space, function: Function) -> None:
@@ -140,20 +132,13 @@ class AF(Optimizer):
 
         """
 
-        # Sorts the agents
         space.agents.sort(key=lambda x: x.fit)
-
-        # Creates a list of new agents
         new_agents = []
 
-        # Iterates thorugh all agents
         for i, agent in enumerate(space.agents):
-            # Iterates through amount of branches
             for _ in range(self.m):
-                # Makes a copy of current agent
                 a = copy.deepcopy(agent)
 
-                # Generates random numbers
                 r1 = r.generate_uniform_random_number()
                 r2 = r.generate_uniform_random_number()
                 r3 = r.generate_uniform_random_number()
@@ -164,32 +149,24 @@ class AF(Optimizer):
                     + self.p_distance[i] * r2 * self.c2
                 )
 
-                # Generates a random gaussian number
                 D = r.generate_gaussian_random_number(
                     0, distance, (space.n_variables, space.n_dimensions)
                 )
 
                 # Updates offspring's position (eq. 5)
                 a.position += D
-
-                # Clips its limits
                 a.clip_by_bound()
 
-                # Evaluates its fitness
                 a.fit = function(a.position)
 
                 # Calculates the probability of selection (eq. 6)
                 p = np.fabs(np.sqrt(a.fit / space.agents[-1].fit)) * self.Q
-
-                # If random number is smaller than probability of selection
                 if r3 < p:
-                    # Appends the offsprings
                     new_agents.append(a)
 
             # Updates both grandparent and parent distances (eq. 2 and 3)
             self.g_distance[i] = self.p_distance[i]
             self.p_distance[i] = np.std(agent.position - a.position)
 
-        # Randomly selects the agents
         idx = d.generate_choice_distribution(len(new_agents), None, space.n_agents)
         space.agents = [new_agents[i] for i in idx]

@@ -41,10 +41,7 @@ class ASO(Optimizer):
 
         super(ASO, self).__init__()
 
-        # Depth weight
         self.alpha = 50.0
-
-        # Multiplier weight
         self.beta = 0.2
 
         self.build(params)
@@ -100,7 +97,6 @@ class ASO(Optimizer):
 
         """
 
-        # Arrays of velocities
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -116,14 +112,11 @@ class ASO(Optimizer):
 
         """
 
-        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
-        # Defines worst and best fitness
         worst = agents[-1].fit
         best = agents[0].fit
 
-        # Calculates the total fitness
         total_fit = np.sum(
             [
                 np.exp(-(agent.fit - best) / (worst - best + c.EPSILON))
@@ -131,7 +124,6 @@ class ASO(Optimizer):
             ]
         )
 
-        # Calculates the masses
         mass = [
             np.exp(-(agent.fit - best) / (worst - best + c.EPSILON)) / total_fit
             for agent in agents
@@ -158,37 +150,22 @@ class ASO(Optimizer):
 
         """
 
-        # Calculates the distance between agent's position and average position
         distance = np.linalg.norm(agent.position - average)
-
-        # Calculates the radius between agent's and its neighbour
         radius = np.linalg.norm(agent.position - K_agent.position)
 
-        # Defines the `rsmin` and `rsmax` coefficients
         rsmin = 1.1 + 0.1 * np.sin((iteration + 1) / n_iterations * np.pi / 2)
         rsmax = 1.24
 
-        # If ratio between radius and distance is smaller than `rsmin`
         if radius / (distance + c.EPSILON) < rsmin:
-            # Defines `rs` as `rsmin`
             rs = rsmin
-
-        # If ratio between radius and distance is bigger than `rsmin`
         else:
-            # If ratio is bigger than `rsmax`
             if radius / (distance + c.EPSILON) > rsmax:
-                # Defines `rs` as `rsmax`
                 rs = rsmax
-
-            # If ratio is smaller than `rsmax`
             else:
-                # Defines `rs` as the ratio
                 rs = radius / (distance + c.EPSILON)
 
-        # Generates an uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Calculates the potential
         coef = (1 - iteration / n_iterations) ** 3
         potential = (
             coef
@@ -221,33 +198,23 @@ class ASO(Optimizer):
 
         """
 
-        # Instantiates an array of accelerations
         acceleration = np.zeros(
             (len(agents), best_agent.n_variables, best_agent.n_dimensions)
         )
 
-        # Calculates the gravitational force
         G = np.exp(-20.0 * iteration / n_iterations)
 
-        # Calculates the number of best agents
         K = int(len(agents) - (len(agents) - 2) * np.sqrt(iteration / n_iterations))
-
-        # Sorts agents according to their masses
         K_agents, _ = map(
             list, zip(*sorted(zip(agents, mass), key=lambda x: x[1], reverse=True)[:K])
         )
 
-        # Calculates the average position
         average = np.mean([agent.position for agent in K_agents])
 
-        # Iterates through every agent
         for i, agent in enumerate(agents):
-            # Creates an array for holding the total potential
             total_potential = np.zeros((agent.n_variables, agent.n_dimensions))
 
-            # Iterates through every neighbour agent
             for K_agent in K_agents:
-                # Sums up the current potential to the total one
                 total_potential += self._calculate_potential(
                     agent, K_agent, average, iteration, n_iterations
                 )
@@ -278,7 +245,6 @@ class ASO(Optimizer):
             space.agents, space.best_agent, mass, iteration, n_iterations
         )
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Updates current agent's velocity (eq. 21)
             r1 = r.generate_uniform_random_number()

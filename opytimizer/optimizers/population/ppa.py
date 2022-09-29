@@ -65,7 +65,6 @@ class PPA(Optimizer):
 
         """
 
-        # Array of velocities
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -85,17 +84,14 @@ class PPA(Optimizer):
 
         """
 
-        # Calculates the number of crows
         n_crows = np.round(
             n_agents * (2 / 3 - iteration * ((2 / 3 - 1 / 2) / n_iterations))
         )
 
-        # Calculates the number of cats
         n_cats = np.round(
             n_agents * (0.01 + iteration * ((1 / 3 - 0.01) / n_iterations))
         )
 
-        # Calculates the number of cuckoos
         n_cuckoos = n_agents - n_crows - n_cats
 
         return int(n_crows), int(n_cats), int(n_cuckoos)
@@ -109,12 +105,8 @@ class PPA(Optimizer):
 
         """
 
-        # Gathers the crows
         crows = space.agents[:n_crows]
-
-        # Iterates through all crows
         for i, crow in enumerate(crows):
-            # Generates a random index
             idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
             # Calculates the step from Lévy distribution (eq. 7)
@@ -144,21 +136,14 @@ class PPA(Optimizer):
 
         """
 
-        # Gathers the cuckoos
         cuckoos = space.agents[n_crows : n_crows + n_cuckoos]
-
-        # Calculates a list of cuckoos' fitness
         fitness = [cuckoo.fit for cuckoo in cuckoos]
 
-        # Calculates the probability of selection
         p = iteration / n_iterations
 
-        # Iterates through all cuckoos
         for cuckoo in cuckoos:
-            # Selects a cuckoo through tournament selection
             s = g.tournament_selection(fitness, 1)[0]
 
-            # Selects two random agents from the space
             i = r.generate_integer_random_number(high=space.n_agents)
             j = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
@@ -195,15 +180,10 @@ class PPA(Optimizer):
 
         """
 
-        # Gathers the cats
-        cats = space.agents[n_crows + n_cuckoos :]
-
-        # Calculates the constant
         constant = 2 - iteration / n_iterations
 
-        # Iterates through all cats
+        cats = space.agents[n_crows + n_cuckoos :]
         for i, cat in enumerate(cats):
-            # Gets the corresponding cat's index
             idx = space.n_agents - n_cats + i
 
             # Updates the cat's velocity (eq. 13)
@@ -226,18 +206,12 @@ class PPA(Optimizer):
 
         """
 
-        # Calculates the number of crows, cats and cuckoos
         n_crows, n_cats, n_cuckoos = self._calculate_population(
             space.n_agents, iteration, n_iterations
         )
 
-        # Performs the nesting phase
         self._nesting_phase(space, n_crows)
-
-        # Performs the parasitism phase
         self._parasitism_phase(space, n_crows, n_cuckoos, iteration, n_iterations)
-
-        # Performs the predation phase
         self._predation_phase(
             space, n_crows, n_cuckoos, n_cats, iteration, n_iterations
         )

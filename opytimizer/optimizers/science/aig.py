@@ -41,10 +41,7 @@ class AIG(Optimizer):
 
         super(AIG, self).__init__()
 
-        # First maximum correction angle
         self.alpha = np.pi
-
-        # Second maximum correction angle
         self.beta = np.pi
 
         self.build(params)
@@ -95,12 +92,9 @@ class AIG(Optimizer):
         alpha_max = self.alpha * a
         beta_max = self.beta * a
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Samples correction angles
             alpha = r.generate_gaussian_random_number(
                 0, alpha_max / 3, (agent.n_variables, agent.n_dimensions)
             )
@@ -114,15 +108,9 @@ class AIG(Optimizer):
 
             # Updates temporary agent's position (eq. 15)
             a.position *= g_alpha * g_beta
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Re-evaluates the temporary agent
             a.fit = function(a.position)
-
-            # If temporary agent's fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Replace its position and fitness
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

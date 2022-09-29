@@ -41,13 +41,8 @@ class SSO(Optimizer):
 
         super(SSO, self).__init__()
 
-        # Weighing constant
         self.C_w = 0.1
-
-        # Local constant
         self.C_p = 0.4
-
-        # Global constant
         self.C_g = 0.9
 
         self.build(params)
@@ -120,7 +115,6 @@ class SSO(Optimizer):
 
         """
 
-        # Arrays of local positions
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -134,22 +128,13 @@ class SSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
             fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
             if fit < agent.fit:
-                # Updates its current fitness to the newer one
                 agent.fit = fit
-
-                # Also updates the local best position to current's agent position
                 self.local_position[i] = copy.deepcopy(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
@@ -162,31 +147,16 @@ class SSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Iterates through every decision variable
             for j in range(agent.n_variables):
-                # Generates a uniform random number
                 r1 = r.generate_uniform_random_number()
-
-                # If random number is smaller than `C_w`
                 if r1 < self.C_w:
-                    # Ignores the position update
                     pass
-
-                # If random number is between `C_w` and `C_p`
                 elif r1 < self.C_p:
-                    # Updates agent's position with its local position
                     agent.position[j] = self.local_position[i][j]
-
-                # If random number is between `C_p` and `C_g`
                 elif r1 < self.C_g:
-                    # Updates agent's position with best position
                     agent.position[j] = space.best_agent.position[j]
-
-                # If random number is greater than `C_g`
                 else:
-                    # Updates agent's position with random number
                     agent.position[j] = r.generate_uniform_random_number(
                         size=agent.n_dimensions
                     )

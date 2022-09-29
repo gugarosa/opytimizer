@@ -42,7 +42,6 @@ class FSO(Optimizer):
 
         super(FSO, self).__init__()
 
-        # Lévy distribution parameter
         self.beta = 0.5
 
         self.build(params)
@@ -77,7 +76,6 @@ class FSO(Optimizer):
 
         """
 
-        # Calculates the mean position of the population
         mean_position = np.mean([agent.position for agent in space.agents], axis=0)
 
         # Calculates the Sigma Reduction Factor (eq. 5)
@@ -86,12 +84,9 @@ class FSO(Optimizer):
         # Calculates the Beta Expansion Factor
         BEF = self.beta + (2 - self.beta) * ((iteration + 1) / n_iterations)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Iterates through all variables
             for j in range(agent.n_variables):
                 # Calculates the random walk (eq. 2 and 3)
                 random_step = r.generate_gaussian_random_number(mean_position[j], SRF)
@@ -99,21 +94,14 @@ class FSO(Optimizer):
                 # Calculates the Lévy flight (eq. 6 to 18)
                 levy_step = d.generate_levy_distribution(BEF)
 
-                # Updates the agent's position
                 a.position[j] += (
                     random_step
                     * levy_step
                     * (agent.position[j] - space.best_agent.position[j])
                 )
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Re-evaluates the temporary agent
             a.fit = function(a.position)
-
-            # If temporary agent's fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Replace its position and fitness
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

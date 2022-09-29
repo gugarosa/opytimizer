@@ -41,16 +41,10 @@ class GOA(Optimizer):
 
         super(GOA, self).__init__()
 
-        # Minimum comfort zone
         self.c_min = 0.00001
-
-        # Maximum comfort zone
         self.c_max = 1
 
-        # Intensity of attraction
         self.f = 0.5
-
-        # Attractive length scale
         self.l = 1.5
 
         self.build(params)
@@ -149,37 +143,24 @@ class GOA(Optimizer):
         # Calculates the comfort coefficient (eq. 2.8)
         comfort = self.c_max - iteration * ((self.c_max - self.c_min) / n_iterations)
 
-        # Copies a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
 
-        # Iterates through 'i' agents
         for agent in space.agents:
-            # Initializes the total comfort as zero
             total_comfort = np.zeros((agent.n_variables, agent.n_dimensions))
 
-            # Iterates through 'j' agents
             for temp in temp_agents:
-                # Distance is calculated by an euclidean distance between 'i' and 'j'
                 distance = g.euclidean_distance(agent.position, temp.position)
-
-                # Calculates the unitary vector
                 unit = (temp.position - agent.position) / (distance + c.EPSILON)
 
-                # Calculates the social force between agents
                 s = self._social_force(2 + np.fmod(distance, 2))
 
-                # Expands the upper and lower bounds
                 ub = np.expand_dims(agent.ub, -1)
                 lb = np.expand_dims(agent.lb, -1)
 
-                # Sums the current comfort to the total one
                 total_comfort += comfort * ((ub - lb) / 2) * s * unit
 
             # Updates the agent's position (eq. 2.7)
             agent.position = comfort * total_comfort + space.best_agent.position
-
-            # Checks the agent's limits
             agent.clip_by_bound()
 
-            # Evaluates the new agent's position
             agent.fit = function(agent.position)

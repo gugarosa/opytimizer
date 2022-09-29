@@ -40,10 +40,7 @@ class MOA(Optimizer):
 
         super(MOA, self).__init__()
 
-        # Particle moviment first constant
         self.alpha = 1.0
-
-        # Particle moviment second constant
         self.rho = 2.0
 
         self.build(params)
@@ -88,7 +85,6 @@ class MOA(Optimizer):
 
         """
 
-        # Checks if supplied number of agents has a perfect square
         if not np.sqrt(space.n_agents).is_integer():
             raise e.SizeError("`n_agents` should have a perfect square")
 
@@ -100,7 +96,6 @@ class MOA(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the best and worst agents and calculates a list of normalized fitness (eq. 2)
@@ -113,7 +108,6 @@ class MOA(Optimizer):
         # Calculates the masses (eq. 3)
         mass = [self.alpha + self.rho * fit for fit in fitness]
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Gathers the agents neighbours (eq. 4)
             root = np.sqrt(space.n_agents)
@@ -123,10 +117,8 @@ class MOA(Optimizer):
             east = int((i + 1) - (i % root) // (root - 1) * root)
             neighbours = [north, south, west, east]
 
-            # Initializes the force as a zero value
             force = 0
 
-            # Iterates through all neighbours
             for n in neighbours:
                 # Calculates the distance between current agent and neighbour (eq. 7)
                 distance = g.euclidean_distance(
@@ -140,8 +132,6 @@ class MOA(Optimizer):
                     / (distance + c.EPSILON)
                 )
 
-            # Calculates the force's mean
-            # This increases the performance of algorithm by eliminating addition biases
             force = np.mean(force)
 
             # Updates the agent's velocity(eq. 9)
@@ -150,6 +140,4 @@ class MOA(Optimizer):
 
             # Updates the agent's position (eq. 10)
             agent.position += velocity
-
-            # Clips the agent's limits
             agent.clip_by_bound()

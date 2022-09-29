@@ -40,7 +40,6 @@ class ESA(Optimizer):
 
         super(ESA, self).__init__()
 
-        # Number of electrons per atom
         self.n_electrons = 5
 
         self.build(params)
@@ -83,7 +82,6 @@ class ESA(Optimizer):
 
         """
 
-        # Orbital radius
         self.D = r.generate_uniform_random_number(
             size=(space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -97,30 +95,20 @@ class ESA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Creates a list of electrons
             electrons = [copy.deepcopy(agent) for _ in range(self.n_electrons)]
-
-            # Iterates through all electrons
             for electron in electrons:
-                # Generates a random number and the energy level
                 r1 = r.generate_uniform_random_number()
                 n = r.generate_integer_random_number(2, 6)
 
                 # Updates the electron's position (eq. 3)
                 electron.position += (2 * r1 - 1) * (1 - 1 / n**2) / self.D[i]
-
-                # Clips its bounds
                 electron.clip_by_bound()
 
-                # Re-evaluates the new position
                 electron.fit = function(electron.position)
 
-            # Sorts the electrons
             electrons.sort(key=lambda x: x.fit)
 
             # Generates both Rydberg constant and acceleration coefficient
@@ -135,15 +123,9 @@ class ESA(Optimizer):
 
             # Updates the temporary agent's position (eq. 5)
             a.position += Ac * self.D[i]
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Calculates the fitness for the temporary position
             a.fit = function(a.position)
-
-            # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

@@ -58,33 +58,21 @@ class BH(Optimizer):
 
         """
 
-        # Event's horizon cost
         cost = 0
 
-        # Iterates through all agents
         for agent in agents:
-            # Generate an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # Updates agent's position
             agent.position += r1 * (best_agent.position - agent.position)
-
-            # Checks agents limits
             agent.clip_by_bound()
 
-            # Evaluates agent
             agent.fit = function(agent.position)
-
-            # If new agent's fitness is better than best
             if agent.fit < best_agent.fit:
-                # Swap their positions and their fitness
                 agent.position, best_agent.position = (
                     best_agent.position,
                     agent.position,
                 )
                 agent.fit, best_agent.fit = best_agent.fit, agent.fit
 
-            # Increment the cost with current agent's fitness
             cost += agent.fit
 
         return cost
@@ -101,17 +89,11 @@ class BH(Optimizer):
 
         """
 
-        # Calculates the radius of the event horizon
         radius = best_agent.fit / max(cost, constant.EPSILON)
 
-        # Iterate through every agent
         for agent in agents:
-            # Calculates distance between star and black hole
             distance = np.linalg.norm(best_agent.position - agent.position)
-
-            # If distance is smaller than horizon's radius
             if distance < radius:
-                # Fills agent with new random positions
                 agent.fill_with_uniform()
 
     def update(self, space: Space, function: Function) -> None:

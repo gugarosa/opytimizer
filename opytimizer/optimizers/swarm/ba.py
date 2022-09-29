@@ -40,16 +40,10 @@ class BA(Optimizer):
 
         super(BA, self).__init__()
 
-        # Minimum frequency range
         self.f_min = 0
-
-        # Maximum frequency range
         self.f_max = 2
 
-        # Loudness parameter
         self.A = 0.5
-
-        # Pulse rate
         self.r = 0.5
 
         self.build(params)
@@ -178,7 +172,6 @@ class BA(Optimizer):
 
         """
 
-        # Arrays of frequencies, velocities, loudnesses and pulse rates
         self.frequency = rnd.generate_uniform_random_number(
             self.f_min, self.f_max, space.n_agents
         )
@@ -198,10 +191,8 @@ class BA(Optimizer):
 
         """
 
-        # Declares alpha constant
         alpha = 0.9
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Updates frequency (eq. 2)
             # Note that we have to apply (min - max) instead of (max - min) or it will not converge
@@ -216,27 +207,18 @@ class BA(Optimizer):
             # Updates agent's position (eq. 4)
             agent.position += self.velocity[i]
 
-            # Generates random uniform and gaussian numbers
             p = rnd.generate_uniform_random_number()
             e = rnd.generate_gaussian_random_number()
-
-            # Checks if probability is bigger than current pulse rate
             if p > self.pulse_rate[i]:
                 # Performs a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size
                 agent.position = space.best_agent.position + 0.001 * e * np.mean(
                     self.loudness
                 )
-
-            # Checks agent limits
             agent.clip_by_bound()
 
-            # Evaluates agent
             agent.fit = function(agent.position)
-
-            # Checks if probability is smaller than loudness and if fit is better
             if p < self.loudness[i] and agent.fit < space.best_agent.fit:
-                # Copies the new solution to space's best agent
                 space.best_agent = copy.deepcopy(agent)
 
                 # Increasing pulse rate (eq. 6 - left)

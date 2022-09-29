@@ -58,13 +58,9 @@ class HHO(Optimizer):
 
         """
 
-        # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Calculates initial jump energy
         E_0 = 2 * r1 - 1
-
-        # Calculates the jump strength
         J = 2 * (1 - r1)
 
         # Calculates the energy (eq. 3)
@@ -87,15 +83,10 @@ class HHO(Optimizer):
 
         """
 
-        # Generates a uniform random number
         q = r.generate_uniform_random_number()
-
-        # Checks if random number is bigger or equal to 0.5
         if q >= 0.5:
-            # Samples a random integer
             j = r.generate_integer_random_number(0, len(agents))
 
-            # Generates two uniform random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
@@ -103,17 +94,12 @@ class HHO(Optimizer):
             location_vector = agents[j].position - r1 * np.fabs(
                 agents[j].position - 2 * r2 * current_agent.position
             )
-
-        # If random number is smaller than 0.5
         else:
-            # Averages the population's position
             average = np.mean([agent.position for agent in agents], axis=0)
 
-            # Generates uniform random numbers
             r3 = r.generate_uniform_random_number()
             r4 = r.generate_uniform_random_number()
 
-            # Expand the dimensions on lower and upper bounds
             lb = np.expand_dims(current_agent.lb, -1)
             ub = np.expand_dims(current_agent.ub, -1)
 
@@ -148,14 +134,10 @@ class HHO(Optimizer):
 
         """
 
-        # Generates a uniform random number
         w = r.generate_uniform_random_number()
-
-        # Without rapid dives
         if w >= 0.5:
             # Soft besiege
             if energy >= 0.5:
-                # Calculates the delta's position
                 delta = best_agent.position - current_agent.position
 
                 # Calculates the location vector (eq. 4)
@@ -167,7 +149,6 @@ class HHO(Optimizer):
 
             # Hard besiege
             else:
-                # Calculates the delta's position
                 delta = best_agent.position - current_agent.position
 
                 # Calculates the location vector (eq. 6)
@@ -194,7 +175,6 @@ class HHO(Optimizer):
             # Calculates the `Z` position (eq. 8)
             Z = Y + S * LF
 
-            # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
@@ -208,7 +188,6 @@ class HHO(Optimizer):
 
         # Hard besiege
         else:
-            # Averages the population's position
             average = np.mean([x.position for x in agents], axis=0)
 
             # Calculates the `Y` position (eq. 12)
@@ -227,7 +206,6 @@ class HHO(Optimizer):
             # Calculates the `Z` position (eq. 13)
             Z = Y + S * LF
 
-            # Evaluates new positions
             Y_fit = function(Y)
             Z_fit = function(Z)
 
@@ -254,21 +232,13 @@ class HHO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Calculates the prey's energy and jump's stength
             E, J = self._calculate_initial_coefficients(iteration, n_iterations)
-
-            # Checks if energy is bigger or equal to one
             if E >= 1:
-                # Performs the exploration phase
                 agent.position = self._exploration_phase(
                     space.agents, agent, space.best_agent
                 )
-
-            # If energy is smaller than one
             else:
-                # Performs the exploitation phase
                 agent.position = self._exploitation_phase(
                     E, J, space.agents, agent, space.best_agent, function
                 )

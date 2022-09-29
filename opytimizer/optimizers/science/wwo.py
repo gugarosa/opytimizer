@@ -42,16 +42,11 @@ class WWO(Optimizer):
 
         super(WWO, self).__init__()
 
-        # Maximum wave height
         self.h_max = 5
 
-        # Wave length reduction coefficient
         self.alpha = 1.001
-
-        # Breaking coefficient
         self.beta = 0.001
 
-        # Maximum number of breakings
         self.k_max = 1
 
         self.build(params)
@@ -152,7 +147,6 @@ class WWO(Optimizer):
 
         """
 
-        # Arrays of heights and lengths
         self.height = r.generate_uniform_random_number(
             self.h_max, self.h_max, space.n_agents
         )
@@ -171,21 +165,13 @@ class WWO(Optimizer):
 
         """
 
-        # Makes a deep copy of current agent
         wave = copy.deepcopy(agent)
 
-        # Iterates through all variables
         for j in range(wave.n_variables):
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number(-1, 1)
-
-            # Updates the wave's position
             wave.position[j] += r1 * self.length[index] * (j + 1)
-
-        # Clips its limits
         wave.clip_by_bound()
 
-        # Re-calculates its fitness
         wave.fit = function(wave.position)
 
         return wave
@@ -206,30 +192,21 @@ class WWO(Optimizer):
 
         """
 
-        # Gathers current fitness
         current_fit = agent.fit
 
-        # Iterates through all variables
         for j in range(agent.n_variables):
-            # Calculates a mean value
             mean = (best_agent.position[j] + agent.position[j]) / 2
-
-            # Calculates the standard deviation
             std = np.fabs(best_agent.position[j] - agent.position[j]) / 2
 
             # Generates a new position (eq. 8)
             agent.position[j] = r.generate_gaussian_random_number(mean, std)
-
-        # Clips its limits
         agent.clip_by_bound()
 
-        # Re-calculates its fitness
         agent.fit = function(agent.position)
 
+        # Re-calculates the new length (eq. 9)
         # Updates the new height to maximum height value
         new_height = self.h_max
-
-        # Re-calculates the new length (eq. 9)
         new_length = self.length[index] * (current_fit / (agent.fit + c.EPSILON))
 
         return new_height, new_length
@@ -247,19 +224,12 @@ class WWO(Optimizer):
 
         """
 
-        # Makes a deep copy of current wave
-        broken_wave = copy.deepcopy(wave)
-
-        # Generates a gaussian random number
         r1 = r.generate_gaussian_random_number()
 
-        # Updates the broken wave's position
+        broken_wave = copy.deepcopy(wave)
         broken_wave.position[j] += r1 * self.beta * (j + 1)
-
-        # Clips its limits
         broken_wave.clip_by_bound()
 
-        # Re-calculates its fitness
         broken_wave.fit = function(broken_wave.position)
 
         return broken_wave
@@ -272,12 +242,9 @@ class WWO(Optimizer):
 
         """
 
-        # Sorts agents
         agents.sort(key=lambda x: x.fit)
 
-        # Iterates through all agents
         for i, agent in enumerate(agents):
-            # Updates its length
             self.length[i] *= self.alpha ** -(
                 (agent.fit - agents[-1].fit + c.EPSILON)
                 / (agents[0].fit - agents[-1].fit + c.EPSILON)
@@ -292,48 +259,31 @@ class WWO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Propagates a wave into a new temporary one (eq. 6)
             wave = self._propagate_wave(agent, function, i)
-
-            # Checks if propagated wave is better than current one
             if wave.fit < agent.fit:
-                # Also checks if propagated wave is better than global one
                 if wave.fit < space.best_agent.fit:
-                    # Replaces the best agent with propagated wave
                     space.best_agent.position = copy.deepcopy(wave.position)
                     space.best_agent.fit = copy.deepcopy(wave.fit)
 
-                    # Generates a `k` number of breaks
                     k = r.generate_integer_random_number(1, self.k_max + 1)
-
-                    # Iterates through every possible break
                     for j in range(k):
                         # Breaks the propagated wave (eq. 10)
                         broken_wave = self._break_wave(wave, function, j)
-
-                        # Checks if broken wave is better than global one
                         if broken_wave.fit < space.best_agent.fit:
-                            # Replaces the best agent with broken wave
                             space.best_agent.position = copy.deepcopy(
                                 broken_wave.position
                             )
                             space.best_agent.fit = copy.deepcopy(broken_wave.fit)
 
-                # Replaces current agent's with propagated wave
                 agent.position = copy.deepcopy(wave.position)
                 agent.fit = copy.deepcopy(wave.fit)
 
-                # Sets its height to maximum height
                 self.height[i] = self.h_max
-
-            # If propagated wave is not better than current agent
             else:
-                # Decreases its height by one
                 self.height[i] -= 1
 
-                # If its height reaches zero
                 if self.height[i] == 0:
                     # Refracts the wave and generates a new height and wave length (eq. 8-9)
                     self.height[i], self.length[i] = self._refract_wave(

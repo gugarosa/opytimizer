@@ -42,19 +42,11 @@ class TWO(Optimizer):
 
         super(TWO, self).__init__()
 
-        # Static friction coefficient
         self.mu_s = 1
-
-        # Kinematic friction coefficient
         self.mu_k = 1
-
-        # Time displacement
         self.delta_t = 1
 
-        # Speed constant
         self.alpha = 0.9
-
-        # Scaling factor
         self.beta = 0.05
 
         self.build(params)
@@ -149,25 +141,16 @@ class TWO(Optimizer):
 
         """
 
-        # Iterates through every agent
         for agent in agents:
-            # Generates a random number
             r1 = r.generate_uniform_random_number()
-
-            # If random is smaller than 0.5
             if r1 < 0.5:
-                # Generates a gaussian random number
                 r2 = r.generate_gaussian_random_number()
 
-                # Updates the agent's position
                 agent.position = best_agent.position + (r2 / iteration) * (
                     best_agent.position - agent.position
                 )
-
-            # Clips its limits
             agent.clip_by_bound()
 
-            # Re-calculates its fitness
             agent.fit = function(agent.position)
 
     def update(
@@ -183,32 +166,22 @@ class TWO(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
-
-        # Gathers best and worst fitness
         best_fit, worst_fit = space.agents[0].fit, space.agents[-1].fit
 
-        # Calculates the agents' weights
         weights = [
             (agent.fit - worst_fit) / (best_fit - worst_fit + c.EPSILON) + 1
             for agent in space.agents
         ]
 
-        # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
 
-        # Linearly decreasing `mu_k`
         mu_k = self.mu_k - (self.mu_k - 0.1) * (iteration / n_iterations)
 
-        # Iterates through 'i' agents
         for i, temp1 in enumerate(temp_agents):
-            # Initializes `delta` as zero
             delta = 0.0
 
-            # Iterates through 'j' agents
             for j, temp2 in enumerate(temp_agents):
-                # If weight from agent `i` is smaller than weight from agent `j`
                 if weights[i] < weights[j]:
                     # Calculates the residual force (eq. 6)
                     force = (
@@ -222,7 +195,6 @@ class TWO(Optimizer):
                     # Calculates the acceleration (eq. 7)
                     acceleration = (force / (weights[i] * mu_k)) * g
 
-                    # Generates a random gaussian number
                     r1 = r.generate_gaussian_random_number(
                         size=(temp1.n_variables, temp1.n_dimensions)
                     )
@@ -238,13 +210,9 @@ class TWO(Optimizer):
             # Updates the temporary agent's position (eq. 11)
             temp1.position += delta
 
-        # Performs the constraint handling
         self._constraint_handle(temp_agents, space.best_agent, function, iteration + 1)
 
-        # Iterates through real and temporary populations
         for agent, temp in zip(space.agents, temp_agents):
-            # If temporary agent is better than real one
             if temp.fit < agent.fit:
-                # Updates its position and fitness
                 agent.position = copy.deepcopy(temp.position)
                 agent.fit = copy.deepcopy(temp.fit)

@@ -41,10 +41,7 @@ class ABO(Optimizer):
 
         super(ABO, self).__init__()
 
-        # Ratio of sunspot butterflies
         self.sunspot_ratio = 0.9
-
-        # Free flight constant
         self.a = 2.0
 
         self.build(params)
@@ -97,32 +94,21 @@ class ABO(Optimizer):
 
         """
 
-        # Generates a random decision variable index
         j = r.generate_integer_random_number(0, agent.n_variables)
-
-        # Generates a uniform random number
         r1 = r.generate_uniform_random_number(-1, 1)
 
-        # Makes a deep copy of current agent
         temp = copy.deepcopy(agent)
 
         # Updates temporary agent's position (eq. 1)
         temp.position[j] = (
             agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
         )
-
-        # Clips its limits
         temp.clip_by_bound()
 
-        # Re-calculates its fitness
         temp.fit = function(temp.position)
-
-        # If its fitness is better than current agent
         if temp.fit < agent.fit:
-            # Return temporary agent as well as a true variable
             return temp.position, temp.fit, True
 
-        # Return current agent as well as a false variable
         return agent.position, agent.fit, False
 
     def update(
@@ -138,15 +124,10 @@ class ABO(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Calculates the number of sunspot butterflies
         n_sunspots = int(self.sunspot_ratio * len(space.agents))
-
-        # Iterates through all sunspot butterflies
         for agent in space.agents[:n_sunspots]:
-            # Generates the index for a random sunspot butterfly
             k = r.generate_integer_random_number(0, len(space.agents))
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
@@ -154,9 +135,7 @@ class ABO(Optimizer):
                 agent, space.agents[k], function
             )
 
-        # Iterates through all canopy butterflies
         for agent in space.agents[n_sunspots:]:
-            # Generates the index for a random canopy butterfly
             k = r.generate_integer_random_number(0, len(space.agents) - n_sunspots)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
@@ -164,28 +143,18 @@ class ABO(Optimizer):
                 agent, space.agents[k], function
             )
 
-            # If there was not fitness replacement
             if not is_better:
-                # Generates the index for a random butterfly
                 k = r.generate_integer_random_number(0, len(space.agents))
-
-                # Generates random uniform number
                 r1 = r.generate_uniform_random_number()
 
                 # Calculates `D` (eq. 4)
                 D = np.fabs(2 * r1 * space.agents[k].position - agent.position)
 
-                # Generates another random uniform number
                 r2 = r.generate_uniform_random_number()
 
-                # Linearly decreases `a`
-                a = self.a - self.a * (iteration / n_iterations)
-
                 # Updates the agent's position (eq. 3)
+                a = self.a - self.a * (iteration / n_iterations)
                 agent.position = space.agents[k].position - 2 * a * r2 - a * D
-
-                # Clips its limits
                 agent.clip_by_bound()
 
-                # Re-calculates its fitness
                 agent.fit = function(agent.position)

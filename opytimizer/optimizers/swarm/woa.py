@@ -38,7 +38,6 @@ class WOA(Optimizer):
 
         super(WOA, self).__init__()
 
-        # Logarithmic spiral
         self.b = 1
 
         self.build(params)
@@ -69,10 +68,7 @@ class WOA(Optimizer):
 
         """
 
-        # Makes a deep copy of agent
         a = copy.deepcopy(agent)
-
-        # Fills agent with new random positions
         a.fill_with_uniform()
 
         return a
@@ -87,53 +83,26 @@ class WOA(Optimizer):
 
         """
 
-        # Linearly decreases the coefficient
         coefficient = 2 - 2 * iteration / (n_iterations - 1)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
 
-            # Calculates the `A` coefficient
             A = 2 * coefficient * r1 - coefficient
-
-            # Calculates the `C` coefficient
             C = 2 * r1
 
-            # Generates a random number between 0 and 1
             p = r.generate_uniform_random_number()
-
-            # If `p` is smaller than 0.5
             if p < 0.5:
-                # If `A` is smaller than 1
                 if np.fabs(A) < 1:
-                    # Calculates the distance coefficient
                     D = np.fabs(C * space.best_agent.position - agent.position)
-
-                    # Updates the agent's position
                     agent.position = space.best_agent.position - A * D
-
-                # If `A` is bigger or equal to 1
                 else:
-                    # Generates a random-based agent
                     a = self._generate_random_agent(agent)
-
-                    # Calculates the distance coefficient
                     D = np.fabs(C * a.position - agent.position)
-
-                    # Updates the agent's position
                     agent.position = a.position - A * D
-
-            # If `p` is bigger or equal to 1
             else:
-                # Generates a random number between -1 and 1
                 l = r.generate_gaussian_random_number()
-
-                # Calculates the distance coefficient
                 D = np.fabs(space.best_agent.position - agent.position)
-
-                # Updates the agent's position
                 agent.position = (
                     D * np.exp(self.b * l) * np.cos(2 * np.pi * l)
                     + space.best_agent.position

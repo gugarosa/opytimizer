@@ -38,10 +38,7 @@ class EPO(Optimizer):
 
         super(EPO, self).__init__()
 
-        # Exploration control parameter
         self.f = 2.0
-
-        # Exploitation control parameter
         self.l = 1.5
 
         self.build(params)
@@ -84,19 +81,11 @@ class EPO(Optimizer):
 
         """
 
-        # Iterates through every agent
         for agent in space.agents:
-            # Generates a radius constant
             R = r.generate_uniform_random_number()
-
-            # Checks if radius is bigger or equal to 0.5
             if R >= 0.5:
-                # Defines temperature as zero
                 T = 0
-
-            # If radius is smaller than one
             else:
-                # Defines temperature as one
                 T = 1
 
             # Calculates the temperature profile (eq. 7)
@@ -105,7 +94,6 @@ class EPO(Optimizer):
             # Calculates the polygon grid accuracy (eq. 10)
             P_grid = np.fabs(space.best_agent.position - agent.position)
 
-            # Generates a uniform random number and the `C` coefficient
             r1 = r.generate_uniform_random_number()
             C = r.generate_uniform_random_number(size=agent.n_variables)
 

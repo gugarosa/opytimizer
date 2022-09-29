@@ -54,7 +54,6 @@ class GWO(Optimizer):
 
         """
 
-        # Generates two uniform random numbers
         r1 = r.generate_uniform_random_number()
         r2 = r.generate_uniform_random_number()
 
@@ -79,21 +78,14 @@ class GWO(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
-
-        # Gathers the best three wolves
         alpha, beta, delta = copy.deepcopy(space.agents[:3])
 
-        # Defines the linear constant
         a = 2 - 2 * iteration / (n_iterations - 1)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Makes a deep copy of current agent
             X = copy.deepcopy(agent)
 
-            # Calculates all coefficients
             A_1, C_1 = self._calculate_coefficients(a)
             A_2, C_2 = self._calculate_coefficients(a)
             A_3, C_3 = self._calculate_coefficients(a)
@@ -105,15 +97,9 @@ class GWO(Optimizer):
 
             # Calculates the temporary agent (eq. 3.7)
             X.position = (X_1 + X_2 + X_3) / 3
-
-            # Clips temporary agent's limits
             X.clip_by_bound()
 
-            # Evaluates temporary agent's new position
             X.fit = function(X.position)
-
-            # Checks if new fitness is better than current agent's fitness
             if X.fit < agent.fit:
-                # Updates the corresponding agent's position and fitness
                 agent.position = copy.deepcopy(X.position)
                 agent.fit = copy.deepcopy(X.fit)

@@ -41,13 +41,8 @@ class LSA(Optimizer):
 
         super(LSA, self).__init__()
 
-        # Maximum channel time
         self.max_time = 10
-
-        # Initial energy
         self.E = 2.05
-
-        # Forking probability
         self.p_fork = 0.01
 
         self.build(params)
@@ -135,10 +130,8 @@ class LSA(Optimizer):
 
         """
 
-        # Channel time
         self.time = 0
 
-        # Array of directions
         self.direction = np.sign(
             r.generate_uniform_random_number(
                 -1, 1, (space.n_variables, space.n_dimensions)
@@ -154,25 +147,15 @@ class LSA(Optimizer):
 
         """
 
-        # Iterates through all decision variables
         for j in range(agent.n_variables):
-            # Makes a copy of agent
             direction = copy.deepcopy(agent)
-
-            # Shakes the direction
             direction.position[j] += (
                 self.direction[j] * 0.005 * (agent.ub[j] - agent.lb[j])
             )
-
-            # Clips its bounds
             direction.clip_by_bound()
 
-            # Evaluates the direction
             direction.fit = function(direction.position)
-
-            # If new direction's fitness is worst than agent's fitness
             if direction.fit > agent.fit:
-                # Inverts the direction
                 self.direction[j] *= -1
 
     def _update_position(
@@ -188,67 +171,38 @@ class LSA(Optimizer):
 
         """
 
-        # Makes a copy of agent
         a = copy.deepcopy(agent)
 
-        # Calculates the distance between agent and best agent
         distance = agent.position - best_agent.position
 
-        # Iterates through all decision variables
         for j in range(agent.n_variables):
-            # Iterates through all dimensions
             for k in range(agent.n_dimensions):
-                # If distance equals to zero
                 if distance[j][k] == 0:
-                    # Updates the position by sampling a gaussian number
                     r1 = r.generate_gaussian_random_number(0, energy)
                     a.position[j][k] += self.direction[j][k] * r1
-
-                # If distance is different from zero
                 else:
-                    # If distance is smaller than zero
                     if distance[j][k] < 0:
-                        # Updates the position by adding an exponential number
                         a.position[j][k] += r.generate_exponential_random_number(
                             np.fabs(distance[j][k])
                         )
-
-                    # If distance is bigger than zero
                     else:
-                        # Updates the position by subtracting an exponential number
                         a.position[j][k] -= r.generate_exponential_random_number(
                             distance[j][k]
                         )
-
-        # Clips the temporary agent's limits
         a.clip_by_bound()
 
-        # Evaluates its new position
         a.fit = function(a.position)
-
-        # If temporary agent's fitness is better than current agent's fitness
         if a.fit < agent.fit:
-            # Replaces position and fitness
             agent.position = copy.deepcopy(a.position)
             agent.fit = copy.deepcopy(a.fit)
 
-            # Generates a random number
             r1 = r.generate_uniform_random_number()
-
-            # If random number is smaller than probability of forking
             if r1 < self.p_fork:
-                # Makes a new copy of current agent
                 a = copy.deepcopy(agent)
-
-                # Generates a random position
                 a.fill_with_uniform()
 
-                # Re-evaluates its position
                 a.fit = function(a.position)
-
-                # If new fitness is better than agent's fitness
                 if a.fit < agent.fit:
-                    # Replaces position and fitness
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
@@ -265,30 +219,18 @@ class LSA(Optimizer):
 
         """
 
-        # Increases the channel's time
         self.time += 1
-
-        # If channel has reached maximum allowed time
         if self.time >= self.max_time:
-            # Sorts agents
             space.agents.sort(key=lambda x: x.fit)
-
-            # Replaces the worst channel with the best one
             space.agents[-1] = copy.deepcopy(space.agents[0])
 
-            # Resets the channel's time
             self.time = 0
 
-        # Re-sorts the agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Updates the direction
         self._update_direction(space.agents[0], function)
 
-        # Calculates the current energy
         energy = self.E - 2 * np.exp(-5 * (n_iterations - iteration) / n_iterations)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Updates agent's position
             self._update_position(agent, space.agents[0], function, energy)

@@ -40,13 +40,8 @@ class SBO(Optimizer):
 
         super(SBO, self).__init__()
 
-        # Step size
         self.alpha = 0.9
-
-        # Probability of mutation
         self.p_mutation = 0.05
-
-        # Percentage of width between lower and upper bounds
         self.z = 0.02
 
         self.build(params)
@@ -119,7 +114,6 @@ class SBO(Optimizer):
 
         """
 
-        # List of widths
         self.sigma = [self.z * (ub - lb) for lb, ub in zip(space.lb, space.ub)]
 
     def update(self, space: Space, function: Function) -> None:
@@ -131,46 +125,29 @@ class SBO(Optimizer):
 
         """
 
-        # Calculates a list of fitness per agent
         fitness = [
             1 / (1 + agent.fit) if agent.fit >= 0 else 1 + np.abs(agent.fit)
             for agent in space.agents
         ]
-
-        # Calculates the total fitness
         total_fitness = np.sum(fitness)
-
-        # Calculates the probability of each agent's fitness
         probs = [fit / total_fitness for fit in fitness]
 
-        # Iterates through all agents
         for agent in space.agents:
-            # For every decision variable
             for j in range(agent.n_variables):
-                # Selects a random individual based on its probability
                 s = d.generate_choice_distribution(len(space.agents), probs, 1)[0]
 
-                # Calculates the lambda factor
                 lambda_k = self.alpha / (1 + probs[s])
 
-                # Updates the decision variable position
                 agent.position[j] += lambda_k * (
                     (space.agents[s].position[j] + space.best_agent.position[j]) / 2
                     - agent.position[j]
                 )
 
-                # Generates an uniform random number
                 r1 = r.generate_uniform_random_number()
-
-                # If random number is smaller than probability of mutation
                 if r1 < self.p_mutation:
-                    # Mutates the decision variable position
                     agent.position[j] += (
                         self.sigma[j] * r.generate_gaussian_random_number()
                     )
-
-            # Checks agent's limits
             agent.clip_by_bound()
 
-            # Calculates its fitness
             agent.fit = function(agent.position)

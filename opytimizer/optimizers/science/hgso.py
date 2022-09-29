@@ -41,25 +41,14 @@ class HGSO(Optimizer):
 
         super(HGSO, self).__init__()
 
-        # Number of clusters
         self.n_clusters = 2
 
-        # Henry's coefficient constant
         self.l1 = 0.0005
-
-        # Partial pressure constant
         self.l2 = 100
-
-        # Constant
         self.l3 = 0.001
 
-        # Influence of gases
         self.alpha = 1.0
-
-        # Gas constant
         self.beta = 1.0
-
-        # Solubility constant
         self.K = 1.0
 
         self.build(params)
@@ -218,10 +207,8 @@ class HGSO(Optimizer):
 
         """
 
-        # Number of agents per cluster
         n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
 
-        # Arrays of coefficients, pressures and constants
         self.coefficient = self.l1 * r.generate_uniform_random_number(
             size=self.n_clusters
         )
@@ -246,16 +233,11 @@ class HGSO(Optimizer):
 
         """
 
-        # Calculates `gamma`
         gamma = self.beta * np.exp(-(best_agent.fit + 0.05) / (agent.fit + 0.05))
-
-        # Generates a flag that provides diversity
         flag = np.sign(r.generate_uniform_random_number(-1, 1))
 
-        # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Updates the position
         new_position = (
             agent.position
             + flag * r1 * gamma * (cluster_agent.position - agent.position)
@@ -280,10 +262,7 @@ class HGSO(Optimizer):
 
         """
 
-        # Creates n-wise clusters
         clusters = g.n_wise(space.agents, self.pressure.shape[1])
-
-        # Iterates through all clusters
         for i, cluster in enumerate(clusters):
             # Calculates the system's current temperature (eq. 8)
             T = np.exp(-iteration / n_iterations)
@@ -291,11 +270,9 @@ class HGSO(Optimizer):
             # Updates Henry's coefficient (eq. 8)
             self.coefficient[i] *= np.exp(-self.constant[i] * (1 / T - 1 / 298.15))
 
-            # Transforms the cluster into a list and sorts it
             cluster = list(cluster)
             cluster.sort(key=lambda x: x.fit)
 
-            # Iterates through all agents in cluster
             for j, agent in enumerate(cluster):
                 # Calculates agent's solubility (eq. 9)
                 solubility = self.K * self.coefficient[i] * self.pressure[i][j]
@@ -304,26 +281,17 @@ class HGSO(Optimizer):
                 agent.position = self._update_position(
                     agent, cluster[0], space.best_agent, solubility
                 )
-
-                # Clips agent's limits
                 agent.clip_by_bound()
 
-                # Re-calculates its fitness
                 agent.fit = function(agent.position)
 
-        # Re-sorts the whole space
         space.agents.sort(key=lambda x: x.fit)
 
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number()
-
         # Calculates the number of worst agents (eq. 11)
+        r1 = r.generate_uniform_random_number()
         N = int(len(space.agents) * (r1 * (0.2 - 0.1) + 0.1))
 
-        # Iterates through every bad agent
         for agent in space.agents[-N:]:
-            # Generates another uniform random number
-            r2 = r.generate_uniform_random_number()
-
             # Updates bad agent's position (eq. 12)
+            r2 = r.generate_uniform_random_number()
             agent.position = agent.lb + r2 * (agent.ub - agent.lb)

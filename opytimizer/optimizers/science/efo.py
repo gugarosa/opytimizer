@@ -39,22 +39,13 @@ class EFO(Optimizer):
 
         super(EFO, self).__init__()
 
-        # Positive field proportion
         self.positive_field = 0.1
-
-        # Negative field proportion
         self.negative_field = 0.5
 
-        # Probability of selecting eletromagnets
         self.ps_ratio = 0.1
-
-        # Probability of selecting a random eletromagnet
         self.r_ratio = 0.4
-
-        # Golden ratio
         self.phi = (1 + np.sqrt(5)) / 2
 
-        # Eletromagnetic index
         self.RI = 0
 
         self.build(params)
@@ -164,19 +155,16 @@ class EFO(Optimizer):
 
         """
 
-        # Calculates a positive particle's index
         positive_index = int(
             r.generate_uniform_random_number(0, n_agents * self.positive_field)
         )
 
-        # Calculates a negative particle's index
         negative_index = int(
             r.generate_uniform_random_number(
                 n_agents * (1 - self.negative_field), n_agents
             )
         )
 
-        # Calculates a neutral particle's index
         neutral_index = int(
             r.generate_uniform_random_number(
                 n_agents * self.positive_field, n_agents * (1 - self.negative_field)
@@ -194,34 +182,19 @@ class EFO(Optimizer):
 
         """
 
-        # Sorts agents according to their fitness
         space.agents.sort(key=lambda x: x.fit)
-
-        # Gathers the number of total agents
         n_agents = len(space.agents)
 
-        # Making a deepcopy of current's best agent
         agent = copy.deepcopy(space.agents[0])
-
-        # Generates a uniform random number for the force
         force = r.generate_uniform_random_number()
 
-        # For every decision variable
         for j in range(agent.n_variables):
-            # Calculates the index of positive, negative and neutral particles
             pos, neg, neu = self._calculate_indexes(n_agents)
 
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If random number is smaller than the probability of selecting eletromagnets
             if r1 < self.ps_ratio:
-                # Applies agent's position as positive particle's position
                 agent.position[j] = space.agents[pos].position[j]
-
-            # If random number is bigger
             else:
-                # Calculates the new agent's position
                 agent.position[j] = (
                     space.agents[neg].position[j]
                     + self.phi
@@ -230,32 +203,18 @@ class EFO(Optimizer):
                     - force
                     * (space.agents[neg].position[j] - space.agents[neu].position[j])
                 )
-
-        # Clips the agent's position to its limits
         agent.clip_by_bound()
 
-        # Generates a third uniform random number
         r2 = r.generate_uniform_random_number()
-
-        # If random number is smaller than probability of changing a random eletromagnet
         if r2 < self.r_ratio:
-            # Update agent's position based on RI
             agent.position[self.RI] = r.generate_uniform_random_number(
                 agent.lb[self.RI], agent.ub[self.RI]
             )
 
-            # Increases RI by one
             self.RI += 1
-
-            # If RI exceeds the number of variables
             if self.RI >= agent.n_variables:
-                # Resets it to one
                 self.RI = 1
 
-        # Calculates the agent's fitness
         agent.fit = function(agent.position)
-
-        # If newly generated agent fitness is better than worst fitness
         if agent.fit < space.agents[-1].fit:
-            # Updates the corresponding agent's object
             space.agents[-1] = copy.deepcopy(agent)

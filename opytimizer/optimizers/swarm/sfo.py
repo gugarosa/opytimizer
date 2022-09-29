@@ -43,13 +43,8 @@ class SFO(Optimizer):
 
         super(SFO, self).__init__()
 
-        # Percentage of initial sailfishes
         self.PP = 0.1
-
-        # Attack power coefficient
         self.A = 4
-
-        # Attack power decrease
         self.e = 0.001
 
         self.build(params)
@@ -122,13 +117,10 @@ class SFO(Optimizer):
 
         """
 
-        # List of sardines
         self.sardines = [
             self._generate_random_agent(space.best_agent)
             for _ in range(int(space.n_agents / self.PP))
         ]
-
-        # Sorts the population of sardines
         self.sardines.sort(key=lambda x: x.fit)
 
     def _generate_random_agent(self, agent: Agent) -> Agent:
@@ -142,10 +134,7 @@ class SFO(Optimizer):
 
         """
 
-        # Makes a deep copy of agent
         a = copy.deepcopy(agent)
-
-        # Fills agent with new random positions
         a.fill_with_uniform()
 
         return a
@@ -165,10 +154,7 @@ class SFO(Optimizer):
         # Calculates the prey density (eq. 8)
         PD = 1 - (n_sailfishes / (n_sailfishes + n_sardines))
 
-        # Generates a random uniform number
         r1 = r.generate_uniform_random_number()
-
-        # Calculates lambda
         lambda_i = 2 * r1 * PD - PD
 
         return lambda_i
@@ -189,10 +175,7 @@ class SFO(Optimizer):
 
         """
 
-        # Generates a random uniform number
         r1 = r.generate_uniform_random_number()
-
-        # Calculates the new position
         new_position = best_sardine.position - lambda_i * (
             r1 * (best_agent.position - best_sardine.position) / 2 - agent.position
         )
@@ -209,36 +192,25 @@ class SFO(Optimizer):
 
         """
 
-        # Gathers the best sardine
         best_sardine = self.sardines[0]
 
-        # Calculates the number of sailfishes and sardines
         n_sailfishes = len(space.agents)
         n_sardines = len(self.sardines)
-
-        # Calculates the number of decision variables
         n_variables = space.agents[0].n_variables
 
-        # Iterates through every agent
         for agent in space.agents:
-            # Calculates the lambda value
             lambda_i = self._calculate_lambda_i(n_sailfishes, n_sardines)
 
-            # Updates agent's position
             agent.position = self._update_sailfish(
                 agent, space.best_agent, best_sardine, lambda_i
             )
-
-            # Clips agent's limits
             agent.clip_by_bound()
 
-            # Re-evaluates agent's fitness
             agent.fit = function(agent.position)
 
         # Calculates the attack power (eq. 10)
         AP = np.fabs(self.A * (1 - 2 * iteration * self.e))
 
-        # Checks if attack power is smaller than 0.5
         if AP < 0.5:
             # Calculates the number of sardines possible replacements (eq. 11)
             alpha = int(len(self.sardines) * AP)
@@ -246,63 +218,43 @@ class SFO(Optimizer):
             # Calculates the number of variables possible replacements (eq. 12)
             beta = int(n_variables * AP)
 
-            # Generates a list of selected sardines
             selected_sardines = r.generate_integer_random_number(
                 0, n_sardines, size=alpha
             )
 
-            # Iterates through every selected sardine
             for i in selected_sardines:
-                # Generates a list of selected variables
                 selected_vars = r.generate_integer_random_number(
                     0, n_variables, size=beta
                 )
 
-                # Iterates through every selected variable
                 for j in selected_vars:
-                    # Generates a uniform random number
                     r1 = r.generate_uniform_random_number()
 
                     # Updates the sardine's position (eq. 9)
                     self.sardines[i].position[j] = r1 * (
                         space.best_agent.position[j] - self.sardines[i].position[j] + AP
                     )
-
-                # Clips sardine's limits
                 self.sardines[i].clip_by_bound()
 
-                # Re-calculates its fitness
                 self.sardines[i].fit = function(self.sardines[i].position)
-
-        # If attack power is bigger than 0.5
         else:
-            # Iterates through every sardine
             for sardine in self.sardines:
-                # Generates a uniform random number
-                r1 = r.generate_uniform_random_number()
-
                 # Updates the sardine's position (eq. 9)
+                r1 = r.generate_uniform_random_number()
                 sardine.position = r1 * (
                     space.best_agent.position - sardine.position + AP
                 )
-
-                # Clips sardine's limits
                 sardine.clip_by_bound()
 
                 # Re-calculates its fitness
                 sardine.fit = function(sardine.position)
 
-        # Sorts the population of agents (sailfishes) and sardines
         space.agents.sort(key=lambda x: x.fit)
         self.sardines.sort(key=lambda x: x.fit)
 
-        # Iterates through every agent
         for agent in space.agents:
-            # Iterates through every sardine
             for sardine in self.sardines:
                 # If agent is worse than sardine (eq. 13)
                 if agent.fit > sardine.fit:
-                    # Copies sardine to agent
                     agent = copy.deepcopy(sardine)
-
                     break

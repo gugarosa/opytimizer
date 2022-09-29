@@ -38,13 +38,9 @@ class SCA(Optimizer):
 
         super(SCA, self).__init__()
 
-        # Minimum function range
         self.r_min = 0
-
-        # Maximum function range
         self.r_max = 2
 
-        # Constant for defining the next position's region
         self.a = 3
 
         self.build(params)
@@ -122,16 +118,12 @@ class SCA(Optimizer):
 
         """
 
-        # If random number is smaller than threshold
         if r4 < 0.5:
-            # Updates the position using sine
             new_position = agent_position + r1 * np.sin(r2) * np.fabs(
                 r3 * best_position - agent_position
             )
 
-        # If the random number is bigger than threshold
         else:
-            # Updates the posistion using cosine
             new_position = agent_position + r1 * np.cos(r2) * np.fabs(
                 r3 * best_position - agent_position
             )
@@ -160,9 +152,7 @@ class SCA(Optimizer):
         # A random number to decide whether sine or cosine should be used
         r4 = r.generate_uniform_random_number()
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Updates agent's position
             agent.position = self._update_position(
                 agent.position, space.best_agent.position, r1, r2, r3, r4
             )

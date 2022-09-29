@@ -43,13 +43,8 @@ class PSO(Optimizer):
 
         super(PSO, self).__init__()
 
-        # Inertia weight
         self.w = 0.7
-
-        # Cognitive constant
         self.c1 = 1.7
-
-        # Social constant
         self.c2 = 1.7
 
         self.build(params)
@@ -135,7 +130,6 @@ class PSO(Optimizer):
 
         """
 
-        # Arrays of local positions and velocities
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -152,22 +146,13 @@ class PSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
             fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
             if fit < agent.fit:
-                # Updates its current fitness to the newer one
                 agent.fit = fit
-
-                # Also updates the local best position to current's agent position
                 self.local_position[i] = copy.deepcopy(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
@@ -180,9 +165,7 @@ class PSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
@@ -220,10 +203,7 @@ class AIWPSO(PSO):
 
         logger.info("Overriding class: PSO -> AIWPSO.")
 
-        # Minimum inertia weight
         self.w_min = 0.1
-
-        # Maximum inertia weight
         self.w_max = 0.9
 
         super(AIWPSO, self).__init__(params)
@@ -283,20 +263,14 @@ class AIWPSO(PSO):
 
         """
 
-        # Initial counter
         p = 0
 
-        # Iterates through every agent
         for i, agent in enumerate(agents):
-            # If current agent fitness is smaller than its best
             if agent.fit < self.fitness[i]:
-                # Increments the counter
                 p += 1
 
-            # Replaces fitness with current agent's fitness
             self.fitness[i] = agent.fit
 
-        # Update inertia weight value
         self.w = (self.w_max - self.w_min) * (p / len(agents)) + self.w_min
 
     def update(self, space: Space, iteration: int) -> None:
@@ -308,28 +282,21 @@ class AIWPSO(PSO):
 
         """
 
-        # Checks if it is the first iteration
         if iteration == 0:
-            # Creates a list of initial fitnesses
             self.fitness = [agent.fit for agent in space.agents]
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
-            # Updates agent's velocity
             self.velocity[i] = (
                 self.w * self.velocity[i]
                 + self.c1 * r1 * (self.local_position[i] - agent.position)
                 + self.c2 * r2 * (space.best_agent.position - agent.position)
             )
 
-            # Updates agent's position
             agent.position += self.velocity[i]
 
-        # Computing particle's success and updating inertia weight
         self._compute_success(space.agents)
 
 
@@ -381,7 +348,6 @@ class RPSO(PSO):
 
         """
 
-        # Arrays of local positions, velocities and masses
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -400,12 +366,9 @@ class RPSO(PSO):
 
         """
 
-        # Calculates the maximum velocity
         max_velocity = np.max(self.velocity)
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates rnadom number
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 
@@ -417,7 +380,6 @@ class RPSO(PSO):
                 + self.c2 * r2 * (space.best_agent.position - agent.position)
             )
 
-            # Updates current agent position
             agent.position += self.velocity[i]
 
 
@@ -456,22 +418,15 @@ class SAVPSO(PSO):
 
         """
 
-        # Creates an array of positions
         positions = np.zeros(
             (space.agents[0].position.shape[0], space.agents[0].position.shape[1])
         )
 
-        # For every agent
         for agent in space.agents:
-            # Sums up its position
             positions += agent.position
-
-        # Divides by the number of agents
         positions /= len(space.agents)
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates a random index for selecting an agent
             idx = r.generate_integer_random_number(0, len(space.agents))
 
             # Updates current agent's velocity (eq. 8)
@@ -484,24 +439,17 @@ class SAVPSO(PSO):
                 + (1 - r1) * (space.best_agent.position - agent.position)
             )
 
-            # Updates current agent's position
             agent.position += self.velocity[i]
 
-            # For every decision variable
             for j in range(agent.n_variables):
-                # Generates a random number
                 r4 = r.generate_uniform_random_number(0, 1)
 
-                # If position is greater than upper bound
                 if agent.position[j] > agent.ub[j]:
-                    # Replaces its value
                     agent.position[j] = positions[j] + 1 * r4 * (
                         agent.ub[j] - positions[j]
                     )
 
-                # If position is smaller than lower bound
                 if agent.position[j] < agent.lb[j]:
-                    # Replaces its value
                     agent.position[j] = positions[j] + 1 * r4 * (
                         agent.lb[j] - positions[j]
                     )
@@ -554,7 +502,6 @@ class VPSO(PSO):
 
         """
 
-        # Arrays of local positions, velocities and vertical velocities
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -573,9 +520,7 @@ class VPSO(PSO):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates uniform random numbers
             r1 = r.generate_uniform_random_number()
             r2 = r.generate_uniform_random_number()
 

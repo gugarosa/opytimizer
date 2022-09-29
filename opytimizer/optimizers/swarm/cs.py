@@ -42,13 +42,8 @@ class CS(Optimizer):
 
         super(CS, self).__init__()
 
-        # Step size
-        self.alpha = 1
-
-        # Lévy distribution parameter
+        self.alpha = 1.0
         self.beta = 1.5
-
-        # Probability of replacing worst nests
         self.p = 0.2
 
         self.build(params)
@@ -114,28 +109,17 @@ class CS(Optimizer):
 
         """
 
-        # Makes a temporary copy of current agents
         new_agents = copy.deepcopy(agents)
-
-        # Then, we iterate for every agent
         for new_agent in new_agents:
-            # Calculates the Lévy distribution
             step = d.generate_levy_distribution(self.beta, new_agent.n_variables)
-
-            # Expanding its dimension to perform entrywise multiplication
             step = np.expand_dims(step, axis=1)
 
-            # Calculates the difference vector between local and best positions
             # Alpha controls the intensity of the step size
             step_size = self.alpha * step * (new_agent.position - best_agent.position)
 
-            # Generates a random normal distribution
             g = r.generate_gaussian_random_number(size=new_agent.n_variables)
-
-            # Expanding its dimension to perform entrywise multiplication
             g = np.expand_dims(g, axis=1)
 
-            # Acutally performs the random walk / flight
             new_agent.position += step_size * g
 
         return new_agents
@@ -154,27 +138,18 @@ class CS(Optimizer):
 
         """
 
-        # Makes a temporary copy of current agents
         new_agents = copy.deepcopy(agents)
 
-        # Generates a bernoulli distribution array
         # It will be used to replace or not a certain nest
         b = d.generate_bernoulli_distribution(1 - prob, len(agents))
 
-        # Iterates through every new agent
         for j, new_agent in enumerate(new_agents):
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
-            # Then, we select two random nests
             k = r.generate_integer_random_number(0, len(agents) - 1)
             l = r.generate_integer_random_number(0, len(agents) - 1, exclude_value=k)
 
-            # Calculates the random walk between these two nests
             step_size = r1 * (agents[k].position - agents[l].position)
-
-            # Finally, we replace the old nest
-            # Note it will only be replaced if 'b' is 1
             new_agent.position += step_size * b[j]
 
         return new_agents
@@ -191,17 +166,11 @@ class CS(Optimizer):
 
         """
 
-        # Iterates through each agent and new agent
         for agent, new_agent in zip(agents, new_agents):
-            # Checks agent's limits
             new_agent.clip_by_bound()
 
-            # Calculates the new agent fitness
             new_agent.fit = function(new_agent.position)
-
-            # If new agent's fitness is better than agent's
             if new_agent.fit < agent.fit:
-                # Replace its position and fitness
                 agent.position = copy.deepcopy(new_agent.position)
                 agent.fit = copy.deepcopy(new_agent.fit)
 
@@ -214,14 +183,8 @@ class CS(Optimizer):
 
         """
 
-        # Generate new nests
         new_agents = self._generate_new_nests(space.agents, space.best_agent)
-
-        # Evaluate new generated nests
         self._evaluate_nests(space.agents, new_agents, function)
 
-        # Generate new nests to be replaced
         new_agents = self._generate_abandoned_nests(space.agents, self.p)
-
-        # Evaluate new generated nests for further replacement
         self._evaluate_nests(space.agents, new_agents, function)

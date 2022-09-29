@@ -57,40 +57,30 @@ class SOS(Optimizer):
 
         """
 
-        # Copies temporary agents from `i` and `j`
         a = copy.deepcopy(agent_i)
         b = copy.deepcopy(agent_j)
 
         # Calculates the mutual vector (eq. 3)
         mutual_vector = (agent_i.position + agent_j.position) / 2
 
-        # Calculates the benefitial factors
         BF_1, BF_2 = np.random.choice([1, 2], 2, replace=False)
 
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number()
-
         # Re-calculates the new positions (eq. 1 and 2)
+        r1 = r.generate_uniform_random_number()
         a.position += r1 * (best_agent.position - mutual_vector * BF_1)
         b.position += r1 * (best_agent.position - mutual_vector * BF_2)
 
-        # Checks their limits
         a.clip_by_bound()
         b.clip_by_bound()
 
-        # Evaluates both agents
         a.fit = function(a.position)
         b.fit = function(b.position)
 
-        # If new position is better than agent's `i` position
         if a.fit < agent_i.fit:
-            # Replaces the agent's `i` position and fitness
             agent_i.position = copy.deepcopy(a.position)
             agent_i.fit = copy.deepcopy(a.fit)
 
-        # If new position is better than agent's `j` position
         if b.fit < agent_j.fit:
-            # Replaces the agent's `j` position and fitness
             agent_j.position = copy.deepcopy(b.position)
             agent_j.fit = copy.deepcopy(b.fit)
 
@@ -107,24 +97,15 @@ class SOS(Optimizer):
 
         """
 
-        # Copies a temporary agent from `i`
         a = copy.deepcopy(agent_i)
 
-        # Generates a uniform random number
-        r1 = r.generate_uniform_random_number(-1, 1)
-
         # Updates the agent's position (eq. 4)
+        r1 = r.generate_uniform_random_number(-1, 1)
         a.position += r1 * (best_agent.position - agent_j.position)
-
-        # Checks its limits
         a.clip_by_bound()
 
-        # Evaluates its new position
         a.fit = function(a.position)
-
-        # If the new position is better than the current agent's position
         if a.fit < agent_i.fit:
-            # Replaces the current agent's position and fitness
             agent_i.position = copy.deepcopy(a.position)
             agent_i.fit = copy.deepcopy(a.fit)
 
@@ -138,24 +119,14 @@ class SOS(Optimizer):
 
         """
 
-        # Creates a temporary parasite agent
-        p = copy.deepcopy(agent_i)
-
-        # Generates a integer random number
         r1 = r.generate_integer_random_number(0, agent_i.n_variables)
 
-        # Updates its position on selected variable with a uniform random number
+        p = copy.deepcopy(agent_i)
         p.position[r1] = r.generate_uniform_random_number(p.lb[r1], p.ub[r1])
-
-        # Checks its limits
         p.clip_by_bound()
 
-        # Evaluates its position
         p.fit = function(p.position)
-
-        # If the new potision is better than agent's `j` position
         if p.fit < agent_j.fit:
-            # Replaces the agent's `j` position and fitness
             agent_j.position = copy.deepcopy(p.position)
             agent_j.fit = copy.deepcopy(p.fit)
 
@@ -168,16 +139,12 @@ class SOS(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates a random integer for mutualism and performs it
             j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
             self._mutualism(agent, space.agents[j], space.best_agent, function)
 
-            # Re-generates a random integer for commensalism and performs it
             j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
             self._commensalism(agent, space.agents[j], space.best_agent, function)
 
-            # Re-generates a random integer for parasitism and performs it
             j = r.generate_integer_random_number(0, len(space.agents), exclude_value=i)
             self._parasitism(agent, space.agents[j], function)

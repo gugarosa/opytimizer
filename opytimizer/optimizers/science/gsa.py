@@ -41,7 +41,6 @@ class GSA(Optimizer):
 
         super(GSA, self).__init__()
 
-        # Initial gravity value
         self.G = 2.467
 
         self.build(params)
@@ -84,7 +83,6 @@ class GSA(Optimizer):
 
         """
 
-        # Arrays of velocities
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -100,13 +98,10 @@ class GSA(Optimizer):
 
         """
 
-        # Gathers the best and worst agents
         best, worst = agents[0].fit, agents[-1].fit
 
-        # Calculates agents' masses using equation 15
+        # Calculates agents' masses (eq. 15)
         mass = [(agent.fit - worst) / (best - worst + c.EPSILON) for agent in agents]
-
-        # Normalizes agents' masses
         norm_mass = mass / (np.sum(mass) + c.EPSILON)
 
         return norm_mass
@@ -126,7 +121,6 @@ class GSA(Optimizer):
 
         """
 
-        # Calculates the force
         force = [
             [
                 gravity
@@ -141,10 +135,7 @@ class GSA(Optimizer):
             for i in range(len(agents))
         ]
 
-        # Transforms the force into an array
         force = np.asarray(force)
-
-        # Applies a stochastic trait to the force
         force = np.sum(r.generate_uniform_random_number() * force, axis=1)
 
         return force
@@ -158,19 +149,12 @@ class GSA(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Calculates the current gravity
         gravity = self.G / (iteration + 1)
-
-        # Calculates agents' mass
         mass = self._calculate_mass(space.agents)
-
-        # Calculates agents' attraction force
         force = self._calculate_force(space.agents, mass, gravity)
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
             # Calculates the acceleration (eq. 10)
             acceleration = force[i] / (mass[i] + c.EPSILON)

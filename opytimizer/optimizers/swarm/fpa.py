@@ -39,13 +39,8 @@ class FPA(Optimizer):
 
         super(FPA, self).__init__()
 
-        # Lévy flight control parameter
         self.beta = 1.5
-
-        # Lévy flight scaling factor
         self.eta = 0.2
-
-        # Probability of local pollination
         self.p = 0.8
 
         self.build(params)
@@ -111,13 +106,8 @@ class FPA(Optimizer):
 
         """
 
-        # Generates a Lévy distribution
         step = d.generate_levy_distribution(self.beta)
-
-        # Calculates the global pollination
         global_pollination = self.eta * step * (best_position - agent_position)
-
-        # Calculates the new position based on previous global pollination
         new_position = agent_position + global_pollination
 
         return new_position
@@ -142,10 +132,7 @@ class FPA(Optimizer):
 
         """
 
-        # Calculates the local pollination
         local_pollination = epsilon * (k_position - l_position)
-
-        # Calculates the new position based on previous local pollination
         new_position = agent_position + local_pollination
 
         return new_position
@@ -159,47 +146,31 @@ class FPA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Creates a temporary agent
             a = copy.deepcopy(agent)
 
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # Check if generated random number is bigger than probability
             if r1 > self.p:
-                # Updates a temporary position according to global pollination
                 a.position = self._global_pollination(
                     agent.position, space.best_agent.position
                 )
-
             else:
-                # Generates an uniform random number
                 epsilon = r.generate_uniform_random_number()
 
-                # Generates an index for flower `k` and flower `l`
                 k = r.generate_integer_random_number(0, len(space.agents))
                 l = r.generate_integer_random_number(
                     0, len(space.agents), exclude_value=k
                 )
 
-                # Updates a temporary position according to local pollination
                 a.position = self._local_pollination(
                     agent.position,
                     space.agents[k].position,
                     space.agents[l].position,
                     epsilon,
                 )
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Calculates the fitness for the temporary position
             a.fit = function(a.position)
-
-            # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

@@ -42,16 +42,10 @@ class WEO(Optimizer):
 
         super(WEO, self).__init__()
 
-        # Minimum substrate energy
         self.E_min = -3.5
-
-        # Maximum substrate energy
         self.E_max = -0.5
 
-        # Minimum contact angle
         self.theta_min = -np.pi / 3.6
-
-        # Maximum contact angle
         self.theta_max = -np.pi / 9
 
         self.build(params)
@@ -147,18 +141,12 @@ class WEO(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
-
-        # Gathers best and worst agents
         best, worst = space.agents[0], space.agents[-1]
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Checks whether it is the first half of iterations
             if int(iteration <= n_iterations / 2):
                 # Calculates the substrate energy (eq. 5)
                 E_sub = ((self.E_max - self.E_min) * (a.fit - best.fit)) / (
@@ -179,8 +167,6 @@ class WEO(Optimizer):
 
                 # Updates the agent's position (eq. 11)
                 a.position += S * MEP
-
-            # If it is the second half of iterations
             else:
                 # Calculates the contact angle (eq. 8)
                 theta = ((self.theta_max - self.theta_min) * (a.fit - best.fit)) / (
@@ -201,15 +187,9 @@ class WEO(Optimizer):
 
                 # Updates the agent's position (eq. 11)
                 a.position += S * DEP
-
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Re-evaluates the temporary agent
             a.fit = function(a.position)
-
-            # If temporary agent's fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Replace its position and fitness
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

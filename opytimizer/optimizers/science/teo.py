@@ -40,19 +40,12 @@ class TEO(Optimizer):
 
         super(TEO, self).__init__()
 
-        # Random step size control
         self.c1 = True
-
-        # Randomness control
         self.c2 = True
 
-        # Cooling parameter
         self.pro = 0.05
 
-        # Thermal memory size
         self.n_TM = 4
-
-        # Thermal memory
         self.TM = []
 
         self.build(params)
@@ -149,7 +142,6 @@ class TEO(Optimizer):
 
         """
 
-        # Creates an enviromental population as a copy of initial population
         self.environment = copy.deepcopy(space.agents)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
@@ -162,27 +154,22 @@ class TEO(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Updates the thermal memory and cuts it to maximum allowed size
         self.TM.append(copy.deepcopy(space.agents[0]))
         self.TM = self.TM[-self.n_TM :]
 
-        # Replaces the worst agents with the thermal memory and re-sorts the agents
         space.agents = space.agents[: -len(self.TM)] + self.TM
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the time (eq. 9)
         time = iteration / n_iterations
 
-        # Iterates through all environmental-based agents
         for env in self.environment:
             # Updates the environment's position (eq. 10)
             r1 = r.generate_uniform_random_number()
             env.position = 1 - (self.c1 + self.c2 * (1 - time)) * r1 * env.position
 
-        # Iterates through both populations' agents
         for agent, env in zip(space.agents, self.environment):
             # Calculates the agent's beta value (eq. 8)
             beta = agent.fit / space.agents[-1].fit
@@ -192,12 +179,8 @@ class TEO(Optimizer):
                 -beta * time
             )
 
-            # Generates a random number
             r1 = r.generate_uniform_random_number()
-
-            # If random number is smaller than `pro`
             if r1 < self.pro:
-                # Selects a random dimension
                 idx = r.generate_integer_random_number(high=agent.n_variables)
 
                 # Resets its position (eq. 12)

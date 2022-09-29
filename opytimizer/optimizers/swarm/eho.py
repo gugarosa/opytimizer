@@ -41,13 +41,9 @@ class EHO(Optimizer):
 
         super(EHO, self).__init__()
 
-        # Matriarch influence
         self.alpha = 0.5
-
-        # Center influence
         self.beta = 0.1
 
-        # Maximum number of clans
         self.n_clans = 10
 
         self.build(params)
@@ -122,7 +118,6 @@ class EHO(Optimizer):
 
         """
 
-        # Number of elephants per clan
         self.n_ci = space.n_agents // self.n_clans
 
     def _get_agents_from_clan(self, agents: List[Agent], index: int) -> List[Agent]:
@@ -137,10 +132,8 @@ class EHO(Optimizer):
 
         """
 
-        # Defines the starting and ending points
         start, end = index * self.n_ci, (index + 1) * self.n_ci
 
-        # If it is the last index, there is no need to return an ending point
         if (index + 1) == self.n_clans:
             return sorted(agents[start:], key=lambda x: x.fit)
 
@@ -158,40 +151,24 @@ class EHO(Optimizer):
 
         """
 
-        # Iterates through every clan
         for i in range(self.n_clans):
-            # Gets the agents for the specified clan
             clan_agents = self._get_agents_from_clan(agents, i)
-
-            # Iterates through every agent in clan
             for j, agent in enumerate(clan_agents):
-                # Creates a temporary agent
                 a = copy.deepcopy(agent)
-
-                # Generaters an uniform random number
                 r1 = r.generate_uniform_random_number()
 
-                # If it is the first agent in clan
                 if j == 0:
                     # Updates its position (eq. 2)
                     a.position = self.beta * centers[i]
-
-                # If it is not the first (best) agent in clan
                 else:
                     # Updates its position (eq. 1)
                     a.position += (
                         self.alpha * (clan_agents[0].position - a.position) * r1
                     )
-
-                # Checks the agent's limits
                 a.clip_by_bound()
 
-                # Evaluates the agent
                 a.fit = function(a.position)
-
-                # If the new potision is better than current agent's position
                 if a.fit < agent.fit:
-                    # Replaces the current agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
@@ -203,15 +180,11 @@ class EHO(Optimizer):
 
         """
 
-        # Iterates through every clan
         for i in range(self.n_clans):
-            # Gets the agents for the specified clan
             clan_agents = self._get_agents_from_clan(agents, i)
 
-            # Gathers the worst agent in clan
-            worst = clan_agents[-1]
-
             # Generates a new position for the worst agent in clan (eq. 4)
+            worst = clan_agents[-1]
             worst.fill_with_uniform()
 
     def update(self, space: Space, function: Function) -> None:
@@ -223,24 +196,16 @@ class EHO(Optimizer):
 
         """
 
-        # Instantiates a list of empty centers
         centers = []
 
-        # Iterates through every clan
         for i in range(self.n_clans):
-            # Gets the agents for the specified clan
             clan_agents = self._get_agents_from_clan(space.agents, i)
 
-            # Calculates the clan's center position
             clan_center = np.mean(
                 np.array([agent.position for agent in clan_agents]), axis=0
             )
 
-            # Appends the center position to the list
             centers.append(clan_center)
 
-        # Performs the updating operator
         self._updating_operator(space.agents, centers, function)
-
-        # Performs the separating operators
         self._separating_operator(space.agents)

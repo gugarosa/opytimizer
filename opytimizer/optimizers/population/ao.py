@@ -41,19 +41,12 @@ class AO(Optimizer):
 
         super(AO, self).__init__()
 
-        # First exploitation adjustment coefficient
         self.alpha = 0.1
-
-        # Second exploitation adjustment coefficient
         self.delta = 0.1
 
-        # Number of search cycles
         self.n_cycles = 10
 
-        # Cycle regularizer
         self.U = 0.00565
-
-        # Angle regularizer
         self.w = 0.005
 
         self.build(params)
@@ -148,39 +141,27 @@ class AO(Optimizer):
 
         """
 
-        # Calculates the mean position of space
         average = np.mean([agent.position for agent in space.agents], axis=0)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Makes a deep copy of current agent
             a = copy.deepcopy(agent)
 
-            # Generates a random number
             r1 = r.generate_uniform_random_number()
 
-            # If current iteration is smaller than 2/3 of maximum iterations
             if iteration <= ((2 / 3) * n_iterations):
-                # Generates another random number
                 r2 = r.generate_uniform_random_number()
 
-                # If random number is smaller or equal to 0.5
                 if r1 <= 0.5:
                     # Updates temporary agent's position (eq. 3)
                     a.position = space.best_agent.position * (
                         1 - (iteration / n_iterations)
                     ) + (average - space.best_agent.position * r2)
-
-                # If random number is bigger than 0.5
                 else:
-                    # Generates a Lévy distirbution and a random integer
                     levy = d.generate_levy_distribution(
                         size=(agent.n_variables, agent.n_dimensions)
                     )
                     idx = r.generate_integer_random_number(high=len(space.agents))
 
-                    # Creates an evenly-space array of `n_variables`
-                    # Also broadcasts it to correct `n_dimensions` size
                     D = np.linspace(1, agent.n_variables, agent.n_variables)
                     D = np.repeat(np.expand_dims(D, -1), agent.n_dimensions, axis=1)
 
@@ -200,15 +181,9 @@ class AO(Optimizer):
                         + space.agents[idx].position
                         + (y - x) * r2
                     )
-
-            # If current iteration is bigger than 2/3 of maximum iterations
             else:
-                # Generates another random number
                 r2 = r.generate_uniform_random_number()
-
-                # If random number is smaller or equal to 0.5
-                if r1 <= 0.5:
-                    # Expands both lower and upper bound dimensions
+                if r2 <= 0.5:
                     lb = np.expand_dims(agent.lb, -1)
                     ub = np.expand_dims(agent.ub, -1)
 
@@ -218,8 +193,6 @@ class AO(Optimizer):
                         - r2
                         + ((ub - lb) * r2 + lb) * self.delta
                     )
-
-                # If random number is bigger than 0.5
                 else:
                     # Calculates both motions (eq. 16 and 17)
                     G1 = 2 * r2 - 1
@@ -228,7 +201,6 @@ class AO(Optimizer):
                     # Calculates quality function (eq. 15)
                     QF = iteration ** (G1 / (1 - n_iterations) ** 2)
 
-                    # Generates a Lévy distribution
                     levy = d.generate_levy_distribution(
                         size=(agent.n_variables, agent.n_dimensions)
                     )
@@ -241,14 +213,9 @@ class AO(Optimizer):
                         + r2 * G1
                     )
 
-            # Checks agent's limits
             a.clip_by_bound()
 
-            # Calculates the fitness for the temporary position
             a.fit = function(a.position)
-
-            # If new fitness is better than agent's fitness
             if a.fit < agent.fit:
-                # Copies its position and fitness to the agent
                 agent.position = copy.deepcopy(a.position)
                 agent.fit = copy.deepcopy(a.fit)

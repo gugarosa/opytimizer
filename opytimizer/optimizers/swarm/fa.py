@@ -40,13 +40,8 @@ class FA(Optimizer):
 
         super(FA, self).__init__()
 
-        # Randomization parameter
         self.alpha = 0.5
-
-        # Attractiveness
         self.beta = 0.2
-
-        # Light absorption coefficient
         self.gamma = 1.0
 
         self.build(params)
@@ -107,31 +102,22 @@ class FA(Optimizer):
 
         """
 
-        # Calculates current iteration delta
         delta = 1 - ((10e-4) / 0.9) ** (1 / n_iterations)
-
-        # Applies update to alpha parameter
         self.alpha *= 1 - delta
 
-        # We copy a temporary list for iterating purposes
         temp_agents = copy.deepcopy(space.agents)
 
-        # Iterates through 'i' agents
         for agent in space.agents:
-            # Iterates through 'j' agents
             for temp in temp_agents:
                 # Distance is calculated by an euclidean distance between 'i' and 'j' (eq. 8)
                 distance = g.euclidean_distance(agent.position, temp.position)
 
-                # If 'i' fit is bigger than 'j' fit
                 if agent.fit > temp.fit:
                     # Recalculate the attractiveness (eq. 6)
                     beta = self.beta * np.exp(-self.gamma * distance)
 
-                    # Generates a random uniform distribution
-                    r1 = r.generate_uniform_random_number()
-
                     # Updates agent's position (eq. 9)
+                    r1 = r.generate_uniform_random_number()
                     agent.position = beta * (
                         temp.position + agent.position
                     ) + self.alpha * (r1 - 0.5)
