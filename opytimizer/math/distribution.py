@@ -23,13 +23,9 @@ def generate_bernoulli_distribution(
 
     """
 
-    # Creates the bernoulli array
     bernoulli_array = np.zeros(size)
 
-    # Generates a random number
     r1 = r.generate_uniform_random_number(0, 1, size)
-
-    # Masks the array based on input probability
     bernoulli_array[r1 < prob] = 1
 
     return bernoulli_array
@@ -50,7 +46,6 @@ def generate_choice_distribution(
 
     """
 
-    # Performs the random choice based on input probabilities
     choice_array = np.random.choice(n, size, p=probs, replace=False)
 
     return choice_array
@@ -74,18 +69,14 @@ def generate_levy_distribution(
 
     """
 
-    # Calculates the equation's numerator and denominator
     num = gamma(1 + beta) * sin(pi * beta / 2)
     den = gamma((1 + beta) / 2) * beta * (2 ** ((beta - 1) / 2))
 
-    # Calculates `sigma`
     sigma = (num / den) ** (1 / beta)
 
-    # Calculates 'u' and `v` distributions
     u = r.generate_gaussian_random_number(0, sigma**2, size=size)
     v = r.generate_gaussian_random_number(size=size)
 
-    # Calculates the Lévy distribution
     levy_array = u / np.fabs(v) ** (1 / beta)
 
     return levy_array

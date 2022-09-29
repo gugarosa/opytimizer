@@ -39,7 +39,6 @@ class SearchSpace(Space):
 
         logger.info("Overriding class: Space -> SearchSpace.")
 
-        # Defines missing override arguments
         n_dimensions = 1
 
         super(SearchSpace, self).__init__(

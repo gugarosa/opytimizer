@@ -96,7 +96,6 @@ class CallbackVessel:
 
         """
 
-        # Callbacks
         self.callbacks = callbacks or []
 
     @property
@@ -202,10 +201,7 @@ class CheckpointCallback(Callback):
 
         super(CheckpointCallback, self).__init__()
 
-        # File's path
         self.file_path = file_path or "checkpoint.pkl"
-
-        # Interval between checkpoints
         self.frequency = frequency
 
     @property
@@ -245,12 +241,8 @@ class CheckpointCallback(Callback):
 
         """
 
-        # Checks if frequency is a positive number different than zero
         if self.frequency > 0:
-            # If `mod` equals to zero
-            # It means that current iteration must be checkpointed
             if iteration % self.frequency == 0:
-                # Checkpoints the current model's state
                 opt_model.save(f"iter_{iteration}_{self.file_path}")
 
 
@@ -270,7 +262,6 @@ class DiscreteSearchCallback(Callback):
 
         super(DiscreteSearchCallback, self).__init__()
 
-        # Allowed values between lower and upper bounds
         if allowed_values is not None:
             self.allowed_values = allowed_values
         else:
@@ -297,7 +288,6 @@ class DiscreteSearchCallback(Callback):
 
         """
 
-        # Gathers the number of variables, lower and upper bounds from search space
         n_variables = opt_model.space.n_variables
         lower_bound = opt_model.space.lb
         upper_bound = opt_model.space.ub

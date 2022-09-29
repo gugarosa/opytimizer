@@ -50,23 +50,17 @@ class TreeSpace(Space):
 
         logger.info("Overriding class: Space -> TreeSpace.")
 
-        # Defines missing override arguments
         n_dimensions = 1
 
         super(TreeSpace, self).__init__(
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
-        # Number of terminal nodes
         self.n_terminals = n_terminals
 
-        # Minimum depth of the trees
         self.min_depth = min_depth
-
-        # Maximum depth of the trees
         self.max_depth = max_depth
 
-        # Function nodes
         if functions is None:
             self.functions = []
         else:
@@ -231,50 +225,33 @@ class TreeSpace(Space):
 
         """
 
-        # Re-initializes the terminals to provide diversity
         self._initialize_terminals()
 
-        # If minimum depth equals the maximum depth
         if min_depth == max_depth:
-            # Generates a terminal identifier
             terminal_id = r.generate_integer_random_number(0, self.n_terminals)
 
             return Node(terminal_id, "TERMINAL", self.terminals[terminal_id].position)
 
-        # Generates a node identifier
         node_id = r.generate_integer_random_number(
             0, len(self.functions) + self.n_terminals
         )
 
-        # If the identifier is a terminal
         if node_id >= len(self.functions):
-            # Gathers its real identifier
             terminal_id = node_id - len(self.functions)
 
             return Node(terminal_id, "TERMINAL", self.terminals[terminal_id].position)
 
-        # Generates a function node
         function_node = Node(self.functions[node_id], "FUNCTION")
 
-        # For every possible function argument
         for i in range(c.FUNCTION_N_ARGS[self.functions[node_id]]):
-            # Calls recursively the grow function and creates a temporary node
             node = self.grow(min_depth + 1, max_depth)
 
-            # If it is not the root
             if not i:
-                # The left child receives the temporary node
                 function_node.left = node
-
-            # If it is the first node
             else:
-                # The right child receives the temporary node
                 function_node.right = node
-
-                # Flag to identify whether the node is a left child
                 node.flag = False
 
-            # The parent of the temporary node is the function node
             node.parent = function_node
 
         return function_node

@@ -39,33 +39,20 @@ class Space:
 
         """
 
-        # Number of agents
         self.n_agents = n_agents
-
-        # Number of variables
         self.n_variables = n_variables
-
-        # Number of dimensions
         self.n_dimensions = n_dimensions
 
-        # Lower bounds
         self.lb = np.asarray(lower_bound)
-
-        # Upper bounds
         self.ub = np.asarray(upper_bound)
 
-        # Variables mapping
         self.mapping = mapping
 
-        # Agents
         self.agents = []
-
-        # Best agent
         self.best_agent = Agent(
             n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
-        # Indicates whether the space is built or not
         self.built = False
 
     @property
@@ -227,7 +214,6 @@ class Space:
         self._create_agents()
         self._initialize_agents()
 
-        # If no errors were shown, we can declare the space as `built`
         self.built = True
 
         logger.debug(

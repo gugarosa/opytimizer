@@ -25,10 +25,8 @@ class MultiObjectiveFunction:
 
         logger.info("Creating class: MultiObjectiveFunction.")
 
-        # List of functions
         self.functions = [Function(f) for f in functions] or []
 
-        # Set built variable to 'True'
         self.built = True
 
         logger.debug(
@@ -47,11 +45,8 @@ class MultiObjectiveFunction:
 
         """
 
-        # Defines a list to hold the total fitnesses
         z = []
-
         for f in self.functions:
-            # Applies f(x)
             z.append(f.pointer(x))
 
         return z

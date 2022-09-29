@@ -37,7 +37,6 @@ class HyperComplexSpace(Space):
 
         logger.info("Overriding class: Space -> HyperComplexSpace.")
 
-        # Defines missing override arguments
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 

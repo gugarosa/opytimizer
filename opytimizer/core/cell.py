@@ -28,19 +28,12 @@ class Cell(DiGraph):
 
         super().__init__()
 
-        # Iterates through all possible blocks
         for i, block in enumerate(blocks):
-            # Adds block identifier to the DAG
-            # We also add a `block` key to retain object's information
             self.add_node(i, block=block)
 
-        # Iterates through all possible edges
         for (u, v) in edges:
-            # Checks if nodes actually exists in DAG
             if u in self.nodes and v in self.nodes:
-                # Checks if `u` number of outputs matches the number of `v` inputs
                 if self.nodes[u]["block"].n_output == self.nodes[v]["block"].n_input:
-                    # Adds edge to the DAG
                     self.add_edge(u, v)
 
     def __call__(self, *args) -> Generator:
@@ -51,30 +44,21 @@ class Cell(DiGraph):
 
         """
 
-        # Checks whether current DAG is valid or not
         if not self.valid:
-            # If not valid, it should not be forwarded and should return empty outputs
             return []
 
-        # Gathers a list of paths from `input` to `output`
         paths = list(nx.all_simple_paths(self, self.input_idx, self.output_idx))
-
-        # Iterates through all paths
         outputs = []
+
         for path in paths:
-            # Makes a copy of current arguments
             current_args = copy.deepcopy(args)
 
-            # Iterates through all nodes in path
             for node in path:
-                # Passes down through every node in path
                 current_args = self.nodes[node]["block"](*current_args)
 
-                # Makes sure that outputs are always encoded as tuples
                 if type(current_args) != tuple:
                     current_args = (current_args,)
 
-            # Appends the outputs
             outputs.append(current_args)
 
         return outputs

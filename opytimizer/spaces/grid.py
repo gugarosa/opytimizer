@@ -40,8 +40,6 @@ class GridSpace(Space):
 
         logger.info("Overriding class: Space -> GridSpace.")
 
-        # Defines missing override arguments
-        # `n_agents = 1` is used as a placeholder for now
         n_agents = 1
         n_dimensions = 1
 
@@ -49,11 +47,9 @@ class GridSpace(Space):
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
-        # Step size of each variable
         self.step = np.asarray(step)
 
         self._create_grid()
-
         self.build()
 
         logger.info("Class overrided.")
@@ -91,7 +87,6 @@ class GridSpace(Space):
     def _create_grid(self) -> None:
         """Creates a grid of possible search values."""
 
-        # Creates a meshgrid with all possible search values
         mesh = np.meshgrid(
             *[
                 s * np.arange(lb / s, ub / s + s)
@@ -99,8 +94,6 @@ class GridSpace(Space):
             ]
         )
 
-        # Transforms the meshgrid into a list
-        # and re-defines the number of agents to the length of grid
         self.grid = np.array(([m.ravel() for m in mesh])).T
         self.n_agents = len(self.grid)
 

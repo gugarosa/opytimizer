@@ -36,28 +36,17 @@ class Agent:
 
         """
 
-        # Number of decision variables
         self.n_variables = n_variables
-
-        # Number of dimensions
         self.n_dimensions = n_dimensions
 
-        # N-dimensional array of positions
         self.position = np.zeros((n_variables, n_dimensions))
-
-        # Fitness value (largest float number)
         self.fit = c.FLOAT_MAX
 
-        # Lower bounds
         self.lb = np.asarray(lower_bound)
-
-        # Upper bounds
         self.ub = np.asarray(upper_bound)
 
-        # Variables mapping
         self.mapping = mapping
 
-        # Timestamp
         self.ts = int(time.time())
 
     @property
@@ -189,17 +178,13 @@ class Agent:
     def clip_by_bound(self) -> None:
         """Clips the agent's decision variables to the bounds limits."""
 
-        # Iterates through all the decision variables
         for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-            # Clips the array based on variable's lower and upper bounds
             self.position[j] = np.clip(self.position[j], lb, ub)
 
     def fill_with_binary(self) -> None:
         """Fills the agent's decision variables with a binary distribution."""
 
-        # Iterates through all the decision variables
         for j in range(self.n_variables):
-            # Fills the array based on a binary distribution
             self.position[j] = r.generate_binary_random_number(self.n_dimensions)
 
     def fill_with_static(self, values: np.ndarray) -> None:
@@ -211,17 +196,13 @@ class Agent:
 
         """
 
-        # Makes sure that `values` is a numpy array
-        # and has the same size of `n_variables`
         values = np.asarray(values)
         if not values.shape:
             values = np.expand_dims(values, -1)
         if values.shape[0] != self.n_variables:
             raise e.SizeError("`values` should be the same size as `n_variables`")
 
-        # Iterates through all the decision variables
         for j, value in enumerate(values):
-            # Fills the array based on a static value
             self.position[j] = value
 
     def fill_with_uniform(self) -> None:
@@ -230,9 +211,7 @@ class Agent:
 
         """
 
-        # Iterates through all the decision variables
         for j, (lb, ub) in enumerate(zip(self.lb, self.ub)):
-            # Fills the array based on a uniform distribution
             self.position[j] = r.generate_uniform_random_number(
                 lb, ub, self.n_dimensions
             )

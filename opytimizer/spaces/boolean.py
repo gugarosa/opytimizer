@@ -32,7 +32,6 @@ class BooleanSpace(Space):
 
         logger.info("Overriding class: Space -> BooleanSpace.")
 
-        # Defines missing override arguments
         n_dimensions = 1
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)

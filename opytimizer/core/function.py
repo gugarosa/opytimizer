@@ -24,16 +24,13 @@ class Function:
 
         logger.info("Creating class: Function.")
 
-        # Pointer's callable
         self.pointer = pointer
 
-        # Name of the pointer (derived from its method or class)
         if hasattr(pointer, "__name__"):
             self.name = pointer.__name__
         else:
             self.name = pointer.__class__.__name__
 
-        # If no errors were shown, we can declare the function as `built`
         self.built = True
 
         logger.debug("Function: %s | Built: %s.", self.name, self.built)

@@ -22,13 +22,9 @@ class Optimizer:
     def __init__(self) -> None:
         """Initialization method."""
 
-        # Algorithm's name
         self.algorithm = self.__class__.__name__
-
-        # Key-value parameters
         self.params = {}
 
-        # Indicates whether the optimizer is built or not
         self.built = False
 
     @property
@@ -79,16 +75,13 @@ class Optimizer:
         """
 
         if params:
-            # Saves the `params` for faster looking up
             self.params = params
 
             for k, v in params.items():
                 setattr(self, k, v)
 
-        # Sets the `built` variable to true
         self.built = True
 
-        # Logs the properties
         logger.debug(
             "Algorithm: %s | Custom Parameters: %s | Built: %s.",
             self.algorithm,
@@ -122,12 +115,9 @@ class Optimizer:
         """
 
         for agent in space.agents:
-            # Calculates the fitness value of current agent
             agent.fit = function(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's position and fitness
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())

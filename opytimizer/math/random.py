@@ -82,14 +82,10 @@ def generate_integer_random_number(
 
     integer_array = np.random.randint(low, high, size)
 
-    # Checks if a value is supposed to be excluded
     if exclude_value is not None:
-        # Creates a boolean array based on excluded value
         bool_array = integer_array == exclude_value
 
-        # If the excluded value is present
         if np.any(bool_array):
-            # Re-calls the function with same arguments
             return generate_integer_random_number(low, high, exclude_value, size)
 
     return integer_array

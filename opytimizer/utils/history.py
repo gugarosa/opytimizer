@@ -24,7 +24,6 @@ class History:
 
         """
 
-        # Stores only the best agent
         self.save_agents = save_agents
 
     @property
@@ -101,30 +100,25 @@ class History:
 
         """
 
-        # Gathers the numpy array from the attribute
         attr = np.asarray(getattr(self, key), dtype=list)
 
         if key in ["agents"]:
-            # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), index, 0)])
             attr_fit = np.hstack(attr[(slice(None), index, 1)])
 
             return attr_pos, attr_fit
 
         if key in ["best_agent"]:
-            # Gathers positions and fitnesses
             attr_pos = np.hstack(attr[(slice(None), 0)])
             attr_fit = np.hstack(attr[(slice(None), 1)])
 
             return attr_pos, attr_fit
 
         if key in ["local_position"]:
-            # Gathers positions
             attr_pos = np.hstack(attr[(slice(None), index)])
 
             return attr_pos
 
-        # Gathers the attribute
         attr = np.hstack(attr[(slice(None))])
 
         return attr

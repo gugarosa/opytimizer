@@ -22,13 +22,8 @@ class Logger(logging.Logger):
 
         """
 
-        # Sets the console handler as critical level to disable console logging
         self.handlers[0].setLevel(logging.CRITICAL)
-
-        # Logs the information
         self.info(msg, *args, **kwargs)
-
-        # Re-enables the console handler logging
         self.handlers[0].setLevel(LOG_LEVEL)
 
 
@@ -40,7 +35,6 @@ def get_console_handler() -> StreamHandler:
 
     """
 
-    # Creates a stream handler for logger
     console_handler = StreamHandler(sys.stdout)
     console_handler.setFormatter(FORMATTER)
 
@@ -55,7 +49,6 @@ def get_timed_file_handler() -> TimedRotatingFileHandler:
 
     """
 
-    # Creates a timed rotating file handler for logger
     file_handler = TimedRotatingFileHandler(LOG_FILE, delay=True, when="midnight")
     file_handler.setFormatter(FORMATTER)
 
@@ -73,21 +66,13 @@ def get_logger(logger_name: str) -> Logger:
 
     """
 
-    # Defines a customized logger in order to have the possibility
-    # of only logging to file when desired
     logging.setLoggerClass(Logger)
 
-    # Creates a logger object
     logger = logging.getLogger(logger_name)
 
-    # Sets an log level
     logger.setLevel(LOG_LEVEL)
-
-    # Adds the desired handlers
     logger.addHandler(get_console_handler())
     logger.addHandler(get_timed_file_handler())
-
-    # Do not propagate logs
     logger.propagate = False
 
     return logger

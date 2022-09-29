@@ -33,21 +33,14 @@ class Node:
 
         """
 
-        # Name of the node (terminal identifier or function name)
         self.name = name
-
-        # Category of the node (`TERMINAL` or `FUNCTION`)
         self.category = category
-
-        # Value of the node (only for terminal nodes)
         self.value = value
 
-        # Pointers to the node's children and parent
         self.left = left
         self.right = right
         self.parent = parent
 
-        # Flag to identify whether the node is a left child
         self.flag = True
 
     def __repr__(self) -> str:
@@ -58,7 +51,6 @@ class Node:
     def __str__(self) -> str:
         """Representation of an informal string."""
 
-        # Building a formatted string for displaying the nodes
         lines = _build_string(self)[0]
 
         return "\n" + "\n".join(lines)
@@ -191,46 +183,31 @@ class Node:
     def post_order(self) -> List["Node"]:
         """Traverses the node in post-order."""
 
-        # Creates lists for post-order and stacked nodes
         post_order, stacked = [], []
 
         while True:
-            # Creates another while to check if node exists
             while self is not None:
-                # If there is a right child node
                 if self.right is not None:
-                    # Appends the right child node
                     stacked.append(self.right)
 
-                # Appends the current node
                 stacked.append(self)
 
-                # Gathers the left child node
                 self = self.left
 
-            # Pops the stacked nodes
             self = stacked.pop()
 
-            # If there is a right node, stacked nodes and the last stacked was a right child
             if (
                 self.right is not None
                 and len(stacked) > 0
                 and stacked[-1] is self.right
             ):
-                # Pops the stacked node
                 stacked.pop()
-
-                # Appends current node
                 stacked.append(self)
 
-                # Gathers the right child node
                 self = self.right
-
             else:
-                # Appends the node to the output list
                 post_order.append(self)
 
-                # And apply None as the current node
                 self = None
 
             if len(stacked) == 0:
@@ -242,25 +219,16 @@ class Node:
     def pre_order(self) -> List["Node"]:
         """Traverses the node in pre-order."""
 
-        # Creates lists for pre-order and stacked nodes
         pre_order, stacked = [], [self]
 
-        # While there is more than one node
         while len(stacked) > 0:
-            # Pops the list and gets the node
             node = stacked.pop()
-
-            # Appends to the pre-order
             pre_order.append(node)
 
-            # If there is a child in the right
             if node.right is not None:
-                # Appends the child
                 stacked.append(node.right)
 
-            # If there is a child in the left
             if node.left is not None:
-                # Appends the child
                 stacked.append(node.left)
 
         return pre_order
@@ -276,19 +244,14 @@ class Node:
 
         """
 
-        # Calculates the pre-order of current node
         pre_order = self.pre_order
-
-        # Checks if the pre-order list has more nodes than the desired position
         if len(pre_order) > position:
-            # Gets the node from position
             node = pre_order[position]
 
             if node.category == "TERMINAL":
                 return node.parent, node.flag
 
             if node.category == "FUNCTION":
-                # If it is a function node, we need to return the parent of its parent
                 if node.parent and node.parent.parent:
                     return node.parent.parent, node.parent.flag
 
@@ -312,98 +275,62 @@ def _build_string(node: Node) -> str:
     """
 
     if node is None:
-        # Return an empty list along with `0` arguments
         return [], 0, 0, 0
 
-    # Creates lists to hold the first and second lines
     first_line, second_line = [], []
 
-    # Gets the node name as a string
     name = str(node.name)
-
-    # The gap size and width of the new node will be the length of the name's string
     gap = width = len(name)
 
-    # Iterate recursively through the left and right branches
     left_branch, left_width, left_start, left_end = _build_string(node.left)
     right_branch, right_width, right_start, right_end = _build_string(node.right)
 
     if left_width > 0:
-        # Calculates the left node
         left = (left_start + left_end) // 2 + 1
 
-        # Appends to first line space and underscore chars
         first_line.append(" " * (left + 1))
         first_line.append("_" * (left_width - left))
 
-        # Appends to second line space chars and connecting slash
         second_line.append(" " * left + "/")
         second_line.append(" " * (left_width - left))
 
-        # The start point will be the left width plus one
         start = left_width + 1
-
-        # Increases the gap
         gap += 1
-
     else:
-        # The start point will be 0
         start = 0
 
-    # Appending current node's name to first line
     first_line.append(name)
-
-    # Appending space chars to second line based on the node's width
     second_line.append(" " * width)
 
     if right_width > 0:
-        # Calculates the right node
         right = (right_start + right_end) // 2
 
-        # Appends to first line underscore and space chars
         first_line.append("_" * right)
         first_line.append(" " * (right_width - right + 1))
 
-        # Appends to second line space chars and a connecting backslash
         second_line.append(" " * right + "\\")
         second_line.append(" " * (right_width - right))
 
-        # Increases the gap size
         gap += 1
 
-    # The ending point will be start plus width minus 1
     end = start + width - 1
-
-    # Calculates how many gaps are needed
     gap = " " * gap
 
-    # Combining left and right branches
     lines = ["".join(first_line), "".join(second_line)]
 
-    # For every possible value in the branches
     for i in range(max(len(left_branch), len(right_branch))):
-        # If current iteration is smaller than left branch's size
         if i < len(left_branch):
-            # Applies the left branch to the left line
             left_line = left_branch[i]
-
         else:
-            # Apply space chars
             left_line = " " * left_width
 
-        # If current iteration is smaller than right branch's size
         if i < len(right_branch):
-            # Applies the right branch to the right line
             right_line = right_branch[i]
-
         else:
-            # Apply space chars
             right_line = " " * right_width
 
-        # Appends the whole line
         lines.append(left_line + gap + right_line)
 
-    # Return the new box, its width and its node repr positions
     return lines, len(lines[0]), start, end
 
 
@@ -419,7 +346,6 @@ def _evaluate(node: Node) -> np.ndarray:
     """
 
     if node:
-        # Performs a recursive pass on the left and right branches
         x = _evaluate(node.left)
         y = _evaluate(node.right)
 
@@ -471,46 +397,29 @@ def _properties(node: Node) -> Dict[str, Any]:
 
     """
 
-    # Initializes minimum and maximum depths
     min_depth, max_depth = 0, -1
-
-    # Initializes number of leaves and nodes as 0
     n_leaves = n_nodes = 0
 
-    # Gathers a list of possible nodes
     nodes = [node]
-
     while len(nodes) > 0:
-        # Maximum depth increases by 1
         max_depth += 1
 
-        # Creates a list for further nodes
         next_nodes = []
-
         for n in nodes:
-            # Increases the number of nodes
             n_nodes += 1
 
-            # If the node is a leaf
             if n.left is None and n.right is None:
                 if min_depth == 0:
-                    # Minimum depth will be equal to maximum depth
                     min_depth = max_depth
 
-                # Increases the number of leaves by 1
                 n_leaves += 1
 
-            # If there is a child in the left
             if n.left is not None:
-                # Appends the left child node
                 next_nodes.append(n.left)
 
-            # If there is a child in the right
             if n.right is not None:
-                # Appends the right child node
                 next_nodes.append(n.right)
 
-        # Current nodes will receive the list of the next depth
         nodes = next_nodes
 
     return {

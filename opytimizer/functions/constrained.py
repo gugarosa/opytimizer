@@ -34,10 +34,7 @@ class ConstrainedFunction(Function):
 
         super(ConstrainedFunction, self).__init__(pointer)
 
-        # List of constraints
         self.constraints = constraints or []
-
-        # Penalization factor
         self.penalty = penalty
 
         logger.debug("Constraints: %s | Penalty: %s.", self.constraints, self.penalty)
@@ -82,15 +79,12 @@ class ConstrainedFunction(Function):
 
         """
 
-        # Calculates the fitness function
         fitness = self.pointer(x)
 
         for constraint in self.constraints:
             if constraint(x):
                 pass
-
             else:
-                # Penalizes the objective function
                 fitness += self.penalty * fitness
 
         return fitness

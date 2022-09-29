@@ -44,23 +44,16 @@ class Opytimizer:
 
         logger.info("Creating class: Opytimizer.")
 
-        # Space
         self.space = space
 
-        # Optimizer (and its additional variables)
         self.optimizer = optimizer
         self.optimizer.compile(space)
 
-        # Function
         self.function = function
 
-        # Optimization history
-        self.history = History(save_agents)
+        self.history = History(save_agents=save_agents)
 
-        # Current iteration
         self.iteration = 0
-
-        # Total number of iterations
         self.total_iterations = 0
 
         logger.debug(
@@ -187,13 +180,8 @@ class Opytimizer:
 
         """
 
-        # Invokes the `on_evaluate_before` callback
         callbacks.on_evaluate_before(*self.evaluate_args)
-
-        # Performs an evaluation over the search space
         self.optimizer.evaluate(*self.evaluate_args)
-
-        # Invokes the `on_evaluate_after` callback
         callbacks.on_evaluate_after(*self.evaluate_args)
 
     def update(self, callbacks: List[Callback]) -> None:
@@ -204,13 +192,8 @@ class Opytimizer:
 
         """
 
-        # Invokes the `on_update_before` callback
         callbacks.on_update_before(*self.update_args)
-
-        # Performs an update over the search space
         self.optimizer.update(*self.update_args)
-
-        # Invokes the `on_update_after` callback
         callbacks.on_update_after(*self.update_args)
 
         # Regardless of callbacks or not, every update on the search space
@@ -232,60 +215,44 @@ class Opytimizer:
 
         logger.info("Starting optimization task.")
 
-        # Additional properties
         self.n_iterations = n_iterations
         callbacks = CallbackVessel(callbacks)
 
-        # Triggers starting time
         start = time.time()
 
-        # Invokes the `on_task_begin` callback
         callbacks.on_task_begin(self)
 
-        # Evaluates the search space
         self.evaluate(callbacks)
 
-        # Initializes a progress bar
         with tqdm(total=n_iterations, ascii=True) as b:
             for t in range(n_iterations):
                 logger.to_file(f"Iteration {t+1}/{n_iterations}")
 
-                # Saves the number of total iterations and current iteration
                 self.total_iterations += 1
                 self.iteration = t
 
-                # Invokes the `on_iteration_begin` callback
                 callbacks.on_iteration_begin(self.total_iterations, self)
 
-                # Updates the search space
                 self.update(callbacks)
-
-                # Re-evaluates the search space
                 self.evaluate(callbacks)
 
-                # Updates the progress bar status
                 b.set_postfix(fitness=self.space.best_agent.fit)
                 b.update()
 
-                # Dumps keyword arguments to model's history
                 self.history.dump(
                     agents=self.space.agents, best_agent=self.space.best_agent
                 )
 
-                # Invokes the `on_iteration_end` callback
                 callbacks.on_iteration_end(self.total_iterations, self)
 
                 logger.to_file(f"Fitness: {self.space.best_agent.fit}")
                 logger.to_file(f"Position: {self.space.best_agent.position}")
 
-        # Invokes the `on_task_end` callback
         callbacks.on_task_end(self)
 
-        # Stops the timer and calculates the optimization time
         end = time.time()
         opt_time = end - start
 
-        # Dumps the elapsed time to model's history
         self.history.dump(time=opt_time)
 
         logger.info("Optimization task ended.")

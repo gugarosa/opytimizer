@@ -31,7 +31,6 @@ class ParetoSpace(Space):
 
         logger.info("Overriding class: Space -> ParetoSpace.")
 
-        # Defines missing override arguments
         n_agents, n_variables = data_points.shape
         n_dimensions = 1
         lower_bound = [0] * n_variables
@@ -69,7 +68,6 @@ class ParetoSpace(Space):
         self._create_agents()
         self._load_agents(data_points)
 
-        # If no errors were shown, we can declare the space as `built`
         self.built = True
 
         logger.debug(

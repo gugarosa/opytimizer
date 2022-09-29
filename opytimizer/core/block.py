@@ -20,16 +20,10 @@ class Block:
 
         """
 
-        # Type of the block
         self.type = type
-
-        # Callable applied when block is called
         self.pointer = pointer
 
-        # Number of input arguments
         self.n_input = n_input
-
-        # Number of output arguments
         self.n_output = n_output
 
     def __call__(self, *args) -> callable:

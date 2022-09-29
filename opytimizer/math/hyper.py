@@ -42,11 +42,9 @@ def span(
 
     """
 
-    # Forces lower and upper bounds to be arrays
     lb = np.asarray(lower_bound)
     ub = np.asarray(upper_bound)
 
-    # Calculates the spanning function
     array_span = (ub - lb) * (norm(array) / np.sqrt(array.shape[1])) + lb
 
     return array_span
@@ -90,7 +88,6 @@ def span_to_hyper_value(
 
             """
 
-            # Spans `x` between lower and upper bounds
             x = span(x, lb, ub)
 
             return f(x)

@@ -24,7 +24,6 @@ class Error(Exception):
 
         super(Error, self).__init__()
 
-        # Logs the error in a formatted way
         logger.error("%s: %s.", cls, msg)
 
 

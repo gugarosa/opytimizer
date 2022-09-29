@@ -30,7 +30,6 @@ class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
 
         super(MultiObjectiveWeightedFunction, self).__init__(functions)
 
-        # List of weights
         self.weights = weights or []
 
         logger.debug("Weights: %s", self.weights)
@@ -47,11 +46,8 @@ class MultiObjectiveWeightedFunction(MultiObjectiveFunction):
 
         """
 
-        # Defines a variable to hold the total fitness
         z = 0
-
         for (f, w) in zip(self.functions, self.weights):
-            # Applies w * f(x)
             z += w * f.pointer(x)
 
         return z

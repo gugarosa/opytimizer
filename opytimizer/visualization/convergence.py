@@ -34,10 +34,8 @@ def plot(
 
     """
 
-    # Creates the figure and axis subplots
     _, ax = plt.subplots(figsize=(7, 5))
 
-    # Defines some properties, such as labels, title and subtitle
     ax.set(xlabel=xlabel, ylabel=ylabel)
     ax.set_title(title, loc="left", fontsize=14)
     ax.set_title(subtitle, loc="right", fontsize=8, color="grey")
@@ -46,23 +44,18 @@ def plot(
         ax.grid()
 
     if labels:
-        # Checks a set of pre-defined `labels` conditions
         if not isinstance(labels, list):
             raise e.TypeError("`labels` should be a list")
 
         if len(labels) != len(args):
             raise e.SizeError("`args` and `labels` should have the same size")
-
     else:
-        # Creates pre-defined `labels`
         labels = [f"variable_{i}" for i in range(len(args))]
 
-    # Plots every argument
     for (arg, label) in zip(args, labels):
         ax.plot(arg, label=label)
 
     if legend:
         ax.legend()
 
-    # Displays the plot
     plt.show()
