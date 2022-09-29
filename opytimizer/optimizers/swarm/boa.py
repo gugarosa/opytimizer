@@ -36,7 +36,6 @@ class BOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BOA.")
 
-        # Overrides its parent class with the receiving params
         super(BOA, self).__init__()
 
         # Sensor modality
@@ -48,7 +47,6 @@ class BOA(Optimizer):
         # Switch probability
         self.p = 0.8
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -38,13 +38,11 @@ class ESA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> ESA.")
 
-        # Overrides its parent class with the receiving params
         super(ESA, self).__init__()
 
         # Number of electrons per atom
         self.n_electrons = 5
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

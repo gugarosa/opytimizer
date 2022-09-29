@@ -39,7 +39,6 @@ class ASO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> ASO.")
 
-        # Overrides its parent class with the receiving params
         super(ASO, self).__init__()
 
         # Depth weight
@@ -48,7 +47,6 @@ class ASO(Optimizer):
         # Multiplier weight
         self.beta = 0.2
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

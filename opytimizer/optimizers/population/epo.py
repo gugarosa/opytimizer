@@ -36,7 +36,6 @@ class EPO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> EPO.")
 
-        # Overrides its parent class with the receiving params
         super(EPO, self).__init__()
 
         # Exploration control parameter
@@ -45,7 +44,6 @@ class EPO(Optimizer):
         # Exploitation control parameter
         self.l = 1.5
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

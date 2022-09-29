@@ -33,16 +33,11 @@ class HC(Optimizer):
 
         logger.info("Overriding class: Optimizer -> HC.")
 
-        # Overrides its parent class with the receiving params
         super(HC, self).__init__()
 
-        # Mean of noise distribution
-        self.r_mean = 0
-
-        # Variance of noise distribution
+        self.r_mean = 0.0
         self.r_var = 0.1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -83,12 +78,8 @@ class HC(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Creates a gaussian noise vector
             noise = r.generate_gaussian_random_number(
                 self.r_mean, self.r_var, size=(agent.n_variables, agent.n_dimensions)
             )
-
-            # Updates agent's position
             agent.position += noise

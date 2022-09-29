@@ -37,13 +37,10 @@ class DOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> DOA.")
 
-        # Overrides its parent class with the receiving params
         super(DOA, self).__init__()
 
-        # Chaos multiplier
         self.r = 1.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -84,7 +81,6 @@ class DOA(Optimizer):
 
         """
 
-        # Array of chaotic maps
         self.chaotic_map = np.zeros((space.n_agents, space.n_variables))
 
     def _calculate_chaotic_map(self, lb: float, ub: float) -> float:
@@ -99,7 +95,6 @@ class DOA(Optimizer):
 
         """
 
-        # Generates a uniform random number between variable's bounds
         r1 = rnd.generate_uniform_random_number(lb, ub)
 
         # Calculates the chaotic map (eq. 3)
@@ -115,11 +110,8 @@ class DOA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Iterates through all decision variables
             for j, (lb, ub) in enumerate(zip(agent.lb, agent.ub)):
-                # Generates a chaotic map
                 c_map = self._calculate_chaotic_map(lb, ub)
 
                 # Updates the agent's position (eq. 6)
@@ -133,10 +125,8 @@ class DOA(Optimizer):
                     / len(space.agents)
                 )
 
-                # Updates current chaotic map with newer value
                 self.chaotic_map[i][j] = c_map
 
-                # Checks if position has exceed the bounds
                 if (agent.position[j] < lb) or (agent.position[j] > ub):
                     # If yes, replace its value with the proposed equation (eq. 7)
                     agent.position[j] = space.best_agent.position[j] * c_map

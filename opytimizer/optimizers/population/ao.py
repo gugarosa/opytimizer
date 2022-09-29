@@ -39,7 +39,6 @@ class AO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> AO.")
 
-        # Overrides its parent class with the receiving params
         super(AO, self).__init__()
 
         # First exploitation adjustment coefficient
@@ -57,7 +56,6 @@ class AO(Optimizer):
         # Angle regularizer
         self.w = 0.005
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

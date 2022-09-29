@@ -40,7 +40,6 @@ class TWO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> TWO.")
 
-        # Overrides its parent class with the receiving params
         super(TWO, self).__init__()
 
         # Static friction coefficient
@@ -58,7 +57,6 @@ class TWO(Optimizer):
         # Scaling factor
         self.beta = 0.05
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

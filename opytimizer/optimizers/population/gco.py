@@ -39,7 +39,6 @@ class GCO(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(GCO, self).__init__()
 
         # Cross-ratio
@@ -48,7 +47,6 @@ class GCO(Optimizer):
         # Mutation factor
         self.F = 1.25
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

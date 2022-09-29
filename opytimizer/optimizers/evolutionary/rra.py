@@ -43,28 +43,17 @@ class RRA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> RRA.")
 
-        # Overrides its parent class with the receiving params
         super(RRA, self).__init__()
 
-        # Length of runners
         self.d_runner = 2
-
-        # Length of roots
         self.d_root = 0.01
-
-        # Cost function tolerance
         self.tol = 0.01
 
-        # Maximum number of stalls
         self.max_stall = 1000
-
-        # Current number of stalls
         self.n_stall = 0
 
-        # Previous best fitness value
         self.last_best_fit = c.FLOAT_MAX
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -174,15 +163,11 @@ class RRA(Optimizer):
 
         """
 
-        # Iterates through number of daughters minus 1
         for _ in range(len(daughters) - 1):
-            # Makes a deep copy of best daughter
             temp_daughter = copy.deepcopy(daughters[0])
 
-            # Generates gaussian random number and variable's index
             j = r.generate_integer_random_number(high=temp_daughter.n_variables)
 
-            # Checks whether to perform the large search
             if is_large:
                 # Disturbs a selected temporary daughter's position (eq. 4)
                 r1 = r.generate_gaussian_random_number()
@@ -192,15 +177,10 @@ class RRA(Optimizer):
                 r1 = r.generate_uniform_random_number(-0.5, 0.5)
                 temp_daughter.position[j] += self.d_root * r1
 
-            # Clips the temporary daughter's position
             temp_daughter.clip_by_bound()
 
-            # Re-evaluates its fitness
             temp_daughter.fit = function(temp_daughter.position)
-
-            # If temporary daughter's position is better than best's
             if temp_daughter.fit < daughters[0].fit:
-                # Replaces the best daughter
                 daughters[0].position = copy.deepcopy(temp_daughter.position)
                 daughters[0].fit = copy.deepcopy(temp_daughter.fit)
 
@@ -218,19 +198,14 @@ class RRA(Optimizer):
 
         """
 
-        # Defines the minimum fitness of current generation
         min_fitness = np.min(fitness)
 
         # Re-arrange the list of fitness by inverting it (eq. 7)
         inv_fitness = [1 / (a + fit - min_fitness) for fit in fitness]
-
-        # Calculates the total inverted fitness
         total_fitness = np.sum(inv_fitness)
 
         # Calculates the probability of each inverted fitness (eq. 8)
         probs = [fit / total_fitness for fit in inv_fitness]
-
-        # Performs the selection process
         selected = d.generate_choice_distribution(len(probs), probs, 1)
 
         return selected[0]
@@ -244,36 +219,26 @@ class RRA(Optimizer):
 
         """
 
-        # Sorts the agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Defines the previous best fitness
         self.last_best_fit = space.agents[0].fit
 
-        # Makes a deep copy of current agents (mothers)
         daughters = copy.deepcopy(space.agents)
-
-        # Iterates through all daughters except the first
         for daughter in daughters[1:]:
-            # Generates a random number
             r1 = r.generate_uniform_random_number(-0.5, 0.5)
 
             # Updates the daughter's position and clips its bounds (eq. 2)
             daughter.position += self.d_runner * r1
             daughter.clip_by_bound()
 
-            # Re-calculates its fitness
             daughter.fit = function(daughter.position)
 
-        # Sorts the daughters
         daughters.sort(key=lambda x: x.fit)
 
         # Checks the new positions' effectiviness (eq. 3)
         effectiveness = np.fabs(
             (self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON)
         )
-
-        # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:
             # Performs the stalling large search (eq. 4)
             self._stalling_search(daughters, function, is_large=True)
@@ -284,36 +249,22 @@ class RRA(Optimizer):
         # Performs the elite selection (eq. 6)
         space.agents[0] = copy.deepcopy(daughters[0])
 
-        # Gathers the fitness of each daughter
         daughters_fit = [daughter.fit for daughter in daughters]
-
-        # Iterates through all mothers except the first
         for agent in space.agents[1:]:
-            # Gathers the selected daughter by roulette selection
             idx = self._roulette_selection(daughters_fit)
-
-            # Replaces the mother with the daughter
             agent = copy.deepcopy(daughters[idx])
 
         # Checks again the positions' effectiviness (eq. 3)
         effectiveness = np.fabs(
             (self.last_best_fit - daughters[0].fit) / (self.last_best_fit + c.EPSILON)
         )
-
-        # If effectiveness is smaller than tolerance
         if effectiveness < self.tol:
-            # Increases the number of stalls
             self.n_stall += 1
         else:
-            # Resets the number of stalls
             self.n_stall = 0
 
-        # If the number of stalls has reached its maximum
         if self.n_stall == self.max_stall:
-            # Iterates through all agenrs
             for agent in space.agents:
-                # Fills the agent with random positions
                 agent.fill_with_uniform()
 
-            # Resets the counter
             self.n_stall = 0

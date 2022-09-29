@@ -38,7 +38,6 @@ class BA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BA.")
 
-        # Overrides its parent class with the receiving params
         super(BA, self).__init__()
 
         # Minimum frequency range
@@ -53,7 +52,6 @@ class BA(Optimizer):
         # Pulse rate
         self.r = 0.5
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

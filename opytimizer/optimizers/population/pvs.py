@@ -37,10 +37,8 @@ class PVS(Optimizer):
 
         logger.info("Overriding class: Optimizer -> PVS.")
 
-        # Overrides its parent class with the receiving params
         super(PVS, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

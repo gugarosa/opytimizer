@@ -36,28 +36,17 @@ class IWO(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(IWO, self).__init__()
 
-        # Minimum number of seeds
         self.min_seeds = 0
-
-        # Maximum number of seeds
         self.max_seeds = 5
 
-        # Exponent to calculate the Spatial Dispersal
         self.e = 2
 
-        # Final standard deviation
         self.final_sigma = 0.001
+        self.init_sigma = 3.0
+        self.sigma = 0.0
 
-        # Initial standard deviation
-        self.init_sigma = 3
-
-        # Standard deviation
-        self.sigma = 0
-
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -161,12 +150,10 @@ class IWO(Optimizer):
 
         """
 
-        # Calculates the iteration coefficient
         coef = ((n_iterations - iteration) ** self.e) / (
             (n_iterations + c.EPSILON) ** self.e
         )
 
-        # Updates the Spatial Dispersial
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
 
     def _produce_offspring(self, agent: Agent, function: Function) -> Agent:
@@ -181,20 +168,14 @@ class IWO(Optimizer):
 
         """
 
-        # Makea a deepcopy on selected agent
         a = copy.deepcopy(agent)
 
-        # For every possible decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # Updates its position
             a.position[j] += self.sigma * r.generate_uniform_random_number(
                 lb, ub, a.n_dimensions
             )
-
-        # Clips its limits
         a.clip_by_bound()
 
-        # Calculates its fitness
         a.fit = function(a.position)
 
         return a
@@ -212,35 +193,23 @@ class IWO(Optimizer):
 
         """
 
-        # Calculates the current Spatial Dispersal
         self._spatial_dispersal(iteration, n_iterations)
 
-        # Calculates the number of agents and creates list of offsprings
         n_agents = len(space.agents)
         offsprings = []
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Calculates the seeding ratio based on its fitness
             ratio = (agent.fit - space.agents[-1].fit) / (
                 space.agents[0].fit - space.agents[-1].fit + c.EPSILON
             )
 
-            # Calculates the number of produced seeds
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)
-
-            # For every seed
             for _ in range(n_seeds):
-                # Reproduces and flowers the seed into a new agent
                 a = self._produce_offspring(agent, function)
-
-                # Appends the agent to the offsprings
                 offsprings.append(a)
 
-        # Joins both populations, sorts and gathers best `n_agents`
         space.agents += offsprings
         space.agents.sort(key=lambda x: x.fit)
         space.agents = space.agents[:n_agents]

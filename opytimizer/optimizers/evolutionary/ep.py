@@ -37,16 +37,11 @@ class EP(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(EP, self).__init__()
 
-        # Size of bout during the tournament selection
         self.bout_size = 0.1
-
-        # Clipping ratio to helps the algorithm's convergence
         self.clip_ratio = 0.05
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -102,16 +97,12 @@ class EP(Optimizer):
 
         """
 
-        # Array of strategies
         self.strategy = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-        # Iterates through all agents
         for i in range(space.n_agents):
-            # For every decision variable
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                # Initializes the strategy array with the proposed EP distance
                 self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
                     0, ub - lb, size=space.agents[i].n_dimensions
                 )
@@ -129,19 +120,13 @@ class EP(Optimizer):
 
         """
 
-        # Makes a deep copy on selected agent
         a = copy.deepcopy(agent)
 
-        # Generates a uniform random number
         r1 = r.generate_gaussian_random_number()
 
-        # Updates its position
         a.position += self.strategy[index] * r1
-
-        # Clips its limits
         a.clip_by_bound()
 
-        # Calculates its fitness
         a.fit = function(a.position)
 
         return a
@@ -161,18 +146,12 @@ class EP(Optimizer):
 
         """
 
-        # Calculates the number of variables and dimensions
         n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
-        # Generates a uniform random number
         r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
-
-        # Calculates the new strategy
         self.strategy[index] += r1 * (np.sqrt(np.abs(self.strategy[index])))
 
-        # For every decision variable
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
-            # Uses the clip ratio to help the convergence
             self.strategy[index][j] = (
                 np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
             )
@@ -186,51 +165,30 @@ class EP(Optimizer):
 
         """
 
-        # Calculates the number of agents
         n_agents = len(space.agents)
 
-        # Creates a list for the produced children
         children = []
-
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Mutates a parent and generates a new child
             a = self._mutate_parent(agent, i, function)
-
-            # Updates the strategy
             self._update_strategy(i, agent.lb, agent.ub)
 
-            # Appends the mutated agent to the children
             children.append(a)
 
-        # Joins both populations
         space.agents += children
 
-        # Number of individuals to be selected
         n_individuals = int(n_agents * self.bout_size)
-
-        # Creates an empty array of wins
         wins = np.zeros(len(space.agents))
 
-        # Iterates through all agents in the new population
         for i, agent in enumerate(space.agents):
-            # Iterate through all tournament individuals
             for _ in range(n_individuals):
-                # Gathers a random index
                 index = r.generate_integer_random_number(0, len(space.agents))
-
-                # If current agent's fitness is smaller than selected one
                 if agent.fit < space.agents[index].fit:
-                    # Increases its winning by one
                     wins[i] += 1
 
-        # Sorts agents list based on its winnings
         space.agents = [
             agents
             for _, agents in sorted(
                 zip(wins, space.agents), key=lambda pair: pair[0], reverse=True
             )
         ]
-
-        # Gathers the best `n_agents`
         space.agents = space.agents[:n_agents]

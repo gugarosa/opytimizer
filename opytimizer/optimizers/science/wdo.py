@@ -37,7 +37,6 @@ class WDO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> WDO.")
 
-        # Overrides its parent class with the receiving params
         super(WDO, self).__init__()
 
         # Maximum velocity
@@ -55,7 +54,6 @@ class WDO(Optimizer):
         # Pressure constant
         self.RT = 1.5
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

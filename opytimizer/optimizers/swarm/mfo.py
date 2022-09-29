@@ -37,13 +37,11 @@ class MFO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> MFO.")
 
-        # Overrides its parent class with the receiving params
         super(MFO, self).__init__()
 
         # Spiral constant
         self.b = 1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

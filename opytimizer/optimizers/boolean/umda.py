@@ -34,19 +34,12 @@ class UMDA(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(UMDA, self).__init__()
 
-        # Probability of selection
         self.p_selection = 0.75
-
-        # Distribution lower bound
         self.lower_bound = 0.05
-
-        # Distribution upper bound
         self.upper_bound = 0.95
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -109,18 +102,12 @@ class UMDA(Optimizer):
 
         """
 
-        # Creates an empty array of probabilities
         probs = np.zeros((agents[0].n_variables, agents[0].n_dimensions))
 
-        # For every pre-selected agent
         for agent in agents:
-            # Increases if feature is selected
             probs += agent.position
 
-        # Normalizes into real probabilities
         probs /= len(agents)
-
-        # Clips between pre-defined lower and upper bounds
         probs = np.clip(probs, self.lower_bound, self.upper_bound)
 
         return probs
@@ -136,10 +123,8 @@ class UMDA(Optimizer):
 
         """
 
-        # Creates a uniform random array with the same shape as `probs`
         r1 = r.generate_uniform_random_number(size=(probs.shape[0], probs.shape[1]))
 
-        # Samples new positions
         new_position = np.where(probs < r1, True, False)
 
         return new_position
@@ -151,22 +136,14 @@ class UMDA(Optimizer):
             space: Space containing agents and update-related information.
 
         """
-        # Retrieves the number of agents
-        n_agents = len(space.agents)
 
-        # Selects the individuals through ranking
+        n_agents = len(space.agents)
         n_selected = int(n_agents * self.p_selection)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Calculates the probability of ocurrence from selected agents
         probs = self._calculate_probability(space.agents[:n_selected])
 
-        # Iterates through every agents
         for agent in space.agents:
-            # Samples new agent's position
             agent.position = self._sample_position(probs)
-
-            # Checks its limits
             agent.clip_by_bound()

@@ -40,10 +40,8 @@ class FFOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> FFOA.")
 
-        # Overrides its parent class with the receiving params
         super(FFOA, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

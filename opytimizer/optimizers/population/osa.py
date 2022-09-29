@@ -40,13 +40,11 @@ class OSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> OSA.")
 
-        # Overrides its parent class with the receiving params
         super(OSA, self).__init__()
 
         # Exploration intensity
         self.beta = 1.9
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

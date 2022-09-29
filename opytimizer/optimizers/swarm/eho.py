@@ -39,7 +39,6 @@ class EHO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> EHO.")
 
-        # Overrides its parent class with the receiving params
         super(EHO, self).__init__()
 
         # Matriarch influence
@@ -51,7 +50,6 @@ class EHO(Optimizer):
         # Maximum number of clans
         self.n_clans = 10
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

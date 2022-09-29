@@ -31,10 +31,8 @@ class GS(Optimizer):
 
         logger.info("Overriding class: Optimizer -> GS.")
 
-        # Overrides its parent class with the receiving params
         super(GS, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

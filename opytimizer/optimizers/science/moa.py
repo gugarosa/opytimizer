@@ -38,7 +38,6 @@ class MOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> MOA.")
 
-        # Overrides its parent class with the receiving params
         super(MOA, self).__init__()
 
         # Particle moviment first constant
@@ -47,7 +46,6 @@ class MOA(Optimizer):
         # Particle moviment second constant
         self.rho = 2.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

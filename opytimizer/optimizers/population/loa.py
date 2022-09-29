@@ -47,7 +47,6 @@ class Lion(Agent):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(Lion, self).__init__(n_variables, n_dimensions, lower_bound, upper_bound)
 
         # Copies the current position and fitness to overrided object
@@ -177,7 +176,6 @@ class LOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> LOA.")
 
-        # Overrides its parent class with the receiving params
         super(LOA, self).__init__()
 
         # Percentage of nomad lions
@@ -201,7 +199,6 @@ class LOA(Optimizer):
         # Mutation probability
         self.Mu = 0.2
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

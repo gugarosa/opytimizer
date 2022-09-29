@@ -39,16 +39,11 @@ class BSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BSA.")
 
-        # Overrides its parent class with the receiving params
         super(BSA, self).__init__()
 
-        # Experience from previous generation
         self.F = 3.0
-
-        # Number of non-crosses
         self.mix_rate = 1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -102,7 +97,6 @@ class BSA(Optimizer):
 
         """
 
-        # Copies a list of agents into the historical population
         self.old_agents = copy.deepcopy(space.agents)
 
     def _permute(self, agents: List[Agent]) -> None:
@@ -113,20 +107,15 @@ class BSA(Optimizer):
 
         """
 
-        # Generates the `a` and `b` random uniform numbers
         a = r.generate_uniform_random_number()
         b = r.generate_uniform_random_number()
 
-        # If `a` is smaller than `b`
         if a < b:
-            # Performs a full copy on the historical population
             self.old_agents = copy.deepcopy(agents)
 
-        # Generates two integers `i` and `j`
         i = r.generate_integer_random_number(high=len(agents))
         j = r.generate_integer_random_number(high=len(agents), exclude_value=i)
 
-        # Swap the agents
         self.old_agents[i], self.old_agents[j] = copy.deepcopy(
             self.old_agents[j]
         ), copy.deepcopy(self.old_agents[i])
@@ -142,22 +131,16 @@ class BSA(Optimizer):
 
         """
 
-        # Makes a deep copy to hold the trial agents
         trial_agents = copy.deepcopy(agents)
 
-        # Generates a uniform random number
         r1 = r.generate_uniform_random_number()
 
-        # Iterates through all populations
         for (trial_agent, agent, old_agent) in zip(
             trial_agents, agents, self.old_agents
         ):
-            # Updates the new trial agent's position
             trial_agent.position = agent.position + self.F * r1 * (
                 old_agent.position - agent.position
             )
-
-            # Clips its limits
             trial_agent.clip_by_bound()
 
         return trial_agents
@@ -171,52 +154,31 @@ class BSA(Optimizer):
 
         """
 
-        # Defines the number of agents and variables
         n_agents = len(agents)
         n_variables = agents[0].n_variables
 
-        # Creates a crossover map
         cross_map = np.ones((n_agents, n_variables))
 
-        # Generates the `a` and `b` random uniform numbers
         a = r.generate_uniform_random_number()
         b = r.generate_uniform_random_number()
 
-        # If `a` is smaller than `b`
         if a < b:
-            # Iterates through all agents
             for i in range(n_agents):
-                # Generates a uniform random number
                 r1 = r.generate_uniform_random_number()
 
-                # Calculates the number of non-crosses
                 non_crosses = int(self.mix_rate * r1 * n_variables)
 
-                # Iterates through the number of non-crosses
                 for _ in range(non_crosses):
-                    # Generates a random decision variable index
                     u = r.generate_integer_random_number(high=n_variables)
-
-                    # Turn off the crossing on this specific point
                     cross_map[i][u] = 0
-
-        # If `a` is bigger than `b`
         else:
-            # Iterates through all agents
             for i in range(n_agents):
-                # Generates a random decision variable index
                 j = r.generate_integer_random_number(high=n_variables)
-
-                # Turn off the crossing on this specific point
                 cross_map[i][j] = 0
 
-        # Iterates through all agents
         for i in range(n_agents):
-            # Iterates through all decision variables
             for j in range(n_variables):
-                # If it is supposed to cross according to the map
                 if cross_map[i][j]:
-                    # Makes a deep copy on such position
                     trial_agents[i].position[j] = copy.deepcopy(agents[i].position[j])
 
     def update(self, space: Space, function: Function) -> None:
@@ -228,22 +190,12 @@ class BSA(Optimizer):
 
         """
 
-        # Performs the permuting operator
         self._permute(space.agents)
-
-        # Calculates the trial agents based on the mutation operator
         trial_agents = self._mutate(space.agents)
-
-        # Performs the crossover
         self._crossover(space.agents, trial_agents)
 
-        # Iterates through all agents and trial agents
         for (agent, trial_agent) in zip(space.agents, trial_agents):
-            # Calculates the trial agent's fitness
             trial_agent.fit = function(trial_agent.position)
-
-            # If its fitness is better than agent's fitness
             if trial_agent.fit < agent.fit:
-                # Copies the trial agent's position and fitness to the agent's
                 agent.position = copy.deepcopy(trial_agent.position)
                 agent.fit = copy.deepcopy(trial_agent.fit)

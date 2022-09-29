@@ -39,7 +39,6 @@ class SSO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> SSO.")
 
-        # Overrides its parent class with the receiving params
         super(SSO, self).__init__()
 
         # Weighing constant
@@ -51,7 +50,6 @@ class SSO(Optimizer):
         # Global constant
         self.C_g = 0.9
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -40,7 +40,6 @@ class CSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> CSA.")
 
-        # Overrides its parent class with the receiving params
         super(CSA, self).__init__()
 
         # Flight length
@@ -49,7 +48,6 @@ class CSA(Optimizer):
         # Awareness probability
         self.AP = 0.1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

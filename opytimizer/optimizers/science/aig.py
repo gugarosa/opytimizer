@@ -39,7 +39,6 @@ class AIG(Optimizer):
 
         logger.info("Overriding class: Optimizer -> AIG.")
 
-        # Overrides its parent class with the receiving params
         super(AIG, self).__init__()
 
         # First maximum correction angle
@@ -48,7 +47,6 @@ class AIG(Optimizer):
         # Second maximum correction angle
         self.beta = np.pi
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -39,7 +39,6 @@ class HGSO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> HGSO.")
 
-        # Overrides its parent class with the receiving params
         super(HGSO, self).__init__()
 
         # Number of clusters
@@ -63,7 +62,6 @@ class HGSO(Optimizer):
         # Solubility constant
         self.K = 1.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

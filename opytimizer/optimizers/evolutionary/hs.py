@@ -40,19 +40,12 @@ class HS(Optimizer):
 
         logger.info("Overriding class: Optimizer -> HS.")
 
-        # Overrides its parent class with the receiving params
         super(HS, self).__init__()
 
-        # Harmony memory considering rate
         self.HMCR = 0.7
-
-        # Pitch adjusting rate
         self.PAR = 0.7
-
-        # Bandwidth parameter
         self.bw = 1.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -113,36 +106,19 @@ class HS(Optimizer):
 
         """
 
-        # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # For every decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # Using the harmony memory
             if r1 <= self.HMCR:
-                # Generates a random index
                 k = r.generate_integer_random_number(0, len(agents))
-
-                # Replaces the position with agent `k`
                 a.position[j] = agents[k].position[j]
 
-                # Generates a new uniform random number
                 r2 = r.generate_uniform_random_number()
-
-                # Checks if it needs a pitch adjusting
                 if r2 <= self.PAR:
-                    # Generates a final random number
                     r3 = r.generate_uniform_random_number(-1, 1)
-
-                    # Updates harmony position
                     a.position[j] += r3 * self.bw
-
-            # If harmony memory is not used
             else:
-                # Generate a uniform random number
                 a.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=a.n_dimensions
                 )
@@ -158,21 +134,14 @@ class HS(Optimizer):
 
         """
 
-        # Generates a new harmony
         agent = self._generate_new_harmony(space.agents)
-
-        # Checks agent limits
         agent.clip_by_bound()
 
-        # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # If newly generated agent fitness is better
         if agent.fit < space.agents[-1].fit:
-            # Updates the corresponding agent's position and fitness
             space.agents[-1].position = copy.deepcopy(agent.position)
             space.agents[-1].fit = copy.deepcopy(agent.fit)
 
@@ -200,19 +169,12 @@ class IHS(HS):
 
         logger.info("Overriding class: HS -> IHS.")
 
-        # Minimum pitch adjusting rate
         self.PAR_min = 0
-
-        # Maximum pitch adjusting rate
         self.PAR_max = 1
 
-        # Minimum bandwidth parameter
         self.bw_min = 1
-
-        # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Overrides its parent class with the receiving params
         super(IHS, self).__init__(params)
 
         logger.info("Class overrided.")
@@ -294,31 +256,22 @@ class IHS(HS):
 
         """
 
-        # Updates pitch adjusting rate
         self.PAR = self.PAR_min + (
             ((self.PAR_max - self.PAR_min) / n_iterations) * iteration
         )
 
-        # Updates bandwidth parameter
         self.bw = self.bw_max * np.exp(
             (np.log(self.bw_min / self.bw_max) / n_iterations) * iteration
         )
 
-        # Generates a new harmony
         agent = self._generate_new_harmony(space.agents)
-
-        # Checks agent limits
         agent.clip_by_bound()
 
-        # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # If newly generated agent fitness is better
         if agent.fit < space.agents[-1].fit:
-            # Updates the corresponding agent's position and fitness
             space.agents[-1].position = copy.deepcopy(agent.position)
             space.agents[-1].fit = copy.deepcopy(agent.fit)
 
@@ -345,7 +298,6 @@ class GHS(IHS):
 
         logger.info("Overriding class: IHS -> GHS.")
 
-        # Overrides its parent class with the receiving params
         super(GHS, self).__init__(params)
 
         logger.info("Class overrided.")
@@ -361,36 +313,19 @@ class GHS(IHS):
 
         """
 
-        # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # For every decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # Using the harmony memory
             if r1 <= self.HMCR:
-                # Generates a random index
                 k = r.generate_integer_random_number(0, len(agents))
-
-                # Replaces the position with agent `k`
                 a.position[j] = agents[k].position[j]
 
-                # Generates a new uniform random number
                 r2 = r.generate_uniform_random_number()
-
-                # Checks if it needs a pitch adjusting
                 if r2 <= self.PAR:
-                    # Generates a random index
                     z = r.generate_integer_random_number(0, a.n_variables)
-
-                    # Updates harmony position
                     a.position[j] = agents[0].position[z]
-
-            # If harmony memory is not used
             else:
-                # Generate a uniform random number
                 a.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=a.n_dimensions
                 )
@@ -421,22 +356,14 @@ class SGHS(HS):
 
         logger.info("Overriding class: HS -> SGHS.")
 
-        # Learning period
         self.LP = 100
 
-        # Mean harmony memory considering rate
         self.HMCRm = 0.98
-
-        # Mean pitch adjusting rate
         self.PARm = 0.9
 
-        # Minimum bandwidth parameter
         self.bw_min = 1
-
-        # Maximum bandwidth parameter
         self.bw_max = 10
 
-        # Overrides its parent class with the receiving params
         super(SGHS, self).__init__(params)
 
         logger.info("Class overrided.")
@@ -593,10 +520,8 @@ class SGHS(HS):
 
         """
 
-        # Current learning period
         self.lp = 1
 
-        # Historical HMCRs and PARs
         self.HMCR_history = []
         self.PAR_history = []
 
@@ -611,33 +536,18 @@ class SGHS(HS):
 
         """
 
-        # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # For every decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # Using the harmony memory
             if r1 <= self.HMCR:
-                # Generates a uniform random number
                 r2 = r.generate_uniform_random_number(-1, 1)
-
-                # Updates harmony position
                 a.position[j] += r2 * self.bw
 
-                # Generates a new uniform random number
                 r3 = r.generate_uniform_random_number()
-
-                # Checks if it needs a pitch adjusting
                 if r3 <= self.PAR:
-                    # Updates harmony position
                     a.position[j] = agents[0].position[j]
-
-            # If harmony memory is not used
             else:
-                # Generate a uniform random number
                 a.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=a.n_dimensions
                 )
@@ -657,51 +567,36 @@ class SGHS(HS):
 
         """
 
-        # Updates harmony memory considering and pitch adjusting rates
         self.HMCR = r.generate_gaussian_random_number(self.HMCRm, 0.01)[0]
         self.PAR = r.generate_gaussian_random_number(self.PARm, 0.05)[0]
 
-        # Stores updates values to lists
         self.HMCR_history.append(self.HMCR)
         self.PAR_history.append(self.PAR)
 
-        # If current iteration is smaller than half
         if iteration < n_iterations // 2:
-            # Updates the bandwidth parameter
             self.bw = (
                 self.bw_max
                 - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
             )
         else:
-            # Replaces by the minimum bandwidth
             self.bw = self.bw_min
 
-        # Generates a new harmony
         agent = self._generate_new_harmony(space.agents)
-
-        # Checks agent limits
         agent.clip_by_bound()
 
-        # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # If newly generated agent fitness is better
         if agent.fit < space.agents[-1].fit:
-            # Updates the corresponding agent's position and fitness
             space.agents[-1].position = copy.deepcopy(agent.position)
             space.agents[-1].fit = copy.deepcopy(agent.fit)
 
-        # Checks if learning period has reached its maximum
         if self.lp == self.LP:
-            # Re-calculates the mean HMCR and PAR, and resets learning period
             self.HMCRm = np.mean(self.HMCR_history)
             self.PARm = np.mean(self.PAR_history)
             self.lp = 1
         else:
-            # Increases learning period
             self.lp += 1
 
 
@@ -728,10 +623,8 @@ class NGHS(HS):
 
         logger.info("Overriding class: HS -> NGHS.")
 
-        # Mutation probability
         self.pm = 0.1
 
-        # Overrides its parent class with the receiving params
         super(NGHS, self).__init__(params)
 
         logger.info("Class overrided.")
@@ -763,29 +656,18 @@ class NGHS(HS):
 
         """
 
-        # Mimics an agent position
         a = copy.deepcopy(best)
 
-        # For every decision variable
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
-            # Updates the harmony position
             new_position = 2 * (best.position[j] - worst.position[j])
-
-            # Clips the harmony position between lower and upper bounds
             new_position = np.clip(new_position, lb, ub)
 
-            # Generates a uniform random number
             r1 = r.generate_uniform_random_number()
 
-            # Updates current agent's position
             a.position[j] = worst.position[j] + r1 * (new_position - worst.position[j])
 
-            # Generates another uniform random number
             r2 = r.generate_uniform_random_number()
-
-            # Checks if is supposed to be mutated
             if r2 <= self.pm:
-                # Mutates the position
                 a.position[j] = r.generate_uniform_random_number(
                     lb, ub, size=a.n_dimensions
                 )
@@ -801,19 +683,13 @@ class NGHS(HS):
 
         """
 
-        # Generates a new harmony
         agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
-
-        # Checks agent limits
         agent.clip_by_bound()
 
-        # Calculates the new harmony fitness
         agent.fit = function(agent.position)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Updates the worst agent's position and fitness
         space.agents[-1].position = copy.deepcopy(agent.position)
         space.agents[-1].fit = copy.deepcopy(agent.fit)
 
@@ -841,7 +717,6 @@ class GOGHS(NGHS):
 
         logger.info("Overriding class: NGHS -> GOGHS.")
 
-        # Overrides its parent class with the receiving params
         super(GOGHS, self).__init__(params)
 
         logger.info("Class overrided.")
@@ -860,34 +735,22 @@ class GOGHS(NGHS):
 
         """
 
-        # Mimics an agent position
         a = copy.deepcopy(agents[0])
 
-        # Creates pseudo-harmonies
         A = np.zeros((a.n_variables))
         B = np.zeros((a.n_variables))
 
-        # Generates a new uniform random number
         k = r.generate_uniform_random_number()
 
-        # Iterates over every variable
         for j in range(a.n_variables):
-            # Defines to `A` and `B` maximum and minimum values, respectively
             A[j], B[j] = c.FLOAT_MAX, -c.FLOAT_MAX
 
-            # Iterates over every agent
             for agent in agents:
-                # If `A` is bigger than agent's position
                 if A[j] > agent.position[j]:
-                    # Replaces its value
                     A[j] = agent.position[j]
-
-                # If `B` is smaller than agent's position
                 elif B[j] < agent.position[j]:
-                    # Replaces its value
                     B[j] = agent.position[j]
 
-            # Calculates new agent's position
             a.position[j] = k * (A[j] + B[j]) - new_agent.position[j]
 
         return a
@@ -901,28 +764,19 @@ class GOGHS(NGHS):
 
         """
 
-        # Generates new harmonies
         agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
         opp_agent = self._generate_opposition_harmony(agent, space.agents)
 
-        # Checks agents limits
         agent.clip_by_bound()
         opp_agent.clip_by_bound()
 
-        # Calculates harmonies fitness
         agent.fit = function(agent.position)
         opp_agent.fit = function(opp_agent.position)
-
-        # Checks if oppisition-based is better than agent
         if opp_agent.fit < agent.fit:
-            # Copies the agent
             agent = copy.deepcopy(opp_agent)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # If generated agent fitness is better
         if agent.fit < space.agents[-1].fit:
-            # Updates the corresponding agent's position and fitness
             space.agents[-1].position = copy.deepcopy(agent.position)
             space.agents[-1].fit = copy.deepcopy(agent.fit)

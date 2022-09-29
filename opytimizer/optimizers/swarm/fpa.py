@@ -37,7 +37,6 @@ class FPA(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(FPA, self).__init__()
 
         # Lévy flight control parameter
@@ -49,7 +48,6 @@ class FPA(Optimizer):
         # Probability of local pollination
         self.p = 0.8
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

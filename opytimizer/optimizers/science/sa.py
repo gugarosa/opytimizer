@@ -39,7 +39,6 @@ class SA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> SA.")
 
-        # Overrides its parent class with the receiving params
         super(SA, self).__init__()
 
         # System's temperature
@@ -48,7 +47,6 @@ class SA(Optimizer):
         # Temperature decay
         self.beta = 0.999
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

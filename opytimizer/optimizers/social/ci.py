@@ -39,16 +39,11 @@ class CI(Optimizer):
 
         logger.info("Overriding class: Optimizer -> CI.")
 
-        # Overrides its parent class with the receiving params
         super(CI, self).__init__()
 
-        # Sampling interval reduction factor
         self.r = 0.8
-
-        # Number of variations
         self.t = 3
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -117,11 +112,9 @@ class CI(Optimizer):
 
         """
 
-        # Arrays of lower bounds
         lower = np.expand_dims(np.expand_dims(space.lb, -1), 0).astype(float)
         self.lower = np.repeat(lower, space.n_agents, axis=0)
 
-        # Arrays of upper bounds
         upper = np.expand_dims(np.expand_dims(space.ub, -1), 0).astype(float)
         self.upper = np.repeat(upper, space.n_agents, axis=0)
 
@@ -134,38 +127,24 @@ class CI(Optimizer):
 
         """
 
-        # Gathers the fitnesses from all individuals
         fitness = [agent.fit for agent in space.agents]
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Performs the weighted wheel selection
             s = g.weighted_wheel_selection(fitness)
 
-            # Shrinks and expands the sampling interval
             self.lower[i] = space.agents[s].position - self.lower[i] * self.r / 2
             self.upper[i] = space.agents[s].position - self.upper[i] * self.r / 2
 
-            # Iterates through all possible variations
             for _ in range(self.t):
-                # Creates a temporary agent
                 a = copy.deepcopy(agent)
 
-                # Iterates through all the decision variables
                 for j, (lb, ub) in enumerate(zip(self.lower[i], self.upper[i])):
-                    # Fills the array based on a uniform distribution
                     a.position[j] = rnd.generate_uniform_random_number(
                         lb, ub, agent.n_dimensions
                     )
-
-                # Checks agent's limits
                 a.clip_by_bound()
 
-                # Calculates the fitness for the temporary position
                 a.fit = function(a.position)
-
-                # If newly generated agent fitness is better
                 if a.fit < agent.fit:
-                    # Updates the corresponding agent's position and fitness
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)

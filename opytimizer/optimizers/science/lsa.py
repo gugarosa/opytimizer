@@ -39,7 +39,6 @@ class LSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> LSA.")
 
-        # Overrides its parent class with the receiving params
         super(LSA, self).__init__()
 
         # Maximum channel time
@@ -51,7 +50,6 @@ class LSA(Optimizer):
         # Forking probability
         self.p_fork = 0.01
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

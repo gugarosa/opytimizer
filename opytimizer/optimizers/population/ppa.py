@@ -38,10 +38,8 @@ class PPA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> PPA.")
 
-        # Overrides its parent class with the receiving params
         super(PPA, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

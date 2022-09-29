@@ -37,7 +37,6 @@ class JS(Optimizer):
 
         logger.info("Overriding class: Optimizer -> JS.")
 
-        # Overrides its parent class with the receiving params
         super(JS, self).__init__()
 
         # Chaotic map coefficient
@@ -49,7 +48,6 @@ class JS(Optimizer):
         # Motion coefficient
         self.gamma = 0.1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -285,7 +283,6 @@ class NBJS(JS):
 
         logger.info("Overriding class: JS -> NBJS.")
 
-        # Overrides its parent class with the receiving params
         super(NBJS, self).__init__(params)
 
         logger.info("Class overrided.")

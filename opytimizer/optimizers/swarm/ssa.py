@@ -35,10 +35,8 @@ class SSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> SSA.")
 
-        # Overrides its parent class with the receiving params
         super(SSA, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

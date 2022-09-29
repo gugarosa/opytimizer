@@ -41,7 +41,6 @@ class SFO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> SFO.")
 
-        # Overrides its parent class with the receiving params
         super(SFO, self).__init__()
 
         # Percentage of initial sailfishes
@@ -53,7 +52,6 @@ class SFO(Optimizer):
         # Attack power decrease
         self.e = 0.001
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

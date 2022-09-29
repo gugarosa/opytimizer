@@ -40,16 +40,11 @@ class BPSO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BPSO.")
 
-        # Overrides its parent class with the receiving params
         super(BPSO, self).__init__()
 
-        # Cognitive constant
         self.c1 = np.array([1])
-
-        # Social constant
         self.c2 = np.array([1])
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -114,7 +109,6 @@ class BPSO(Optimizer):
 
         """
 
-        # Arrays of local positions and velocities
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool
         )
@@ -131,22 +125,14 @@ class BPSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
             fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
             if fit < agent.fit:
-                # Updates its current fitness to the newer one
                 agent.fit = fit
 
-                # Also updates the local best position to current's agent position
                 self.local_position[i] = copy.deepcopy(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
@@ -159,13 +145,10 @@ class BPSO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Defines random binary numbers
             r1 = r.generate_binary_random_number(agent.position.shape)
             r2 = r.generate_binary_random_number(agent.position.shape)
 
-            # Calculates the local and global partials
             local_partial = np.logical_and(
                 self.c1,
                 np.logical_xor(

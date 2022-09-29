@@ -38,7 +38,6 @@ class FA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> FA.")
 
-        # Overrides its parent class with the receiving params
         super(FA, self).__init__()
 
         # Randomization parameter
@@ -50,7 +49,6 @@ class FA(Optimizer):
         # Light absorption coefficient
         self.gamma = 1.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

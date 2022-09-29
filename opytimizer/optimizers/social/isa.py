@@ -41,16 +41,11 @@ class ISA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> ISA.")
 
-        # Overrides its parent class with the receiving params
         super(ISA, self).__init__()
 
-        # Inertia weight
         self.w = 0.7
-
-        # Tendency factor
         self.tau = 0.3
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -119,7 +114,6 @@ class ISA(Optimizer):
 
         """
 
-        # Arrays of local positions and velocities
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -136,22 +130,14 @@ class ISA(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Calculates the fitness value of current agent
             fit = function(agent.position)
-
-            # If fitness is better than agent's best fit
             if fit < agent.fit:
-                # Updates its current fitness to the newer one
                 agent.fit = fit
 
-                # Also updates the local best position to current's agent position
                 self.local_position[i] = copy.deepcopy(agent.position)
 
-            # If agent's fitness is better than global fitness
             if agent.fit < space.best_agent.fit:
-                # Makes a deep copy of agent's local best position and fitness to the best agent
                 space.best_agent.position = copy.deepcopy(self.local_position[i])
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
@@ -165,34 +151,25 @@ class ISA(Optimizer):
 
         """
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
-
-        # Gathers best and worst agents
         best, worst = space.agents[0], space.agents[-1]
 
-        # Calculates the coefficient and weighted coefficient and weighted particle (eq. 1.2)
         coef = [
             (best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON)
             for agent in space.agents
         ]
         w_coef = [cf / (np.sum(coef) + c.EPSILON) for cf in coef]
 
-        # Calculates weighted particle position and fitness (eq. 1.1)
         w_position = np.sum(
             [cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0
         )
         w_fit = function(w_position)
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates random uniform and integer numbers
             r1 = r.generate_uniform_random_number()
             idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
 
-            # If random number is bigger than tendency factor
             if r1 >= self.tau:
-                # Defines acceleration coefficients
                 phi3 = r.generate_uniform_random_number()
                 phi2 = 2 * r.generate_uniform_random_number()
                 phi1 = -(phi2 + phi3) * r.generate_uniform_random_number()
@@ -204,20 +181,13 @@ class ISA(Optimizer):
                     + phi2 * (space.best_agent.position - self.local_position[idx])
                     + phi3 * (w_position - self.local_position[idx])
                 )
-
-            # If random number is smaller than tendency factor
             else:
-                # Generates another random number
                 r2 = r.generate_uniform_random_number()
-
-                # If current agent's fitness is smaller than selected agent
                 if agent.fit < space.agents[idx].fit:
                     # Updates agent's velocity (eq. 6.2 - top)
                     self.velocity[i] = r2 * (
                         agent.position - space.agents[idx].position
                     )
-
-                # If current agent's fitness is bigger than selected agent
                 else:
                     # Updates agent's velocity (eq. 6.2 - bottom)
                     self.velocity[i] = r2 * (
@@ -228,18 +198,12 @@ class ISA(Optimizer):
             agent.position += self.velocity[i]
             agent.clip_by_bound()
 
-            # Evaluates agent's and local's fitnesses
             agent.fit = function(agent.position)
             local_fit = function(self.local_position[i])
 
-            # Checks whether `w_fit` is smaller than agent's fitness
             if w_fit < agent.fit:
-                # If weighted fitness is better than local fitness
                 if w_fit < local_fit:
-                    # Replaces local position with weighted position
                     self.local_position[i] = copy.deepcopy(w_position)
             else:
-                # If current agent's fitness is better than weighted fitness
                 if agent.fit < local_fit:
-                    # Replaces local position with agent's position
                     self.local_position[i] = copy.deepcopy(agent.position)

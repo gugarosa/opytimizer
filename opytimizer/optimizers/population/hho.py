@@ -38,10 +38,8 @@ class HHO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> HHO.")
 
-        # Overrides its parent class with the receiving params
         super(HHO, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

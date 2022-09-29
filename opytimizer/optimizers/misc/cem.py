@@ -36,16 +36,11 @@ class CEM(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(CEM, self).__init__()
 
-        # Amount of positions to employ in mean and std updates
         self.n_updates = 5
-
-        # Learning rate
         self.alpha = 0.7
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -114,13 +109,10 @@ class CEM(Optimizer):
 
         """
 
-        # Arrays of means and standard deviations
         self.mean = np.zeros(space.n_variables)
         self.std = np.zeros(space.n_variables)
 
-        # Iterates through all decision variables
         for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-            # Calculates the initial mean and standard deviation
             self.mean[j] = r.generate_uniform_random_number(lb, ub)
             self.std[j] = ub - lb
 
@@ -133,19 +125,14 @@ class CEM(Optimizer):
 
         """
 
-        # Iterates through all agents
         for agent in agents:
-            # Iterate through all decision variables
             for j, (m, s) in enumerate(zip(self.mean, self.std)):
-                # For each decision variable, we generate gaussian numbers based on mean and std
                 agent.position[j] = r.generate_gaussian_random_number(
                     m, s, agent.n_dimensions
                 )
 
-            # Clips the agent limits
             agent.clip_by_bound()
 
-            # Calculates its new fitness
             agent.fit = function(agent.position)
 
     def _update_mean(self, updates: np.ndarray) -> np.ndarray:
@@ -159,7 +146,6 @@ class CEM(Optimizer):
 
         """
 
-        # Calculates the new mean based on update formula
         new_mean = self.alpha * self.mean + (1 - self.alpha) * np.mean(updates)
 
         return new_mean
@@ -175,7 +161,6 @@ class CEM(Optimizer):
 
         """
 
-        # Calculates the new standard deviation based on update formula
         new_std = self.alpha * self.std + (1 - self.alpha) * np.sqrt(
             np.mean((updates - self.mean) ** 2)
         )
@@ -191,17 +176,13 @@ class CEM(Optimizer):
 
         """
 
-        # Creates new agents based on current mean and standard deviation
         self._create_new_samples(space.agents, function)
 
-        # Sorts agents
         space.agents.sort(key=lambda x: x.fit)
 
-        # Gathers the update positions
         update_position = np.array(
             [agent.position for agent in space.agents[: self.n_updates]]
         )
 
-        # Updates its mean and standard deviation
         self.mean = self._update_mean(update_position)
         self.std = self._update_std(update_position)

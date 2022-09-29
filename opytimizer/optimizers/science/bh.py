@@ -37,10 +37,8 @@ class BH(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BH.")
 
-        # Overrides its parent class with the receiving params
         super(BH, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

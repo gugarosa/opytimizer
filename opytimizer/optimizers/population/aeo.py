@@ -37,10 +37,8 @@ class AEO(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(AEO, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

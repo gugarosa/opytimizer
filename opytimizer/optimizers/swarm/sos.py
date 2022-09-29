@@ -38,10 +38,8 @@ class SOS(Optimizer):
 
         logger.info("Overriding class: Optimizer -> SOS.")
 
-        # Overrides its parent class with the receiving params
         super(SOS, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -37,10 +37,8 @@ class GWO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> GWO.")
 
-        # Overrides its parent class with the receiving params
         super(GWO, self).__init__()
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

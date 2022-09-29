@@ -38,13 +38,10 @@ class BMRFO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> BMRFO.")
 
-        # Overrides its parent class with the receiving params
         super(BMRFO, self).__init__()
 
-        # Somersault foraging
         self.S = np.array([1])
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -84,23 +81,16 @@ class BMRFO(Optimizer):
 
         """
 
-        # Generates binary random numbers
         r1 = r.generate_binary_random_number(best_position.shape)
         beta = r.generate_binary_random_number(best_position.shape)
 
-        # Generates a uniform random number
         u = r.generate_uniform_random_number()
-
-        # Checks if current iteration proportion is smaller than random generated number
         if iteration / n_iterations < u:
-            # Generates binary random positions
             r_position = r.generate_binary_random_number(
                 size=(agents[i].n_variables, agents[i].n_dimensions)
             )
 
-            # Checks if the index is equal to zero
             if i == 0:
-                # Calculates the cyclone foraging
                 partial_one = np.logical_or(
                     r1, np.logical_xor(r_position, agents[i].position)
                 )
@@ -110,10 +100,7 @@ class BMRFO(Optimizer):
                 cyclone_foraging = np.logical_and(
                     r_position, np.logical_and(partial_one, partial_two)
                 )
-
-            # If index is different than zero
             else:
-                # Calculates the cyclone foraging
                 partial_one = np.logical_or(
                     r1, np.logical_xor(agents[i - 1].position, agents[i].position)
                 )
@@ -123,12 +110,8 @@ class BMRFO(Optimizer):
                 cyclone_foraging = np.logical_and(
                     r_position, np.logical_and(partial_one, partial_two)
                 )
-
-        # If current iteration proportion is bigger than random generated number
         else:
-            # Checks if the index is equal to zero
             if i == 0:
-                # Calculates the cyclone foraging
                 partial_one = np.logical_or(
                     r1, np.logical_xor(best_position, agents[i].position)
                 )
@@ -138,10 +121,7 @@ class BMRFO(Optimizer):
                 cyclone_foraging = np.logical_and(
                     best_position, np.logical_and(partial_one, partial_two)
                 )
-
-            # If index is different than zero
             else:
-                # Calculates the cyclone foraging
                 partial_one = np.logical_or(
                     r1, np.logical_xor(agents[i - 1].position, agents[i].position)
                 )
@@ -169,13 +149,10 @@ class BMRFO(Optimizer):
 
         """
 
-        # Generates binary random numbers
         r1 = r.generate_binary_random_number(best_position.shape)
         alpha = r.generate_binary_random_number(best_position.shape)
 
-        # Checks if the index is equal to zero
         if i == 0:
-            # Calculates the chain foraging
             partial_one = np.logical_and(
                 r1, np.logical_xor(best_position, agents[i].position)
             )
@@ -185,10 +162,7 @@ class BMRFO(Optimizer):
             chain_foraging = np.logical_or(
                 agents[i].position, np.logical_or(partial_one, partial_two)
             )
-
-        # If index is different than zero
         else:
-            # Calculates the chain foraging
             partial_one = np.logical_and(
                 r1, np.logical_xor(agents[i - 1].position, agents[i].position)
             )
@@ -215,11 +189,9 @@ class BMRFO(Optimizer):
 
         """
 
-        # Generates binary random numbers
         r1 = r.generate_binary_random_number(best_position.shape)
         r2 = r.generate_binary_random_number(best_position.shape)
 
-        # Calculates the somersault foraging
         somersault_foraging = np.logical_or(
             position,
             np.logical_and(
@@ -245,40 +217,25 @@ class BMRFO(Optimizer):
 
         """
 
-        # Iterates through all agents
         for i, agent in enumerate(space.agents):
-            # Generates an uniform random number
             r1 = r.generate_uniform_random_number()
-
-            # If random number is smaller than 1/2
             if r1 < 0.5:
-                # Performs the cyclone foraging
                 agent.position = self._cyclone_foraging(
                     space.agents, space.best_agent.position, i, iteration, n_iterations
                 )
-
-            # If random number is bigger than 1/2
             else:
-                # Performs the chain foraging
                 agent.position = self._chain_foraging(
                     space.agents, space.best_agent.position, i
                 )
 
-            # Clips the agent's limits
             agent.clip_by_bound()
 
-            # Evaluates the agent
             agent.fit = function(agent.position)
-
-            # If new agent's fitness is better than best
             if agent.fit < space.best_agent.fit:
-                # Replace the best agent's position and fitness with its copy
                 space.best_agent.position = copy.deepcopy(agent.position)
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Performs the somersault foraging
             agent.position = self._somersault_foraging(
                 agent.position, space.best_agent.position
             )

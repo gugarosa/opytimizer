@@ -36,13 +36,10 @@ class NDS(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(NDS, self).__init__()
 
-        # Number of points in the frontier
         self.n_pareto_points = 0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -109,10 +106,7 @@ class NDS(Optimizer):
 
         """
 
-        # Array of domination counts
         self.count = np.zeros(space.n_agents)
-
-        # Array of dominating sets
         self.set = np.zeros((space.n_agents, space.n_agents))
 
         # Array of pareto status
@@ -131,19 +125,13 @@ class NDS(Optimizer):
 
         """
 
-        # Counts of greater than and greater/equal than
-        # between `i` and `j`
         gt, gte = 0, 0
 
-        # Gathers the number of objectives
         n_objectives = agent_i.position.shape[0]
-
         for k in range(n_objectives):
-            # Compares if `i` is greater/equal than `j`
             if agent_i.position[k] >= agent_j.position[k]:
                 gte += 1
 
-                # Compares if `i` is greater than `j`
                 if agent_i.position[k] > agent_j.position[k]:
                     gt += 1
 
@@ -157,24 +145,15 @@ class NDS(Optimizer):
 
         """
 
-        # Copies a temporary list for iterating purposes
-        # and defines a temporary status
         temp_agents = copy.deepcopy(space.agents)
         temp_status = -10
 
-        # Iterates through 'i' agents
         for i, agent in enumerate(space.agents):
-            # Iterates through 'j' agents
             for j, temp in enumerate(temp_agents):
-                # Performs a domination comparison between `i` and `j`
                 if self._compare_domination(temp, agent):
-                    # Increments the counter
                     self.count[i] += 1
-
-                    # And adds the dominated solution to the set
                     self.set[j][i] = 1
 
-        # Finds the first archive (frontier)
         archive = []
         for i, agent in enumerate(space.agents):
             # If the solution is non-dominant, it should be
@@ -183,7 +162,6 @@ class NDS(Optimizer):
                 self.status[i] = temp_status
                 archive.append(i)
 
-                # Increments the number of points in the frontier
                 self.n_pareto_points += 1
 
         # Finds the subsequence archives (frontiers)
@@ -191,7 +169,6 @@ class NDS(Optimizer):
         while len(archive) != 0:
             temp_status -= 1
 
-            # Iterates through every solution in current frontier
             for f in archive:
                 # Checks solutions that are dominated by current solution
                 for s in self.set[f].nonzero()[0]:

@@ -38,7 +38,6 @@ class TEO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> TEO.")
 
-        # Overrides its parent class with the receiving params
         super(TEO, self).__init__()
 
         # Random step size control
@@ -56,7 +55,6 @@ class TEO(Optimizer):
         # Thermal memory
         self.TM = []
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

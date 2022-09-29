@@ -40,7 +40,6 @@ class WEO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> WEO.")
 
-        # Overrides its parent class with the receiving params
         super(WEO, self).__init__()
 
         # Minimum substrate energy
@@ -55,7 +54,6 @@ class WEO(Optimizer):
         # Maximum contact angle
         self.theta_max = -np.pi / 9
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

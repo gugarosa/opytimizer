@@ -39,13 +39,11 @@ class GSA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> GSA.")
 
-        # Overrides its parent class with the receiving params
         super(GSA, self).__init__()
 
         # Initial gravity value
         self.G = 2.467
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

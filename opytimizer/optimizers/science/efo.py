@@ -37,7 +37,6 @@ class EFO(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(EFO, self).__init__()
 
         # Positive field proportion
@@ -58,7 +57,6 @@ class EFO(Optimizer):
         # Eletromagnetic index
         self.RI = 0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -37,13 +37,10 @@ class ES(Optimizer):
 
         """
 
-        # Overrides its parent class with the receiving params
         super(ES, self).__init__()
 
-        # Ratio of children in the population
         self.child_ratio = 0.5
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -99,17 +96,13 @@ class ES(Optimizer):
 
         """
 
-        # Number of children and array of strategies
         self.n_children = int(space.n_agents * self.child_ratio)
         self.strategy = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-        # Iterates through all agents
         for i in range(self.n_children):
-            # For every decision variable
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                # Initializes the strategy array with the proposed EP distance
                 self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
                     0, ub - lb, size=space.agents[i].n_dimensions
                 )
@@ -127,19 +120,12 @@ class ES(Optimizer):
 
         """
 
-        # Makes a deep copy on selected agent
         a = copy.deepcopy(agent)
 
-        # Generates a uniform random number
         r1 = r.generate_gaussian_random_number()
-
-        # Updates its position
         a.position += self.strategy[index] * r1
-
-        # Clips its limits
         a.clip_by_bound()
 
-        # Calculates its fitness
         a.fit = function(a.position)
 
         return a
@@ -155,18 +141,14 @@ class ES(Optimizer):
 
         """
 
-        # Calculates the number of variables and dimensions
         n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
-        # Calculates the mutation strength and its complementary
         tau = 1 / np.sqrt(2 * n_variables)
         tau_p = 1 / np.sqrt(2 * np.sqrt(n_variables))
 
-        # Generates uniform random numbers
         r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
         r2 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
 
-        # Calculates the new strategy
         self.strategy[index] *= np.exp(tau_p * r1 + tau * r2)
 
     def update(self, space: Space, function: Function) -> None:
@@ -178,24 +160,15 @@ class ES(Optimizer):
 
         """
 
-        # Calculates the number of agents
         n_agents = len(space.agents)
 
-        # Creates a list for the produced children
         children = []
-
-        # Iterate through all children
         for i in range(self.n_children):
-            # Mutates a parent and generates a new child
             a = self._mutate_parent(space.agents[i], i, function)
-
-            # Updates the strategy
             self._update_strategy(i)
 
-            # Appends the mutated agent to the children
             children.append(a)
 
-        # Joins both populations, sorts agents and gathers best `n_agents`
         space.agents += children
         space.agents.sort(key=lambda x: x.fit)
         space.agents = space.agents[:n_agents]

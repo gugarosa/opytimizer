@@ -36,7 +36,6 @@ class STOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> STOA.")
 
-        # Overrides its parent class with the receiving params
         super(STOA, self).__init__()
 
         # Controlling variable
@@ -48,7 +47,6 @@ class STOA(Optimizer):
         # Spiral shape second constant
         self.v = 1.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

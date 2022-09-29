@@ -35,22 +35,14 @@ class AOA(Optimizer):
 
         logger.info("Overriding class: Optimizer -> AOA.")
 
-        # Overrides its parent class with the receiving params
         super(AOA, self).__init__()
 
-        # Minimum accelerated function
         self.a_min = 0.2
-
-        # Maximum accelerated function
         self.a_max = 1.0
 
-        # Sensitive parameter
         self.alpha = 5.0
-
-        # Control parameter
         self.mu = 0.499
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
@@ -133,22 +125,13 @@ class AOA(Optimizer):
         # Calculates math optimizer probability (eq. 4)
         MOP = 1 - (iteration ** (1 / self.alpha) / n_iterations ** (1 / self.alpha))
 
-        # Iterates through all agents
         for agent in space.agents:
-            # Iterates through all variables
             for j in range(agent.n_variables):
-                # Generates random probability
-                r1 = r.generate_uniform_random_number()
-
-                # Calculates the search partition
                 search_partition = (agent.ub[j] - agent.lb[j]) * self.mu + agent.lb[j]
 
-                # If probability is bigger than MOA
+                r1 = r.generate_uniform_random_number()
                 if r1 > MOA:
-                    # Generates an extra probability
                     r2 = r.generate_uniform_random_number()
-
-                    # If probability is bigger than 0.5
                     if r2 > 0.5:
                         # Updates position with (eq. 3 - top)
                         agent.position[j] = (
@@ -156,27 +139,18 @@ class AOA(Optimizer):
                             / (MOP + c.EPSILON)
                             * search_partition
                         )
-
-                    # If probability is smaller than 0.5
                     else:
                         # Updates position with (eq. 3 - bottom)
                         agent.position[j] = (
                             space.best_agent.position[j] * MOP * search_partition
                         )
-
-                # If probability is smaller than MOA
                 else:
-                    # Generates an extra probability
                     r3 = r.generate_uniform_random_number()
-
-                    # If probability is bigger than 0.5
                     if r3 > 0.5:
                         # Updates position with (eq. 5 - top)
                         agent.position[j] = (
                             space.best_agent.position[j] - MOP * search_partition
                         )
-
-                    # If probability is smaller than 0.5
                     else:
                         # Updates position with (eq. 5 - bottom)
                         agent.position[j] = (

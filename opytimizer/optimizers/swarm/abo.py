@@ -39,7 +39,6 @@ class ABO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> ABO.")
 
-        # Overrides its parent class with the receiving params
         super(ABO, self).__init__()
 
         # Ratio of sunspot butterflies
@@ -48,7 +47,6 @@ class ABO(Optimizer):
         # Free flight constant
         self.a = 2.0
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

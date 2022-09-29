@@ -41,13 +41,11 @@ class ABC(Optimizer):
 
         logger.info("Overriding class: Optimizer -> ABC.")
 
-        # Overrides its parent class with the receiving params
         super(ABC, self).__init__()
 
         # Number of trial limits
         self.n_trials = 10
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

@@ -39,7 +39,6 @@ class AF(Optimizer):
 
         logger.info("Overriding class: Optimizer -> AF.")
 
-        # Overrides its parent class with the receiving params
         super(AF, self).__init__()
 
         # First learning coefficient
@@ -54,7 +53,6 @@ class AF(Optimizer):
         # Selective probability
         self.Q = 0.75
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

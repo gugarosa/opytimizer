@@ -40,7 +40,6 @@ class WWO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> WWO.")
 
-        # Overrides its parent class with the receiving params
         super(WWO, self).__init__()
 
         # Maximum wave height
@@ -55,7 +54,6 @@ class WWO(Optimizer):
         # Maximum number of breakings
         self.k_max = 1
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")

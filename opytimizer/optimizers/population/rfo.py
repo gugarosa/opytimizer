@@ -40,7 +40,6 @@ class RFO(Optimizer):
 
         logger.info("Overriding class: Optimizer -> RFO.")
 
-        # Overrides its parent class with the receiving params
         super(RFO, self).__init__()
 
         # Observation angle
@@ -52,7 +51,6 @@ class RFO(Optimizer):
         # Percentual of foxes replacement
         self.p_replacement = 0.05
 
-        # Builds the class
         self.build(params)
 
         logger.info("Class overrided.")
