@@ -17,10 +17,10 @@ import sys
 
 import sphinx_rtd_theme
 
+# This step ensures that the source package is imported
+sys.path.insert(0, os.path.abspath("../"))
+
 import opytimizer
-
-sys.path.insert(0, os.path.abspath("."))
-
 
 # -- Project information -----------------------------------------------------
 
