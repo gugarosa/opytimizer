@@ -14,20 +14,18 @@ setup(
     url="https://github.com/gugarosa/opytimizer",
     license="Apache 2.0",
     install_requires=[
-        "coverage>=5.5",
         "dill>=0.3.4",
         "matplotlib>=3.3.4",
         "networkx>=2.5.1",
         "numpy>=1.19.5",
         "opytimark>=1.0.7",
-        "pre-commit>=2.17.0",
-        "pylint>=2.7.2",
-        "pytest>=6.2.2",
         "tqdm>=4.49.0",
     ],
     extras_require={
         "tests": [
             "coverage",
+            "pre-commit>=2.17.0",
+            "pylint>=2.7.2",
             "pytest",
             "pytest-pep8",
         ],
