@@ -24,9 +24,13 @@ class GSGP(GP):
     variables and methods.
 
     References:
-        A. Moraglio, K. Krawiec and C. G. Johnson.
+        A. Moraglio, K. Krawiec, and C. G. Johnson.
         Geometric semantic genetic programming.
         Lecture Notes in Computer Science (2012).
+
+        G. H. de Rosa, J. P. Papa, and L. P. Papa.
+        Feature selection using geometric semantic genetic programming.
+        Proceedings of the Genetic and Evolutionary Computation Conference Companion (2017).
 
     """
 
