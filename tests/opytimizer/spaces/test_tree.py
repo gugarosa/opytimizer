@@ -150,12 +150,6 @@ def test_tree_space_initialize_agents():
     assert new_tree_space.agents[0].position[0] != 0
 
 
-def test_tree_space_initialize_terminals():
-    new_tree_space = tree.TreeSpace(1, 1, 0, 1)
-
-    assert new_tree_space.terminals[0].position[0] != 0
-
-
 def test_tree_space_grow():
     new_tree_space = tree.TreeSpace(
         1, 1, 0, 1, min_depth=1, max_depth=5, functions=["SUM", "SUB", "MUL", "DIV"]

@@ -178,6 +178,9 @@ class TreeSpace(Space):
             for _ in range(self.n_terminals)
         ]
 
+        for terminal in self.terminals:
+            terminal.fill_with_uniform()
+
     def _create_trees(self) -> None:
         """Creates a list of trees based on the GROW algorithm."""
 
@@ -203,12 +206,6 @@ class TreeSpace(Space):
 
         self.best_agent = copy.deepcopy(self.agents[0])
 
-    def _initialize_terminals(self) -> None:
-        """Initializes terminals with their positions."""
-
-        for terminal in self.terminals:
-            terminal.fill_with_uniform()
-
     def grow(self, min_depth: Optional[int] = 1, max_depth: Optional[int] = 3) -> Node:
         """Creates a random tree based on the GROW algorithm.
 
@@ -224,8 +221,6 @@ class TreeSpace(Space):
             (Node): Random tree based on the GROW algorithm.
 
         """
-
-        self._initialize_terminals()
 
         if min_depth == max_depth:
             terminal_id = r.generate_integer_random_number(0, self.n_terminals)

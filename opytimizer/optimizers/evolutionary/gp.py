@@ -177,7 +177,7 @@ class GP(Optimizer):
 
         Args:
             space: A TreeSpace object.
-            trees: A Node instance to be mutated.
+            tree: A Node instance to be mutated.
             max_nodes: Maximum number of nodes to be searched.
 
         Returns:
