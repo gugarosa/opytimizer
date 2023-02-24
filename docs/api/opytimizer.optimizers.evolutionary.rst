@@ -9,6 +9,7 @@ opytimizer.optimizers.evolutionary
     opytimizer.optimizers.evolutionary.foa
     opytimizer.optimizers.evolutionary.ga
     opytimizer.optimizers.evolutionary.gp
+    opytimizer.optimizers.evolutionary.gsgp
     opytimizer.optimizers.evolutionary.hs
     opytimizer.optimizers.evolutionary.iwo
     opytimizer.optimizers.evolutionary.rra
