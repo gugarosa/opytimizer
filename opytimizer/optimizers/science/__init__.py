@@ -14,6 +14,7 @@ from opytimizer.optimizers.science.lsa import LSA
 from opytimizer.optimizers.science.moa import MOA
 from opytimizer.optimizers.science.mvo import MVO
 from opytimizer.optimizers.science.sa import SA
+from opytimizer.optimizers.science.sma import SMA
 from opytimizer.optimizers.science.teo import TEO
 from opytimizer.optimizers.science.two import TWO
 from opytimizer.optimizers.science.wca import WCA
