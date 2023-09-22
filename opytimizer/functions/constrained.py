@@ -1,7 +1,7 @@
 """Constrained single-objective functions.
 """
 
-from typing import List, Optional
+from typing import List
 
 import numpy as np
 
@@ -19,7 +19,7 @@ class ConstrainedFunction(Function):
         self,
         pointer: List[callable],
         constraints: List[callable],
-        penalty: Optional[float] = 0.0,
+        penalty: float = 0.0,
     ) -> None:
         """Initialization method.
 

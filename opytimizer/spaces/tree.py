@@ -27,9 +27,9 @@ class TreeSpace(Space):
         n_variables: int,
         lower_bound: Union[float, List, Tuple, np.ndarray],
         upper_bound: Union[float, List, Tuple, np.ndarray],
-        n_terminals: Optional[int] = 1,
-        min_depth: Optional[int] = 1,
-        max_depth: Optional[int] = 3,
+        n_terminals: int = 1,
+        min_depth: int = 1,
+        max_depth: int = 3,
         functions: Optional[List[str]] = None,
         mapping: Optional[List[str]] = None,
     ) -> None:
@@ -206,7 +206,7 @@ class TreeSpace(Space):
 
         self.best_agent = copy.deepcopy(self.agents[0])
 
-    def grow(self, min_depth: Optional[int] = 1, max_depth: Optional[int] = 3) -> Node:
+    def grow(self, min_depth: int = 1, max_depth: int = 3) -> Node:
         """Creates a random tree based on the GROW algorithm.
 
         References:

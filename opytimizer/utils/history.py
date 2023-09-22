@@ -16,7 +16,7 @@ class History:
 
     """
 
-    def __init__(self, save_agents: Optional[bool] = False) -> None:
+    def __init__(self, save_agents: bool = False) -> None:
         """Initialization method.
 
         Args:

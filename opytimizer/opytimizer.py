@@ -30,7 +30,7 @@ class Opytimizer:
         space: Space,
         optimizer: Optimizer,
         function: Function,
-        save_agents: Optional[bool] = False,
+        save_agents: bool = False,
     ) -> None:
         """Initialization method.
 
@@ -202,7 +202,7 @@ class Opytimizer:
 
     def start(
         self,
-        n_iterations: Optional[int] = 1,
+        n_iterations: int = 1,
         callbacks: Optional[List[Callback]] = None,
     ) -> None:
         """Starts the optimization task.

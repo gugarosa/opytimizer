@@ -20,9 +20,9 @@ class Space:
 
     def __init__(
         self,
-        n_agents: Optional[int] = 1,
-        n_variables: Optional[int] = 1,
-        n_dimensions: Optional[int] = 1,
+        n_agents: int = 1,
+        n_variables: int = 1,
+        n_dimensions: int = 1,
         lower_bound: Optional[Union[float, List, Tuple, np.ndarray]] = 0.0,
         upper_bound: Optional[Union[float, List, Tuple, np.ndarray]] = 1.0,
         mapping: Optional[List[str]] = None,

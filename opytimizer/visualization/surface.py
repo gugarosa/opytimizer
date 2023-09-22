@@ -1,18 +1,16 @@
 """3-D benchmarking functions plots.
 """
 
-from typing import Optional
-
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 def plot(
     points: np.ndarray,
-    title: Optional[str] = "",
-    subtitle: Optional[str] = "",
-    style: Optional[str] = "winter",
-    colorbar: Optional[bool] = True,
+    title: str = "",
+    subtitle: str = "",
+    style: str = "winter",
+    colorbar: bool = True,
 ) -> None:
     """Plots the surface from a 3-dimensional function.
 

@@ -152,7 +152,7 @@ class RRA(Optimizer):
         self,
         daughters: List[Agent],
         function: Function,
-        is_large: Optional[bool] = True,
+        is_large: bool = True,
     ) -> None:
         """Performs the stalling random larrge or small search (eq. 4 and 5).
 
@@ -184,9 +184,7 @@ class RRA(Optimizer):
                 daughters[0].position = copy.deepcopy(temp_daughter.position)
                 daughters[0].fit = copy.deepcopy(temp_daughter.fit)
 
-    def _roulette_selection(
-        self, fitness: List[float], a: Optional[float] = 0.1
-    ) -> int:
+    def _roulette_selection(self, fitness: List[float], a: float = 0.1) -> int:
         """Performs a roulette selection on the population (eq. 8).
 
         Args:

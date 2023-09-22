@@ -9,9 +9,7 @@ import numpy as np
 import opytimizer.math.random as r
 
 
-def generate_bernoulli_distribution(
-    prob: Optional[float] = 0.0, size: Optional[int] = 1
-) -> np.ndarray:
+def generate_bernoulli_distribution(prob: float = 0.0, size: int = 1) -> np.ndarray:
     """Generates a Bernoulli distribution based on an input probability.
 
     Args:
@@ -32,7 +30,7 @@ def generate_bernoulli_distribution(
 
 
 def generate_choice_distribution(
-    n: Optional[int] = 1, probs: Optional[np.ndarray] = None, size: Optional[int] = 1
+    n: int = 1, probs: Optional[np.ndarray] = None, size: int = 1
 ) -> np.ndarray:
     """Generates a random choice distribution based on probabilities.
 
@@ -51,9 +49,7 @@ def generate_choice_distribution(
     return choice_array
 
 
-def generate_levy_distribution(
-    beta: Optional[float] = 0.1, size: Optional[int] = 1
-) -> np.ndarray:
+def generate_levy_distribution(beta: float = 0.1, size: int = 1) -> np.ndarray:
     """Generates a n-dimensional array based on a Lévy distribution.
 
     References:

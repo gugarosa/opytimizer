@@ -1,14 +1,14 @@
 """Graph-based search space.
 """
 
-
 from opytimizer.utils import logging
 
 logger = logging.get_logger(__name__)
 
 
 class GraphSpace:
-    """ """
+    """A GraphSpace class for agents, variables and methods
+    related to the graph-based search space."""
 
     def __init__(self, n_blocks: int) -> None:
         """Initialization method.

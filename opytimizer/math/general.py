@@ -28,9 +28,9 @@ def euclidean_distance(x: np.ndarray, y: np.ndarray) -> float:
 
 def kmeans(
     x: np.ndarray,
-    n_clusters: Optional[int] = 1,
-    max_iterations: Optional[int] = 100,
-    tol: Optional[float] = 1e-4,
+    n_clusters: int = 1,
+    max_iterations: int = 100,
+    tol: float = 1e-4,
 ) -> np.ndarray:
     """Performs the K-Means clustering over the input data.
 
@@ -72,7 +72,7 @@ def kmeans(
     return labels
 
 
-def n_wise(x: List[Any], size: Optional[int] = 2) -> Iterable:
+def n_wise(x: List[Any], size: int = 2) -> Iterable:
     """Iterates over an iterator and returns n-wise samples from it.
 
     Args:
@@ -89,9 +89,7 @@ def n_wise(x: List[Any], size: Optional[int] = 2) -> Iterable:
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
-def tournament_selection(
-    fitness: List[float], n: int, size: Optional[int] = 2
-) -> np.array:
+def tournament_selection(fitness: List[float], n: int, size: int = 2) -> np.array:
     """Selects n-individuals based on a tournament selection.
 
     Args:

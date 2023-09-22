@@ -1,7 +1,7 @@
 """Callbacks.
 """
 
-from typing import List, Optional, TypeVar, Union
+from typing import List, TypeVar, Union
 
 import numpy as np
 
@@ -188,9 +188,7 @@ class CheckpointCallback(Callback):
 
     """
 
-    def __init__(
-        self, file_path: Optional[str] = None, frequency: Optional[int] = 0
-    ) -> None:
+    def __init__(self, file_path: str = None, frequency: int = 0) -> None:
         """Initialization method.
 
         Args:

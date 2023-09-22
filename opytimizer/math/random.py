@@ -1,12 +1,10 @@
 """Random-based mathematical generators.
 """
 
-from typing import Optional
-
 import numpy as np
 
 
-def generate_binary_random_number(size: Optional[int] = 1) -> np.ndarray:
+def generate_binary_random_number(size: int = 1) -> np.ndarray:
     """Generates a binary random number or array based on an uniform distribution.
 
     Args:
@@ -22,9 +20,7 @@ def generate_binary_random_number(size: Optional[int] = 1) -> np.ndarray:
     return binary_array
 
 
-def generate_exponential_random_number(
-    scale: Optional[float] = 1.0, size: Optional[int] = 1
-) -> np.ndarray:
+def generate_exponential_random_number(scale: float = 1.0, size: int = 1) -> np.ndarray:
     """Generates a random number or array based on an exponential distribution.
 
     Args:
@@ -42,7 +38,7 @@ def generate_exponential_random_number(
 
 
 def generate_gamma_random_number(
-    shape: Optional[float] = 1.0, scale: Optional[float] = 1.0, size: Optional[int] = 1
+    shape: float = 1.0, scale: float = 1.0, size: int = 1
 ) -> np.ndarray:
     """Generates an Erlang distribution based on gamma values.
 
@@ -62,10 +58,10 @@ def generate_gamma_random_number(
 
 
 def generate_integer_random_number(
-    low: Optional[int] = 0,
-    high: Optional[int] = 1,
-    exclude_value: Optional[int] = None,
-    size: Optional[int] = None,
+    low: int = 0,
+    high: int = 1,
+    exclude_value: int = None,
+    size: int = None,
 ) -> np.ndarray:
     """Generates a random number or array based on an integer distribution.
 
@@ -92,7 +88,7 @@ def generate_integer_random_number(
 
 
 def generate_uniform_random_number(
-    low: Optional[float] = 0.0, high: Optional[float] = 1.0, size: Optional[int] = 1
+    low: float = 0.0, high: float = 1.0, size: int = 1
 ) -> np.ndarray:
     """Generates a random number or array based on a uniform distribution.
 
@@ -112,9 +108,9 @@ def generate_uniform_random_number(
 
 
 def generate_gaussian_random_number(
-    mean: Optional[float] = 0.0,
-    variance: Optional[float] = 1.0,
-    size: Optional[int] = 1,
+    mean: float = 0.0,
+    variance: float = 1.0,
+    size: int = 1,
 ) -> np.ndarray:
     """Generates a random number or array based on a gaussian distribution.
 
