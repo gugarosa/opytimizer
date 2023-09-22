@@ -29,4 +29,5 @@ from opytimizer.optimizers.swarm.sos import SOS
 from opytimizer.optimizers.swarm.ssa import SSA
 from opytimizer.optimizers.swarm.sso import SSO
 from opytimizer.optimizers.swarm.stoa import STOA
+from opytimizer.optimizers.swarm.waoa import WAOA
 from opytimizer.optimizers.swarm.woa import WOA
