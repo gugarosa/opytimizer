@@ -8,16 +8,17 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.logging as l
-from opytimizer.core.optimizer import Optimizer
 from opytimizer.core.function import Function
+from opytimizer.core.optimizer import Optimizer
 from opytimizer.core.space import Space
 
 logger = l.get_logger(__name__)
 
+
 class WAOA(Optimizer):
     """A WAOA class, inherited from Optimizer.
 
-    This is the designed class to dife WAOA-related 
+    This is the designed class to dife WAOA-related
     variables and methods.
 
     References:
@@ -33,13 +34,13 @@ class WAOA(Optimizer):
             params (str): Contains key-value parameters to the meta-heuristics.
         """
 
-        logger.info('Overriding class: Optimizer -> SSA')
-        
+        logger.info("Overriding class: Optimizer -> SSA")
+
         super(WAOA, self).__init__()
 
         self.build(params)
 
-        logger.info('Class overrided.')
+        logger.info("Class overrided.")
 
     def update(self, space: Space, function: Function, iteration: int) -> None:
         """Wraps Walrus Optimization Algorithm over all agents and variables.
@@ -55,11 +56,13 @@ class WAOA(Optimizer):
             a = copy.deepcopy(agent)
 
             for j in range(space.n_variables):
-                
+
                 r1 = r.generate_integer_random_number(1, 2)
                 r2 = r.generate_uniform_random_number()
 
-                a.position[j] = agent.position[j] + r2 * (space.best_agent.position[j] - r1 * agent.position[j])
+                a.position[j] = agent.position[j] + r2 * (
+                    space.best_agent.position[j] - r1 * agent.position[j]
+                )
 
             a.clip_by_bound()
 
@@ -69,24 +72,28 @@ class WAOA(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
             k = r.generate_integer_random_number(0, space.n_agents, i)
-            
-            if (space.agents[k].fit < agent.fit):
+
+            if space.agents[k].fit < agent.fit:
 
                 for j in range(space.n_variables):
-                
+
                     r1 = r.generate_integer_random_number(1, 2)
                     r2 = r.generate_uniform_random_number()
 
-                    a.position[j] = agent.position[j] + r2 * (space.agents[k].position[j] - r1 * agent.position[j])
-            
+                    a.position[j] = agent.position[j] + r2 * (
+                        space.agents[k].position[j] - r1 * agent.position[j]
+                    )
+
             else:
 
                 for j in range(space.n_variables):
-                
+
                     r2 = r.generate_uniform_random_number()
 
-                    a.position[j] = agent.position[j] + r2 * (agent.position[j] - space.agents[k].position[j])
-            
+                    a.position[j] = agent.position[j] + r2 * (
+                        agent.position[j] - space.agents[k].position[j]
+                    )
+
             a.clip_by_bound()
 
             a.fit = function(a.position)
@@ -98,7 +105,10 @@ class WAOA(Optimizer):
 
                 r2 = r.generate_uniform_random_number()
 
-                a.position[j] = agent.position[j] + ((agent.ub[j]/(iteration+1)) - r2 * (agent.lb[j]/(iteration+1)))
+                a.position[j] = agent.position[j] + (
+                    (agent.ub[j] / (iteration + 1))
+                    - r2 * (agent.lb[j] / (iteration + 1))
+                )
 
             a.clip_by_bound()
 
