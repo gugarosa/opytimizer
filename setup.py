@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="opytimizer",
-    version="3.1.2",
+    version="3.1.3",
     description="Nature-Inspired Python Optimizer",
     long_description=long_description,
     long_description_content_type="text/markdown",

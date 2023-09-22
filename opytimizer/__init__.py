@@ -4,4 +4,4 @@ of several modules and sub-modules.
 
 from opytimizer.opytimizer import Opytimizer
 
-__version__ = "3.1.2"
+__version__ = "3.1.3"
