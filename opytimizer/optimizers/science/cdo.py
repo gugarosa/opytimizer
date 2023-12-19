@@ -66,6 +66,7 @@ class CDO(Optimizer):
 
         Args:
             space: Space containing agents and update-related information.
+            function: A Function object that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
