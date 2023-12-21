@@ -5,6 +5,7 @@ It contains implementations of science-based optimizers.
 from opytimizer.optimizers.science.aig import AIG
 from opytimizer.optimizers.science.aso import ASO
 from opytimizer.optimizers.science.bh import BH
+from opytimizer.optimizers.science.cdo import CDO
 from opytimizer.optimizers.science.efo import EFO
 from opytimizer.optimizers.science.eo import EO
 from opytimizer.optimizers.science.esa import ESA
