@@ -95,7 +95,7 @@ class EPO(Optimizer):
             P_grid = np.fabs(space.best_agent.position - agent.position)
 
             r1 = r.generate_uniform_random_number()
-            C = r.generate_uniform_random_number(size=agent.n_variables)
+            C = r.generate_uniform_random_number(size=(agent.n_variables, 1))
 
             # Calculates the avoidance coefficient (eq. 9)
             A = 2 * (T_p + P_grid) * r1 - T_p
