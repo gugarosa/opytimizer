@@ -18,8 +18,6 @@ Use Opytimizer if you need a library or wish to:
 * Mix-and-match different strategies to solve your problem;
 * Because it is fun to optimize things.
 
-Read the docs at [opytimizer.readthedocs.io](https://opytimizer.readthedocs.io).
-
 Opytimizer is compatible with: **Python 3.6+**.
 
 ---
