@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opytimizer"
-version = "3.1.4"
+version = "4.0.0"
 description = "Nature-Inspired Python Optimizer"
 readme = "README.md"
 requires-python = ">=3.11"
