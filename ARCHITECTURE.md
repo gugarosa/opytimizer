@@ -1,6 +1,6 @@
 # Opytimizer Architecture
 
-> Version 4.0.0 · Apache 2.0 · Python 3.11+
+> Version 5.0.0 · Apache 2.0 · Python 3.11+
 
 ## Overview
 

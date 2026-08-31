@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opytimizer"
-version = "4.0.0"
+version = "5.0.0"
 description = "Nature-Inspired Python Optimizer"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -18,6 +18,7 @@ classifiers = [
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
