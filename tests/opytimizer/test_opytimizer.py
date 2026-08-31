@@ -1,244 +1,169 @@
-import opytimizer
-from opytimizer.core import function
-from opytimizer.optimizers.swarm import pso
-from opytimizer.spaces import search
-from opytimizer.utils import callback, history
+import os
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+from opytimizer import Opytimizer
+from opytimizer.core import Optimizer
+from opytimizer.spaces import SearchSpace
+from opytimizer.utils.callback import Callback
 
 
-def test_opytimizer_space():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert type(new_opytimizer.space).__name__ == "SearchSpace"
+def sphere(x):
+    return float(np.sum(x**2))
 
 
-def test_opytimizer_space_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+class StepOptimizer(Optimizer):
+    def __init__(self):
+        self.compiled = False
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
+    def compile(self, space):
+        self.compiled = True
 
-    try:
-        space.built = False
-        new_opytimizer.space = space
-    except:
-        space.built = True
-        new_opytimizer.space = space
-
-    assert type(new_opytimizer.space).__name__ == "SearchSpace"
+    def update(self, space):
+        for agent in space.agents:
+            agent.position += 2
 
 
-def test_opytimizer_optimizer():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+class Recorder(Callback):
+    def __init__(self):
+        self.events = []
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
+    def on_task_begin(self, opt_model):
+        self.events.append("task_begin")
 
-    assert type(new_opytimizer.optimizer).__name__ == "PSO"
+    def on_task_end(self, opt_model):
+        self.events.append("task_end")
 
+    def on_iteration_begin(self, iteration, opt_model):
+        self.events.append(f"iteration_begin:{iteration}")
 
-def test_opytimizer_optimizer_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+    def on_iteration_end(self, iteration, opt_model):
+        self.events.append(f"iteration_end:{iteration}")
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
+    def on_evaluate_before(self, *evaluate_args):
+        self.events.append("evaluate_before")
 
-    try:
-        optimizer.built = False
-        new_opytimizer.optimizer = optimizer
-    except:
-        optimizer.built = True
-        new_opytimizer.optimizer = optimizer
+    def on_evaluate_after(self, *evaluate_args):
+        self.events.append("evaluate_after")
 
-    assert type(new_opytimizer.optimizer).__name__ == "PSO"
+    def on_update_before(self, *update_args):
+        self.events.append("update_before")
 
-
-def test_opytimizer_function():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert type(new_opytimizer.function).__name__ == "Function"
+    def on_update_after(self, *update_args):
+        self.events.append("update_after")
 
 
-def test_opytimizer_function_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    try:
-        func.built = False
-        new_opytimizer.function = func
-    except:
-        func.built = True
-        new_opytimizer.function = func
-
-    assert type(new_opytimizer.function).__name__ == "Function"
+def make_model(save_agents=False):
+    space = SearchSpace(1, 1, 0, 1)
+    space.agents[0].position[:] = 0.5
+    optimizer = StepOptimizer()
+    return Opytimizer(space, optimizer, sphere, save_agents), optimizer
 
 
-def test_opytimizer_history():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+def test_opytimizer_accepts_raw_callable_and_compiles_optimizer():
+    model, optimizer = make_model()
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert type(new_opytimizer.history).__name__ == "History"
-
-
-def test_opytimizer_history_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-    hist = history.History()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    try:
-        new_opytimizer.history = 1
-    except:
-        new_opytimizer.history = hist
-
-    assert type(new_opytimizer.history).__name__ == "History"
+    assert model.function is sphere
+    assert optimizer.compiled
+    assert len(model.evaluate_args) == 2
+    assert len(model.update_args) == 1
+    assert not hasattr(model.space, "built")
+    assert not hasattr(model.optimizer, "built")
 
 
-def test_opytimizer_iteration():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+def test_opytimizer_validates_constructor_inputs():
+    space = SearchSpace(1, 1, 0, 1)
+    optimizer = StepOptimizer()
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert new_opytimizer.iteration == 0
-
-
-def test_opytimizer_iterations_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    try:
-        new_opytimizer.iteration = "a"
-    except:
-        new_opytimizer.iteration = 0
-
-    assert new_opytimizer.iteration == 0
-
-    try:
-        new_opytimizer.iteration = -1
-    except:
-        new_opytimizer.iteration = 0
-
-    assert new_opytimizer.iteration == 0
+    with pytest.raises(TypeError):
+        Opytimizer(object(), optimizer, sphere)
+    with pytest.raises(TypeError):
+        Opytimizer(space, object(), sphere)
+    with pytest.raises(TypeError):
+        Opytimizer(space, optimizer, 1)
 
 
-def test_opytimizer_total_iterations():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+def test_opytimizer_preserves_callback_order_clipping_and_history():
+    model, _ = make_model(save_agents=True)
+    recorder = Recorder()
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
+    model.start(1, [recorder])
 
-    assert new_opytimizer.total_iterations == 0
+    assert recorder.events == [
+        "task_begin",
+        "evaluate_before",
+        "evaluate_after",
+        "iteration_begin:1",
+        "update_before",
+        "update_after",
+        "evaluate_before",
+        "evaluate_after",
+        "iteration_end:1",
+        "task_end",
+    ]
+    assert np.array_equal(model.space.agents[0].position, [[1]])
+    assert model.iteration == 0
+    assert model.total_iterations == 1
+    assert model.n_iterations == 1
+    assert len(model.history.agents) == 1
+    assert len(model.history.best_agent) == 1
+    assert len(model.history.time) == 1
 
 
-def test_opytimizer_total_iterations_setter():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
+def test_opytimizer_dispatches_callbacks_in_list_order():
+    calls = []
 
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
+    class OrderedCallback(Callback):
+        def __init__(self, name):
+            self.name = name
 
-    try:
-        new_opytimizer.total_iterations = "a"
-    except:
-        new_opytimizer.total_iterations = 0
+        def on_task_begin(self, opt_model):
+            calls.append(("task_begin", self.name))
 
-    assert new_opytimizer.total_iterations == 0
+        def on_evaluate_before(self, *evaluate_args):
+            calls.append(("evaluate_before", self.name))
+
+        def on_evaluate_after(self, *evaluate_args):
+            calls.append(("evaluate_after", self.name))
+
+        def on_task_end(self, opt_model):
+            calls.append(("task_end", self.name))
+
+    model, _ = make_model()
+    model.start(0, [OrderedCallback("first"), OrderedCallback("second")])
+
+    assert calls == [
+        ("task_begin", "first"),
+        ("task_begin", "second"),
+        ("evaluate_before", "first"),
+        ("evaluate_before", "second"),
+        ("evaluate_after", "first"),
+        ("evaluate_after", "second"),
+        ("task_end", "first"),
+        ("task_end", "second"),
+    ]
+
+
+def test_opytimizer_evaluate_and_update_without_callbacks():
+    model, _ = make_model()
+
+    model.evaluate()
+    model.update()
+
+    assert model.space.best_agent.fit == 0.25
+    assert np.array_equal(model.space.agents[0].position, [[1]])
+
+
+def test_opytimizer_save_and_load():
+    model, _ = make_model()
+    path = Path(f"opytimizer-{os.getpid()}.pkl")
 
     try:
-        new_opytimizer.total_iterations = -1
-    except:
-        new_opytimizer.total_iterations = 0
-
-    assert new_opytimizer.total_iterations == 0
-
-
-def test_opytimizer_evaluate_args():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert len(new_opytimizer.evaluate_args) == 2
-
-
-def test_opytimizer_update_args():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    assert len(new_opytimizer.update_args) == 1
-
-
-def test_opytimizer_evaluate():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-    callbacks = callback.CallbackVessel([])
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    new_opytimizer.evaluate(callbacks)
-
-
-def test_opytimizer_update():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-    callbacks = callback.CallbackVessel([])
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    new_opytimizer.update(callbacks)
-
-
-def test_opytimizer_start():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    new_opytimizer.start(n_iterations=1)
-
-
-def test_opytimizer_save():
-    space = search.SearchSpace(1, 1, 0, 1)
-    func = function.Function(callable)
-    optimizer = pso.PSO()
-
-    new_opytimizer = opytimizer.Opytimizer(space, optimizer, func)
-
-    new_opytimizer.save("out.pkl")
-
-
-def test_opytimizer_load():
-    new_opytimizer = opytimizer.Opytimizer.load("out.pkl")
-
-    assert type(new_opytimizer).__name__ == "Opytimizer"
+        model.save(str(path))
+        loaded = Opytimizer.load(str(path))
+        assert isinstance(loaded, Opytimizer)
+        assert loaded.function(np.array([2])) == 4
+    finally:
+        path.unlink(missing_ok=True)

@@ -1,16 +1,11 @@
-"""Grid-based search space.
-"""
+"""Grid-based search space."""
 
 import copy
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
 
-import opytimizer.utils.exception as e
 from opytimizer.core import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GridSpace(Space):
@@ -38,51 +33,22 @@ class GridSpace(Space):
 
         """
 
-        logger.info("Overriding class: Space -> GridSpace.")
-
         n_agents = 1
         n_dimensions = 1
 
-        super(GridSpace, self).__init__(
+        super().__init__(
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
-        self.step = np.asarray(step)
-
-        self._create_grid()
-        self.build()
-
-        logger.info("Class overrided.")
-
-    @property
-    def step(self) -> np.ndarray:
-        """Step size of each variable."""
-
-        return self._step
-
-    @step.setter
-    def step(self, step: np.ndarray) -> None:
-        if not isinstance(step, np.ndarray):
-            raise e.TypeError("`step` should be a numpy array")
+        step = np.asarray(step)
         if not step.shape:
             step = np.expand_dims(step, -1)
         if step.shape[0] != self.n_variables:
-            raise e.SizeError("`step` should be the same size as `n_variables`")
+            raise ValueError("`step` should match `n_variables`")
+        self.step = step
 
-        self._step = step
-
-    @property
-    def grid(self) -> np.ndarray:
-        """Grid with possible search values."""
-
-        return self._grid
-
-    @grid.setter
-    def grid(self, grid: np.ndarray) -> None:
-        if not isinstance(grid, np.ndarray):
-            raise e.TypeError("`grid` should be a numpy array")
-
-        self._grid = grid
+        self._create_grid()
+        self.build()
 
     def _create_grid(self) -> None:
         """Creates a grid of possible search values."""

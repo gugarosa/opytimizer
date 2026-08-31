@@ -1,84 +1,52 @@
-from opytimizer.core import agent
-from opytimizer.utils import history
+import numpy as np
+import pytest
+
+from opytimizer.core import Agent
+from opytimizer.utils.history import History
 
 
-def test_history_save_agents():
-    new_history = history.History()
-
-    assert new_history.save_agents is False
+def make_agents():
+    return [Agent(2, 1, [0, 0], [1, 1]) for _ in range(2)]
 
 
-def test_history_save_agents_setter():
-    new_history = history.History()
+def test_history_validates_save_agents():
+    assert History().save_agents is False
 
-    try:
-        new_history.save_agents = "a"
-    except:
-        new_history.save_agents = True
-
-    assert new_history.save_agents is True
+    with pytest.raises(TypeError):
+        History("yes")
 
 
-def test_history_dump():
-    new_history = history.History(save_agents=True)
+def test_history_dumps_and_parses_values():
+    agents = make_agents()
+    history = History(save_agents=True)
 
-    agents = [
-        agent.Agent(
-            n_variables=2, n_dimensions=1, lower_bound=[0, 0], upper_bound=[1, 1]
-        )
-        for _ in range(5)
-    ]
-
-    new_history.dump(agents=agents, best_agent=agents[4], value=0)
-
-    assert len(new_history.agents) > 0
-    assert len(new_history.best_agent) > 0
-    assert new_history.value[0] == 0
-
-    new_history = history.History(save_agents=False)
-
-    new_history.dump(agents=agents)
-
-    assert hasattr(new_history, "agents") is False
-
-
-def test_history_get_convergence():
-    new_history = history.History(save_agents=True)
-
-    agents = [
-        agent.Agent(
-            n_variables=2, n_dimensions=1, lower_bound=[0, 0], upper_bound=[1, 1]
-        )
-        for _ in range(5)
-    ]
-
-    new_history.dump(
-        agents=agents, best_agent=agents[4], local_position=agents[0].position, value=0
+    history.dump(
+        agents=agents,
+        best_agent=agents[0],
+        local_position=agents[0].position,
+        value=1,
     )
-    new_history.dump(
-        agents=agents, best_agent=agents[4], local_position=agents[0].position, value=0
+    history.dump(
+        agents=agents,
+        best_agent=agents[0],
+        local_position=agents[0].position,
+        value=2,
     )
 
-    try:
-        agents_pos, agents_fit = new_history.get_convergence(key="agents", index=5)
-    except:
-        agents_pos, agents_fit = new_history.get_convergence(key="agents", index=0)
+    agents_pos, agents_fit = history.get_convergence("agents", index=0)
+    best_pos, best_fit = history.get_convergence("best_agent")
 
     assert agents_pos.shape == (2, 2)
     assert agents_fit.shape == (2,)
+    assert best_pos.shape == (2, 2)
+    assert best_fit.shape == (2,)
+    assert history.get_convergence("local_position").shape == (2,)
+    assert np.array_equal(history.get_convergence("value"), [1, 2])
 
-    best_agent_pos, best_agent_fit = new_history.get_convergence(key="best_agent")
 
-    assert best_agent_pos.shape == (2, 2)
-    assert best_agent_fit.shape == (2,)
+def test_history_skips_agents_when_disabled():
+    history = History()
 
-    try:
-        local_position = new_history.get_convergence(key="local_position", index=5)
-    except:
-        local_position = new_history.get_convergence(key="local_position")
+    history.dump(agents=make_agents())
 
-    assert local_position.shape == (2,)
-
-    value = new_history.get_convergence(key="value")
-
-    assert value.shape == (2,)
+    assert not hasattr(history, "agents")

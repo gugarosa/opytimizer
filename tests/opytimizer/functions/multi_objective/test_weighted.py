@@ -1,41 +1,33 @@
-from opytimizer.functions.multi_objective import weighted
+import pytest
+
+from opytimizer.functions.multi_objective import MultiObjectiveWeightedFunction
 
 
-def test_weighted_weights():
-    new_weighted = weighted.MultiObjectiveWeightedFunction([], [])
-
-    assert type(new_weighted.weights) == list
+def square(x):
+    return x**2
 
 
-def test_weighted_weights_setter():
-    new_weighted = weighted.MultiObjectiveWeightedFunction([], [])
-
-    try:
-        new_weighted.weights = None
-    except:
-        new_weighted.weights = []
-
-    try:
-        new_weighted.weights = [1.0]
-    except:
-        new_weighted.weights = []
-
-    assert len(new_weighted.weights) == 0
+def cube(x):
+    return x**3
 
 
-def test_weighted_call():
-    def square(x):
-        return x**2
+def test_weighted_function_keeps_mutable_weighted_behavior():
+    function = MultiObjectiveWeightedFunction([square, cube], [0.5, 0.5])
 
-    assert square(2) == 4
+    assert function(2) == 6
 
-    def cube(x):
-        return x**3
+    function.weights = [1, 0]
+    assert function(2) == 4
 
-    assert cube(2) == 8
 
-    new_weighted = weighted.MultiObjectiveWeightedFunction(
-        functions=[square, cube], weights=[0.5, 0.5]
-    )
-
-    assert new_weighted(2) == 6
+@pytest.mark.parametrize(
+    "functions,weights,error",
+    [
+        ([square], None, TypeError),
+        ([square], [], ValueError),
+        ([1], [1], TypeError),
+    ],
+)
+def test_weighted_function_validates_constructor_inputs(functions, weights, error):
+    with pytest.raises(error):
+        MultiObjectiveWeightedFunction(functions, weights)

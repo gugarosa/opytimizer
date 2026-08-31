@@ -1,5 +1,4 @@
-"""Pareto-based search space.
-"""
+"""Pareto-based search space."""
 
 import copy
 from typing import List, Optional
@@ -7,9 +6,6 @@ from typing import List, Optional
 import numpy as np
 
 from opytimizer.core import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class ParetoSpace(Space):
@@ -29,20 +25,21 @@ class ParetoSpace(Space):
 
         """
 
-        logger.info("Overriding class: Space -> ParetoSpace.")
+        if not isinstance(data_points, np.ndarray):
+            raise TypeError("`data_points` should be a numpy array")
+        if data_points.ndim != 2 or not all(data_points.shape):
+            raise ValueError("`data_points` should be a non-empty matrix")
 
         n_agents, n_variables = data_points.shape
         n_dimensions = 1
         lower_bound = [0] * n_variables
         upper_bound = [0] * n_variables
 
-        super(ParetoSpace, self).__init__(
+        super().__init__(
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build(data_points)
-
-        logger.info("Class overrided.")
 
     def _load_agents(self, data_points: np.ndarray) -> None:
         """Loads agents from pre-defined data points.
@@ -67,16 +64,6 @@ class ParetoSpace(Space):
 
         self._create_agents()
         self._load_agents(data_points)
-
-        self.built = True
-
-        logger.debug(
-            "Agents: %d | Size: (%d, %d) | Built: %s.",
-            self.n_agents,
-            self.n_variables,
-            self.n_dimensions,
-            self.built,
-        )
 
     def clip_by_bound(self) -> None:
         """Overrides default function as no clipping should be performed."""

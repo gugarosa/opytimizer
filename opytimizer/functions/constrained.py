@@ -1,75 +1,45 @@
-"""Constrained single-objective functions.
-"""
+"""Constrained single-objective functions."""
 
-from typing import List
+from typing import Callable, List
 
 import numpy as np
 
-import opytimizer.utils.exception as e
-from opytimizer.core import Function
-from opytimizer.utils import logging
 
-logger = logging.get_logger(__name__)
-
-
-class ConstrainedFunction(Function):
+class ConstrainedFunction:
     """A ConstrainedFunction class used to hold constrained single-objective functions."""
 
     def __init__(
         self,
-        pointer: List[callable],
-        constraints: List[callable],
+        function: Callable,
+        constraints: List[Callable],
         penalty: float = 0.0,
     ) -> None:
         """Initialization method.
 
         Args:
-            pointer: Pointer to a function that will return the fitness value.
+            function: Callable that returns the fitness value.
             constraints: Constraints to be applied to the fitness function.
             penalty: Penalization factor when a constraint is not valid.
 
         """
 
-        logger.info("Overriding class: Function -> ConstrainedFunction.")
+        if not callable(function):
+            raise TypeError("`function` should be callable")
+        if not isinstance(constraints, list):
+            raise TypeError("`constraints` should be a list")
+        if not all(callable(constraint) for constraint in constraints):
+            raise TypeError("every constraint should be callable")
+        if not isinstance(penalty, (float, int)):
+            raise TypeError("`penalty` should be a float or integer")
+        if penalty < 0:
+            raise ValueError("`penalty` should be >= 0")
 
-        super(ConstrainedFunction, self).__init__(pointer)
-
-        self.constraints = constraints or []
+        self.function = function
+        self.constraints = constraints
         self.penalty = penalty
 
-        logger.debug("Constraints: %s | Penalty: %s.", self.constraints, self.penalty)
-        logger.info("Class overrided.")
-
-    @property
-    def constraints(self) -> List[callable]:
-        """Constraints to be applied to the fitness function."""
-
-        return self._constraints
-
-    @constraints.setter
-    def constraints(self, constraints: List[callable]) -> None:
-        if not isinstance(constraints, list):
-            raise e.TypeError("`constraints` should be a list")
-
-        self._constraints = constraints
-
-    @property
-    def penalty(self) -> float:
-        """Penalization factor."""
-
-        return self._penalty
-
-    @penalty.setter
-    def penalty(self, penalty: float) -> None:
-        if not isinstance(penalty, (float, int)):
-            raise e.TypeError("`penalty` should be a float or integer")
-        if penalty < 0:
-            raise e.ValueError("`penalty` should be >= 0")
-
-        self._penalty = penalty
-
     def __call__(self, x: np.ndarray) -> float:
-        """Callable to avoid using the `pointer` property.
+        """Calculates the constrained objective value.
 
         Args:
             x: Array of positions.
@@ -79,12 +49,10 @@ class ConstrainedFunction(Function):
 
         """
 
-        fitness = self.pointer(x)
+        fitness = self.function(x)
 
         for constraint in self.constraints:
-            if constraint(x):
-                pass
-            else:
+            if not constraint(x):
                 fitness += self.penalty * fitness
 
         return fitness

@@ -2,89 +2,35 @@ import sys
 
 import numpy as np
 
-from opytimizer.core import function, optimizer
-from opytimizer.spaces import search
+from opytimizer.core import Optimizer
+from opytimizer.spaces import SearchSpace
 
 
-def test_optimizer_algorithm():
-    new_optimizer = optimizer.Optimizer()
+def test_optimizer_build_applies_mapping_without_lifecycle_state():
+    optimizer = Optimizer()
 
-    assert new_optimizer.algorithm == "Optimizer"
+    optimizer.build({"rate": 0.5})
 
-
-def test_optimizer_algorithm_setter():
-    new_optimizer = optimizer.Optimizer()
-
-    try:
-        new_optimizer.algorithm = 0
-    except:
-        new_optimizer.algorithm = "Optimizer"
-
-    assert new_optimizer.algorithm == "Optimizer"
+    assert optimizer.rate == 0.5
+    assert not hasattr(optimizer, "algorithm")
+    assert not hasattr(optimizer, "params")
+    assert not hasattr(optimizer, "built")
 
 
-def test_optimizer_params():
-    new_optimizer = optimizer.Optimizer()
+def test_optimizer_base_hooks_are_noops():
+    optimizer = Optimizer()
 
-    assert new_optimizer.params == {}
-
-
-def test_optimizer_params_setter():
-    new_optimizer = optimizer.Optimizer()
-
-    try:
-        new_optimizer.params = 1
-    except:
-        new_optimizer.params = {"w": 1.5}
-
-    assert new_optimizer.params["w"] == 1.5
+    assert optimizer.compile(None) is None
+    assert optimizer.update() is None
 
 
-def test_optimizer_built():
-    new_optimizer = optimizer.Optimizer()
+def test_optimizer_evaluates_raw_callable():
+    space = SearchSpace(2, 2, [0, 0], [1, 1])
+    space.agents[0].position[:] = 0.5
+    space.agents[1].position[:] = 1
 
-    assert new_optimizer.built is False
+    Optimizer().evaluate(space, lambda x: np.sum(x**2))
 
-
-def test_optimizer_built_setter():
-    new_optimizer = optimizer.Optimizer()
-
-    try:
-        new_optimizer.built = 1
-    except:
-        new_optimizer.built = True
-
-    assert new_optimizer.built is True
-
-
-def test_optimizer_build():
-    new_optimizer = optimizer.Optimizer()
-
-    new_optimizer.build({"w": 1.5})
-
-
-def test_optimizer_compile():
-    new_optimizer = optimizer.Optimizer()
-
-    new_optimizer.compile(None)
-
-
-def test_optimizer_update():
-    new_optimizer = optimizer.Optimizer()
-
-    new_optimizer.update()
-
-
-def test_optimizer_evaluate():
-    def square(x):
-        return np.sum(x**2)
-
-    new_function = function.Function(square)
-    new_search_space = search.SearchSpace(
-        n_agents=1, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
-
-    new_optimizer = optimizer.Optimizer()
-    new_optimizer.evaluate(new_search_space, new_function)
-
-    assert new_search_space.best_agent.fit < sys.float_info.max
+    assert space.best_agent.fit == 0.5
+    assert space.best_agent.fit < sys.float_info.max
+    assert np.array_equal(space.best_agent.position, space.agents[0].position)
