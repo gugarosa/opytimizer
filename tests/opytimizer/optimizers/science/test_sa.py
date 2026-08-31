@@ -17,34 +17,6 @@ def test_sa_params():
     assert new_sa.beta == 0.99
 
 
-def test_sa_params_setter():
-    new_sa = sa.SA()
-
-    try:
-        new_sa.T = "a"
-    except:
-        new_sa.T = 10
-
-    try:
-        new_sa.T = -1
-    except:
-        new_sa.T = 10
-
-    assert new_sa.T == 10
-
-    try:
-        new_sa.beta = "b"
-    except:
-        new_sa.beta = 0.5
-
-    try:
-        new_sa.beta = -1
-    except:
-        new_sa.beta = 0.5
-
-    assert new_sa.beta == 0.5
-
-
 def test_sa_update():
     def square(x):
         return np.sum(x**2)

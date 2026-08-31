@@ -12,20 +12,6 @@ def test_ffoa_compile():
     new_ffoa = ffoa.FFOA()
     new_ffoa.compile(search_space)
 
-    try:
-        new_ffoa.x_axis = 1
-    except:
-        new_ffoa.x_axis = []
-
-    assert new_ffoa.x_axis == []
-
-    try:
-        new_ffoa.y_axis = 1
-    except:
-        new_ffoa.y_axis = []
-
-    assert new_ffoa.y_axis == []
-
 
 def test_ffoa_update():
     def square(x):

@@ -1,18 +1,12 @@
-"""Jellyfish Search-based algorithms.
-"""
+"""Jellyfish Search-based algorithms."""
 
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class JS(Optimizer):
@@ -35,8 +29,6 @@ class JS(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> JS.")
-
         super(JS, self).__init__()
 
         self.eta = 4.0
@@ -44,53 +36,6 @@ class JS(Optimizer):
         self.gamma = 0.1
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def eta(self) -> float:
-        """Chaotic map coefficient."""
-
-        return self._eta
-
-    @eta.setter
-    def eta(self, eta: float) -> None:
-        if not isinstance(eta, (float, int)):
-            raise e.TypeError("`eta` should be a float or integer")
-        if eta <= 0:
-            raise e.ValueError("`eta` should be > 0")
-
-        self._eta = eta
-
-    @property
-    def beta(self) -> float:
-        """Distribution coeffiecient."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta <= 0:
-            raise e.ValueError("`beta` should be > 0")
-
-        self._beta = beta
-
-    @property
-    def gamma(self) -> float:
-        """Motion coeffiecient."""
-
-        return self._gamma
-
-    @gamma.setter
-    def gamma(self, gamma: float) -> None:
-        if not isinstance(gamma, (float, int)):
-            raise e.TypeError("`gamma` should be a float or integer")
-        if gamma <= 0:
-            raise e.ValueError("`gamma` should be > 0")
-
-        self._gamma = gamma
 
     def _initialize_chaotic_map(self, agents: List[Agent]) -> None:
         """Initializes a set of agents using a logistic chaotic map.
@@ -103,9 +48,7 @@ class JS(Optimizer):
         for i, agent in enumerate(agents):
             if i == 0:
                 for j in range(agent.n_variables):
-                    agent.position[j] = r.generate_uniform_random_number(
-                        size=agent.n_dimensions
-                    )
+                    agent.position[j] = np.random.uniform(0.0, 1.0, agent.n_dimensions)
             else:
                 for j in range(agent.n_variables):
                     # Calculates its position using logistic chaotic map (eq. 18)
@@ -137,7 +80,7 @@ class JS(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         u = np.mean([agent.position for agent in agents])
 
         # Calculates the ocean current (eq. 9)
@@ -157,7 +100,7 @@ class JS(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         motion = self.gamma * r1 * (np.expand_dims(ub, -1) - np.expand_dims(lb, -1))
 
         return motion
@@ -174,7 +117,7 @@ class JS(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
 
         if agent_i.fit >= agent_j.fit:
             # Determines its direction (eq. 15 - top)
@@ -198,7 +141,7 @@ class JS(Optimizer):
         """
 
         for agent in space.agents:
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
 
             # Calculates the time control mechanism (eq. 17)
             c = np.fabs((1 - iteration / n_iterations) * (2 * r1 - 1))
@@ -208,16 +151,16 @@ class JS(Optimizer):
                 trend = self._ocean_current(space.agents, space.best_agent)
 
                 # Updates the location of current jellyfish (eq. 11)
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 agent.position += r2 * trend
             else:
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 if r2 > (1 - c):
                     # Update jellyfish's location with type A motion (eq. 12)
                     agent.position += self._motion_a(agent.lb, agent.ub)
                 else:
                     # Updates jellyfish's location with type B motion (eq. 16)
-                    j = r.generate_integer_random_number(0, len(space.agents))
+                    j = np.random.randint(0, len(space.agents), None)
                     agent.position += self._motion_b(agent, space.agents[j])
             agent.clip_by_bound()
 
@@ -241,11 +184,7 @@ class NBJS(JS):
 
         """
 
-        logger.info("Overriding class: JS -> NBJS.")
-
         super(NBJS, self).__init__(params)
-
-        logger.info("Class overrided.")
 
     def _motion_a(self, lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
         """Calculates type A motion.
@@ -259,7 +198,7 @@ class NBJS(JS):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         motion = self.gamma * r1
 
         return motion

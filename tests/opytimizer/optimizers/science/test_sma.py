@@ -12,22 +12,6 @@ def test_sma_params():
     assert new_sma.z == 0.03
 
 
-def test_sma_params_setter():
-    new_sma = sma.SMA()
-
-    try:
-        new_sma.z = "a"
-    except:
-        new_sma.z = 0.05
-
-    try:
-        new_sma.z = -1
-    except:
-        new_sma.z = 0.05
-
-    assert new_sma.z == 0.05
-
-
 def test_sma_compile():
     search_space = search.SearchSpace(
         n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -35,13 +19,6 @@ def test_sma_compile():
 
     new_sma = sma.SMA()
     new_sma.compile(search_space)
-
-    try:
-        new_sma.weight = 1
-    except:
-        new_sma.weight = np.array([1])
-
-    assert new_sma.weight == np.array([1])
 
 
 def test_sma_update_weight():

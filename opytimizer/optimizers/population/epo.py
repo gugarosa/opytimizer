@@ -1,17 +1,11 @@
-"""Emperor Penguin Optimizer.
-"""
+"""Emperor Penguin Optimizer."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class EPO(Optimizer):
@@ -34,42 +28,12 @@ class EPO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> EPO.")
-
         super(EPO, self).__init__()
 
         self.f = 2.0
         self.l = 1.5
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def f(self) -> float:
-        """Exploration control parameter."""
-
-        return self._f
-
-    @f.setter
-    def f(self, f: float) -> None:
-        if not isinstance(f, (float, int)):
-            raise e.TypeError("`f` should be a float or integer")
-
-        self._f = f
-
-    @property
-    def l(self) -> float:
-        """Exploitation control parameter."""
-
-        return self._l
-
-    @l.setter
-    def l(self, l: float) -> None:
-        if not isinstance(l, (float, int)):
-            raise e.TypeError("`l` should be a float or integer")
-
-        self._l = l
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Emperor Penguin Optimization over all agents and variables.
@@ -82,7 +46,7 @@ class EPO(Optimizer):
         """
 
         for agent in space.agents:
-            R = r.generate_uniform_random_number()
+            R = np.random.uniform(0.0, 1.0, 1)
             if R >= 0.5:
                 T = 0
             else:
@@ -94,8 +58,8 @@ class EPO(Optimizer):
             # Calculates the polygon grid accuracy (eq. 10)
             P_grid = np.fabs(space.best_agent.position - agent.position)
 
-            r1 = r.generate_uniform_random_number()
-            C = r.generate_uniform_random_number(size=(agent.n_variables, 1))
+            r1 = np.random.uniform(0.0, 1.0, 1)
+            C = np.random.uniform(0.0, 1.0, (agent.n_variables, 1))
 
             # Calculates the avoidance coefficient (eq. 9)
             A = 2 * (T_p + P_grid) * r1 - T_p

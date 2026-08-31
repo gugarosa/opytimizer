@@ -1,19 +1,13 @@
-"""Artificial Ecosystem-based Optimization.
-"""
+"""Artificial Ecosystem-based Optimization."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class AEO(Optimizer):
@@ -41,8 +35,6 @@ class AEO(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
     def _production(
         self, agent: Agent, best_agent: Agent, iteration: int, n_iterations: int
     ) -> Agent:
@@ -62,12 +54,12 @@ class AEO(Optimizer):
         a = copy.deepcopy(agent)
 
         # Calculates the alpha factor (eq. 2)
-        alpha = (1 - iteration / n_iterations) * r.generate_uniform_random_number()
+        alpha = (1 - iteration / n_iterations) * np.random.uniform(0.0, 1.0, 1)
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
             a.position[j] = (1 - alpha) * best_agent.position[
                 j
-            ] + alpha * r.generate_uniform_random_number(lb, ub, a.n_dimensions)
+            ] + alpha * np.random.uniform(lb, ub, a.n_dimensions)
 
         return a
 
@@ -107,7 +99,7 @@ class AEO(Optimizer):
 
         a = copy.deepcopy(agent)
 
-        r2 = r.generate_uniform_random_number()
+        r2 = np.random.uniform(0.0, 1.0, 1)
         a.position += C * r2 * (a.position - producer.position) + (1 - r2) * (
             a.position - consumer.position
         )
@@ -136,7 +128,7 @@ class AEO(Optimizer):
         self,
         agents: List[Agent],
         best_agent: Agent,
-        function: Function,
+        function: Callable,
         iteration: int,
         n_iterations: int,
     ) -> None:
@@ -146,7 +138,7 @@ class AEO(Optimizer):
         Args:
             agents: List of agents.
             best_agent: Global best agent.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -157,10 +149,10 @@ class AEO(Optimizer):
             if i == 0:
                 a = self._production(agent, best_agent, iteration, n_iterations)
             else:
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
 
-                v1 = r.generate_gaussian_random_number()
-                v2 = r.generate_gaussian_random_number()
+                v1 = np.random.normal(0.0, 1.0, 1)
+                v2 = np.random.normal(0.0, 1.0, 1)
 
                 # Calculates the consumption factor (eq. 4)
                 C = 0.5 * v1 / np.abs(v2)
@@ -168,10 +160,10 @@ class AEO(Optimizer):
                 if r1 < 1 / 3:
                     a = self._herbivore_consumption(agent, agents[0], C)
                 elif 1 / 3 <= r1 <= 2 / 3:
-                    j = int(r.generate_uniform_random_number(1, i))
+                    j = int(np.random.uniform(1, i, 1))
                     a = self._omnivore_consumption(agent, agents[0], agents[j], C)
                 else:
-                    j = int(r.generate_uniform_random_number(1, i))
+                    j = int(np.random.uniform(1, i, 1))
                     a = self._carnivore_consumption(agent, agents[j], C)
 
             a.clip_by_bound()
@@ -182,7 +174,7 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
     def _update_decomposition(
-        self, agents: List[Agent], best_agent: Agent, function: Function
+        self, agents: List[Agent], best_agent: Agent, function: Callable
     ) -> None:
         """Wraps decomposition updates over all
         agents and variables (eq. 9).
@@ -190,7 +182,7 @@ class AEO(Optimizer):
         Args:
             agents: List of agents.
             best_agent: Global best agent.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -198,12 +190,12 @@ class AEO(Optimizer):
             a = copy.deepcopy(agent)
 
             # Calculates the decomposition factor (eq. 10)
-            D = 3 * r.generate_gaussian_random_number()
+            D = 3 * np.random.normal(0.0, 1.0, 1)
 
-            r3 = r.generate_uniform_random_number()
+            r3 = np.random.uniform(0.0, 1.0, 1)
 
             # First weight coefficient (eq. 11)
-            e = r3 * int(r.generate_uniform_random_number(1, 2)) - 1
+            e = r3 * int(np.random.uniform(1, 2, 1)) - 1
 
             # Second weight coefficient (eq. 12)
             _h = 2 * r3 - 1
@@ -219,13 +211,13 @@ class AEO(Optimizer):
                 agent.fit = copy.deepcopy(a.fit)
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Artificial Ecosystem-based Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 

@@ -14,34 +14,6 @@ def test_de_params():
     assert new_de.F == 0.7
 
 
-def test_de_params_setter():
-    new_de = de.DE()
-
-    try:
-        new_de.CR = "a"
-    except:
-        new_de.CR = 0.5
-
-    try:
-        new_de.CR = -1
-    except:
-        new_de.CR = 0.5
-
-    assert new_de.CR == 0.5
-
-    try:
-        new_de.F = "b"
-    except:
-        new_de.F = 0.5
-
-    try:
-        new_de.F = -1
-    except:
-        new_de.F = 0.5
-
-    assert new_de.F == 0.5
-
-
 def test_de_mutate_agent():
     new_de = de.DE()
 

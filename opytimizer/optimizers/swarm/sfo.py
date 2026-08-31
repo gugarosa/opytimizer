@@ -1,20 +1,13 @@
-"""Sailfish Optimizer.
-"""
+"""Sailfish Optimizer."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as ex
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SFO(Optimizer):
@@ -39,8 +32,6 @@ class SFO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> SFO.")
-
         super(SFO, self).__init__()
 
         self.PP = 0.1
@@ -48,66 +39,6 @@ class SFO(Optimizer):
         self.e = 0.001
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def PP(self) -> float:
-        """Percentage of initial sailfishes."""
-
-        return self._PP
-
-    @PP.setter
-    def PP(self, PP: float) -> None:
-        if not isinstance(PP, (float, int)):
-            raise ex.TypeError("`PP` should be a float or integer")
-        if PP < 0 or PP > 1:
-            raise ex.ValueError("`PP` should be between 0 and 1")
-
-        self._PP = PP
-
-    @property
-    def A(self) -> int:
-        """Attack power coefficient."""
-
-        return self._A
-
-    @A.setter
-    def A(self, A: int) -> None:
-        if not isinstance(A, int):
-            raise ex.TypeError("`A` should be an integer")
-        if A <= 0:
-            raise ex.ValueError("`A` should be > 0")
-
-        self._A = A
-
-    @property
-    def e(self) -> float:
-        """Attack power decrease."""
-
-        return self._e
-
-    @e.setter
-    def e(self, e: float) -> None:
-        if not isinstance(e, (float, int)):
-            raise ex.TypeError("`e` should be a float or integer")
-        if e < 0:
-            raise ex.ValueError("`e` should be >= 0")
-
-        self._e = e
-
-    @property
-    def sardines(self) -> List[Agent]:
-        """List of sardines."""
-
-        return self._sardines
-
-    @sardines.setter
-    def sardines(self, sardines: List[Agent]) -> None:
-        if not isinstance(sardines, list):
-            raise ex.TypeError("`sardines` should be a list")
-
-        self._sardines = sardines
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -154,7 +85,7 @@ class SFO(Optimizer):
         # Calculates the prey density (eq. 8)
         PD = 1 - (n_sailfishes / (n_sailfishes + n_sardines))
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         lambda_i = 2 * r1 * PD - PD
 
         return lambda_i
@@ -175,19 +106,19 @@ class SFO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         new_position = best_sardine.position - lambda_i * (
             r1 * (best_agent.position - best_sardine.position) / 2 - agent.position
         )
 
         return new_position
 
-    def update(self, space: Space, function: Function, iteration: int) -> None:
+    def update(self, space: Space, function: Callable, iteration: int) -> None:
         """Wraps Sailfish Optimizer over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
 
         """
@@ -218,17 +149,13 @@ class SFO(Optimizer):
             # Calculates the number of variables possible replacements (eq. 12)
             beta = int(n_variables * AP)
 
-            selected_sardines = r.generate_integer_random_number(
-                0, n_sardines, size=alpha
-            )
+            selected_sardines = np.random.randint(0, n_sardines, alpha)
 
             for i in selected_sardines:
-                selected_vars = r.generate_integer_random_number(
-                    0, n_variables, size=beta
-                )
+                selected_vars = np.random.randint(0, n_variables, beta)
 
                 for j in selected_vars:
-                    r1 = r.generate_uniform_random_number()
+                    r1 = np.random.uniform(0.0, 1.0, 1)
 
                     # Updates the sardine's position (eq. 9)
                     self.sardines[i].position[j] = r1 * (
@@ -240,7 +167,7 @@ class SFO(Optimizer):
         else:
             for sardine in self.sardines:
                 # Updates the sardine's position (eq. 9)
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 sardine.position = r1 * (
                     space.best_agent.position - sardine.position + AP
                 )

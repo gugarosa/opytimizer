@@ -1,20 +1,13 @@
-"""Equilibrium Optimizer.
-"""
+"""Equilibrium Optimizer."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as rnd
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class EO(Optimizer):
@@ -37,8 +30,6 @@ class EO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> EO.")
-
         super(EO, self).__init__()
 
         self.a1 = 2.0
@@ -47,81 +38,6 @@ class EO(Optimizer):
         self.V = 1.0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def a1(self) -> float:
-        """Exploration constant."""
-
-        return self._a1
-
-    @a1.setter
-    def a1(self, a1: float) -> None:
-        if not isinstance(a1, (float, int)):
-            raise e.TypeError("`a1` should be a float or integer")
-        if a1 < 0:
-            raise e.ValueError("`a1` should be >= 0")
-
-        self._a1 = a1
-
-    @property
-    def a2(self) -> float:
-        """Exploitation constant."""
-
-        return self._a2
-
-    @a2.setter
-    def a2(self, a2: float) -> None:
-        if not isinstance(a2, (float, int)):
-            raise e.TypeError("`a2` should be a float or integer")
-        if a2 < 0:
-            raise e.ValueError("`a2` should be >= 0")
-
-        self._a2 = a2
-
-    @property
-    def GP(self) -> float:
-        """Generation probability."""
-
-        return self._GP
-
-    @GP.setter
-    def GP(self, GP: float) -> None:
-        if not isinstance(GP, (float, int)):
-            raise e.TypeError("`GP` should be a float or integer")
-        if GP < 0 or GP > 1:
-            raise e.ValueError("`GP` should be between 0 and 1")
-
-        self._GP = GP
-
-    @property
-    def V(self) -> float:
-        """Velocity."""
-
-        return self._V
-
-    @V.setter
-    def V(self, V: float) -> None:
-        if not isinstance(V, (float, int)):
-            raise e.TypeError("`V` should be a float or integer")
-        if V < 0:
-            raise e.ValueError("`V` should be >= 0")
-
-        self._V = V
-
-    @property
-    def C(self) -> List[Agent]:
-        """Concentrations (agents)."""
-
-        return self._C
-
-    @C.setter
-    def C(self, C: List[Agent]) -> None:
-        if not isinstance(C, list):
-            raise e.TypeError("`C` should be a list")
-
-        self._C = C
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -151,11 +67,11 @@ class EO(Optimizer):
             elif agent.fit < self.C[3].fit:
                 self.C[3] = copy.deepcopy(agent)
 
-    def _average_concentration(self, function: Function) -> Agent:
+    def _average_concentration(self, function: Callable) -> Agent:
         """Averages the concentrations.
 
         Args:
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (Agent): Averaged concentration.
@@ -171,13 +87,13 @@ class EO(Optimizer):
         return C_avg
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Equilibrium Optimizer over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -193,21 +109,17 @@ class EO(Optimizer):
         t = (1 - iteration / n_iterations) ** (self.a2 * iteration / n_iterations)
 
         for agent in space.agents:
-            i = rnd.generate_integer_random_number(0, 5)
+            i = np.random.randint(0, 5, None)
 
             # Generates two uniform random vectors (eq. 11)
-            r = rnd.generate_uniform_random_number(
-                size=(agent.n_variables, agent.n_dimensions)
-            )
-            lambd = rnd.generate_uniform_random_number(
-                size=(agent.n_variables, agent.n_dimensions)
-            )
+            r = np.random.uniform(0.0, 1.0, (agent.n_variables, agent.n_dimensions))
+            lambd = np.random.uniform(0.0, 1.0, (agent.n_variables, agent.n_dimensions))
 
             # Calculates the exponential term (eq. 11)
             F = self.a1 * np.sign(r - 0.5) * (np.exp(-lambd * t) - 1)
 
-            r1 = rnd.generate_uniform_random_number()
-            r2 = rnd.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
+            r2 = np.random.uniform(0.0, 1.0, 1)
 
             # If `r2` is bigger than generation probability (eq. 15)
             if r2 >= self.GP:

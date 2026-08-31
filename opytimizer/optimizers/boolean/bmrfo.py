@@ -1,20 +1,13 @@
-"""Boolean Manta Ray Foraging Optimization.
-"""
+"""Boolean Manta Ray Foraging Optimization."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BMRFO(Optimizer):
@@ -36,28 +29,11 @@ class BMRFO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BMRFO.")
-
         super(BMRFO, self).__init__()
 
         self.S = np.array([1])
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def S(self) -> np.ndarray:
-        """Somersault foraging."""
-
-        return self._S
-
-    @S.setter
-    def S(self, S: np.ndarray) -> None:
-        if not isinstance(S, np.ndarray):
-            raise e.TypeError("`S` should be a numpy array")
-
-        self._S = S
 
     def _cyclone_foraging(
         self,
@@ -81,13 +57,13 @@ class BMRFO(Optimizer):
 
         """
 
-        r1 = r.generate_binary_random_number(best_position.shape)
-        beta = r.generate_binary_random_number(best_position.shape)
+        r1 = np.random.randint(0, 2, best_position.shape)
+        beta = np.random.randint(0, 2, best_position.shape)
 
-        u = r.generate_uniform_random_number()
+        u = np.random.uniform(0.0, 1.0, 1)
         if iteration / n_iterations < u:
-            r_position = r.generate_binary_random_number(
-                size=(agents[i].n_variables, agents[i].n_dimensions)
+            r_position = np.random.randint(
+                0, 2, (agents[i].n_variables, agents[i].n_dimensions)
             )
 
             if i == 0:
@@ -149,8 +125,8 @@ class BMRFO(Optimizer):
 
         """
 
-        r1 = r.generate_binary_random_number(best_position.shape)
-        alpha = r.generate_binary_random_number(best_position.shape)
+        r1 = np.random.randint(0, 2, best_position.shape)
+        alpha = np.random.randint(0, 2, best_position.shape)
 
         if i == 0:
             partial_one = np.logical_and(
@@ -189,8 +165,8 @@ class BMRFO(Optimizer):
 
         """
 
-        r1 = r.generate_binary_random_number(best_position.shape)
-        r2 = r.generate_binary_random_number(best_position.shape)
+        r1 = np.random.randint(0, 2, best_position.shape)
+        r2 = np.random.randint(0, 2, best_position.shape)
 
         somersault_foraging = np.logical_or(
             position,
@@ -205,20 +181,20 @@ class BMRFO(Optimizer):
         return somersault_foraging
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Boolean Manta Ray Foraging Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
         """
 
         for i, agent in enumerate(space.agents):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < 0.5:
                 agent.position = self._cyclone_foraging(
                     space.agents, space.best_agent.position, i, iteration, n_iterations

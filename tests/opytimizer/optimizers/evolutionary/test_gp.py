@@ -2,7 +2,6 @@ import sys
 
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.evolutionary import gp
 from opytimizer.spaces import tree
 
@@ -24,58 +23,6 @@ def test_gp_params():
     assert new_gp.p_crossover == 0.5
 
     assert new_gp.prunning_ratio == 0.5
-
-
-def test_gp_params_setter():
-    new_gp = gp.GP()
-
-    try:
-        new_gp.p_reproduction = "a"
-    except:
-        new_gp.p_reproduction = 0.75
-
-    try:
-        new_gp.p_reproduction = -1
-    except:
-        new_gp.p_reproduction = 0.75
-
-    assert new_gp.p_reproduction == 0.75
-
-    try:
-        new_gp.p_mutation = "b"
-    except:
-        new_gp.p_mutation = 0.5
-
-    try:
-        new_gp.p_mutation = -1
-    except:
-        new_gp.p_mutation = 0.5
-
-    assert new_gp.p_mutation == 0.5
-
-    try:
-        new_gp.p_crossover = "c"
-    except:
-        new_gp.p_crossover = 0.25
-
-    try:
-        new_gp.p_crossover = -1
-    except:
-        new_gp.p_crossover = 0.25
-
-    assert new_gp.p_crossover == 0.25
-
-    try:
-        new_gp.prunning_ratio = "d"
-    except:
-        new_gp.prunning_ratio = 0.25
-
-    try:
-        new_gp.prunning_ratio = -1
-    except:
-        new_gp.prunning_ratio = 0.25
-
-    assert new_gp.prunning_ratio == 0.25
 
 
 def test_gp_prune_nodes():
@@ -181,7 +128,7 @@ def test_gp_evaluate():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
+    new_function = square
 
     tree_space = tree.TreeSpace(
         n_agents=1000,

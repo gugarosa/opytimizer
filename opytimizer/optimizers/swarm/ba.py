@@ -1,19 +1,12 @@
-"""Bat Algorithm.
-"""
+"""Bat Algorithm."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as rnd
-import opytimizer.utils.exception as ex
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BA(Optimizer):
@@ -36,8 +29,6 @@ class BA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BA.")
-
         super(BA, self).__init__()
 
         self.f_min = 0
@@ -48,122 +39,6 @@ class BA(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def f_min(self) -> float:
-        """Minimum frequency range."""
-
-        return self._f_min
-
-    @f_min.setter
-    def f_min(self, f_min: float) -> None:
-        if not isinstance(f_min, (float, int)):
-            raise ex.TypeError("`f_min` should be a float or integer")
-        if f_min < 0:
-            raise ex.ValueError("`f_min` should be >= 0")
-
-        self._f_min = f_min
-
-    @property
-    def f_max(self) -> float:
-        """Maximum frequency range."""
-
-        return self._f_max
-
-    @f_max.setter
-    def f_max(self, f_max: float) -> None:
-        if not isinstance(f_max, (float, int)):
-            raise ex.TypeError("`f_max` should be a float or integer")
-        if f_max < 0:
-            raise ex.ValueError("`f_max` should be >= 0")
-        if f_max < self.f_min:
-            raise ex.ValueError("`f_max` should be >= `f_min`")
-
-        self._f_max = f_max
-
-    @property
-    def A(self) -> float:
-        """Loudness parameter."""
-
-        return self._A
-
-    @A.setter
-    def A(self, A: float) -> None:
-        if not isinstance(A, (float, int)):
-            raise ex.TypeError("`A` should be a float or integer")
-        if A < 0:
-            raise ex.ValueError("`A` should be >= 0")
-
-        self._A = A
-
-    @property
-    def r(self) -> float:
-        """Pulse rate."""
-
-        return self._r
-
-    @r.setter
-    def r(self, r: float) -> None:
-        if not isinstance(r, (float, int)):
-            raise ex.TypeError("`r` should be a float or integer")
-        if r < 0:
-            raise ex.ValueError("`r` should be >= 0")
-
-        self._r = r
-
-    @property
-    def frequency(self) -> np.ndarray:
-        """Array of frequencies."""
-
-        return self._frequency
-
-    @frequency.setter
-    def frequency(self, frequency: np.ndarray) -> None:
-        if not isinstance(frequency, np.ndarray):
-            raise ex.TypeError("`frequency` should be a numpy array")
-
-        self._frequency = frequency
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise ex.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
-
-    @property
-    def loudness(self) -> np.ndarray:
-        """Array of loudnesses."""
-
-        return self._loudness
-
-    @loudness.setter
-    def loudness(self, loudness: np.ndarray) -> None:
-        if not isinstance(loudness, np.ndarray):
-            raise ex.TypeError("`loudness` should be a numpy array")
-
-        self._loudness = loudness
-
-    @property
-    def pulse_rate(self) -> np.ndarray:
-        """Array of pulse rates."""
-
-        return self._pulse_rate
-
-    @pulse_rate.setter
-    def pulse_rate(self, pulse_rate: np.ndarray) -> None:
-        if not isinstance(pulse_rate, np.ndarray):
-            raise ex.TypeError("`pulse_rate` should be a numpy array")
-
-        self._pulse_rate = pulse_rate
-
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
@@ -172,21 +47,19 @@ class BA(Optimizer):
 
         """
 
-        self.frequency = rnd.generate_uniform_random_number(
-            self.f_min, self.f_max, space.n_agents
-        )
+        self.frequency = np.random.uniform(self.f_min, self.f_max, space.n_agents)
         self.velocity = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
-        self.loudness = rnd.generate_uniform_random_number(0, self.A, space.n_agents)
-        self.pulse_rate = rnd.generate_uniform_random_number(0, self.r, space.n_agents)
+        self.loudness = np.random.uniform(0, self.A, space.n_agents)
+        self.pulse_rate = np.random.uniform(0, self.r, space.n_agents)
 
-    def update(self, space: Space, function: Function, iteration: int) -> None:
+    def update(self, space: Space, function: Callable, iteration: int) -> None:
         """Wraps Bat Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
 
         """
@@ -196,7 +69,7 @@ class BA(Optimizer):
         for i, agent in enumerate(space.agents):
             # Updates frequency (eq. 2)
             # Note that we have to apply (min - max) instead of (max - min) or it will not converge
-            beta = rnd.generate_uniform_random_number()
+            beta = np.random.uniform(0.0, 1.0, 1)
             self.frequency[i] = self.f_min + (self.f_min - self.f_max) * beta
 
             # Updates velocity (eq. 3)
@@ -207,8 +80,8 @@ class BA(Optimizer):
             # Updates agent's position (eq. 4)
             agent.position += self.velocity[i]
 
-            p = rnd.generate_uniform_random_number()
-            e = rnd.generate_gaussian_random_number()
+            p = np.random.uniform(0.0, 1.0, 1)
+            e = np.random.normal(0.0, 1.0, 1)
             if p > self.pulse_rate[i]:
                 # Performs a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size

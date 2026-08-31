@@ -14,38 +14,6 @@ def test_aig_params():
     assert new_aig.beta == np.pi
 
 
-def test_aig_params_setter():
-    new_aig = aig.AIG()
-
-    try:
-        new_aig.alpha = "a"
-    except:
-        new_aig.alpha = np.pi
-
-    assert new_aig.alpha == np.pi
-
-    try:
-        new_aig.alpha = -1
-    except:
-        new_aig.alpha = np.pi
-
-    assert new_aig.alpha == np.pi
-
-    try:
-        new_aig.beta = "b"
-    except:
-        new_aig.beta = np.pi
-
-    assert new_aig.beta == np.pi
-
-    try:
-        new_aig.beta = -1
-    except:
-        new_aig.beta = np.pi
-
-    assert new_aig.beta == np.pi
-
-
 def test_aig_update():
     def square(x):
         return np.sum(x**2)

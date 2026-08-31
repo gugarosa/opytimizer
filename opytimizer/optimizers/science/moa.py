@@ -1,19 +1,12 @@
-"""Magnetic Optimization Algorithm.
-"""
+"""Magnetic Optimization Algorithm."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.general as g
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class MOA(Optimizer):
@@ -36,46 +29,12 @@ class MOA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> MOA.")
-
         super(MOA, self).__init__()
 
         self.alpha = 1.0
         self.rho = 2.0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def alpha(self) -> float:
-        """Particle moviment first constant."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0:
-            raise e.ValueError("`alpha` should be >= 0")
-
-        self._alpha = alpha
-
-    @property
-    def rho(self) -> float:
-        """Particle moviment second constant."""
-
-        return self._rho
-
-    @rho.setter
-    def rho(self, rho: float) -> None:
-        if not isinstance(rho, (float, int)):
-            raise e.TypeError("`rho` should be a float or integer")
-        if rho < 0:
-            raise e.ValueError("`rho` should be >= 0")
-
-        self._rho = rho
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -86,7 +45,7 @@ class MOA(Optimizer):
         """
 
         if not np.sqrt(space.n_agents).is_integer():
-            raise e.SizeError("`n_agents` should have a perfect square")
+            raise ValueError("`n_agents` should have a perfect square")
 
     def update(self, space: Space) -> None:
         """Wraps Magnetic Optimization Algorithm over all agents and variables.
@@ -121,9 +80,7 @@ class MOA(Optimizer):
 
             for n in neighbours:
                 # Calculates the distance between current agent and neighbour (eq. 7)
-                distance = g.euclidean_distance(
-                    agent.position, space.agents[n].position
-                )
+                distance = np.linalg.norm(agent.position - space.agents[n].position)
 
                 # Calculates the force between agents (eq. 5)
                 force += (
@@ -135,7 +92,7 @@ class MOA(Optimizer):
             force = np.mean(force)
 
             # Updates the agent's velocity(eq. 9)
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             velocity = force / mass[i] * r1
 
             # Updates the agent's position (eq. 10)

@@ -1,20 +1,13 @@
-"""Flying Squirrel Optimizer.
-"""
+"""Flying Squirrel Optimizer."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.distribution as d
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class FSO(Optimizer):
@@ -38,39 +31,20 @@ class FSO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> FSO.")
-
         super(FSO, self).__init__()
 
         self.beta = 0.5
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def beta(self) -> float:
-        """Lévy distribution parameter."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta <= 0 or beta > 2:
-            raise e.ValueError("`beta` should be between 0 and 2")
-
-        self._beta = beta
-
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Flying Squirrel Optimizer over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -89,7 +63,7 @@ class FSO(Optimizer):
 
             for j in range(agent.n_variables):
                 # Calculates the random walk (eq. 2 and 3)
-                random_step = r.generate_gaussian_random_number(mean_position[j], SRF)
+                random_step = np.random.normal(mean_position[j], SRF, 1)
 
                 # Calculates the Lévy flight (eq. 6 to 18)
                 levy_step = d.generate_levy_distribution(BEF)

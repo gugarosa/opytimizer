@@ -20,46 +20,6 @@ def test_bwo_params():
     assert new_bwo.pm == 0.4
 
 
-def test_bwo_params_setter():
-    new_bwo = bwo.BWO()
-
-    try:
-        new_bwo.pp = "a"
-    except:
-        new_bwo.pp = 0.6
-
-    try:
-        new_bwo.pp = -1
-    except:
-        new_bwo.pp = 0.6
-
-    assert new_bwo.pp == 0.6
-
-    try:
-        new_bwo.cr = "b"
-    except:
-        new_bwo.cr = 0.44
-
-    try:
-        new_bwo.cr = -1
-    except:
-        new_bwo.cr = 0.44
-
-    assert new_bwo.cr == 0.44
-
-    try:
-        new_bwo.pm = "c"
-    except:
-        new_bwo.pm = 0.4
-
-    try:
-        new_bwo.pm = -1
-    except:
-        new_bwo.pm = 0.4
-
-    assert new_bwo.pm == 0.4
-
-
 def test_bwo_procreating():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]

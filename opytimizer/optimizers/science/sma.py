@@ -1,5 +1,4 @@
-"""Slime Mould Algorithm.
-"""
+"""Slime Mould Algorithm."""
 
 from typing import Any, Dict, List, Optional
 
@@ -7,14 +6,9 @@ import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SMA(Optimizer):
@@ -38,43 +32,11 @@ class SMA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> SMA.")
-
         super(SMA, self).__init__()
 
         self.z = 0.03
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def z(self) -> float:
-        """Probability threshold."""
-
-        return self._z
-
-    @z.setter
-    def z(self, z: float) -> None:
-        if not isinstance(z, (float, int)):
-            raise e.TypeError("`z` should be a float or integer")
-        if z < 0:
-            raise e.ValueError("`z` should be >= 0")
-
-        self._z = z
-
-    @property
-    def weight(self) -> np.ndarray:
-        """Array of weights."""
-
-        return self._weight
-
-    @weight.setter
-    def weight(self, weight: np.ndarray) -> None:
-        if not isinstance(weight, np.ndarray):
-            raise e.TypeError("`weight` should be a numpy array")
-
-        self._weight = weight
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -98,7 +60,7 @@ class SMA(Optimizer):
 
         for i in range(n_agents):
 
-            r1 = r.generate_uniform_random_number(
+            r1 = np.random.uniform(
                 0, 1, (agents[i].n_variables, agents[i].n_dimensions)
             )
 
@@ -129,22 +91,20 @@ class SMA(Optimizer):
 
         for i, agent in enumerate(space.agents):
 
-            r2 = r.generate_uniform_random_number()
+            r2 = np.random.uniform(0.0, 1.0, 1)
 
             if r2 < self.z:
                 agent.fill_with_uniform()
             else:
                 p = np.tanh(np.abs(agent.fit - space.agents[0].fit))
-                vb = r.generate_uniform_random_number(-a, a)
-                vc = r.generate_uniform_random_number(-b, b)
+                vb = np.random.uniform(-a, a, 1)
+                vc = np.random.uniform(-b, b, 1)
 
-                r3 = r.generate_uniform_random_number()
+                r3 = np.random.uniform(0.0, 1.0, 1)
 
                 if r3 < p:
-                    k = r.generate_integer_random_number(0, len(space.agents))
-                    l = r.generate_integer_random_number(
-                        0, len(space.agents), exclude_value=k
-                    )
+                    k = np.random.randint(0, len(space.agents), None)
+                    l = r.integer(0, len(space.agents), exclude=k, size=None)
                     agent.position = space.agents[0].position + vb * (
                         self.weight[i]
                         * (space.agents[k].position - space.agents[l].position)

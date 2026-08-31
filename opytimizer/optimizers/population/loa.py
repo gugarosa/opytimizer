@@ -1,23 +1,15 @@
-"""Lion Optimization Algorithm.
-"""
+"""Lion Optimization Algorithm."""
 
 import copy
 import itertools
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-import opytimizer.math.distribution as d
 import opytimizer.math.general as g
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Agent, Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class Lion(Agent):
@@ -61,88 +53,6 @@ class Lion(Agent):
         self.pride = 0
         self.group = 0
 
-    @property
-    def best_position(self) -> np.ndarray:
-        """N-dimensional array of best positions."""
-
-        return self._best_position
-
-    @best_position.setter
-    def best_position(self, best_position: np.ndarray) -> None:
-        if not isinstance(best_position, np.ndarray):
-            raise e.TypeError("`best_position` should be a numpy array")
-
-        self._best_position = best_position
-
-    @property
-    def p_fit(self) -> float:
-        """Previous fitness value."""
-
-        return self._p_fit
-
-    @p_fit.setter
-    def p_fit(self, p_fit: float) -> None:
-        if not isinstance(p_fit, (float, int, np.int32, np.int64)):
-            raise e.TypeError("`p_fit` should be a float or integer")
-
-        self._p_fit = p_fit
-
-    @property
-    def nomad(self) -> bool:
-        """bool: Whether lion is nomad or not."""
-
-        return self._nomad
-
-    @nomad.setter
-    def nomad(self, nomad: bool) -> None:
-        if not isinstance(nomad, bool):
-            raise e.TypeError("`nomad` should be a boolean")
-
-        self._nomad = nomad
-
-    @property
-    def female(self) -> bool:
-        """Whether lion is female or not."""
-
-        return self._female
-
-    @female.setter
-    def female(self, female: bool) -> None:
-        if not isinstance(female, bool):
-            raise e.TypeError("`female` should be a boolean")
-
-        self._female = female
-
-    @property
-    def pride(self) -> int:
-        """Index of pride."""
-
-        return self._pride
-
-    @pride.setter
-    def pride(self, pride: int) -> None:
-        if not isinstance(pride, int):
-            raise e.TypeError("`pride` should be an integer")
-        if pride < 0:
-            raise e.ValueError("`pride` should be > 0")
-
-        self._pride = pride
-
-    @property
-    def group(self) -> int:
-        """Index of hunting group."""
-
-        return self._group
-
-    @group.setter
-    def group(self, group: int) -> None:
-        if not isinstance(group, int):
-            raise e.TypeError("`group` should be an integer")
-        if group < 0:
-            raise e.ValueError("`group` should be > 0")
-
-        self._group = group
-
 
 class LOA(Optimizer):
     """An LOA class, inherited from Optimizer.
@@ -164,8 +74,6 @@ class LOA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> LOA.")
-
         super(LOA, self).__init__()
 
         self.N = 0.2
@@ -179,113 +87,6 @@ class LOA(Optimizer):
         self.Mu = 0.2
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def N(self) -> float:
-        """Percentage of nomad lions."""
-
-        return self._N
-
-    @N.setter
-    def N(self, N: float) -> None:
-        if not isinstance(N, (float, int)):
-            raise e.TypeError("`N` should be a float or integer")
-        if N < 0 or N > 1:
-            raise e.ValueError("`N` should be between 0 and 1")
-
-        self._N = N
-
-    @property
-    def P(self) -> int:
-        """Number of prides."""
-
-        return self._P
-
-    @P.setter
-    def P(self, P: int) -> None:
-        if not isinstance(P, int):
-            raise e.TypeError("`P` should be an integer")
-        if P <= 0:
-            raise e.ValueError("`P` should be > 0")
-
-        self._P = P
-
-    @property
-    def S(self) -> float:
-        """Percentage of female lions."""
-
-        return self._S
-
-    @S.setter
-    def S(self, S: float) -> None:
-        if not isinstance(S, (float, int)):
-            raise e.TypeError("`S` should be a float or integer")
-        if S < 0 or S > 1:
-            raise e.ValueError("`S` should be between 0 and 1")
-
-        self._S = S
-
-    @property
-    def R(self) -> float:
-        """Percentage of roaming lions."""
-
-        return self._R
-
-    @R.setter
-    def R(self, R: float) -> None:
-        if not isinstance(R, (float, int)):
-            raise e.TypeError("`R` should be a float or integer")
-        if R < 0 or R > 1:
-            raise e.ValueError("`R` should be between 0 and 1")
-
-        self._R = R
-
-    @property
-    def I(self) -> float:
-        """Immigrate rate."""
-
-        return self._I
-
-    @I.setter
-    def I(self, I: float) -> None:
-        if not isinstance(I, (float, int)):
-            raise e.TypeError("`I` should be a float or integer")
-        if I < 0 or I > 1:
-            raise e.ValueError("`I` should be between 0 and 1")
-
-        self._I = I
-
-    @property
-    def Ma(self) -> float:
-        """Mating probability."""
-
-        return self._Ma
-
-    @Ma.setter
-    def Ma(self, Ma: float) -> None:
-        if not isinstance(Ma, (float, int)):
-            raise e.TypeError("`Ma` should be a float or integer")
-        if Ma < 0 or Ma > 1:
-            raise e.ValueError("`Ma` should be between 0 and 1")
-
-        self._Ma = Ma
-
-    @property
-    def Mu(self) -> float:
-        """Mutation probability."""
-
-        return self._Mu
-
-    @Mu.setter
-    def Mu(self, Mu: float) -> None:
-        if not isinstance(Mu, (float, int)):
-            raise e.TypeError("`Mu` should be a float or integer")
-        if Mu < 0 or Mu > 1:
-            raise e.ValueError("`Mu` should be between 0 and 1")
-
-        self._Mu = Mu
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -308,15 +109,13 @@ class LOA(Optimizer):
         ]
 
         n_nomad = int(self.N * space.n_agents)
-        nomad_gender = d.generate_bernoulli_distribution(1 - self.S, n_nomad)
+        nomad_gender = np.random.binomial(1, 1 - self.S, n_nomad)
 
         for i, agent in enumerate(space.agents[:n_nomad]):
             agent.nomad = True
             agent.female = bool(nomad_gender[i])
 
-        pride_gender = d.generate_bernoulli_distribution(
-            self.S, space.n_agents - n_nomad
-        )
+        pride_gender = np.random.binomial(1, self.S, space.n_agents - n_nomad)
 
         for i, agent in enumerate(space.agents[n_nomad:]):
             agent.female = bool(pride_gender[i])
@@ -350,19 +149,19 @@ class LOA(Optimizer):
 
         return [[agent for agent in agents if agent.pride == i] for i in range(self.P)]
 
-    def _hunting(self, prides: List[Lion], function: Function) -> None:
+    def _hunting(self, prides: List[Lion], function: Callable) -> None:
         """Performs the hunting procedure (s. 2.2.2).
 
         Args:
             prides: List of prides holding their corresponding lions.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
         for pride in prides:
             for agent in pride:
                 if agent.female:
-                    agent.group = r.generate_integer_random_number(high=4)
+                    agent.group = np.random.randint(0, 4, None)
                 else:
                     agent.group = 0
 
@@ -384,13 +183,13 @@ class LOA(Optimizer):
                     for j in range(agent.n_variables):
                         if agent.position[j] < prey[j]:
                             # Updates its position (eq. 5 - top)
-                            agent.position[j] = r.generate_uniform_random_number(
-                                agent.position[j], prey[j]
+                            agent.position[j] = np.random.uniform(
+                                agent.position[j], prey[j], 1
                             )
                         else:
                             # Updates its position (eq. 5 - bottom)
-                            agent.position[j] = r.generate_uniform_random_number(
-                                prey[j], agent.position[j]
+                            agent.position[j] = np.random.uniform(
+                                prey[j], agent.position[j], 1
                             )
 
                 if agent.group in [left, right]:
@@ -399,13 +198,13 @@ class LOA(Optimizer):
 
                         if encircling < prey[j]:
                             # Updates its position (eq. 4 - top)
-                            agent.position[j] = r.generate_uniform_random_number(
-                                encircling, prey[j]
+                            agent.position[j] = np.random.uniform(
+                                encircling, prey[j], 1
                             )
                         else:
                             # Updates its position (eq. 4 - bottom)
-                            agent.position[j] = r.generate_uniform_random_number(
-                                prey[j], encircling
+                            agent.position[j] = np.random.uniform(
+                                prey[j], encircling, 1
                             )
 
                 agent.clip_by_bound()
@@ -417,7 +216,7 @@ class LOA(Optimizer):
 
                     p_improvement = agent.fit / agent.p_fit
 
-                    r1 = r.generate_uniform_random_number()
+                    r1 = np.random.uniform(0.0, 1.0, 1)
                     prey += r1 * p_improvement * (prey - agent.position)
 
     def _moving_safe_place(self, prides: List[Lion]) -> None:
@@ -442,11 +241,11 @@ class LOA(Optimizer):
                 if agent.group == 0 and agent.female:
                     w = g.tournament_selection(fitnesses, 1, tournament_size)[0]
 
-                    distance = g.euclidean_distance(agent.position, pride[w].position)
+                    distance = np.linalg.norm(agent.position - pride[w].position)
 
-                    rand = r.generate_uniform_random_number()
-                    u = r.generate_uniform_random_number(-1, 1)
-                    theta = r.generate_uniform_random_number(-np.pi / 6, np.pi / 6)
+                    rand = np.random.uniform(0.0, 1.0, 1)
+                    u = np.random.uniform(-1, 1, 1)
+                    theta = np.random.uniform(-np.pi / 6, np.pi / 6, 1)
 
                     R1 = pride[w].position - agent.position
                     R2 = np.random.randn(*R1.T.shape)
@@ -457,31 +256,31 @@ class LOA(Optimizer):
                         2 * distance * rand * R1 + u * np.tan(theta) * distance * R2
                     )
 
-    def _roaming(self, prides: List[Lion], function: Function) -> None:
+    def _roaming(self, prides: List[Lion], function: Callable) -> None:
         """Performs the roaming procedure (s. 2.2.4).
 
         Args:
             prides: List of prides holding their corresponding lions.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
         for pride in prides:
             n_roaming = int(len(pride) * self.P)
 
-            selected = r.generate_integer_random_number(high=len(pride), size=n_roaming)
+            selected = np.random.randint(0, len(pride), n_roaming)
 
             for agent in pride:
                 if not agent.female:
                     for s in selected:
-                        theta = r.generate_uniform_random_number(-np.pi / 6, np.pi / 6)
+                        theta = np.random.uniform(-np.pi / 6, np.pi / 6, 1)
 
-                        distance = g.euclidean_distance(
-                            pride[s].best_position, agent.position
+                        distance = np.linalg.norm(
+                            pride[s].best_position - agent.position
                         )
 
                         # Generates the step (eq. 10)
-                        step = r.generate_uniform_random_number(0, 2 * distance)
+                        step = np.random.uniform(0, 2 * distance, 1)
                         agent.position += step * np.tan(theta)
                         agent.clip_by_bound()
 
@@ -491,14 +290,14 @@ class LOA(Optimizer):
                             agent.best_position = copy.deepcopy(agent.position)
 
     def _mating_operator(
-        self, agent: List[Lion], males: List[Lion], function: Function
+        self, agent: List[Lion], males: List[Lion], function: Callable
     ) -> Tuple[Lion, Lion]:
         """Wraps the mating operator.
 
         Args:
             agent: Current agent.
             males: List of males that will be breed.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (Tuple[Lion, Lion]): A pair of offsprings that resulted from mating.
@@ -506,7 +305,7 @@ class LOA(Optimizer):
         """
 
         males_average = np.mean([male.position for male in males], axis=0)
-        beta = r.generate_gaussian_random_number(0.5, 0.1)
+        beta = np.random.normal(0.5, 0.1, 1)
 
         a1, a2 = copy.deepcopy(agent), copy.deepcopy(agent)
 
@@ -517,13 +316,13 @@ class LOA(Optimizer):
         a2.position = (1 - beta) * a2.position + beta * males_average
 
         for j in range(agent.n_variables):
-            r2 = r.generate_uniform_random_number()
+            r2 = np.random.uniform(0.0, 1.0, 1)
             if r2 < self.Mu:
-                a1.position[j] = r.generate_uniform_random_number(a1.lb[j], a1.ub[j])
+                a1.position[j] = np.random.uniform(a1.lb[j], a1.ub[j], 1)
 
-            r3 = r.generate_uniform_random_number()
+            r3 = np.random.uniform(0.0, 1.0, 1)
             if r3 < self.Mu:
-                a2.position[j] = r.generate_uniform_random_number(a2.lb[j], a2.ub[j])
+                a2.position[j] = np.random.uniform(a2.lb[j], a2.ub[j], 1)
 
         a1.clip_by_bound()
         a2.clip_by_bound()
@@ -538,12 +337,12 @@ class LOA(Optimizer):
 
         return a1, a2
 
-    def _mating(self, prides: List[Lion], function: Function) -> Lion:
+    def _mating(self, prides: List[Lion], function: Callable) -> Lion:
         """Generates offsprings from mating (s. 2.2.5).
 
         Args:
             prides: List of prides holding their corresponding lions.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (Lion): Cubs generated from the mating procedure.
@@ -556,7 +355,7 @@ class LOA(Optimizer):
 
             for agent in pride:
                 if agent.female:
-                    r1 = r.generate_uniform_random_number()
+                    r1 = np.random.uniform(0.0, 1.0, 1)
                     if r1 < self.Ma:
                         males = [agent for agent in pride if not agent.female]
 
@@ -601,12 +400,12 @@ class LOA(Optimizer):
 
         return nomads, new_prides
 
-    def _nomad_roaming(self, nomads: List[Lion], function: Function) -> None:
+    def _nomad_roaming(self, nomads: List[Lion], function: Callable) -> None:
         """Performs the roaming procedure for nomad lions (s. 2.2.4).
 
         Args:
             nomads: Nomad lions.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -619,13 +418,11 @@ class LOA(Optimizer):
                 0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON)
             )
 
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < prob:
                 for j in range(agent.n_variables):
                     # Updates the agent's position (eq. 11 - bottom)
-                    agent.position[j] = r.generate_uniform_random_number(
-                        agent.lb[j], agent.ub[j]
-                    )
+                    agent.position[j] = np.random.uniform(agent.lb[j], agent.ub[j], 1)
 
             agent.clip_by_bound()
 
@@ -634,12 +431,12 @@ class LOA(Optimizer):
             if agent.fit < agent.p_fit:
                 agent.best_position = copy.deepcopy(agent.position)
 
-    def _nomad_mating(self, nomads: List[Lion], function: Function) -> List[Lion]:
+    def _nomad_mating(self, nomads: List[Lion], function: Callable) -> List[Lion]:
         """Generates offsprings from nomad lions mating (s. 2.2.5).
 
         Args:
             nomads: Nomad lions.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (List[Lion]): Updated nomad lions.
@@ -650,12 +447,12 @@ class LOA(Optimizer):
 
         for agent in nomads:
             if agent.female:
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 if r1 < self.Ma:
                     males = [agent for agent in nomads if not agent.female]
 
                     if len(males) > 0:
-                        idx = r.generate_integer_random_number(high=len(males))
+                        idx = np.random.randint(0, len(males), None)
 
                         a1, a2 = self._mating_operator(agent, [males[idx]], function)
                         cubs += [a1, a2]
@@ -680,7 +477,7 @@ class LOA(Optimizer):
 
         for agent in nomads:
             if agent.female:
-                attack_prides = r.generate_binary_random_number(self.P)
+                attack_prides = np.random.randint(0, 2, self.P)
 
                 for i, pride in enumerate(prides):
                     if attack_prides[i]:
@@ -712,9 +509,7 @@ class LOA(Optimizer):
         for pride in prides:
             n_migrating = int(len(pride) * self.I)
 
-            selected = r.generate_integer_random_number(
-                high=len(pride), size=n_migrating
-            )
+            selected = np.random.randint(0, len(pride), n_migrating)
             for s in selected:
                 if pride[s].female:
                     n = copy.deepcopy(pride[s])
@@ -781,15 +576,15 @@ class LOA(Optimizer):
 
         for males_per_pride, pride in zip(males_prides, prides):
             if males_per_pride == 0:
-                idx = r.generate_integer_random_number(high=len(pride))
+                idx = np.random.randint(0, len(pride), None)
                 pride[idx].female = False
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Lion Optimization Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

@@ -1,16 +1,11 @@
-"""Salp Swarm Algorithm.
-"""
+"""Salp Swarm Algorithm."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SSA(Optimizer):
@@ -33,13 +28,9 @@ class SSA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> SSA.")
-
         super(SSA, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Salp Swarm Algorithm over all agents and variables.
@@ -59,8 +50,8 @@ class SSA(Optimizer):
                 for j, (lb, ub) in enumerate(
                     zip(space.agents[i].lb, space.agents[i].ub)
                 ):
-                    c2 = r.generate_uniform_random_number()
-                    c3 = r.generate_uniform_random_number()
+                    c2 = np.random.uniform(0.0, 1.0, 1)
+                    c3 = np.random.uniform(0.0, 1.0, 1)
 
                     if c3 < 0.5:
                         # Updates the leading salp position (eq. 3.1 - part 1)

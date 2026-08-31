@@ -15,34 +15,6 @@ def test_ssd_params():
     assert new_ssd.decay == 0.99
 
 
-def test_ssd_params_setter():
-    new_ssd = ssd.SSD()
-
-    try:
-        new_ssd.c = "a"
-    except:
-        new_ssd.c = 0.5
-
-    try:
-        new_ssd.c = -1
-    except:
-        new_ssd.c = 0.5
-
-    assert new_ssd.c == 0.5
-
-    try:
-        new_ssd.decay = "b"
-    except:
-        new_ssd.decay = 0.99
-
-    try:
-        new_ssd.decay = -1
-    except:
-        new_ssd.decay = 0.99
-
-    assert new_ssd.decay == 0.99
-
-
 def test_ssd_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -50,20 +22,6 @@ def test_ssd_compile():
 
     new_ssd = ssd.SSD()
     new_ssd.compile(search_space)
-
-    try:
-        new_ssd.local_position = 1
-    except:
-        new_ssd.local_position = np.array([1])
-
-    assert new_ssd.local_position == 1
-
-    try:
-        new_ssd.velocity = 1
-    except:
-        new_ssd.velocity = np.array([1])
-
-    assert new_ssd.velocity == 1
 
 
 def test_ssd_mean_global_solution():

@@ -14,34 +14,6 @@ def test_abo_params():
     assert new_abo.a == 2.0
 
 
-def test_abo_params_setter():
-    new_abo = abo.ABO()
-
-    try:
-        new_abo.sunspot_ratio = "a"
-    except:
-        new_abo.sunspot_ratio = 0.9
-
-    try:
-        new_abo.sunspot_ratio = -1
-    except:
-        new_abo.sunspot_ratio = 0.9
-
-    assert new_abo.sunspot_ratio == 0.9
-
-    try:
-        new_abo.a = "b"
-    except:
-        new_abo.a = 2.0
-
-    try:
-        new_abo.a = -1
-    except:
-        new_abo.a = 2.0
-
-    assert new_abo.a == 2.0
-
-
 def test_abo_flight_mode():
     def square(x):
         return np.sum(x**2)

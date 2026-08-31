@@ -15,38 +15,6 @@ def test_moa_params():
     assert new_moa.rho == 2.0
 
 
-def test_moa_params_setter():
-    new_moa = moa.MOA()
-
-    try:
-        new_moa.alpha = "a"
-    except:
-        new_moa.alpha = 1.0
-
-    assert new_moa.alpha == 1.0
-
-    try:
-        new_moa.alpha = -1
-    except:
-        new_moa.alpha = 1.0
-
-    assert new_moa.alpha == 1.0
-
-    try:
-        new_moa.rho = "b"
-    except:
-        new_moa.rho = 2.0
-
-    assert new_moa.rho == 2.0
-
-    try:
-        new_moa.rho = -1
-    except:
-        new_moa.rho = 2.0
-
-    assert new_moa.rho == 2.0
-
-
 def test_moa_compile():
     try:
         search_space = search.SearchSpace(

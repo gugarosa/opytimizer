@@ -1,17 +1,11 @@
-"""Darcy Optimization Algorithm.
-"""
+"""Darcy Optimization Algorithm."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as rnd
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class DOA(Optimizer):
@@ -35,43 +29,11 @@ class DOA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> DOA.")
-
         super(DOA, self).__init__()
 
         self.r = 1.0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def r(self) -> float:
-        """Chaos multiplier."""
-
-        return self._r
-
-    @r.setter
-    def r(self, r: float) -> None:
-        if not isinstance(r, (float, int)):
-            raise e.TypeError("`r` should be a float or integer")
-        if r < 0:
-            raise e.ValueError("`r` should be >= 0")
-
-        self._r = r
-
-    @property
-    def chaotic_map(self) -> np.ndarray:
-        """Array of chaotic maps."""
-
-        return self._chaotic_map
-
-    @chaotic_map.setter
-    def chaotic_map(self, chaotic_map: np.ndarray) -> None:
-        if not isinstance(chaotic_map, np.ndarray):
-            raise e.TypeError("`chaotic_map` should be a numpy array")
-
-        self._chaotic_map = chaotic_map
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -95,7 +57,7 @@ class DOA(Optimizer):
 
         """
 
-        r1 = rnd.generate_uniform_random_number(lb, ub)
+        r1 = np.random.uniform(lb, ub, 1)
 
         # Calculates the chaotic map (eq. 3)
         c_map = self.r * r1 * (1 - r1) + ((4 - self.r) * np.sin(np.pi * r1)) / 4

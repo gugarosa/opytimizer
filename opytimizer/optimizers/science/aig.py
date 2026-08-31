@@ -1,19 +1,12 @@
-"""Algorithm of the Innovative Gunner.
-"""
+"""Algorithm of the Innovative Gunner."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class AIG(Optimizer):
@@ -37,8 +30,6 @@ class AIG(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> AIG.")
-
         super(AIG, self).__init__()
 
         self.alpha = np.pi
@@ -46,59 +37,27 @@ class AIG(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def alpha(self) -> float:
-        """First maximum correction angle."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0 or alpha > np.pi * 2:
-            raise e.ValueError("`alpha` should be between 0 and 2PI")
-
-        self._alpha = alpha
-
-    @property
-    def beta(self) -> float:
-        """Second maximum correction angle."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta < 0 or beta > np.pi * 2:
-            raise e.ValueError("`beta` should be between 0 and 2PI")
-
-        self._beta = beta
-
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Algorithm of the Innovative Gunner over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
         # Calculates the maximum correction angles (eq. 18)
-        a = r.generate_uniform_random_number()
+        a = np.random.uniform(0.0, 1.0, 1)
         alpha_max = self.alpha * a
         beta_max = self.beta * a
 
         for agent in space.agents:
             a = copy.deepcopy(agent)
 
-            alpha = r.generate_gaussian_random_number(
+            alpha = np.random.normal(
                 0, alpha_max / 3, (agent.n_variables, agent.n_dimensions)
             )
-            beta = r.generate_gaussian_random_number(
+            beta = np.random.normal(
                 0, beta_max / 3, (agent.n_variables, agent.n_dimensions)
             )
 

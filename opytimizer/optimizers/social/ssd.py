@@ -1,20 +1,13 @@
-"""Social Ski Driver.
-"""
+"""Social Ski Driver."""
 
 import copy
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SSD(Optimizer):
@@ -38,71 +31,12 @@ class SSD(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> SSD.")
-
         super(SSD, self).__init__()
 
         self.c = 2.0
         self.decay = 0.99
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def c(self) -> float:
-        """Exploration parameter."""
-
-        return self._c
-
-    @c.setter
-    def c(self, c: float) -> None:
-        if not isinstance(c, (float, int)):
-            raise e.TypeError("`c` should be a float or integer")
-        if c < 0:
-            raise e.ValueError("`c` should be >= 0")
-
-        self._c = c
-
-    @property
-    def decay(self) -> float:
-        """Decay rate."""
-
-        return self._decay
-
-    @decay.setter
-    def decay(self, decay: float) -> None:
-        if not isinstance(decay, (float, int)):
-            raise e.TypeError("`decay` should be a float or integer")
-        if decay < 0 or decay > 1:
-            raise e.ValueError("`decay` should be between 0 and 1")
-        self._decay = decay
-
-    @property
-    def local_position(self) -> np.ndarray:
-        """Array of local positions."""
-
-        return self._local_position
-
-    @local_position.setter
-    def local_position(self, local_position: np.ndarray) -> None:
-        if not isinstance(local_position, np.ndarray):
-            raise e.TypeError("`local_position` should be a numpy array")
-
-        self._local_position = local_position
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -115,8 +49,8 @@ class SSD(Optimizer):
         self.local_position = np.zeros(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
-        self.velocity = r.generate_uniform_random_number(
-            size=(space.n_agents, space.n_variables, space.n_dimensions)
+        self.velocity = np.random.uniform(
+            0.0, 1.0, (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
     def _mean_global_solution(
@@ -169,8 +103,8 @@ class SSD(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
+        r2 = np.random.uniform(0.0, 1.0, 1)
 
         if r2 <= 0.5:
             new_velocity = self.c * np.sin(r1) * (
@@ -183,12 +117,12 @@ class SSD(Optimizer):
 
         return new_velocity
 
-    def evaluate(self, space: Space, function: Function) -> None:
+    def evaluate(self, space: Space, function: Callable) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
             space: A Space object that will be evaluated.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -204,12 +138,12 @@ class SSD(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Social Ski Driver over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

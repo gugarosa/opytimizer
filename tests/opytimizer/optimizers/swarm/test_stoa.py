@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.swarm import stoa
 from opytimizer.spaces import search
 
@@ -12,52 +10,6 @@ def test_stoa_params():
     assert new_stoa.Cf == 2.0
 
     assert new_stoa.u == 1.0
-
-    assert new_stoa.v == 1.0
-
-
-def test_stoa_params_setter():
-    new_stoa = stoa.STOA()
-
-    try:
-        new_stoa.Cf = "a"
-    except:
-        new_stoa.Cf = 2.0
-
-    assert new_stoa.Cf == 2.0
-
-    try:
-        new_stoa.Cf = -1
-    except:
-        new_stoa.Cf = 2.0
-
-    assert new_stoa.Cf == 2.0
-
-    try:
-        new_stoa.u = "b"
-    except:
-        new_stoa.u = 1.0
-
-    assert new_stoa.u == 1.0
-
-    try:
-        new_stoa.u = -1
-    except:
-        new_stoa.u = 1.0
-
-    assert new_stoa.u == 1.0
-
-    try:
-        new_stoa.v = "b"
-    except:
-        new_stoa.v = 1.0
-
-    assert new_stoa.v == 1.0
-
-    try:
-        new_stoa.v = -1
-    except:
-        new_stoa.v = 1.0
 
     assert new_stoa.v == 1.0
 

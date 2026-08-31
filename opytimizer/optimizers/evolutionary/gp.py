@@ -1,23 +1,16 @@
-"""Genetic Programming.
-"""
+"""Genetic Programming."""
 
 import copy
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.general as g
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.node import Node
 from opytimizer.core.space import Space
 from opytimizer.spaces.tree import TreeSpace
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GP(Optimizer):
@@ -39,8 +32,6 @@ class GP(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> GP.")
-
         super(GP, self).__init__()
 
         self.p_reproduction = 0.25
@@ -49,68 +40,6 @@ class GP(Optimizer):
         self.prunning_ratio = 0.0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def p_reproduction(self) -> float:
-        """Probability of reproduction."""
-
-        return self._p_reproduction
-
-    @p_reproduction.setter
-    def p_reproduction(self, p_reproduction: float) -> None:
-        if not isinstance(p_reproduction, (float, int)):
-            raise e.TypeError("`p_reproduction` should be a float or integer")
-        if p_reproduction < 0 or p_reproduction > 1:
-            raise e.ValueError("`p_reproduction` should be between 0 and 1")
-
-        self._p_reproduction = p_reproduction
-
-    @property
-    def p_mutation(self) -> float:
-        """Probability of mutation."""
-
-        return self._p_mutation
-
-    @p_mutation.setter
-    def p_mutation(self, p_mutation: float) -> None:
-        if not isinstance(p_mutation, (float, int)):
-            raise e.TypeError("`p_mutation` should be a float or integer")
-        if p_mutation < 0 or p_mutation > 1:
-            raise e.ValueError("`p_mutation` should be between 0 and 1")
-
-        self._p_mutation = p_mutation
-
-    @property
-    def p_crossover(self) -> float:
-        """Probability of crossover."""
-
-        return self._p_crossover
-
-    @p_crossover.setter
-    def p_crossover(self, p_crossover: float) -> None:
-        if not isinstance(p_crossover, (float, int)):
-            raise e.TypeError("`p_crossover` should be a float or integer")
-        if p_crossover < 0 or p_crossover > 1:
-            raise e.ValueError("`p_crossover` should be between 0 and 1")
-
-        self._p_crossover = p_crossover
-
-    @property
-    def prunning_ratio(self) -> float:
-        """Nodes' prunning ratio."""
-
-        return self._prunning_ratio
-
-    @prunning_ratio.setter
-    def prunning_ratio(self, prunning_ratio: float) -> None:
-        if not isinstance(prunning_ratio, (float, int)):
-            raise e.TypeError("`prunning_ratio` should be a float or integer")
-        if prunning_ratio < 0 or prunning_ratio > 1:
-            raise e.ValueError("`prunning_ratio` should be between 0 and 1")
-
-        self._prunning_ratio = prunning_ratio
 
     def _prune_nodes(self, n_nodes: int) -> int:
         """Prunes the amount of possible nodes used for mutation and crossover.
@@ -186,7 +115,7 @@ class GP(Optimizer):
         """
 
         mutated_tree = copy.deepcopy(tree)
-        mutation_point = int(r.generate_uniform_random_number(2, max_nodes))
+        mutation_point = int(np.random.uniform(2, max_nodes, 1))
 
         sub_tree, flag = mutated_tree.find_node(mutation_point)
 
@@ -253,12 +182,12 @@ class GP(Optimizer):
         """
 
         father_offspring = copy.deepcopy(father)
-        father_point = int(r.generate_uniform_random_number(2, max_father))
+        father_point = int(np.random.uniform(2, max_father, 1))
 
         sub_father, flag_father = father_offspring.find_node(father_point)
 
         mother_offspring = copy.deepcopy(mother)
-        mother_point = int(r.generate_uniform_random_number(2, max_mother))
+        mother_point = int(np.random.uniform(2, max_mother, 1))
 
         sub_mother, flag_mother = mother_offspring.find_node(mother_point)
 
@@ -300,16 +229,16 @@ class GP(Optimizer):
 
         return father, mother
 
-    def evaluate(self, space: Space, function: Function) -> None:
+    def evaluate(self, space: Space, function: Callable) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
             space: A TreeSpace object.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
-        for (tree, agent) in zip(space.trees, space.agents):
+        for tree, agent in zip(space.trees, space.agents):
             agent.position = copy.deepcopy(tree.position)
             agent.clip_by_bound()
 

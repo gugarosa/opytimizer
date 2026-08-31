@@ -18,46 +18,6 @@ def test_js_params():
     assert new_js.gamma == 0.1
 
 
-def test_js_params_setter():
-    new_js = js.JS()
-
-    try:
-        new_js.eta = "a"
-    except:
-        new_js.eta = 4.0
-
-    try:
-        new_js.eta = -1
-    except:
-        new_js.eta = 4.0
-
-    assert new_js.eta == 4.0
-
-    try:
-        new_js.beta = "b"
-    except:
-        new_js.beta = 2.0
-
-    try:
-        new_js.beta = 0
-    except:
-        new_js.beta = 3.0
-
-    assert new_js.beta == 3.0
-
-    try:
-        new_js.gamma = "c"
-    except:
-        new_js.gamma = 0.1
-
-    try:
-        new_js.gamma = -1
-    except:
-        new_js.gamma = 0.1
-
-    assert new_js.gamma == 0.1
-
-
 def test_js_initialize_chaotic_map():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]

@@ -1,20 +1,13 @@
-"""Gravitational Search Algorithm.
-"""
+"""Gravitational Search Algorithm."""
 
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.general as g
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GSA(Optimizer):
@@ -37,43 +30,11 @@ class GSA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> GSA.")
-
         super(GSA, self).__init__()
 
         self.G = 2.467
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def G(self) -> float:
-        """Initial gravity."""
-
-        return self._G
-
-    @G.setter
-    def G(self, G: float) -> None:
-        if not isinstance(G, (float, int)):
-            raise e.TypeError("`G` should be a float or integer")
-        if G < 0:
-            raise e.ValueError("`G` should be >= 0")
-
-        self._G = G
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -125,10 +86,7 @@ class GSA(Optimizer):
             [
                 gravity
                 * (mass[i] * mass[j])
-                / (
-                    g.euclidean_distance(agents[i].position, agents[j].position)
-                    + c.EPSILON
-                )
+                / (np.linalg.norm(agents[i].position - agents[j].position) + c.EPSILON)
                 * (agents[j].position - agents[i].position)
                 for j in range(len(agents))
             ]
@@ -136,7 +94,7 @@ class GSA(Optimizer):
         ]
 
         force = np.asarray(force)
-        force = np.sum(r.generate_uniform_random_number() * force, axis=1)
+        force = np.sum(np.random.uniform(0.0, 1.0, 1) * force, axis=1)
 
         return force
 
@@ -160,7 +118,7 @@ class GSA(Optimizer):
             acceleration = force[i] / (mass[i] + c.EPSILON)
 
             # Updates current agent velocity (eq. 11)
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             self.velocity[i] = r1 * self.velocity[i] + acceleration
 
             # Updates current agent position (eq. 12)

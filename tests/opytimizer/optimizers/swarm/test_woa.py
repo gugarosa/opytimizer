@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.swarm import woa
 from opytimizer.spaces import search
 
@@ -10,15 +8,6 @@ def test_woa_params():
     new_woa = woa.WOA(params=params)
 
     assert new_woa.b == 1
-
-
-def test_woa_params_setter():
-    new_woa = woa.WOA()
-
-    try:
-        new_woa.b = "a"
-    except:
-        new_woa.b = 1
 
 
 def test_woa_generate_random_agent():

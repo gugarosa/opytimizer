@@ -1,19 +1,13 @@
-"""Whale Optimization Algorithm.
-"""
+"""Whale Optimization Algorithm."""
 
 import copy
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class WOA(Optimizer):
@@ -41,21 +35,6 @@ class WOA(Optimizer):
         self.b = 1
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def b(self) -> float:
-        """Logarithmic spiral."""
-
-        return self._b
-
-    @b.setter
-    def b(self, b: float) -> None:
-        if not isinstance(b, (float, int)):
-            raise e.TypeError("`b` should be a float or integer")
-
-        self._b = b
 
     def _generate_random_agent(self, agent: Agent) -> Agent:
         """Generates a new random-based agent.
@@ -86,12 +65,12 @@ class WOA(Optimizer):
         coefficient = 2 - 2 * iteration / (n_iterations - 1)
 
         for agent in space.agents:
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
 
             A = 2 * coefficient * r1 - coefficient
             C = 2 * r1
 
-            p = r.generate_uniform_random_number()
+            p = np.random.uniform(0.0, 1.0, 1)
             if p < 0.5:
                 if np.fabs(A) < 1:
                     D = np.fabs(C * space.best_agent.position - agent.position)
@@ -101,7 +80,7 @@ class WOA(Optimizer):
                     D = np.fabs(C * a.position - agent.position)
                     agent.position = a.position - A * D
             else:
-                l = r.generate_gaussian_random_number()
+                l = np.random.normal(0.0, 1.0, 1)
                 D = np.fabs(space.best_agent.position - agent.position)
                 agent.position = (
                     D * np.exp(self.b * l) * np.cos(2 * np.pi * l)

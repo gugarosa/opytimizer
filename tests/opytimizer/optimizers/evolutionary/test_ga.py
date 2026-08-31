@@ -20,46 +20,6 @@ def test_ga_params():
     assert new_ga.p_crossover == 0.5
 
 
-def test_ga_params_setter():
-    new_ga = ga.GA()
-
-    try:
-        new_ga.p_selection = "a"
-    except:
-        new_ga.p_selection = 0.75
-
-    try:
-        new_ga.p_selection = -1
-    except:
-        new_ga.p_selection = 0.75
-
-    assert new_ga.p_selection == 0.75
-
-    try:
-        new_ga.p_mutation = "b"
-    except:
-        new_ga.p_mutation = 0.25
-
-    try:
-        new_ga.p_mutation = -1
-    except:
-        new_ga.p_mutation = 0.25
-
-    assert new_ga.p_mutation == 0.25
-
-    try:
-        new_ga.p_crossover = "c"
-    except:
-        new_ga.p_crossover = 0.5
-
-    try:
-        new_ga.p_crossover = -1
-    except:
-        new_ga.p_crossover = 0.5
-
-    assert new_ga.p_crossover == 0.5
-
-
 def test_ga_roulette_selection():
     new_ga = ga.GA()
 

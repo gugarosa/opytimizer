@@ -18,58 +18,6 @@ def test_eo_params():
     assert new_eo.V == 1.0
 
 
-def test_eo_params_setter():
-    new_eo = eo.EO()
-
-    try:
-        new_eo.a1 = "a"
-    except:
-        new_eo.a1 = 2.0
-
-    try:
-        new_eo.a1 = -1
-    except:
-        new_eo.a1 = 2.0
-
-    assert new_eo.a1 == 2.0
-
-    try:
-        new_eo.a2 = "b"
-    except:
-        new_eo.a2 = 1.0
-
-    try:
-        new_eo.a2 = -1
-    except:
-        new_eo.a2 = 1.0
-
-    assert new_eo.a2 == 1.0
-
-    try:
-        new_eo.GP = "c"
-    except:
-        new_eo.GP = 0.5
-
-    try:
-        new_eo.GP = -1
-    except:
-        new_eo.GP = 0.5
-
-    assert new_eo.GP == 0.5
-
-    try:
-        new_eo.V = "d"
-    except:
-        new_eo.V = 1.0
-
-    try:
-        new_eo.V = -1
-    except:
-        new_eo.V = 1.0
-
-    assert new_eo.V == 1.0
-
-
 def test_eo_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
@@ -77,13 +25,6 @@ def test_eo_compile():
 
     new_eo = eo.EO()
     new_eo.compile(search_space)
-
-    try:
-        new_eo.C = 1
-    except:
-        new_eo.C = []
-
-    assert new_eo.C == []
 
 
 def test_eo_calculate_equilibrium():

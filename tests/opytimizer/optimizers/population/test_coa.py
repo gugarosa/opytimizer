@@ -14,24 +14,6 @@ def test_coa_params():
     assert new_coa.n_p == 2
 
 
-def test_coa_params_setter():
-    new_coa = coa.COA()
-
-    try:
-        new_coa.n_p = "a"
-    except:
-        new_coa.n_p = 2
-
-    assert new_coa.n_p == 2
-
-    try:
-        new_coa.n_p = -1
-    except:
-        new_coa.n_p = 2
-
-    assert new_coa.n_p == 2
-
-
 def test_coa_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -39,20 +21,6 @@ def test_coa_compile():
 
     new_coa = coa.COA()
     new_coa.compile(search_space)
-
-    try:
-        new_coa.n_c = "a"
-    except:
-        new_coa.n_c = 1
-
-    assert new_coa.n_c == 1
-
-    try:
-        new_coa.n_c = -1
-    except:
-        new_coa.n_c = 1
-
-    assert new_coa.n_c == 1
 
 
 def test_coa_get_agents_from_pack():

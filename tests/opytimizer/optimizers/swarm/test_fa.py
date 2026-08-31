@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.swarm import fa
 from opytimizer.spaces import search
 
@@ -12,46 +10,6 @@ def test_fa_params():
     assert new_fa.alpha == 0.5
 
     assert new_fa.beta == 0.2
-
-    assert new_fa.gamma == 1.0
-
-
-def test_fa_params_setter():
-    new_fa = fa.FA()
-
-    try:
-        new_fa.alpha = "a"
-    except:
-        new_fa.alpha = 0.5
-
-    try:
-        new_fa.alpha = -1
-    except:
-        new_fa.alpha = 0.5
-
-    assert new_fa.alpha == 0.5
-
-    try:
-        new_fa.beta = "b"
-    except:
-        new_fa.beta = 0.2
-
-    try:
-        new_fa.beta = -1
-    except:
-        new_fa.beta = 0.2
-
-    assert new_fa.beta == 0.2
-
-    try:
-        new_fa.gamma = "c"
-    except:
-        new_fa.gamma = 1.0
-
-    try:
-        new_fa.gamma = -1
-    except:
-        new_fa.gamma = 1.0
 
     assert new_fa.gamma == 1.0
 

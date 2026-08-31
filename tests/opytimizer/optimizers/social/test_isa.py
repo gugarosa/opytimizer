@@ -15,34 +15,6 @@ def test_isa_params():
     assert new_isa.tau == 0.3
 
 
-def test_isa_params_setter():
-    new_isa = isa.ISA()
-
-    try:
-        new_isa.w = "a"
-    except:
-        new_isa.w = 0.7
-
-    try:
-        new_isa.w = -1
-    except:
-        new_isa.w = 0.7
-
-    assert new_isa.w == 0.7
-
-    try:
-        new_isa.tau = "b"
-    except:
-        new_isa.tau = 0.3
-
-    try:
-        new_isa.tau = -1
-    except:
-        new_isa.tau = 0.3
-
-    assert new_isa.tau == 0.3
-
-
 def test_isa_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -50,20 +22,6 @@ def test_isa_compile():
 
     new_isa = isa.ISA()
     new_isa.compile(search_space)
-
-    try:
-        new_isa.local_position = 1
-    except:
-        new_isa.local_position = np.array([1])
-
-    assert new_isa.local_position == 1
-
-    try:
-        new_isa.velocity = 1
-    except:
-        new_isa.velocity = np.array([1])
-
-    assert new_isa.velocity == 1
 
 
 def test_isa_evaluate():

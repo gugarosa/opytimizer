@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.swarm import boa
 from opytimizer.spaces import search
 
@@ -16,46 +14,6 @@ def test_boa_params():
     assert new_boa.p == 0.8
 
 
-def test_boa_params_setter():
-    new_boa = boa.BOA()
-
-    try:
-        new_boa.c = "a"
-    except:
-        new_boa.c = 0.01
-
-    try:
-        new_boa.c = -1
-    except:
-        new_boa.c = 0.01
-
-    assert new_boa.c == 0.01
-
-    try:
-        new_boa.a = "b"
-    except:
-        new_boa.a = 0.1
-
-    try:
-        new_boa.a = -1
-    except:
-        new_boa.a = 0.1
-
-    assert new_boa.a == 0.1
-
-    try:
-        new_boa.p = "c"
-    except:
-        new_boa.p = 0.8
-
-    try:
-        new_boa.p = -1
-    except:
-        new_boa.p = 0.8
-
-    assert new_boa.p == 0.8
-
-
 def test_boa_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -63,13 +21,6 @@ def test_boa_compile():
 
     new_boa = boa.BOA()
     new_boa.compile(search_space)
-
-    try:
-        new_boa.fragrance = 1
-    except:
-        new_boa.fragrance = np.array([1])
-
-    assert new_boa.fragrance == np.array([1])
 
 
 def test_boa_best_movement():

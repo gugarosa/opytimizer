@@ -1,21 +1,15 @@
-"""Cuckoo Search.
-"""
+"""Cuckoo Search."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.distribution as d
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class CS(Optimizer):
@@ -38,8 +32,6 @@ class CS(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> CS.")
-
         super(CS, self).__init__()
 
         self.alpha = 1.0
@@ -47,53 +39,6 @@ class CS(Optimizer):
         self.p = 0.2
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def alpha(self) -> float:
-        """Step size."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0:
-            raise e.ValueError("`alpha` should be >= 0")
-
-        self._alpha = alpha
-
-    @property
-    def beta(self) -> float:
-        """Lévy distribution parameter."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta <= 0 or beta > 2:
-            raise e.ValueError("`beta` should be between 0 and 2")
-
-        self._beta = beta
-
-    @property
-    def p(self) -> float:
-        """Probability of replacing worst nests."""
-
-        return self._p
-
-    @p.setter
-    def p(self, p: float) -> None:
-        if not isinstance(p, (float, int)):
-            raise e.TypeError("`p` should be a float or integer")
-        if p < 0 or p > 1:
-            raise e.ValueError("`p` should be between 0 and 1")
-
-        self._p = p
 
     def _generate_new_nests(
         self, agents: List[Agent], best_agent: Agent
@@ -117,7 +62,7 @@ class CS(Optimizer):
             # Alpha controls the intensity of the step size
             step_size = self.alpha * step * (new_agent.position - best_agent.position)
 
-            g = r.generate_gaussian_random_number(size=new_agent.n_variables)
+            g = np.random.normal(0.0, 1.0, new_agent.n_variables)
             g = np.expand_dims(g, axis=1)
 
             new_agent.position += step_size * g
@@ -141,13 +86,13 @@ class CS(Optimizer):
         new_agents = copy.deepcopy(agents)
 
         # It will be used to replace or not a certain nest
-        b = d.generate_bernoulli_distribution(1 - prob, len(agents))
+        b = np.random.binomial(1, 1 - prob, len(agents))
 
         for j, new_agent in enumerate(new_agents):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
 
-            k = r.generate_integer_random_number(0, len(agents) - 1)
-            l = r.generate_integer_random_number(0, len(agents) - 1, exclude_value=k)
+            k = np.random.randint(0, len(agents) - 1, None)
+            l = r.integer(0, len(agents) - 1, exclude=k, size=None)
 
             step_size = r1 * (agents[k].position - agents[l].position)
             new_agent.position += step_size * b[j]
@@ -155,7 +100,7 @@ class CS(Optimizer):
         return new_agents
 
     def _evaluate_nests(
-        self, agents: List[Agent], new_agents: List[Agent], function: Function
+        self, agents: List[Agent], new_agents: List[Agent], function: Callable
     ) -> None:
         """Evaluate new nests according to a fitness function.
 
@@ -174,12 +119,12 @@ class CS(Optimizer):
                 agent.position = copy.deepcopy(new_agent.position)
                 agent.fit = copy.deepcopy(new_agent.fit)
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Cuckoo Search over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

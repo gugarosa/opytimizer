@@ -1,8 +1,6 @@
 import sys
 
-import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.evolutionary import gsgp
 from opytimizer.spaces import tree
 

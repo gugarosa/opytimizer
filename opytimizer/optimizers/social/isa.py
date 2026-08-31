@@ -1,21 +1,15 @@
-"""Interactive Search Algorithm.
-"""
+"""Interactive Search Algorithm."""
 
 import copy
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class ISA(Optimizer):
@@ -39,72 +33,12 @@ class ISA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> ISA.")
-
         super(ISA, self).__init__()
 
         self.w = 0.7
         self.tau = 0.3
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def w(self) -> float:
-        """Inertia weight."""
-
-        return self._w
-
-    @w.setter
-    def w(self, w: float) -> None:
-        if not isinstance(w, (float, int)):
-            raise e.TypeError("`w` should be a float or integer")
-        if w < 0:
-            raise e.ValueError("`w` should be >= 0")
-
-        self._w = w
-
-    @property
-    def tau(self) -> float:
-        """Tendency factor."""
-
-        return self._tau
-
-    @tau.setter
-    def tau(self, tau: float) -> None:
-        if not isinstance(tau, (float, int)):
-            raise e.TypeError("`tau` should be a float or integer")
-        if tau < 0:
-            raise e.ValueError("`tau` should be >= 0")
-
-        self._tau = tau
-
-    @property
-    def local_position(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._local_position
-
-    @local_position.setter
-    def local_position(self, local_position: np.ndarray) -> None:
-        if not isinstance(local_position, np.ndarray):
-            raise e.TypeError("`local_position` should be a numpy array")
-
-        self._local_position = local_position
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -121,12 +55,12 @@ class ISA(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def evaluate(self, space: Space, function: Function) -> None:
+    def evaluate(self, space: Space, function: Callable) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
             space: A Space object that will be evaluated.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -142,12 +76,12 @@ class ISA(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
                 space.best_agent.ts = int(time.time())
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Interactive Search Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -166,13 +100,13 @@ class ISA(Optimizer):
         w_fit = function(w_position)
 
         for i, agent in enumerate(space.agents):
-            r1 = r.generate_uniform_random_number()
-            idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
+            r1 = np.random.uniform(0.0, 1.0, 1)
+            idx = r.integer(0, space.n_agents, exclude=i, size=None)
 
             if r1 >= self.tau:
-                phi3 = r.generate_uniform_random_number()
-                phi2 = 2 * r.generate_uniform_random_number()
-                phi1 = -(phi2 + phi3) * r.generate_uniform_random_number()
+                phi3 = np.random.uniform(0.0, 1.0, 1)
+                phi2 = 2 * np.random.uniform(0.0, 1.0, 1)
+                phi1 = -(phi2 + phi3) * np.random.uniform(0.0, 1.0, 1)
 
                 # Updates the agent's velocity (eq. 6.1)
                 self.velocity[i] = (
@@ -182,7 +116,7 @@ class ISA(Optimizer):
                     + phi3 * (w_position - self.local_position[idx])
                 )
             else:
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 if agent.fit < space.agents[idx].fit:
                     # Updates agent's velocity (eq. 6.2 - top)
                     self.velocity[i] = r2 * (

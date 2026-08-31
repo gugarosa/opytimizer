@@ -14,24 +14,6 @@ def test_fso_params():
     assert new_fso.beta == 0.5
 
 
-def test_fso_params_setter():
-    new_fso = fso.FSO()
-
-    try:
-        new_fso.beta = "a"
-    except:
-        new_fso.beta = 0.5
-
-    assert new_fso.beta == 0.5
-
-    try:
-        new_fso.beta = -1
-    except:
-        new_fso.beta = 0.5
-
-    assert new_fso.beta == 0.5
-
-
 def test_fso_update():
     def square(x):
         return np.sum(x**2)

@@ -1,17 +1,11 @@
-"""Sine Cosine Algorithm.
-"""
+"""Sine Cosine Algorithm."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SCA(Optimizer):
@@ -34,8 +28,6 @@ class SCA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> SCA.")
-
         super(SCA, self).__init__()
 
         self.r_min = 0
@@ -44,55 +36,6 @@ class SCA(Optimizer):
         self.a = 3
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def r_min(self) -> float:
-        """Minimum function range."""
-
-        return self._r_min
-
-    @r_min.setter
-    def r_min(self, r_min: float) -> None:
-        if not isinstance(r_min, (float, int)):
-            raise e.TypeError("`r_min` should be a float or integer")
-        if r_min < 0:
-            raise e.ValueError("`r_min` should be >= 0")
-
-        self._r_min = r_min
-
-    @property
-    def r_max(self) -> float:
-        """Maximum function range."""
-
-        return self._r_max
-
-    @r_max.setter
-    def r_max(self, r_max: float) -> None:
-        if not isinstance(r_max, (float, int)):
-            raise e.TypeError("`r_max` should be a float or integer")
-        if r_max < 0:
-            raise e.ValueError("`r_max` should be >= 0")
-        if r_max < self.r_min:
-            raise e.ValueError("`r_max` should be >= `r_min`")
-
-        self._r_max = r_max
-
-    @property
-    def a(self) -> float:
-        """Loudness parameter."""
-
-        return self._a
-
-    @a.setter
-    def a(self, a: float) -> None:
-        if not isinstance(a, (float, int)):
-            raise e.TypeError("`a` should be a float or integer")
-        if a < 0:
-            raise e.ValueError("`a` should be >= 0")
-
-        self._a = a
 
     def _update_position(
         self,
@@ -144,13 +87,13 @@ class SCA(Optimizer):
         r1 = self.a - (iteration * self.a / n_iterations)
 
         # The r2 parameter defines how far the movement should be
-        r2 = r.generate_uniform_random_number(0, 2 * np.pi)
+        r2 = np.random.uniform(0, 2 * np.pi, 1)
 
         # A random weight for emphasizing or deemphasizing the movement
-        r3 = r.generate_uniform_random_number(self.r_min, self.r_max)
+        r3 = np.random.uniform(self.r_min, self.r_max, 1)
 
         # A random number to decide whether sine or cosine should be used
-        r4 = r.generate_uniform_random_number()
+        r4 = np.random.uniform(0.0, 1.0, 1)
 
         for agent in space.agents:
             agent.position = self._update_position(

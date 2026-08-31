@@ -1,21 +1,15 @@
-"""Most Valuable Player Algorithm.
-"""
+"""Most Valuable Player Algorithm."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class MVPA(Optimizer):
@@ -38,45 +32,11 @@ class MVPA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> MVPA.")
-
         super(MVPA, self).__init__()
 
         self.n_teams = 4
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def n_teams(self) -> int:
-        """Maximum number of teams."""
-
-        return self._n_teams
-
-    @n_teams.setter
-    def n_teams(self, n_teams: int) -> None:
-        if not isinstance(n_teams, int):
-            raise e.TypeError("`n_teams` should be an integer")
-        if n_teams < 1:
-            raise e.ValueError("`n_teams` should be > 0")
-
-        self._n_teams = n_teams
-
-    @property
-    def n_p(self) -> int:
-        """Number of players per team."""
-
-        return self._n_p
-
-    @n_p.setter
-    def n_p(self, n_p: int) -> None:
-        if not isinstance(n_p, int):
-            raise e.TypeError("`n_p` should be an integer")
-        if n_p < 1:
-            raise e.ValueError("`n_p` should be > 0")
-
-        self._n_p = n_p
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -107,12 +67,12 @@ class MVPA(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Most Valuable Player Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -121,7 +81,7 @@ class MVPA(Optimizer):
             franchise_i = copy.deepcopy(team_i[0])
             fitness_i = np.mean([agent.fit for agent in team_i])
 
-            j = r.generate_integer_random_number(0, self.n_teams, i)
+            j = r.integer(0, self.n_teams, exclude=i, size=None)
             team_j = self._get_agents_from_team(space.agents, j)
             franchise_j = copy.deepcopy(team_j[0])
             fitness_j = np.mean([agent.fit for agent in team_j])
@@ -129,9 +89,9 @@ class MVPA(Optimizer):
             for agent in team_i:
                 a = copy.deepcopy(agent)
 
-                r1 = r.generate_uniform_random_number()
-                r2 = r.generate_uniform_random_number()
-                r3 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
+                r2 = np.random.uniform(0.0, 1.0, 1)
+                r3 = np.random.uniform(0.0, 1.0, 1)
 
                 # Updates temporary agent's position (eq. 9)
                 a.position += r1 * (franchise_i.position - a.position) + 2 * r1 * (

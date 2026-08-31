@@ -1,20 +1,14 @@
-"""Queuing Search Algorithm.
-"""
+"""Queuing Search Algorithm."""
 
 import copy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class QSA(Optimizer):
@@ -38,13 +32,9 @@ class QSA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> QSA.")
-
         super(QSA, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")
 
     def _calculate_queue(
         self, n_agents: int, t_1: float, t_2: float, t_3: float
@@ -78,13 +68,13 @@ class QSA(Optimizer):
         return q_1, q_2, q_3
 
     def _business_one(
-        self, agents: List[Agent], function: Function, beta: float
+        self, agents: List[Agent], function: Callable, beta: float
     ) -> None:
         """Performs the first business phase.
 
         Args:
             agents: List of agents.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             beta: Range of fluctuation.
 
         """
@@ -121,13 +111,11 @@ class QSA(Optimizer):
 
                 A = copy.deepcopy(A_3)
 
-            alpha = r.generate_uniform_random_number(-1, 1)
-            E = r.generate_gamma_random_number(
-                1, 0.5, (agent.n_variables, agent.n_dimensions)
-            )
+            alpha = np.random.uniform(-1, 1, 1)
+            E = np.random.gamma(1, 0.5, (agent.n_variables, agent.n_dimensions))
 
             if case == 1:
-                e = r.generate_gamma_random_number(1, 0.5, 1)
+                e = np.random.gamma(1, 0.5, 1)
 
                 # Calculates the fluctuation (eq. 6)
                 F_1 = beta * alpha * (E * np.fabs(A.position - a.position)) + e * (
@@ -161,12 +149,12 @@ class QSA(Optimizer):
                 else:
                     case = 1
 
-    def _business_two(self, agents: List[Agent], function: Function) -> None:
+    def _business_two(self, agents: List[Agent], function: Callable) -> None:
         """Performs the second business phase.
 
         Args:
             agents: List of agents.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -194,12 +182,12 @@ class QSA(Optimizer):
             else:
                 A = copy.deepcopy(A_3)
 
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < pr[i]:
                 A_1, A_2 = np.random.choice(agents, 2, replace=False)
 
-                r2 = r.generate_uniform_random_number()
-                e = r.generate_gamma_random_number(1, 0.5, 1)
+                r2 = np.random.uniform(0.0, 1.0, 1)
+                e = np.random.gamma(1, 0.5, 1)
 
                 if r2 < cv:
                     # Calculates the fluctuation (eq. 14)
@@ -219,12 +207,12 @@ class QSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _business_three(self, agents: List[Agent], function: Function) -> None:
+    def _business_three(self, agents: List[Agent], function: Callable) -> None:
         """Performs the third business phase.
 
         Args:
             agents: List of agents.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -236,10 +224,10 @@ class QSA(Optimizer):
             a = copy.deepcopy(agent)
 
             for j in range(agent.n_variables):
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 if r1 < pr[i]:
                     A_1, A_2 = np.random.choice(agents, 2, replace=False)
-                    e = r.generate_gamma_random_number(1, 0.5, 1)
+                    e = np.random.gamma(1, 0.5, 1)
 
                     # Updates temporary agent's position (eq. 17)
                     a.position[j] = A_1.position[j] + e * (
@@ -252,13 +240,13 @@ class QSA(Optimizer):
                     agent.fit = copy.deepcopy(a.fit)
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Queue Search Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 

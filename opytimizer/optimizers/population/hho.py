@@ -1,19 +1,13 @@
-"""Harris Hawks Optimization.
-"""
+"""Harris Hawks Optimization."""
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.distribution as d
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class HHO(Optimizer):
@@ -36,13 +30,9 @@ class HHO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> HHO.")
-
         super(HHO, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")
 
     def _calculate_initial_coefficients(
         self, iteration: int, n_iterations: int
@@ -58,7 +48,7 @@ class HHO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
 
         E_0 = 2 * r1 - 1
         J = 2 * (1 - r1)
@@ -83,12 +73,12 @@ class HHO(Optimizer):
 
         """
 
-        q = r.generate_uniform_random_number()
+        q = np.random.uniform(0.0, 1.0, 1)
         if q >= 0.5:
-            j = r.generate_integer_random_number(0, len(agents))
+            j = np.random.randint(0, len(agents), None)
 
-            r1 = r.generate_uniform_random_number()
-            r2 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
+            r2 = np.random.uniform(0.0, 1.0, 1)
 
             # Updates the location vector (eq. 1 - part 1)
             location_vector = agents[j].position - r1 * np.fabs(
@@ -97,8 +87,8 @@ class HHO(Optimizer):
         else:
             average = np.mean([agent.position for agent in agents], axis=0)
 
-            r3 = r.generate_uniform_random_number()
-            r4 = r.generate_uniform_random_number()
+            r3 = np.random.uniform(0.0, 1.0, 1)
+            r4 = np.random.uniform(0.0, 1.0, 1)
 
             lb = np.expand_dims(current_agent.lb, -1)
             ub = np.expand_dims(current_agent.ub, -1)
@@ -117,7 +107,7 @@ class HHO(Optimizer):
         agents: List[Agent],
         current_agent: Agent,
         best_agent: Agent,
-        function: Function,
+        function: Callable,
     ) -> np.ndarray:
         """Performs the exploitation phase.
 
@@ -134,7 +124,7 @@ class HHO(Optimizer):
 
         """
 
-        w = r.generate_uniform_random_number()
+        w = np.random.uniform(0.0, 1.0, 1)
         if w >= 0.5:
             # Soft besiege
             if energy >= 0.5:
@@ -168,8 +158,8 @@ class HHO(Optimizer):
             LF = d.generate_levy_distribution(
                 1.5, (current_agent.n_variables, current_agent.n_dimensions)
             )
-            S = r.generate_uniform_random_number(
-                size=(current_agent.n_variables, current_agent.n_dimensions)
+            S = np.random.uniform(
+                0.0, 1.0, (current_agent.n_variables, current_agent.n_dimensions)
             )
 
             # Calculates the `Z` position (eq. 8)
@@ -199,8 +189,8 @@ class HHO(Optimizer):
             LF = d.generate_levy_distribution(
                 1.5, (current_agent.n_variables, current_agent.n_dimensions)
             )
-            S = r.generate_uniform_random_number(
-                size=(current_agent.n_variables, current_agent.n_dimensions)
+            S = np.random.uniform(
+                0.0, 1.0, (current_agent.n_variables, current_agent.n_dimensions)
             )
 
             # Calculates the `Z` position (eq. 13)
@@ -220,13 +210,13 @@ class HHO(Optimizer):
         return current_agent.position
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Harris Hawks Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 

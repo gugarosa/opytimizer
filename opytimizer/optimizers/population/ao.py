@@ -1,20 +1,13 @@
-"""Aquila Optimizer.
-"""
+"""Aquila Optimizer."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.distribution as d
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class AO(Optimizer):
@@ -37,8 +30,6 @@ class AO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> AO.")
-
         super(AO, self).__init__()
 
         self.alpha = 0.1
@@ -51,91 +42,14 @@ class AO(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def alpha(self) -> float:
-        """First exploitation adjustment coefficient."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0:
-            raise e.ValueError("`alpha` should be >= 0")
-
-        self._alpha = alpha
-
-    @property
-    def delta(self) -> float:
-        """Second exploitation adjustment coefficient."""
-
-        return self._delta
-
-    @delta.setter
-    def delta(self, delta: float) -> None:
-        if not isinstance(delta, (float, int)):
-            raise e.TypeError("`delta` should be a float or integer")
-        if delta < 0:
-            raise e.ValueError("`delta` should be >= 0")
-
-        self._delta = delta
-
-    @property
-    def n_cycles(self) -> int:
-        """Number of cycles."""
-
-        return self._n_cycles
-
-    @n_cycles.setter
-    def n_cycles(self, n_cycles: int) -> None:
-        if not isinstance(n_cycles, int):
-            raise e.TypeError("`n_cycles` should be an integer")
-        if n_cycles <= 0:
-            raise e.ValueError("`n_cycles` should be > 0")
-
-        self._n_cycles = n_cycles
-
-    @property
-    def U(self) -> float:
-        """Cycle regularizer."""
-
-        return self._U
-
-    @U.setter
-    def U(self, U: float) -> None:
-        if not isinstance(U, (float, int)):
-            raise e.TypeError("`U` should be a float or integer")
-        if U < 0:
-            raise e.ValueError("`U` should be >= 0")
-
-        self._U = U
-
-    @property
-    def w(self) -> float:
-        """Angle regularizer."""
-
-        return self._w
-
-    @w.setter
-    def w(self, w: float) -> None:
-        if not isinstance(w, (float, int)):
-            raise e.TypeError("`w` should be a float or integer")
-        if w < 0:
-            raise e.ValueError("`w` should be >= 0")
-
-        self._w = w
-
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Aquila Optimizer over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -146,10 +60,10 @@ class AO(Optimizer):
         for agent in space.agents:
             a = copy.deepcopy(agent)
 
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
 
             if iteration <= ((2 / 3) * n_iterations):
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
 
                 if r1 <= 0.5:
                     # Updates temporary agent's position (eq. 3)
@@ -160,7 +74,7 @@ class AO(Optimizer):
                     levy = d.generate_levy_distribution(
                         size=(agent.n_variables, agent.n_dimensions)
                     )
-                    idx = r.generate_integer_random_number(high=len(space.agents))
+                    idx = np.random.randint(0, len(space.agents), None)
 
                     D = np.linspace(1, agent.n_variables, agent.n_variables)
                     D = np.repeat(np.expand_dims(D, -1), agent.n_dimensions, axis=1)
@@ -182,7 +96,7 @@ class AO(Optimizer):
                         + (y - x) * r2
                     )
             else:
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 if r2 <= 0.5:
                     lb = np.expand_dims(agent.lb, -1)
                     ub = np.expand_dims(agent.ub, -1)

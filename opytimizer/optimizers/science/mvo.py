@@ -1,19 +1,12 @@
-"""Multi-Verse Optimizer.
-"""
+"""Multi-Verse Optimizer."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.general as g
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class MVO(Optimizer):
@@ -46,63 +39,14 @@ class MVO(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def WEP_min(self) -> float:
-        """Minimum Wormhole Existence Probability."""
-
-        return self._WEP_min
-
-    @WEP_min.setter
-    def WEP_min(self, WEP_min: float) -> None:
-        if not isinstance(WEP_min, (float, int)):
-            raise e.TypeError("`WEP_min` should be a float or integer")
-        if WEP_min < 0 or WEP_min > 1:
-            raise e.ValueError("`WEP_min` should be >= 0 and < 1")
-
-        self._WEP_min = WEP_min
-
-    @property
-    def WEP_max(self) -> float:
-        """Maximum Wormhole Existence Probability."""
-
-        return self._WEP_max
-
-    @WEP_max.setter
-    def WEP_max(self, WEP_max: float) -> None:
-        if not isinstance(WEP_max, (float, int)):
-            raise e.TypeError("`WEP_max` should be a float or integer")
-        if WEP_max < 0 or WEP_max > 1:
-            raise e.ValueError("`WEP_max` should be >= 0 and < 1")
-        if WEP_max < self.WEP_min:
-            raise e.ValueError("`WEP_max` should be >= `WEP_min`")
-
-        self._WEP_max = WEP_max
-
-    @property
-    def p(self) -> float:
-        """Exploitation accuracy."""
-
-        return self._p
-
-    @p.setter
-    def p(self, p: float) -> None:
-        if not isinstance(p, (float, int)):
-            raise e.TypeError("`p` should be a float or integer")
-        if p < 0:
-            raise e.ValueError("`p` should be >= 0")
-
-        self._p = p
-
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Multi-Verse Optimizer over all agents and variables (eq. 3.1-3.4).
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -120,16 +64,16 @@ class MVO(Optimizer):
 
         for i, agent in enumerate(space.agents):
             for j in range(agent.n_variables):
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 if r1 < norm_fitness[i]:
                     white_hole = g.weighted_wheel_selection(norm_fitness)
                     agent.position[j] = space.agents[white_hole].position[j]
 
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 if r2 < WEP:
-                    width = r.generate_uniform_random_number(agent.lb[j], agent.ub[j])
+                    width = np.random.uniform(agent.lb[j], agent.ub[j], 1)
 
-                    r3 = r.generate_uniform_random_number()
+                    r3 = np.random.uniform(0.0, 1.0, 1)
                     if r3 < 0.5:
                         agent.position[j] = space.best_agent.position[j] + TDR * width
                     else:

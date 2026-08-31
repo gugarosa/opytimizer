@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.swarm import sca
 from opytimizer.spaces import search
 
@@ -18,51 +16,6 @@ def test_sca_params():
     assert new_sca.r_max == 2
 
     assert new_sca.a == 3
-
-
-def test_sca_params_setter():
-    new_sca = sca.SCA()
-
-    try:
-        new_sca.r_min = "a"
-    except:
-        new_sca.r_min = 0.1
-
-    try:
-        new_sca.r_min = -1
-    except:
-        new_sca.r_min = 0.1
-
-    assert new_sca.r_min == 0.1
-
-    try:
-        new_sca.r_max = "b"
-    except:
-        new_sca.r_max = 2
-
-    try:
-        new_sca.r_max = -1
-    except:
-        new_sca.r_max = 2
-
-    try:
-        new_sca.r_max = 0
-    except:
-        new_sca.r_max = 2
-
-    assert new_sca.r_max == 2
-
-    try:
-        new_sca.a = "c"
-    except:
-        new_sca.a = 0.5
-
-    try:
-        new_sca.a = -1
-    except:
-        new_sca.a = 0.5
-
-    assert new_sca.a == 0.5
 
 
 def test_sca_update_position():

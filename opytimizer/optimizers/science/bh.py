@@ -1,18 +1,13 @@
-"""Black Hole.
-"""
+"""Black Hole."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import constant, logging
-
-logger = logging.get_logger(__name__)
+from opytimizer.utils import constant
 
 
 class BH(Optimizer):
@@ -35,16 +30,12 @@ class BH(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BH.")
-
         super(BH, self).__init__()
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
     def _update_position(
-        self, agents: List[Agent], best_agent: Agent, function: Function
+        self, agents: List[Agent], best_agent: Agent, function: Callable
     ) -> float:
         """It updates every star position and calculates their event's horizon cost (eq. 3).
 
@@ -61,7 +52,7 @@ class BH(Optimizer):
         cost = 0
 
         for agent in agents:
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             agent.position += r1 * (best_agent.position - agent.position)
             agent.clip_by_bound()
 
@@ -96,12 +87,12 @@ class BH(Optimizer):
             if distance < radius:
                 agent.fill_with_uniform()
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Black Hole over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

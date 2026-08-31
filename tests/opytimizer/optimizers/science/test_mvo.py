@@ -16,51 +16,6 @@ def test_mvo_params():
     assert new_mvo.p == 0.5
 
 
-def test_mvo_params_setter():
-    new_mvo = mvo.MVO()
-
-    try:
-        new_mvo.WEP_min = "a"
-    except:
-        new_mvo.WEP_min = 0.75
-
-    try:
-        new_mvo.WEP_min = -1
-    except:
-        new_mvo.WEP_min = 0.75
-
-    assert new_mvo.WEP_min == 0.75
-
-    try:
-        new_mvo.WEP_max = "b"
-    except:
-        new_mvo.WEP_max = 0.9
-
-    try:
-        new_mvo.WEP_max = 0.1
-    except:
-        new_mvo.WEP_max = 0.9
-
-    try:
-        new_mvo.WEP_max = -1
-    except:
-        new_mvo.WEP_max = 0.9
-
-    assert new_mvo.WEP_max == 0.9
-
-    try:
-        new_mvo.p = "c"
-    except:
-        new_mvo.p = 0.25
-
-    try:
-        new_mvo.p = -1
-    except:
-        new_mvo.p = 0.25
-
-    assert new_mvo.p == 0.25
-
-
 def test_mvo_update():
     def square(x):
         return np.sum(x**2)

@@ -1,18 +1,13 @@
-"""Non-Dominated Sorting.
-"""
+"""Non-Dominated Sorting."""
 
 import copy
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class NDS(Optimizer):
@@ -41,62 +36,6 @@ class NDS(Optimizer):
         self.n_pareto_points = 0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def n_pareto_points(self) -> int:
-        """Number of points in the frontier."""
-
-        return self._n_pareto_points
-
-    @n_pareto_points.setter
-    def n_pareto_points(self, n_pareto_points: int) -> None:
-        if not isinstance(n_pareto_points, int):
-            raise e.TypeError("`n_pareto_points` should be an integer")
-        if n_pareto_points < 0:
-            raise e.ValueError("`n_pareto_points` should be >= 0")
-
-        self._n_pareto_points = n_pareto_points
-
-    @property
-    def count(self) -> np.ndarray:
-        """Array of domination counts."""
-
-        return self._count
-
-    @count.setter
-    def count(self, count: np.ndarray) -> None:
-        if not isinstance(count, np.ndarray):
-            raise e.TypeError("`count` should be a numpy array")
-
-        self._count = count
-
-    @property
-    def set(self) -> np.ndarray:
-        """Array of dominating set."""
-
-        return self._set
-
-    @set.setter
-    def set(self, set: np.ndarray) -> None:
-        if not isinstance(set, np.ndarray):
-            raise e.TypeError("`set` should be a numpy array")
-
-        self._set = set
-
-    @property
-    def status(self) -> np.ndarray:
-        """Array of pareto status."""
-
-        return self._status
-
-    @status.setter
-    def status(self, status: np.ndarray) -> None:
-        if not isinstance(status, np.ndarray):
-            raise e.TypeError("`status` should be a numpy array")
-
-        self._status = status
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.

@@ -1,12 +1,8 @@
-"""Grid-Search.
-"""
+"""Grid-Search."""
 
 from typing import Any, Dict, Optional
 
 from opytimizer.core import Optimizer
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GS(Optimizer):
@@ -29,10 +25,6 @@ class GS(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> GS.")
-
         super(GS, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")

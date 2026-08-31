@@ -14,22 +14,6 @@ def test_mrfo_params():
     assert new_mrfo.S == 2.0
 
 
-def test_mrfo_params_setter():
-    new_mrfo = mrfo.MRFO()
-
-    try:
-        new_mrfo.S = "a"
-    except:
-        new_mrfo.S = 2.0
-
-    try:
-        new_mrfo.S = -1
-    except:
-        new_mrfo.S = 2.0
-
-    assert new_mrfo.S == 2.0
-
-
 def test_mrfo_cyclone_foraging():
     new_mrfo = mrfo.MRFO()
 

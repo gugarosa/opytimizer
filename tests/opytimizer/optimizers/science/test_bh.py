@@ -1,6 +1,5 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.science import bh
 from opytimizer.spaces import search
 
@@ -9,7 +8,7 @@ def test_bh_update_position():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
+    new_function = square
 
     new_bh = bh.BH()
 
