@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from opytimizer import Opytimizer
-from opytimizer.core import Optimizer
+from opytimizer.core import Optimizer, Space
 from opytimizer.spaces import SearchSpace
 from opytimizer.utils.callback import Callback
 
@@ -83,6 +83,11 @@ def test_opytimizer_validates_constructor_inputs():
         Opytimizer(space, object(), sphere)
     with pytest.raises(TypeError):
         Opytimizer(space, optimizer, 1)
+
+
+def test_opytimizer_rejects_uninitialized_space():
+    with pytest.raises(RuntimeError):
+        Opytimizer(Space(), StepOptimizer(), sphere)
 
 
 def test_opytimizer_preserves_callback_order_clipping_and_history():

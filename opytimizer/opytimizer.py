@@ -42,6 +42,8 @@ class Opytimizer:
 
         if not isinstance(space, Space):
             raise TypeError("`space` should be a Space")
+        if len(space.agents) != space.n_agents:
+            raise RuntimeError("`space` should be initialized")
         if not isinstance(optimizer, Optimizer):
             raise TypeError("`optimizer` should be an Optimizer")
         if not callable(function):
