@@ -1,12 +1,9 @@
-from opytimark.markers.boolean import Knapsack
-
-import opytimizer.math.random as r
 from opytimizer.optimizers.boolean import bmrfo
 from opytimizer.spaces import boolean
 
 
 def test_bmrfo_params():
-    params = {"S": r.generate_binary_random_number(size=(1, 1))}
+    params = {"S": 1}
 
     new_bmrfo = bmrfo.BMRFO(params=params)
 
@@ -68,12 +65,8 @@ def test_bmrfo_somersault_foraging():
 
 
 def test_bmrfo_update():
-    new_function = Knapsack(
-        values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100
-    )
-
     new_bmrfo = bmrfo.BMRFO()
 
     boolean_space = boolean.BooleanSpace(n_agents=100, n_variables=5)
 
-    new_bmrfo.update(boolean_space, new_function, 1, 20)
+    new_bmrfo.update(boolean_space, lambda x: x.sum(), 1, 20)

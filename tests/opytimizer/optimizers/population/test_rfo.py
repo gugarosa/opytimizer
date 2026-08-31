@@ -1,6 +1,5 @@
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.optimizers.population import rfo
 from opytimizer.spaces import search
 
@@ -9,8 +8,8 @@ np.random.seed(1)
 
 def test_rfo_params():
     params = {
-        "phi": r.generate_uniform_random_number(0, 2 * np.pi)[0],
-        "theta": r.generate_uniform_random_number()[0],
+        "phi": np.random.uniform(0, 2 * np.pi),
+        "theta": np.random.uniform(),
         "p_replacement": 0.05,
     }
 

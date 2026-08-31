@@ -2,15 +2,14 @@ import sys
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.optimizers.boolean import bpso
 from opytimizer.spaces import boolean
 
 
 def test_bpso_params():
     params = {
-        "c1": r.generate_binary_random_number(size=(1, 1)),
-        "c2": r.generate_binary_random_number(size=(1, 1)),
+        "c1": np.array([1]),
+        "c2": np.array([1]),
     }
 
     new_bpso = bpso.BPSO(params=params)
