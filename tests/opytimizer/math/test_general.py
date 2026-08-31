@@ -3,46 +3,37 @@ import numpy as np
 from opytimizer.math import general
 
 
-def test_euclidean_distance():
-    x = np.array([0, 1, 2, 3])
+def test_kmeans_groups_nearest_samples(monkeypatch):
+    indexes = iter([0, 2])
+    monkeypatch.setattr(np.random, "randint", lambda low, high: next(indexes))
 
-    y = np.array([1, 2, 3, 4])
+    samples = np.array([[[0.0]], [[0.1]], [[10.0]], [[10.1]]])
 
-    assert general.euclidean_distance(x, y) == 2.0
+    labels = general.kmeans(samples, n_clusters=2)
 
-
-def test_kmeans():
-    x = np.random.uniform(0, 1, (20, 2, 1))
-
-    y = general.kmeans(x, n_clusters=3)
-
-    assert y.shape[0] == 20
+    np.testing.assert_array_equal(labels, [0, 0, 1, 1])
 
 
-def test_n_wise():
-    list = [1, 2, 3, 4]
+def test_n_wise_keeps_the_final_partial_group():
+    groups = list(general.n_wise([1, 2, 3, 4, 5]))
 
-    pairs = general.n_wise(list)
-
-    for _ in pairs:
-        pass
-
-    assert type(pairs).__name__ == "callable_iterator" or "generator"
+    assert groups == [(1, 2), (3, 4), (5,)]
 
 
-def test_tournament_selection():
-    fitness = [1, 2, 3, 4]
+def test_tournament_selection_returns_the_best_drawn_indexes(monkeypatch):
+    draws = iter([np.array([3, 2]), np.array([4, 4])])
+    monkeypatch.setattr(np.random, "choice", lambda fitness, size: next(draws))
 
-    selected = general.tournament_selection(fitness, 2)
+    selected = general.tournament_selection([1, 2, 3, 4], 2)
 
-    assert len(selected) == 2
+    assert selected == [1, 3]
 
 
-def test_weighted_wheel_selection():
-    weights = [1, 2, 3, 4, 5, 6, 7, 8]
+def test_weighted_wheel_selection_returns_threshold_bucket(monkeypatch):
+    monkeypatch.setattr(np.random, "uniform", lambda: 0.5)
 
-    assert general.weighted_wheel_selection(weights) >= 0
+    assert general.weighted_wheel_selection([1, 2, 7]) == 2
 
-    weights = [0, 0, 0, 0, 0, 0, 0, 0]
 
-    assert general.weighted_wheel_selection(weights) is None
+def test_weighted_wheel_selection_returns_none_without_weight():
+    assert general.weighted_wheel_selection([0, 0]) is None

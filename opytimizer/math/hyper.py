@@ -1,28 +1,9 @@
-"""Hypercomplex-based mathematical helpers.
-"""
+"""Hypercomplex-based mathematical helpers."""
 
 from functools import wraps
 from typing import Any, List, Tuple, Union
 
 import numpy as np
-
-
-def norm(array: np.ndarray) -> np.ndarray:
-    """Calculates the norm over an array. It is used as the first step to map
-    a hypercomplex number to a real-valued space.
-
-    Args:
-        array: A 2-dimensional input array.
-
-    Returns:
-        (np.ndarray): Norm calculated over the second axis, such as (2, 4) array shape
-        will result in a norm (2, ) shape.
-
-    """
-
-    array_norm = np.linalg.norm(array, axis=1)
-
-    return array_norm
 
 
 def span(
@@ -45,7 +26,9 @@ def span(
     lb = np.asarray(lower_bound)
     ub = np.asarray(upper_bound)
 
-    array_span = (ub - lb) * (norm(array) / np.sqrt(array.shape[1])) + lb
+    array_span = (ub - lb) * (
+        np.linalg.norm(array, axis=1) / np.sqrt(array.shape[1])
+    ) + lb
 
     return array_span
 

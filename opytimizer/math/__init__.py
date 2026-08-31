@@ -1,2 +1,1 @@
-"""Mathematical package for all common opytimizer modules.
-"""
+"""Mathematical package for all common opytimizer modules."""
