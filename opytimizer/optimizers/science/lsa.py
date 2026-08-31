@@ -92,15 +92,15 @@ class LSA(Optimizer):
         for j in range(agent.n_variables):
             for k in range(agent.n_dimensions):
                 if distance[j][k] == 0:
-                    r1 = np.random.normal(0, energy, 1)
+                    r1 = np.random.normal(0, energy)
                     a.position[j][k] += self.direction[j][k] * r1
                 else:
                     if distance[j][k] < 0:
                         a.position[j][k] += np.random.exponential(
-                            np.fabs(distance[j][k]), 1
+                            np.fabs(distance[j][k])
                         )
                     else:
-                        a.position[j][k] -= np.random.exponential(distance[j][k], 1)
+                        a.position[j][k] -= np.random.exponential(distance[j][k])
         a.clip_by_bound()
 
         a.fit = function(a.position)

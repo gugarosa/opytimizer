@@ -131,7 +131,7 @@ class HGSO(Optimizer):
         space.agents.sort(key=lambda x: x.fit)
 
         # Calculates the number of worst agents (eq. 11)
-        r1 = np.random.uniform(0.0, 1.0, 1)
+        r1 = np.random.uniform(0.0, 1.0)
         N = int(len(space.agents) * (r1 * (0.2 - 0.1) + 0.1))
 
         for agent in space.agents[-N:]:

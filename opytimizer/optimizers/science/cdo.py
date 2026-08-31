@@ -6,8 +6,8 @@ from typing import Any, Callable, Dict, Optional
 import numpy as np
 
 import opytimizer.utils.constant as c
-from opytimizer.core.space import Space
 from opytimizer.core import Optimizer
+from opytimizer.core.space import Space
 
 
 class CDO(Optimizer):

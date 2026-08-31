@@ -160,10 +160,10 @@ class AEO(Optimizer):
                 if r1 < 1 / 3:
                     a = self._herbivore_consumption(agent, agents[0], C)
                 elif 1 / 3 <= r1 <= 2 / 3:
-                    j = int(np.random.uniform(1, i, 1))
+                    j = int(np.random.uniform(1, i))
                     a = self._omnivore_consumption(agent, agents[0], agents[j], C)
                 else:
-                    j = int(np.random.uniform(1, i, 1))
+                    j = int(np.random.uniform(1, i))
                     a = self._carnivore_consumption(agent, agents[j], C)
 
             a.clip_by_bound()
@@ -195,7 +195,7 @@ class AEO(Optimizer):
             r3 = np.random.uniform(0.0, 1.0, 1)
 
             # First weight coefficient (eq. 11)
-            e = r3 * int(np.random.uniform(1, 2, 1)) - 1
+            e = r3 * int(np.random.uniform(1, 2)) - 1
 
             # Second weight coefficient (eq. 12)
             _h = 2 * r3 - 1

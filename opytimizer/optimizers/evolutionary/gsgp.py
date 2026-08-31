@@ -76,7 +76,7 @@ class GSGP(GP):
         """
 
         mutated_tree = copy.deepcopy(tree)
-        mutation_point = int(np.random.uniform(2, max_nodes, 1))
+        mutation_point = int(np.random.uniform(2, max_nodes))
         sub_tree, _ = mutated_tree.find_node(mutation_point)
 
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
@@ -166,11 +166,11 @@ class GSGP(GP):
         """
 
         father_offspring = copy.deepcopy(father)
-        father_point = int(np.random.uniform(2, max_father, 1))
+        father_point = int(np.random.uniform(2, max_father))
         sub_father, _ = father_offspring.find_node(father_point)
 
         mother_offspring = copy.deepcopy(mother)
-        mother_point = int(np.random.uniform(2, max_mother, 1))
+        mother_point = int(np.random.uniform(2, max_mother))
         sub_mother, _ = mother_offspring.find_node(mother_point)
 
         if sub_father and sub_mother:

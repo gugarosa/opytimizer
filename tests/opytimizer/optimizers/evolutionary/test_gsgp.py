@@ -1,6 +1,5 @@
 import sys
 
-
 from opytimizer.optimizers.evolutionary import gsgp
 from opytimizer.spaces import tree
 

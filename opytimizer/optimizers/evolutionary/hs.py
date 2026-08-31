@@ -439,10 +439,11 @@ class GOGHS(NGHS):
             A[j], B[j] = c.FLOAT_MAX, -c.FLOAT_MAX
 
             for agent in agents:
-                if A[j] > agent.position[j]:
-                    A[j] = agent.position[j]
-                elif B[j] < agent.position[j]:
-                    B[j] = agent.position[j]
+                position = agent.position[j].item()
+                if A[j] > position:
+                    A[j] = position
+                elif B[j] < position:
+                    B[j] = position
 
             a.position[j] = k * (A[j] + B[j]) - new_agent.position[j]
 

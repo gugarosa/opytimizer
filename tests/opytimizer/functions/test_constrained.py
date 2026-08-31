@@ -9,7 +9,9 @@ def square(x):
 
 
 def test_constrained_function_keeps_raw_callable_and_state():
-    constraint = lambda x: x[0] <= 0
+    def constraint(x):
+        return x[0] <= 0
+
     function = ConstrainedFunction(square, [constraint], penalty=2)
 
     assert function.function is square

@@ -54,15 +54,15 @@ class EFO(Optimizer):
 
         """
 
-        positive_index = int(np.random.uniform(0, n_agents * self.positive_field, 1))
+        positive_index = int(np.random.uniform(0, n_agents * self.positive_field))
 
         negative_index = int(
-            np.random.uniform(n_agents * (1 - self.negative_field), n_agents, 1)
+            np.random.uniform(n_agents * (1 - self.negative_field), n_agents)
         )
 
         neutral_index = int(
             np.random.uniform(
-                n_agents * self.positive_field, n_agents * (1 - self.negative_field), 1
+                n_agents * self.positive_field, n_agents * (1 - self.negative_field)
             )
         )
 

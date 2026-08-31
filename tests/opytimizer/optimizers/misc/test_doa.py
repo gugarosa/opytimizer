@@ -24,7 +24,7 @@ def test_doa_calculate_chaotic_map():
 
     c_map = new_doa._calculate_chaotic_map(0, 1)
 
-    assert c_map.shape == (1,)
+    assert c_map.shape == ()
 
 
 def test_doa_update():
