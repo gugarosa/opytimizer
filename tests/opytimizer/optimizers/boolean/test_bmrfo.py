@@ -1,9 +1,11 @@
+import numpy as np
+
 from opytimizer.optimizers.boolean import bmrfo
 from opytimizer.spaces import boolean
 
 
 def test_bmrfo_params():
-    params = {"S": 1}
+    params = {"S": np.random.randint(0, 2, size=(1, 1))}
 
     new_bmrfo = bmrfo.BMRFO(params=params)
 

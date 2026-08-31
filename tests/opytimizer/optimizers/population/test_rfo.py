@@ -8,8 +8,8 @@ np.random.seed(1)
 
 def test_rfo_params():
     params = {
-        "phi": np.random.uniform(0, 2 * np.pi),
-        "theta": np.random.uniform(),
+        "phi": np.random.uniform(0, 2 * np.pi, size=1)[0],
+        "theta": np.random.uniform(size=1)[0],
         "p_replacement": 0.05,
     }
 

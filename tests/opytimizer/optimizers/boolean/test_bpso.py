@@ -8,8 +8,8 @@ from opytimizer.spaces import boolean
 
 def test_bpso_params():
     params = {
-        "c1": np.array([1]),
-        "c2": np.array([1]),
+        "c1": np.random.randint(0, 2, size=(1, 1)),
+        "c2": np.random.randint(0, 2, size=(1, 1)),
     }
 
     new_bpso = bpso.BPSO(params=params)

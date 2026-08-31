@@ -7,7 +7,6 @@ from typing import Any, Callable, Dict, Optional
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.logging as l
 from opytimizer.core.optimizer import Optimizer
 from opytimizer.core.space import Space
 
@@ -42,7 +41,6 @@ class WAOA(Optimizer):
             space: A Space object that will be evaluated.
 
         """
-        print("evaluating...")
         for agent in space.agents:
             if agent.fit < space.best_agent.fit:
                 space.best_agent.position = copy.deepcopy(agent.position)
