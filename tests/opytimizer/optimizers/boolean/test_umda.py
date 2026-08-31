@@ -16,59 +16,6 @@ def test_umda_params():
     assert new_umda.upper_bound == 0.95
 
 
-def test_umda_params_setter():
-    new_umda = umda.UMDA()
-
-    try:
-        new_umda.p_selection = "a"
-    except:
-        new_umda.p_selection = 0.75
-
-    assert new_umda.p_selection == 0.75
-
-    try:
-        new_umda.p_selection = -1
-    except:
-        new_umda.p_selection = 0.75
-
-    assert new_umda.p_selection == 0.75
-
-    try:
-        new_umda.lower_bound = "a"
-    except:
-        new_umda.lower_bound = 0.05
-
-    assert new_umda.lower_bound == 0.05
-
-    try:
-        new_umda.lower_bound = -1
-    except:
-        new_umda.lower_bound = 0.05
-
-    assert new_umda.lower_bound == 0.05
-
-    try:
-        new_umda.upper_bound = "a"
-    except:
-        new_umda.upper_bound = 0.95
-
-    assert new_umda.upper_bound == 0.95
-
-    try:
-        new_umda.upper_bound = -1
-    except:
-        new_umda.upper_bound = 0.95
-
-    assert new_umda.upper_bound == 0.95
-
-    try:
-        new_umda.upper_bound = 0.04
-    except:
-        new_umda.upper_bound = 0.95
-
-    assert new_umda.upper_bound == 0.95
-
-
 def test_umda_calculate_probability():
     new_umda = umda.UMDA()
 

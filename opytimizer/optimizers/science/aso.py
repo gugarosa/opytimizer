@@ -1,19 +1,13 @@
-"""Atom Search Optimization.
-"""
+"""Atom Search Optimization."""
 
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class ASO(Optimizer):
@@ -37,57 +31,12 @@ class ASO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> ASO.")
-
         super(ASO, self).__init__()
 
         self.alpha = 50.0
         self.beta = 0.2
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def alpha(self) -> float:
-        """Depth weight."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-
-        self._alpha = alpha
-
-    @property
-    def beta(self) -> float:
-        """Multiplier weight."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta < 0 or beta > 1:
-            raise e.ValueError("`beta` should be between 0 and 1")
-
-        self._beta = beta
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -164,7 +113,7 @@ class ASO(Optimizer):
             else:
                 rs = radius / (distance + c.EPSILON)
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
 
         coef = (1 - iteration / n_iterations) ** 3
         potential = (
@@ -247,7 +196,7 @@ class ASO(Optimizer):
 
         for i, agent in enumerate(space.agents):
             # Updates current agent's velocity (eq. 21)
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             self.velocity[i] = r1 * self.velocity[i] + acceleration[i]
 
             # Updates current agent's position (eq. 22)

@@ -16,27 +16,6 @@ def test_bsa_params():
     assert new_bsa.mix_rate == 1
 
 
-def test_bsa_params_setter():
-    new_bsa = bsa.BSA()
-
-    try:
-        new_bsa.F = "a"
-    except:
-        new_bsa.F = 3.0
-
-    try:
-        new_bsa.mix_rate = "b"
-    except:
-        new_bsa.mix_rate = 1
-
-    try:
-        new_bsa.mix_rate = -1
-    except:
-        new_bsa.mix_rate = 1
-
-    assert new_bsa.mix_rate == 1
-
-
 def test_bsa_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -44,13 +23,6 @@ def test_bsa_compile():
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
-
-    try:
-        new_bsa.old_agents = 1
-    except:
-        new_bsa.old_agents = []
-
-    assert new_bsa.old_agents == []
 
 
 def test_bsa_permute():

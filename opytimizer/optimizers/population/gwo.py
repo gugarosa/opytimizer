@@ -1,18 +1,12 @@
-"""Grey Wolf Optimizer.
-"""
+"""Grey Wolf Optimizer."""
 
 import copy
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GWO(Optimizer):
@@ -35,13 +29,9 @@ class GWO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> GWO.")
-
         super(GWO, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")
 
     def _calculate_coefficients(self, a: float) -> Tuple[float, float]:
         """Calculates the mathematical coefficients.
@@ -54,8 +44,8 @@ class GWO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
+        r2 = np.random.uniform(0.0, 1.0, 1)
 
         # Calculates the `A` coefficient (eq. 3.3)
         A = 2 * a * r1 - a
@@ -66,13 +56,13 @@ class GWO(Optimizer):
         return A, C
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Grey Wolf Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 

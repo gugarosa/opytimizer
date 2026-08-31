@@ -1,21 +1,15 @@
-"""Brain Storm Optimization.
-"""
+"""Brain Storm Optimization."""
 
 import copy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BSO(Optimizer):
@@ -38,8 +32,6 @@ class BSO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BSO.")
-
         super(BSO, self).__init__()
 
         self.m = 5
@@ -52,98 +44,6 @@ class BSO(Optimizer):
         self.k = 20
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def m(self) -> int:
-        """Number of clusters."""
-
-        return self._m
-
-    @m.setter
-    def m(self, m: int) -> None:
-        if not isinstance(m, int):
-            raise e.TypeError("`m` should be an integer")
-        if m <= 0:
-            raise e.ValueError("`m` should be > 0")
-
-        self._m = m
-
-    @property
-    def p_replacement_cluster(self) -> float:
-        """Probability of replacing a random cluster."""
-
-        return self._p_replacement_cluster
-
-    @p_replacement_cluster.setter
-    def p_replacement_cluster(self, p_replacement_cluster: float) -> None:
-        if not isinstance(p_replacement_cluster, (float, int)):
-            raise e.TypeError("`p_replacement_cluster` should be a float or integer")
-        if p_replacement_cluster < 0 or p_replacement_cluster > 1:
-            raise e.ValueError("`p_replacement_cluster` should be between 0 and 1")
-
-        self._p_replacement_cluster = p_replacement_cluster
-
-    @property
-    def p_single_cluster(self) -> float:
-        """Probability of selecting a single cluster."""
-
-        return self._p_single_cluster
-
-    @p_single_cluster.setter
-    def p_single_cluster(self, p_single_cluster: float) -> None:
-        if not isinstance(p_single_cluster, (float, int)):
-            raise e.TypeError("`p_single_cluster` should be a float or integer")
-        if p_single_cluster < 0 or p_single_cluster > 1:
-            raise e.ValueError("`p_single_cluster` should be between 0 and 1")
-
-        self._p_single_cluster = p_single_cluster
-
-    @property
-    def p_single_best(self) -> float:
-        """Probability of selecting the best idea from a single cluster."""
-
-        return self._p_single_best
-
-    @p_single_best.setter
-    def p_single_best(self, p_single_best: float) -> None:
-        if not isinstance(p_single_best, (float, int)):
-            raise e.TypeError("`p_single_best` should be a float or integer")
-        if p_single_best < 0 or p_single_best > 1:
-            raise e.ValueError("`p_single_best` should be between 0 and 1")
-
-        self._p_single_best = p_single_best
-
-    @property
-    def p_double_best(self) -> float:
-        """Probability of selecting the best idea from a pair of clusters."""
-
-        return self._p_double_best
-
-    @p_double_best.setter
-    def p_double_best(self, p_double_best: float) -> None:
-        if not isinstance(p_double_best, (float, int)):
-            raise e.TypeError("`p_double_best` should be a float or integer")
-        if p_double_best < 0 or p_double_best > 1:
-            raise e.ValueError("`p_double_best` should be between 0 and 1")
-
-        self._p_double_best = p_double_best
-
-    @property
-    def k(self) -> float:
-        """Controls the sigmoid's slope."""
-
-        return self._k
-
-    @k.setter
-    def k(self, k: float) -> None:
-        if not isinstance(k, (float, int)):
-            raise e.TypeError("`k` should be a float or integer")
-        if k <= 0:
-            raise e.ValueError("`k` should should be > 0")
-
-        self._k = k
 
     def _clusterize(self, agents: List[Agent]) -> Tuple[np.ndarray, np.ndarray]:
         """Performs the clusterization over the agents' positions.
@@ -193,13 +93,13 @@ class BSO(Optimizer):
         return 1 / (1 + np.exp(-x))
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Brain Storm Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Number of iterations.s
 
@@ -207,52 +107,50 @@ class BSO(Optimizer):
 
         ideas_idx_per_cluster, best_idx_per_cluster = self._clusterize(space.agents)
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         if r1 < self.p_replacement_cluster:
-            c = r.generate_integer_random_number(0, self.m)
+            c = np.random.randint(0, self.m, None)
             space.agents[best_idx_per_cluster[c]].fill_with_uniform()
 
         for agent in space.agents:
             a = copy.deepcopy(agent)
 
-            r2 = r.generate_uniform_random_number()
+            r2 = np.random.uniform(0.0, 1.0, 1)
             if r2 < self.p_single_cluster:
-                c = r.generate_integer_random_number(0, self.m)
+                c = np.random.randint(0, self.m, None)
                 if len(ideas_idx_per_cluster[c]) > 0:
-                    r3 = r.generate_uniform_random_number()
+                    r3 = np.random.uniform(0.0, 1.0, 1)
                     if r3 < self.p_single_best:
                         a.position = copy.deepcopy(
                             space.agents[best_idx_per_cluster[c]].position
                         )
                     else:
-                        j = r.generate_integer_random_number(
-                            0, len(ideas_idx_per_cluster[c])
-                        )
+                        j = np.random.randint(0, len(ideas_idx_per_cluster[c]), None)
 
                         a.position = copy.deepcopy(
                             space.agents[ideas_idx_per_cluster[c][j]].position
                         )
             else:
                 if self.m > 1:
-                    c1 = r.generate_integer_random_number(0, self.m)
-                    c2 = r.generate_integer_random_number(0, self.m, c1)
+                    c1 = np.random.randint(0, self.m, None)
+                    c2 = r.integer(0, self.m, exclude=c1, size=None)
 
                     if (
                         len(ideas_idx_per_cluster[c1]) > 0
                         and len(ideas_idx_per_cluster[c2]) > 0
                     ):
-                        r4 = r.generate_uniform_random_number()
+                        r4 = np.random.uniform(0.0, 1.0, 1)
                         if r4 < self.p_double_best:
                             a.position = (
                                 space.agents[best_idx_per_cluster[c1]].position
                                 + space.agents[best_idx_per_cluster[c2]].position
                             ) / 2
                         else:
-                            u = r.generate_integer_random_number(
-                                0, len(ideas_idx_per_cluster[c1])
+                            u = np.random.randint(
+                                0, len(ideas_idx_per_cluster[c1]), None
                             )
-                            v = r.generate_integer_random_number(
-                                0, len(ideas_idx_per_cluster[c2])
+                            v = np.random.randint(
+                                0, len(ideas_idx_per_cluster[c2]), None
                             )
 
                             a.position = (
@@ -260,10 +158,10 @@ class BSO(Optimizer):
                                 + space.agents[ideas_idx_per_cluster[c2][v]].position
                             ) / 2
 
-            r5 = r.generate_uniform_random_number()
+            r5 = np.random.uniform(0.0, 1.0, 1)
             csi = self._sigmoid((0.5 * n_iterations - iteration) / self.k) * r5
 
-            a.position += csi * r.generate_gaussian_random_number()
+            a.position += csi * np.random.normal(0.0, 1.0, 1)
             a.clip_by_bound()
 
             a.fit = function(a.position)

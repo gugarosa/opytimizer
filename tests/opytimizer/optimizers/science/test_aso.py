@@ -14,27 +14,6 @@ def test_aso_params():
     assert new_aso.beta == 0.2
 
 
-def test_aso_params_setter():
-    new_aso = aso.ASO()
-
-    try:
-        new_aso.alpha = "a"
-    except:
-        new_aso.alpha = 50.0
-
-    try:
-        new_aso.beta = "b"
-    except:
-        new_aso.beta = 0.2
-
-    try:
-        new_aso.beta = -1
-    except:
-        new_aso.beta = 0.2
-
-    assert new_aso.beta == 0.2
-
-
 def test_aso_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -42,13 +21,6 @@ def test_aso_compile():
 
     new_aso = aso.ASO()
     new_aso.compile(search_space)
-
-    try:
-        new_aso.velocity = 1
-    except:
-        new_aso.velocity = np.array([1])
-
-    assert new_aso.velocity == np.array([1])
 
 
 def test_aso_calculate_mass():

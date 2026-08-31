@@ -1,19 +1,12 @@
-"""Water Cycle Algorithm.
-"""
+"""Water Cycle Algorithm."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class WCA(Optimizer):
@@ -38,59 +31,12 @@ class WCA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> WCA.")
-
         super(WCA, self).__init__()
 
         self.nsr = 2
         self.d_max = 0.1
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def nsr(self) -> float:
-        """Number of rivers summed with a single sea."""
-
-        return self._nsr
-
-    @nsr.setter
-    def nsr(self, nsr: float) -> None:
-        if not isinstance(nsr, int):
-            raise e.TypeError("`nsr` should be an integer")
-        if nsr < 1:
-            raise e.ValueError("`nsr` should be > 1")
-
-        self._nsr = nsr
-
-    @property
-    def d_max(self) -> float:
-        """Maximum evaporation condition."""
-
-        return self._d_max
-
-    @d_max.setter
-    def d_max(self, d_max: float) -> None:
-        if not isinstance(d_max, (float, int)):
-            raise e.TypeError("`d_max` should be a float or integer")
-        if d_max < 0:
-            raise e.ValueError("`d_max` should be >= 0")
-
-        self._d_max = d_max
-
-    @property
-    def flows(self) -> np.ndarray:
-        """Array of flows."""
-
-        return self._flows
-
-    @flows.setter
-    def flows(self, flows: np.ndarray) -> None:
-        if not isinstance(flows, np.ndarray):
-            raise e.TypeError("`flows` should be a numpy array")
-
-        self._flows = flows
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -132,18 +78,18 @@ class WCA(Optimizer):
                 if distance < self.d_max:
                     if i == 0:
                         # Updates position (eq. 12)
-                        r1 = r.generate_gaussian_random_number(1, agents[j].n_variables)
+                        r1 = np.random.normal(1, agents[j].n_variables, 1)
                         agents[j].position = best_agent.position + np.sqrt(0.1) * r1
                     else:
                         # Updates position (eq. 11)
                         agents[j].fill_with_uniform()
 
-    def _update_stream(self, agents: List[Agent], function: Function) -> None:
+    def _update_stream(self, agents: List[Agent], function: Callable) -> None:
         """Updates every stream position (eq. 8).
 
         Args:
             agents: List of agents.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -153,37 +99,37 @@ class WCA(Optimizer):
             n_flows += self.flows[i]
 
             for j in range((self.nsr + n_flows - self.flows[i]), self.nsr + n_flows):
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 agents[j].position += r1 * 2 * (agents[i].position - agents[j].position)
                 agents[j].clip_by_bound()
 
                 agents[j].fit = function(agents[j].position)
 
     def _update_river(
-        self, agents: List[Agent], best_agent: Agent, function: Function
+        self, agents: List[Agent], best_agent: Agent, function: Callable
     ) -> None:
         """Updates every river position (eq. 9).
 
         Args:
             agents: List of agents.
             best_agent: Global best agent.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
         for i in range(1, self.nsr):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             agents[i].position += r1 * 2 * (best_agent.position - agents[i].position)
             agents[i].clip_by_bound()
 
             agents[i].fit = function(agents[i].position)
 
-    def update(self, space: Space, function: Function, n_iterations: int) -> None:
+    def update(self, space: Space, function: Callable, n_iterations: int) -> None:
         """Wraps Water Cycle Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             n_iterations: Maximum number of iterations.
 
         """

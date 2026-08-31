@@ -1,11 +1,8 @@
-"""History-based object that helps in saving the optimization history.
-"""
+"""History-based object that helps in saving the optimization history."""
 
 from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
-
-import opytimizer.utils.exception as e
 
 
 class History:
@@ -24,20 +21,10 @@ class History:
 
         """
 
-        self.save_agents = save_agents
-
-    @property
-    def save_agents(self) -> bool:
-        """Saves all agents in the search space."""
-
-        return self._save_agents
-
-    @save_agents.setter
-    def save_agents(self, save_agents: bool) -> None:
         if not isinstance(save_agents, bool):
-            raise e.TypeError("`save_agents` should be a boolean")
+            raise TypeError("`save_agents` should be a boolean")
 
-        self._save_agents = save_agents
+        self.save_agents = save_agents
 
     def _parse(self, key: str, value: Any) -> Union[List[Any], Tuple[List[Any], float]]:
         """Parses incoming values with specified formats.
@@ -66,7 +53,7 @@ class History:
     def dump(self, **kwargs) -> None:
         """Dumps keyword pairs into self-class attributes."""
 
-        for (key, value) in kwargs.items():
+        for key, value in kwargs.items():
             # If current `key` is `agents` and they should not be saved,
             # we skip this loop iteration
             if key == "agents" and not self.save_agents:

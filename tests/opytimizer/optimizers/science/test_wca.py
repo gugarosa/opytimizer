@@ -14,34 +14,6 @@ def test_wca_params():
     assert new_wca.d_max == 0.25
 
 
-def test_wca_params_setter():
-    new_wca = wca.WCA()
-
-    try:
-        new_wca.nsr = 0.0
-    except:
-        new_wca.nsr = 10
-
-    try:
-        new_wca.nsr = 0
-    except:
-        new_wca.nsr = 10
-
-    assert new_wca.nsr == 10
-
-    try:
-        new_wca.d_max = "a"
-    except:
-        new_wca.d_max = 0.1
-
-    try:
-        new_wca.d_max = -1
-    except:
-        new_wca.d_max = 0.1
-
-    assert new_wca.d_max == 0.1
-
-
 def test_wca_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -49,13 +21,6 @@ def test_wca_compile():
 
     new_wca = wca.WCA()
     new_wca.compile(search_space)
-
-    try:
-        new_wca.flows = 1
-    except:
-        new_wca.flows = np.array([1])
-
-    assert new_wca.flows == np.array([1])
 
 
 def test_wca_flow_intensity():

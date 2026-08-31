@@ -1,18 +1,12 @@
-"""Moth-Flame Optimization.
-"""
+"""Moth-Flame Optimization."""
 
 import copy
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as rnd
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class MFO(Optimizer):
@@ -35,30 +29,11 @@ class MFO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> MFO.")
-
         super(MFO, self).__init__()
 
         self.b = 1
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def b(self) -> float:
-        """Spiral constant."""
-
-        return self._b
-
-    @b.setter
-    def b(self, b: float) -> None:
-        if not isinstance(b, (float, int)):
-            raise e.TypeError("`b` should be a float or integer")
-        if b < 0:
-            raise e.ValueError("`b` should be >= 0")
-
-        self._b = b
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Moth-Flame Optimization over all agents and variables.
@@ -80,7 +55,7 @@ class MFO(Optimizer):
 
         for i, agent in enumerate(space.agents):
             for j in range(agent.n_variables):
-                t = rnd.generate_uniform_random_number(r, 1)
+                t = np.random.uniform(r, 1, 1)
 
                 if i < n_flames:
                     # Calculates the distance (eq. 3.13)

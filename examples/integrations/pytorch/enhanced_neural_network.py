@@ -6,7 +6,6 @@ from torch import optim
 from torch.autograd import Variable
 
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
@@ -141,13 +140,12 @@ n_variables = 3
 lower_bound = [0, 0, 0]
 upper_bound = [1, 1, 1]
 
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
-function = Function(enhanced_neural_network)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+opt = Opytimizer(space, optimizer, enhanced_neural_network)
 
 # Runs the optimization task
 opt.start(n_iterations=100)

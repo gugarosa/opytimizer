@@ -20,68 +20,6 @@ def test_ao_params():
     assert new_ao.w == 0.005
 
 
-def test_ao_params_setter():
-    new_ao = ao.AO()
-
-    try:
-        new_ao.alpha = "a"
-    except:
-        new_ao.alpha = 0.1
-
-    try:
-        new_ao.alpha = -1
-    except:
-        new_ao.alpha = 0.1
-
-    assert new_ao.alpha == 0.1
-
-    try:
-        new_ao.delta = "b"
-    except:
-        new_ao.delta = 0.1
-
-    try:
-        new_ao.delta = -1
-    except:
-        new_ao.delta = 0.1
-
-    try:
-        new_ao.n_cycles = "c"
-    except:
-        new_ao.n_cycles = 10
-
-    try:
-        new_ao.n_cycles = -1
-    except:
-        new_ao.n_cycles = 10
-
-    assert new_ao.n_cycles == 10
-
-    try:
-        new_ao.U = "d"
-    except:
-        new_ao.U = 0.00565
-
-    try:
-        new_ao.U = -1
-    except:
-        new_ao.U = 0.00565
-
-    assert new_ao.U == 0.00565
-
-    try:
-        new_ao.w = "e"
-    except:
-        new_ao.w = 0.005
-
-    try:
-        new_ao.w = -1
-    except:
-        new_ao.w = 0.005
-
-    assert new_ao.w == 0.005
-
-
 def test_ao_update():
     def square(x):
         return np.sum(x**2)

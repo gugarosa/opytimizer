@@ -1,20 +1,13 @@
-"""Owl Search Algorithm.
-"""
+"""Owl Search Algorithm."""
 
 import copy
 from typing import Any, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.general as g
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class OSA(Optimizer):
@@ -38,30 +31,11 @@ class OSA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> OSA.")
-
         super(OSA, self).__init__()
 
         self.beta = 1.9
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def beta(self) -> float:
-        """Exploration intensity."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta < 0:
-            raise e.ValueError("`beta` should be >= 0")
-
-        self._beta = beta
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
         """Wraps Owl Search Algorithm over all agents and variables.
@@ -86,14 +60,14 @@ class OSA(Optimizer):
             intensity = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
             # Calculates the distance between owl and prey (eq. 7)
-            distance = g.euclidean_distance(agent.position, best.position)
+            distance = np.linalg.norm(agent.position - best.position)
 
             # Obtains the change in intensity (eq. 8)
-            noise = r.generate_uniform_random_number()
+            noise = np.random.uniform(0.0, 1.0, 1)
             intensity_change = intensity / (distance**2 + c.EPSILON) + noise
 
-            p_vm = r.generate_uniform_random_number()
-            alpha = r.generate_uniform_random_number(high=0.5)
+            p_vm = np.random.uniform(0.0, 1.0, 1)
+            alpha = np.random.uniform(0.0, 0.5, 1)
             if p_vm < 0.5:
                 # Updates current's owl position (eq. 9 - top)
                 agent.position += (

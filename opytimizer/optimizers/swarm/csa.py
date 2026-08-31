@@ -1,20 +1,13 @@
-"""Crow Search Algorithm.
-"""
+"""Crow Search Algorithm."""
 
 import copy
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class CSA(Optimizer):
@@ -38,57 +31,12 @@ class CSA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> CSA.")
-
         super(CSA, self).__init__()
 
         self.fl = 2.0
         self.AP = 0.1
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def fl(self) -> float:
-        """Flight length."""
-
-        return self._fl
-
-    @fl.setter
-    def fl(self, fl: float) -> None:
-        if not isinstance(fl, (float, int)):
-            raise e.TypeError("`fl` should be a float or integer")
-
-        self._fl = fl
-
-    @property
-    def AP(self) -> float:
-        """Awareness probability."""
-
-        return self._AP
-
-    @AP.setter
-    def AP(self, AP: float) -> None:
-        if not isinstance(AP, (float, int)):
-            raise e.TypeError("`AP` should be a float or integer")
-        if AP < 0 or AP > 1:
-            raise e.ValueError("`AP` should be between 0 and 1")
-
-        self._AP = AP
-
-    @property
-    def memory(self) -> np.ndarray:
-        """Array of memories."""
-
-        return self._memory
-
-    @memory.setter
-    def memory(self, memory: np.ndarray) -> None:
-        if not isinstance(memory, np.ndarray):
-            raise e.TypeError("`memory` should be a numpy array")
-
-        self._memory = memory
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -100,12 +48,12 @@ class CSA(Optimizer):
 
         self.memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-    def evaluate(self, space: Space, function: Function) -> None:
+    def evaluate(self, space: Space, function: Callable) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
             space: A Space object that will be evaluated.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -131,11 +79,11 @@ class CSA(Optimizer):
         """
 
         for agent in space.agents:
-            r1 = r.generate_uniform_random_number()
-            r2 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
+            r2 = np.random.uniform(0.0, 1.0, 1)
 
             # Generates a random integer (e.g. selects the crow)
-            j = r.generate_integer_random_number(high=len(space.agents))
+            j = np.random.randint(0, len(space.agents), None)
 
             if r1 >= self.AP:
                 # Updates agent's position (eq. 2)

@@ -4,7 +4,6 @@ import tensorflow as tf
 from tensorflow.keras import datasets, layers, models, optimizers
 
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
@@ -65,13 +64,12 @@ n_variables = 2
 lower_bound = [0, 0]
 upper_bound = [0.001, 1]
 
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
-function = Function(cnn)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+opt = Opytimizer(space, optimizer, cnn)
 
 # Runs the optimization task
 opt.start(n_iterations=3)

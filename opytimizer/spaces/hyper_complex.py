@@ -1,5 +1,4 @@
-"""Hypercomplex-based search space.
-"""
+"""Hypercomplex-based search space."""
 
 import copy
 from typing import List, Optional
@@ -7,9 +6,6 @@ from typing import List, Optional
 import numpy as np
 
 from opytimizer.core import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class HyperComplexSpace(Space):
@@ -35,18 +31,14 @@ class HyperComplexSpace(Space):
 
         """
 
-        logger.info("Overriding class: Space -> HyperComplexSpace.")
-
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 
-        super(HyperComplexSpace, self).__init__(
+        super().__init__(
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build()
-
-        logger.info("Class overrided.")
 
     def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""

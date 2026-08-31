@@ -23,52 +23,6 @@ def test_weo_params():
     assert new_weo.theta_max == -np.pi / 9
 
 
-def test_weo_params_setter():
-    new_weo = weo.WEO()
-
-    try:
-        new_weo.E_min = "a"
-    except:
-        new_weo.E_min = -3.5
-
-    assert new_weo.E_min == -3.5
-
-    try:
-        new_weo.E_max = "b"
-    except:
-        new_weo.E_max = -0.5
-
-    assert new_weo.E_max == -0.5
-
-    try:
-        new_weo.E_max = -5.0
-    except:
-        new_weo.E_max = -0.5
-
-    assert new_weo.E_max == -0.5
-
-    try:
-        new_weo.theta_min = "c"
-    except:
-        new_weo.theta_min = -np.pi / 3.6
-
-    assert new_weo.theta_min == -np.pi / 3.6
-
-    try:
-        new_weo.theta_max = "d"
-    except:
-        new_weo.theta_max = -np.pi / 9
-
-    assert new_weo.theta_max == -np.pi / 9
-
-    try:
-        new_weo.theta_max = -np.pi / 3
-    except:
-        new_weo.theta_max = -np.pi / 9
-
-    assert new_weo.theta_max == -np.pi / 9
-
-
 def test_weo_evaporation_flux():
     new_weo = weo.WEO()
 

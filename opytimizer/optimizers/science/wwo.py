@@ -1,21 +1,14 @@
-"""Water Wave Optimization.
-"""
+"""Water Wave Optimization."""
 
 import copy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class WWO(Optimizer):
@@ -38,8 +31,6 @@ class WWO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> WWO.")
-
         super(WWO, self).__init__()
 
         self.h_max = 5
@@ -51,94 +42,6 @@ class WWO(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def h_max(self) -> int:
-        """Maximum wave height."""
-
-        return self._h_max
-
-    @h_max.setter
-    def h_max(self, h_max: int) -> None:
-        if not isinstance(h_max, int):
-            raise e.TypeError("`h_max` should be an integer")
-        if h_max <= 0:
-            raise e.ValueError("`h_max` should be > 0")
-
-        self._h_max = h_max
-
-    @property
-    def alpha(self) -> float:
-        """Wave length reduction coefficient."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0:
-            raise e.ValueError("`alpha` should be >= 0")
-
-        self._alpha = alpha
-
-    @property
-    def beta(self) -> float:
-        """Breaking coefficient."""
-
-        return self._beta
-
-    @beta.setter
-    def beta(self, beta: float) -> None:
-        if not isinstance(beta, (float, int)):
-            raise e.TypeError("`beta` should be a float or integer")
-        if beta < 0:
-            raise e.ValueError("`beta` should be >= 0")
-
-        self._beta = beta
-
-    @property
-    def k_max(self) -> int:
-        """Maximum number of breakings."""
-
-        return self._k_max
-
-    @k_max.setter
-    def k_max(self, k_max: int) -> None:
-        if not isinstance(k_max, int):
-            raise e.TypeError("`k_max` should be an integer")
-        if k_max <= 0:
-            raise e.ValueError("`k_max` should be > 0")
-
-        self._k_max = k_max
-
-    @property
-    def height(self) -> np.ndarray:
-        """Array of heights."""
-
-        return self._height
-
-    @height.setter
-    def height(self, height: np.ndarray) -> None:
-        if not isinstance(height, np.ndarray):
-            raise e.TypeError("`height` should be a numpy array")
-
-        self._height = height
-
-    @property
-    def length(self) -> np.ndarray:
-        """Array of lengths."""
-
-        return self._length
-
-    @length.setter
-    def length(self, length: np.ndarray) -> None:
-        if not isinstance(length, np.ndarray):
-            raise e.TypeError("`length` should be a numpy array")
-
-        self._length = length
-
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
@@ -147,12 +50,10 @@ class WWO(Optimizer):
 
         """
 
-        self.height = r.generate_uniform_random_number(
-            self.h_max, self.h_max, space.n_agents
-        )
-        self.length = r.generate_uniform_random_number(0.5, 0.5, space.n_agents)
+        self.height = np.random.uniform(self.h_max, self.h_max, space.n_agents)
+        self.length = np.random.uniform(0.5, 0.5, space.n_agents)
 
-    def _propagate_wave(self, agent: Agent, function: Function, index: int) -> Agent:
+    def _propagate_wave(self, agent: Agent, function: Callable, index: int) -> Agent:
         """Propagates wave into a new position (eq. 6).
 
         Args:
@@ -168,7 +69,7 @@ class WWO(Optimizer):
         wave = copy.deepcopy(agent)
 
         for j in range(wave.n_variables):
-            r1 = r.generate_uniform_random_number(-1, 1)
+            r1 = np.random.uniform(-1, 1, 1)
             wave.position[j] += r1 * self.length[index] * (j + 1)
         wave.clip_by_bound()
 
@@ -177,7 +78,7 @@ class WWO(Optimizer):
         return wave
 
     def _refract_wave(
-        self, agent: Agent, best_agent: Agent, function: Function, index: int
+        self, agent: Agent, best_agent: Agent, function: Callable, index: int
     ) -> Tuple[float, float]:
         """Refract wave into a new position (eq. 8-9).
 
@@ -199,7 +100,7 @@ class WWO(Optimizer):
             std = np.fabs(best_agent.position[j] - agent.position[j]) / 2
 
             # Generates a new position (eq. 8)
-            agent.position[j] = r.generate_gaussian_random_number(mean, std)
+            agent.position[j] = np.random.normal(mean, std, 1)
         agent.clip_by_bound()
 
         agent.fit = function(agent.position)
@@ -211,7 +112,7 @@ class WWO(Optimizer):
 
         return new_height, new_length
 
-    def _break_wave(self, wave: Agent, function: Function, j: int) -> Agent:
+    def _break_wave(self, wave: Agent, function: Callable, j: int) -> Agent:
         """Breaks current wave into a new one (eq. 10).
 
         Args:
@@ -224,7 +125,7 @@ class WWO(Optimizer):
 
         """
 
-        r1 = r.generate_gaussian_random_number()
+        r1 = np.random.normal(0.0, 1.0, 1)
 
         broken_wave = copy.deepcopy(wave)
         broken_wave.position[j] += r1 * self.beta * (j + 1)
@@ -250,7 +151,7 @@ class WWO(Optimizer):
                 / (agents[0].fit - agents[-1].fit + c.EPSILON)
             )
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Water Wave Optimization over all agents and variables.
 
         Args:
@@ -267,7 +168,7 @@ class WWO(Optimizer):
                     space.best_agent.position = copy.deepcopy(wave.position)
                     space.best_agent.fit = copy.deepcopy(wave.fit)
 
-                    k = r.generate_integer_random_number(1, self.k_max + 1)
+                    k = np.random.randint(1, self.k_max + 1, None)
                     for j in range(k):
                         # Breaks the propagated wave (eq. 10)
                         broken_wave = self._break_wave(wave, function, j)

@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.population import ppa
 from opytimizer.spaces import search
 
@@ -11,13 +9,6 @@ def test_ppa_compile():
 
     new_ppa = ppa.PPA()
     new_ppa.compile(search_space)
-
-    try:
-        new_ppa.velocity = 1
-    except:
-        new_ppa.velocity = np.array([1])
-
-    assert new_ppa.velocity == np.array([1])
 
 
 def test_ppa_calculate_population():

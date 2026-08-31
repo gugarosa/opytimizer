@@ -1,19 +1,13 @@
-"""Pigeon-Inspired Optimization.
-"""
+"""Pigeon-Inspired Optimization."""
 
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class PIO(Optimizer):
@@ -37,8 +31,6 @@ class PIO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> PIO.")
-
         super(PIO, self).__init__()
 
         self.n_c1 = 150
@@ -47,81 +39,6 @@ class PIO(Optimizer):
         self.R = 0.2
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def n_c1(self) -> int:
-        """Number of mapping iterations."""
-
-        return self._n_c1
-
-    @n_c1.setter
-    def n_c1(self, n_c1: int) -> None:
-        if not isinstance(n_c1, int):
-            raise e.TypeError("`n_c1` should be an integer")
-        if n_c1 <= 0:
-            raise e.ValueError("`n_c1` should be > 0")
-
-        self._n_c1 = n_c1
-
-    @property
-    def n_c2(self) -> int:
-        """Number of landmark iterations."""
-
-        return self._n_c2
-
-    @n_c2.setter
-    def n_c2(self, n_c2: int) -> None:
-        if not isinstance(n_c2, int):
-            raise e.TypeError("`n_c2` should be an integer")
-        if n_c2 < self.n_c1:
-            raise e.ValueError("`n_c1` should be > `n_c2")
-
-        self._n_c2 = n_c2
-
-    @property
-    def R(self) -> float:
-        """Map and compass factor."""
-
-        return self._R
-
-    @R.setter
-    def R(self, R: float) -> None:
-        if not isinstance(R, (float, int)):
-            raise e.TypeError("`R` should be a float or integer")
-        if R < 0:
-            raise e.ValueError("`R` should be >= 0")
-
-        self._R = R
-
-    @property
-    def n_p(self) -> int:
-        """Number of pigeons."""
-
-        return self._n_p
-
-    @n_p.setter
-    def n_p(self, n_p: int) -> None:
-        if not isinstance(n_p, int):
-            raise e.TypeError("`n_p` should be an integer")
-        if n_p <= 0:
-            raise e.ValueError("`n_p` should be > 0")
-
-        self._n_p = n_p
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of pulse rates."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -171,7 +88,7 @@ class PIO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         new_position = position + r1 * (center - position)
 
         return new_position
@@ -188,7 +105,7 @@ class PIO(Optimizer):
         if iteration < self.n_c1:
             for i, agent in enumerate(space.agents):
                 # Updates current agent velocity (eq. 5)
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 self.velocity[i] = self.velocity[i] * np.exp(
                     -self.R * (iteration + 1)
                 ) + r1 * (space.best_agent.position - agent.position)

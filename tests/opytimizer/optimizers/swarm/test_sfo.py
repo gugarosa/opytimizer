@@ -18,46 +18,6 @@ def test_sfo_params():
     assert new_sfo.e == 0.001
 
 
-def test_sfo_params_setter():
-    new_sfo = sfo.SFO()
-
-    try:
-        new_sfo.PP = "a"
-    except:
-        new_sfo.PP = 0.1
-
-    try:
-        new_sfo.PP = -1
-    except:
-        new_sfo.PP = 0.1
-
-    assert new_sfo.PP == 0.1
-
-    try:
-        new_sfo.A = "b"
-    except:
-        new_sfo.A = 4
-
-    try:
-        new_sfo.A = 0
-    except:
-        new_sfo.A = 4
-
-    assert new_sfo.A == 4
-
-    try:
-        new_sfo.e = "c"
-    except:
-        new_sfo.e = 0.001
-
-    try:
-        new_sfo.e = -1
-    except:
-        new_sfo.e = 0.001
-
-    assert new_sfo.e == 0.001
-
-
 def test_sfo_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
@@ -65,13 +25,6 @@ def test_sfo_compile():
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
-
-    try:
-        new_sfo.sardines = 1
-    except:
-        new_sfo.sardines = []
-
-    assert new_sfo.sardines == []
 
 
 def test_sfo_generate_random_agent():

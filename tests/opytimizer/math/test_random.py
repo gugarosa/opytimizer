@@ -1,45 +1,29 @@
 import numpy as np
+import pytest
 
 from opytimizer.math import random
 
-np.random.seed(0)
+
+def test_integer_preserves_scalar_and_array_behavior():
+    assert np.isscalar(random.integer(0, 2))
+    assert random.integer(0, 2, size=(2, 3)).shape == (2, 3)
 
 
-def test_generate_binary_random_number():
-    binary_array = random.generate_binary_random_number(5)
+def test_integer_excludes_without_redrawing(monkeypatch):
+    calls = []
 
-    assert binary_array.shape == (5,)
+    def randint(low, high, size):
+        calls.append((low, high, size))
+        return np.array([0, 1, 0, 1])
 
+    monkeypatch.setattr(np.random, "randint", randint)
 
-def test_generate_exponential_random_number():
-    exponential_array = random.generate_exponential_random_number(1, 5)
+    values = random.integer(0, 3, exclude=1, size=4)
 
-    assert exponential_array.shape == (5,)
-
-
-def test_generate_gamma_random_number():
-    gamma_array = random.generate_gamma_random_number(1, 1, 5)
-
-    assert gamma_array.shape == (5,)
+    assert calls == [(0, 2, 4)]
+    np.testing.assert_array_equal(values, [0, 2, 0, 2])
 
 
-def test_generate_integer_random_number():
-    integer_array = random.generate_integer_random_number(0, 1, None, 5)
-
-    assert integer_array.shape == (5,)
-
-    integer_array = random.generate_integer_random_number(0, 10, 1, 9)
-
-    assert integer_array.shape == (9,)
-
-
-def test_generate_uniform_random_number():
-    uniform_array = random.generate_uniform_random_number(0, 1, 5)
-
-    assert uniform_array.shape == (5,)
-
-
-def test_generate_gaussian_random_number():
-    gaussian_array = random.generate_gaussian_random_number(0, 1, 3)
-
-    assert gaussian_array.shape == (3,)
+def test_integer_rejects_excluding_the_only_value():
+    with pytest.raises(ValueError):
+        random.integer(0, 1, exclude=0)

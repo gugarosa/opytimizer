@@ -1,5 +1,3 @@
-import numpy as np
-
 from opytimizer.optimizers.science import gsa
 from opytimizer.spaces import search
 
@@ -14,22 +12,6 @@ def test_gsa_params():
     assert new_gsa.G == 2.467
 
 
-def test_gsa_params_setter():
-    new_gsa = gsa.GSA()
-
-    try:
-        new_gsa.G = "a"
-    except:
-        new_gsa.G = 0.1
-
-    try:
-        new_gsa.G = -1
-    except:
-        new_gsa.G = 0.1
-
-    assert new_gsa.G == 0.1
-
-
 def test_gsa_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -37,13 +19,6 @@ def test_gsa_compile():
 
     new_gsa = gsa.GSA()
     new_gsa.compile(search_space)
-
-    try:
-        new_gsa.velocity = 1
-    except:
-        new_gsa.velocity = np.array([1])
-
-    assert new_gsa.velocity == np.array([1])
 
 
 def test_gsa_calculate_mass():

@@ -12,20 +12,6 @@ def test_epo_params():
     assert new_epo.l == 1.5
 
 
-def test_epo_params_setter():
-    new_epo = epo.EPO()
-
-    try:
-        new_epo.f = "a"
-    except:
-        new_epo.f = 2.0
-
-    try:
-        new_epo.l = "b"
-    except:
-        new_epo.l = 1.5
-
-
 def test_epo_update():
     new_epo = epo.EPO()
 

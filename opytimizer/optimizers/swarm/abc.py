@@ -1,21 +1,14 @@
-"""Artificial Bee Colony.
-"""
+"""Artificial Bee Colony."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class ABC(Optimizer):
@@ -39,43 +32,11 @@ class ABC(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> ABC.")
-
         super(ABC, self).__init__()
 
         self.n_trials = 10
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def n_trials(self) -> int:
-        """Number of trial limits."""
-
-        return self._n_trials
-
-    @n_trials.setter
-    def n_trials(self, n_trials: int) -> None:
-        if not isinstance(n_trials, int):
-            raise e.TypeError("`n_trials` should be an integer")
-        if n_trials <= 0:
-            raise e.ValueError("`n_trials` should be > 0")
-
-        self._n_trials = n_trials
-
-    @property
-    def trial(self) -> np.ndarray:
-        """Array of trial."""
-
-        return self._trial
-
-    @trial.setter
-    def trial(self, trial: np.ndarray) -> None:
-        if not isinstance(trial, np.ndarray):
-            raise e.TypeError("`trial` should be a numpy array")
-
-        self._trial = trial
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -88,7 +49,7 @@ class ABC(Optimizer):
         self.trial = np.zeros(space.n_agents)
 
     def _evaluate_location(
-        self, agent: Agent, neighbour: Agent, function: Function, index: int
+        self, agent: Agent, neighbour: Agent, function: Callable, index: int
     ) -> None:
         """Evaluates a food source location and update its value if possible (eq. 2.2).
 
@@ -100,7 +61,7 @@ class ABC(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number(-1, 1)
+        r1 = np.random.uniform(-1, 1, 1)
 
         a = copy.deepcopy(agent)
 
@@ -117,7 +78,7 @@ class ABC(Optimizer):
         else:
             self.trial[index] += 1
 
-    def _send_employee(self, agents: List[Agent], function: Function) -> None:
+    def _send_employee(self, agents: List[Agent], function: Callable) -> None:
         """Sends employee bees onto food source to evaluate its nectar.
 
         Args:
@@ -127,10 +88,10 @@ class ABC(Optimizer):
         """
 
         for i, agent in enumerate(agents):
-            source = r.generate_integer_random_number(0, len(agents))
+            source = np.random.randint(0, len(agents), None)
             self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_onlooker(self, agents: List[Agent], function: Function) -> None:
+    def _send_onlooker(self, agents: List[Agent], function: Callable) -> None:
         """Sends onlooker bees to select new food sources (eq. 2.1).
 
         Args:
@@ -144,16 +105,16 @@ class ABC(Optimizer):
         k = 0
         while k < len(agents):
             for i, agent in enumerate(agents):
-                r1 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
                 probs = (agent.fit / (total + c.EPSILON)) + 0.1
 
                 if r1 < probs:
                     k += 1
 
-                    source = r.generate_integer_random_number(0, len(agents))
+                    source = np.random.randint(0, len(agents), None)
                     self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_scout(self, agents: List[Agent], function: Function) -> None:
+    def _send_scout(self, agents: List[Agent], function: Callable) -> None:
         """Sends scout bees to scout for new possible food sources.
 
         Args:
@@ -167,19 +128,19 @@ class ABC(Optimizer):
             self.trial[max_index] = 0
 
             a = copy.deepcopy(agents[max_index])
-            a.position += r.generate_uniform_random_number(-1, 1)
+            a.position += np.random.uniform(-1, 1, 1)
             a.clip_by_bound()
 
             a.fit = function(a.position)
             if a.fit < agents[max_index].fit:
                 agents[max_index] = copy.deepcopy(a)
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Artificial Bee Colony over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

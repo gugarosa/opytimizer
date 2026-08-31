@@ -1,22 +1,15 @@
-"""Krill Herd.
-"""
+"""Krill Herd."""
 
 import copy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.general as g
 import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class KH(Optimizer):
@@ -56,169 +49,6 @@ class KH(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def N_max(self) -> float:
-        """Maximum induced speed."""
-
-        return self._N_max
-
-    @N_max.setter
-    def N_max(self, N_max: float) -> None:
-        if not isinstance(N_max, (float, int)):
-            raise e.TypeError("`N_max` should be a float or integer")
-        if N_max < 0:
-            raise e.ValueError("`N_max` should be >= 0")
-
-        self._N_max = N_max
-
-    @property
-    def w_n(self) -> float:
-        """Inertia weight of the neighbours' motion."""
-
-        return self._w_n
-
-    @w_n.setter
-    def w_n(self, w_n: float) -> None:
-        if not isinstance(w_n, (float, int)):
-            raise e.TypeError("`w_n` should be a float or integer")
-        if w_n < 0 or w_n > 1:
-            raise e.ValueError("`w_n` should be between 0 and 1")
-
-        self._w_n = w_n
-
-    @property
-    def NN(self) -> int:
-        """Number of neighbours."""
-
-        return self._NN
-
-    @NN.setter
-    def NN(self, NN: int) -> None:
-        if not isinstance(NN, int):
-            raise e.TypeError("`NN` should be a integer")
-        if NN < 0:
-            raise e.ValueError("`NN` should be >= 0")
-
-        self._NN = NN
-
-    @property
-    def V_f(self) -> float:
-        """Foraging speed."""
-
-        return self._V_f
-
-    @V_f.setter
-    def V_f(self, V_f: float) -> None:
-        if not isinstance(V_f, (float, int)):
-            raise e.TypeError("`V_f` should be a float or integer")
-        if V_f < 0:
-            raise e.ValueError("`V_f` should be >= 0")
-
-        self._V_f = V_f
-
-    @property
-    def w_f(self) -> float:
-        """Inertia weight of the foraging motion."""
-
-        return self._w_f
-
-    @w_f.setter
-    def w_f(self, w_f: float) -> None:
-        if not isinstance(w_f, (float, int)):
-            raise e.TypeError("`w_f` should be a float or integer")
-        if w_f < 0 or w_f > 1:
-            raise e.ValueError("`w_f` should be between 0 and 1")
-
-        self._w_f = w_f
-
-    @property
-    def D_max(self) -> float:
-        """Maximum diffusion speed."""
-
-        return self._D_max
-
-    @D_max.setter
-    def D_max(self, D_max: float) -> None:
-        if not isinstance(D_max, (float, int)):
-            raise e.TypeError("`D_max` should be a float or integer")
-        if D_max < 0:
-            raise e.ValueError("`D_max` should be >= 0")
-
-        self._D_max = D_max
-
-    @property
-    def C_t(self) -> float:
-        """Position constant."""
-
-        return self._C_t
-
-    @C_t.setter
-    def C_t(self, C_t: float) -> None:
-        if not isinstance(C_t, (float, int)):
-            raise e.TypeError("`C_t` should be a float or integer")
-        if C_t < 0 or C_t > 2:
-            raise e.ValueError("`C_t` should be between 0 and 2")
-
-        self._C_t = C_t
-
-    @property
-    def Cr(self) -> float:
-        """Crossover probability."""
-
-        return self._Cr
-
-    @Cr.setter
-    def Cr(self, Cr: float) -> None:
-        if not isinstance(Cr, (float, int)):
-            raise e.TypeError("`Cr` should be a float or integer")
-        if Cr < 0 or Cr > 1:
-            raise e.ValueError("`Cr` should be between 0 and 1")
-
-        self._Cr = Cr
-
-    @property
-    def Mu(self) -> float:
-        """Mutation probability."""
-
-        return self._Mu
-
-    @Mu.setter
-    def Mu(self, Mu: float) -> None:
-        if not isinstance(Mu, (float, int)):
-            raise e.TypeError("`Mu` should be a float or integer")
-        if Mu < 0 or Mu > 1:
-            raise e.ValueError("`Mu` should be between 0 and 1")
-
-        self._Mu = Mu
-
-    @property
-    def motion(self) -> np.ndarray:
-        """Array of motions."""
-
-        return self._motion
-
-    @motion.setter
-    def motion(self, motion: np.ndarray) -> None:
-        if not isinstance(motion, np.ndarray):
-            raise e.TypeError("`motion` should be a numpy array")
-
-        self._motion = motion
-
-    @property
-    def foraging(self) -> np.ndarray:
-        """Array of foragings."""
-
-        return self._foraging
-
-    @foraging.setter
-    def foraging(self, foraging: np.ndarray) -> None:
-        if not isinstance(foraging, np.ndarray):
-            raise e.TypeError("`foraging` should be a numpy array")
-
-        self._foraging = foraging
-
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
@@ -232,12 +62,12 @@ class KH(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def _food_location(self, agents: List[Agent], function: Function) -> Agent:
+    def _food_location(self, agents: List[Agent], function: Callable) -> Agent:
         """Calculates the food location.
 
         Args:
             agents: List of agents.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
            (Agent): A new food location.
@@ -271,8 +101,7 @@ class KH(Optimizer):
         """
 
         eucl_distance = [
-            g.euclidean_distance(agents[idx].position, agent.position)
-            for agent in agents
+            np.linalg.norm(agents[idx].position - agent.position) for agent in agents
         ]
         distance = np.sum(eucl_distance) / (self.NN * len(agents))
 
@@ -329,7 +158,7 @@ class KH(Optimizer):
 
         position = [
             (neighbour.position - agent.position)
-            / (g.euclidean_distance(neighbour.position, agent.position) + c.EPSILON)
+            / (np.linalg.norm(neighbour.position - agent.position) + c.EPSILON)
             for neighbour in neighbours
         ]
 
@@ -356,7 +185,7 @@ class KH(Optimizer):
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
         position = (best.position - agent.position) / (
-            g.euclidean_distance(best.position, agent.position) + c.EPSILON
+            np.linalg.norm(best.position - agent.position) + c.EPSILON
         )
 
         alpha = C_best * fitness * position
@@ -393,7 +222,7 @@ class KH(Optimizer):
         alpha_l = self._local_alpha(agents[idx], agents[-1], agents[0], neighbours)
 
         # Calculates the effective coefficient (eq. 9)
-        C_best = 2 * (r.generate_uniform_random_number() + iteration / n_iterations)
+        C_best = 2 * (np.random.uniform(0.0, 1.0, 1) + iteration / n_iterations)
 
         # Calculates the target alpha (eq. 8)
         alpha_t = self._target_alpha(agents[idx], agents[-1], agents[0], C_best)
@@ -423,7 +252,7 @@ class KH(Optimizer):
         fitness = (agent.fit - food.fit) / (worst.fit - best.fit + c.EPSILON)
 
         position = (food.position - agent.position) / (
-            g.euclidean_distance(food.position, agent.position) + c.EPSILON
+            np.linalg.norm(food.position - agent.position) + c.EPSILON
         )
 
         beta = C_food * fitness * position
@@ -446,7 +275,7 @@ class KH(Optimizer):
         fitness = (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
 
         position = (best.position - agent.position) / (
-            g.euclidean_distance(best.position, agent.position) + c.EPSILON
+            np.linalg.norm(best.position - agent.position) + c.EPSILON
         )
 
         beta = fitness * position
@@ -508,7 +337,7 @@ class KH(Optimizer):
         """
 
         # Calculates the physical diffusion (eq. 17)
-        r1 = r.generate_uniform_random_number(-1, 1, size=(n_variables, n_dimensions))
+        r1 = np.random.uniform(-1, 1, (n_variables, n_dimensions))
         physical_diffusion = self.D_max * (1 - iteration / n_iterations) * r1
 
         return physical_diffusion
@@ -574,7 +403,7 @@ class KH(Optimizer):
         """
 
         a = copy.deepcopy(agents[idx])
-        m = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
+        m = r.integer(0, len(agents), exclude=idx, size=None)
 
         Cr = self.Cr * (
             (agents[idx].fit - agents[0].fit)
@@ -582,7 +411,7 @@ class KH(Optimizer):
         )
 
         for j in range(a.n_variables):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < Cr:
                 a.position[j] = copy.deepcopy(agents[m].position[j])
 
@@ -602,8 +431,8 @@ class KH(Optimizer):
 
         a = copy.deepcopy(agents[idx])
 
-        p = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
-        q = r.generate_integer_random_number(0, len(agents), exclude_value=idx)
+        p = r.integer(0, len(agents), exclude=idx, size=None)
+        q = r.integer(0, len(agents), exclude=idx, size=None)
 
         Mu = self.Mu / (
             (agents[idx].fit - agents[0].fit)
@@ -612,9 +441,9 @@ class KH(Optimizer):
         )
 
         for j in range(a.n_variables):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < Mu:
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
                 a.position[j] = agents[0].position[j] + r2 * (
                     agents[p].position[j] - agents[q].position[j]
                 )
@@ -622,13 +451,13 @@ class KH(Optimizer):
         return a
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps motion and genetic updates over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 

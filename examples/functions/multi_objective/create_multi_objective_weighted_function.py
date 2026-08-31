@@ -13,11 +13,10 @@ def test_function2(z):
 # Declares `x`
 x = 0
 
-# Any type of internal python-coded function
-# can be used as a pointer
+# Any callable can be used directly
 h = MultiObjectiveWeightedFunction([test_function1, test_function2], [0.5, 0.5])
 
-# Testing out your new Function class
+# Tests the weighted callable
 print(f"x: {x}")
 print(f"f(x): {h.functions[0](x)}")
 print(f"g(x): {h.functions[1](x)}")

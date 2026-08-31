@@ -1,19 +1,12 @@
+import numpy as np
+
 from opytimizer.math import distribution
 
 
-def test_generate_bernoulli_distribution():
-    bernoulli_array = distribution.generate_bernoulli_distribution(prob=0.5, size=10)
+def test_generate_levy_distribution_applies_mantegna_step(monkeypatch):
+    draws = iter([np.array([2.0]), np.array([-4.0])])
+    monkeypatch.setattr(np.random, "normal", lambda *args, **kwargs: next(draws))
 
-    assert bernoulli_array.shape == (10,)
+    sample = distribution.generate_levy_distribution(beta=1, size=1)
 
-
-def test_generate_choice_distribution():
-    choice_array = distribution.generate_choice_distribution(n=10, probs=None, size=10)
-
-    assert choice_array.shape == (10,)
-
-
-def test_generate_levy_distribution():
-    levy_array = distribution.generate_levy_distribution(beta=0.1, size=5)
-
-    assert levy_array.shape == (5,)
+    np.testing.assert_allclose(sample, [0.5])

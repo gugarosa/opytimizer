@@ -1,20 +1,13 @@
-"""Coyote Optimization Algorithm.
-"""
+"""Coyote Optimization Algorithm."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class COA(Optimizer):
@@ -37,45 +30,11 @@ class COA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> COA.")
-
         super(COA, self).__init__()
 
         self.n_p = 2
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def n_p(self) -> int:
-        """Number of packs."""
-
-        return self._n_p
-
-    @n_p.setter
-    def n_p(self, n_p: int) -> None:
-        if not isinstance(n_p, int):
-            raise e.TypeError("`n_p` should be an integer")
-        if n_p <= 0:
-            raise e.ValueError("`n_p` should be > 0")
-
-        self._n_p = n_p
-
-    @property
-    def n_c(self) -> int:
-        """Number of coyotes per pack."""
-
-        return self._n_c
-
-    @n_c.setter
-    def n_c(self, n_c: int) -> None:
-        if not isinstance(n_c, int):
-            raise e.TypeError("`n_c` should be an integer")
-        if n_c <= 0:
-            raise e.ValueError("`n_c` should be > 0")
-
-        self._n_c = n_c
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -115,26 +74,26 @@ class COA(Optimizer):
         """
 
         p_e = 0.005 * len(agents)
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
 
         if r1 < p_e:
-            p1 = r.generate_integer_random_number(high=self.n_p)
-            p2 = r.generate_integer_random_number(high=self.n_p)
+            p1 = np.random.randint(0, self.n_p, None)
+            p2 = np.random.randint(0, self.n_p, None)
 
-            c1 = r.generate_integer_random_number(high=self.n_c)
-            c2 = r.generate_integer_random_number(high=self.n_c)
+            c1 = np.random.randint(0, self.n_c, None)
+            c2 = np.random.randint(0, self.n_c, None)
 
             i = self.n_c * p1 + c1
             j = self.n_c * p2 + c2
 
             agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Coyote Optimization Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -152,14 +111,14 @@ class COA(Optimizer):
             for agent in pack_agents:
                 a = copy.deepcopy(agent)
 
-                cr1 = r.generate_integer_random_number(high=len(pack_agents))
-                cr2 = r.generate_integer_random_number(high=len(pack_agents))
+                cr1 = np.random.randint(0, len(pack_agents), None)
+                cr2 = np.random.randint(0, len(pack_agents), None)
 
                 lambda_1 = alpha.position - pack_agents[cr1].position
                 lambda_2 = tendency - pack_agents[cr2].position
 
-                r1 = r.generate_uniform_random_number()
-                r2 = r.generate_uniform_random_number()
+                r1 = np.random.uniform(0.0, 1.0, 1)
+                r2 = np.random.uniform(0.0, 1.0, 1)
 
                 # Updates the social condition (eq. 12)
                 a.position += r1 * lambda_1 + r2 * lambda_2

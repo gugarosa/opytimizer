@@ -16,46 +16,6 @@ def test_pso_params():
     assert new_pso.c2 == 1.7
 
 
-def test_pso_params_setter():
-    new_pso = pso.PSO()
-
-    try:
-        new_pso.w = "a"
-    except:
-        new_pso.w = 1
-
-    try:
-        new_pso.w = -1
-    except:
-        new_pso.w = 1
-
-    assert new_pso.w == 1
-
-    try:
-        new_pso.c1 = "b"
-    except:
-        new_pso.c1 = 1.5
-
-    try:
-        new_pso.c1 = -1
-    except:
-        new_pso.c1 = 1.5
-
-    assert new_pso.c1 == 1.5
-
-    try:
-        new_pso.c2 = "c"
-    except:
-        new_pso.c2 = 1.5
-
-    try:
-        new_pso.c2 = -1
-    except:
-        new_pso.c2 = 1.5
-
-    assert new_pso.c2 == 1.5
-
-
 def test_pso_compile():
     search_space = search.SearchSpace(
         n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -63,20 +23,6 @@ def test_pso_compile():
 
     new_pso = pso.PSO()
     new_pso.compile(search_space)
-
-    try:
-        new_pso.local_position = 1
-    except:
-        new_pso.local_position = np.array([1])
-
-    assert new_pso.local_position == np.array([1])
-
-    try:
-        new_pso.velocity = 1
-    except:
-        new_pso.velocity = np.array([1])
-
-    assert new_pso.velocity == np.array([1])
 
 
 def test_pso_evaluate():
@@ -135,27 +81,6 @@ def test_rpso_compile():
     new_rpso = pso.RPSO()
     new_rpso.compile(search_space)
 
-    try:
-        new_rpso.local_position = 1
-    except:
-        new_rpso.local_position = np.array([1])
-
-    assert new_rpso.local_position == np.array([1])
-
-    try:
-        new_rpso.velocity = 1
-    except:
-        new_rpso.velocity = np.array([1])
-
-    assert new_rpso.velocity == np.array([1])
-
-    try:
-        new_rpso.mass = 1
-    except:
-        new_rpso.mass = np.array([1])
-
-    assert new_rpso.mass == np.array([1])
-
 
 def test_rpso_update():
     search_space = search.SearchSpace(
@@ -186,27 +111,6 @@ def test_vpso_compile():
 
     new_vpso = pso.VPSO()
     new_vpso.compile(search_space)
-
-    try:
-        new_vpso.local_position = 1
-    except:
-        new_vpso.local_position = np.array([1])
-
-    assert new_vpso.local_position == np.array([1])
-
-    try:
-        new_vpso.velocity = 1
-    except:
-        new_vpso.velocity = np.array([1])
-
-    assert new_vpso.velocity == np.array([1])
-
-    try:
-        new_vpso.v_velocity = 1
-    except:
-        new_vpso.v_velocity = np.array([1])
-
-    assert new_vpso.v_velocity == np.array([1])
 
 
 def test_vpso_update():

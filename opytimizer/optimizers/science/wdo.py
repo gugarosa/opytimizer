@@ -1,18 +1,11 @@
-"""Wind Driven Optimization.
-"""
+"""Wind Driven Optimization."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class WDO(Optimizer):
@@ -35,8 +28,6 @@ class WDO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> WDO.")
-
         super(WDO, self).__init__()
 
         self.v_max = 0.3
@@ -46,96 +37,6 @@ class WDO(Optimizer):
         self.RT = 1.5
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def v_max(self) -> float:
-        """Maximum velocity."""
-
-        return self._v_max
-
-    @v_max.setter
-    def v_max(self, v_max: float) -> None:
-        if not isinstance(v_max, (float, int)):
-            raise e.TypeError("`v_max` should be a float or integer")
-        if v_max < 0:
-            raise e.ValueError("`v_max` should be >= 0")
-
-        self._v_max = v_max
-
-    @property
-    def alpha(self) -> float:
-        """Friction coefficient."""
-
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, alpha: float) -> None:
-        if not isinstance(alpha, (float, int)):
-            raise e.TypeError("`alpha` should be a float or integer")
-        if alpha < 0 or alpha > 1:
-            raise e.ValueError("`alpha` should be between 0 and 1")
-
-        self._alpha = alpha
-
-    @property
-    def g(self) -> float:
-        """Gravitational force coefficient."""
-
-        return self._g
-
-    @g.setter
-    def g(self, g: float) -> None:
-        if not isinstance(g, (float, int)):
-            raise e.TypeError("`g` should be a float or integer")
-        if g < 0:
-            raise e.ValueError("`g` should be >= 0")
-
-        self._g = g
-
-    @property
-    def c(self) -> float:
-        """Coriolis force."""
-
-        return self._c
-
-    @c.setter
-    def c(self, c: float) -> None:
-        if not isinstance(c, (float, int)):
-            raise e.TypeError("`c` should be a float or integer")
-        if c < 0:
-            raise e.ValueError("`c` should be >= 0")
-
-        self._c = c
-
-    @property
-    def RT(self) -> float:
-        """Pressure constant."""
-
-        return self._RT
-
-    @RT.setter
-    def RT(self, RT: float) -> None:
-        if not isinstance(RT, (float, int)):
-            raise e.TypeError("`RT` should be a float or integer")
-        if RT < 0:
-            raise e.ValueError("`RT` should be >= 0")
-
-        self._RT = RT
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -149,7 +50,7 @@ class WDO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions)
         )
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Wind Driven Optimization over all agents and variables.
 
         Args:
@@ -159,7 +60,7 @@ class WDO(Optimizer):
         """
 
         for i, agent in enumerate(space.agents):
-            index = r.generate_integer_random_number(0, len(space.agents))
+            index = np.random.randint(0, len(space.agents), None)
 
             # Updates velocity (eq. 15)
             self.velocity[i] = (

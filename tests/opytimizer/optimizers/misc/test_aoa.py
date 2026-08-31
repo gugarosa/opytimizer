@@ -16,63 +16,6 @@ def test_aoa_params():
     assert new_aoa.mu == 0.499
 
 
-def test_aoa_params_setter():
-    new_aoa = aoa.AOA()
-
-    try:
-        new_aoa.a_min = "a"
-    except:
-        new_aoa.a_min = 0.2
-
-    try:
-        new_aoa.a_min = -1
-    except:
-        new_aoa.a_min = 0.2
-
-    assert new_aoa.a_min == 0.2
-
-    try:
-        new_aoa.a_max = "b"
-    except:
-        new_aoa.a_max = 1.0
-
-    try:
-        new_aoa.a_max = -1
-    except:
-        new_aoa.a_max = 1.0
-
-    try:
-        new_aoa.a_max = 0
-    except:
-        new_aoa.a_max = 1.0
-
-    assert new_aoa.a_max == 1.0
-
-    try:
-        new_aoa.alpha = "c"
-    except:
-        new_aoa.alpha = 5.0
-
-    try:
-        new_aoa.alpha = -1
-    except:
-        new_aoa.alpha = 5.0
-
-    assert new_aoa.alpha == 5.0
-
-    try:
-        new_aoa.mu = "d"
-    except:
-        new_aoa.mu = 0.499
-
-    try:
-        new_aoa.mu = -1
-    except:
-        new_aoa.mu = 0.499
-
-    assert new_aoa.mu == 0.499
-
-
 def test_aoa_update():
     new_aoa = aoa.AOA()
 

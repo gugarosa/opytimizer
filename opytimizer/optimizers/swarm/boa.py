@@ -1,17 +1,12 @@
-"""Butterfly Optimization Algorithm.
-"""
+"""Butterfly Optimization Algorithm."""
 
 from typing import Any, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BOA(Optimizer):
@@ -34,8 +29,6 @@ class BOA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BOA.")
-
         super(BOA, self).__init__()
 
         self.c = 0.01
@@ -43,66 +36,6 @@ class BOA(Optimizer):
         self.p = 0.8
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def c(self) -> float:
-        """Sensor modality."""
-
-        return self._c
-
-    @c.setter
-    def c(self, c: float) -> None:
-        if not isinstance(c, (float, int)):
-            raise e.TypeError("`c` should be a float or integer")
-        if c < 0:
-            raise e.ValueError("`c` should be >= 0")
-
-        self._c = c
-
-    @property
-    def a(self) -> float:
-        """Power exponent."""
-
-        return self._a
-
-    @a.setter
-    def a(self, a: float) -> None:
-        if not isinstance(a, (float, int)):
-            raise e.TypeError("`a` should be a float or integer")
-        if a < 0:
-            raise e.ValueError("`a` should be >= 0")
-
-        self._a = a
-
-    @property
-    def p(self) -> float:
-        """Switch probability."""
-
-        return self._p
-
-    @p.setter
-    def p(self, p: float) -> None:
-        if not isinstance(p, (float, int)):
-            raise e.TypeError("`p` should be a float or integer")
-        if p < 0 or p > 1:
-            raise e.ValueError("`p` should be between 0 and 1")
-
-        self._p = p
-
-    @property
-    def fragrance(self) -> np.ndarray:
-        """Array of fragrances."""
-
-        return self._fragrance
-
-    @fragrance.setter
-    def fragrance(self, fragrance: np.ndarray) -> None:
-        if not isinstance(fragrance, np.ndarray):
-            raise e.TypeError("`fragrance` should be a numpy array")
-
-        self._fragrance = fragrance
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -181,17 +114,15 @@ class BOA(Optimizer):
             self.fragrance[i] = self.c * agent.fit**self.a
 
         for i, agent in enumerate(space.agents):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < self.p:
                 # Moves current agent towards the best one (eq. 2)
                 agent.position = self._best_movement(
                     agent.position, space.best_agent.position, self.fragrance[i], r1
                 )
             else:
-                j = r.generate_integer_random_number(0, len(space.agents))
-                k = r.generate_integer_random_number(
-                    0, len(space.agents), exclude_value=j
-                )
+                j = np.random.randint(0, len(space.agents), None)
+                k = r.integer(0, len(space.agents), exclude=j, size=None)
 
                 # Moves current agent using a local movement (eq. 3)
                 agent.position = self._local_movement(

@@ -1,5 +1,4 @@
-"""Parasitism-Predation Algorithm.
-"""
+"""Parasitism-Predation Algorithm."""
 
 from typing import Any, Dict, Optional, Tuple
 
@@ -8,12 +7,8 @@ import numpy as np
 import opytimizer.math.distribution as d
 import opytimizer.math.general as g
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class PPA(Optimizer):
@@ -36,26 +31,9 @@ class PPA(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> PPA.")
-
         super(PPA, self).__init__()
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -107,7 +85,7 @@ class PPA(Optimizer):
 
         crows = space.agents[:n_crows]
         for i, crow in enumerate(crows):
-            idx = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
+            idx = r.integer(0, space.n_agents, exclude=i, size=None)
 
             # Calculates the step from Lévy distribution (eq. 7)
             step = d.generate_levy_distribution(size=crow.n_variables)
@@ -144,15 +122,15 @@ class PPA(Optimizer):
         for cuckoo in cuckoos:
             s = g.tournament_selection(fitness, 1)[0]
 
-            i = r.generate_integer_random_number(high=space.n_agents)
-            j = r.generate_integer_random_number(high=space.n_agents, exclude_value=i)
+            i = np.random.randint(0, space.n_agents, None)
+            j = r.integer(0, space.n_agents, exclude=i, size=None)
 
             # Creates a bernoulli distribution to preserve or not variables (eq. 12)
-            k = d.generate_bernoulli_distribution(1 - p, cuckoo.n_variables)
+            k = np.random.binomial(1, 1 - p, cuckoo.n_variables)
             k = np.expand_dims(k, -1)
 
             # Calculates the gaussian-based step distribution (eq. 11)
-            rand = r.generate_uniform_random_number()
+            rand = np.random.uniform(0.0, 1.0, 1)
             S_g = (space.agents[i].position - space.agents[j].position) * rand
 
             # Updates the cuckoo's position and clips its limits (eq. 10)
@@ -187,7 +165,7 @@ class PPA(Optimizer):
             idx = space.n_agents - n_cats + i
 
             # Updates the cat's velocity (eq. 13)
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             self.velocity[idx] += (
                 r1 * constant * (space.best_agent.position - cat.position)
             )

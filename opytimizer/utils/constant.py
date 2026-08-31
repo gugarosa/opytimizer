@@ -1,5 +1,4 @@
-"""Constants.
-"""
+"""Constants."""
 
 import sys
 

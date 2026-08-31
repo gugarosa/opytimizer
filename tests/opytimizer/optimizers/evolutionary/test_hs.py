@@ -1,9 +1,7 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.evolutionary import hs
 from opytimizer.spaces import search
-from opytimizer.utils import constant
 
 np.random.seed(0)
 
@@ -18,48 +16,6 @@ def test_hs_params():
     assert new_hs.PAR == 0.7
 
     assert new_hs.bw == 10.0
-
-
-def test_hs_params_setter():
-    new_hs = hs.HS()
-
-    try:
-        new_hs.HMCR = "a"
-    except:
-        new_hs.HMCR = 0.5
-
-    try:
-        new_hs.HMCR = -1
-    except:
-        new_hs.HMCR = 0.5
-
-    assert new_hs.HMCR == 0.5
-
-    try:
-        new_hs.PAR = "b"
-    except:
-        new_hs.PAR = 0.5
-
-    try:
-        new_hs.PAR = -1
-    except:
-        new_hs.PAR = 0.5
-
-    assert new_hs.PAR == 0.5
-
-    try:
-        new_hs.bw = "c"
-    except:
-        new_hs.bw = 5
-
-    try:
-        new_hs.bw = -1
-    except:
-        new_hs.bw = 5
-
-    assert new_hs.bw == 5
-
-    assert new_hs.bw == 5
 
 
 def test_hs_generate_new_harmony():
@@ -99,68 +55,6 @@ def test_ihs_params():
     assert new_ihs.bw_min == 2
 
     assert new_ihs.bw_max == 5
-
-
-def test_ihs_params_setter():
-    new_ihs = hs.IHS()
-
-    try:
-        new_ihs.PAR_min = "a"
-    except:
-        new_ihs.PAR_min = 0.5
-
-    try:
-        new_ihs.PAR_min = -1
-    except:
-        new_ihs.PAR_min = 0.5
-
-    assert new_ihs.PAR_min == 0.5
-
-    try:
-        new_ihs.PAR_max = "b"
-    except:
-        new_ihs.PAR_max = 1.0
-
-    try:
-        new_ihs.PAR_max = -1
-    except:
-        new_ihs.PAR_max = 1.0
-
-    try:
-        new_ihs.PAR_max = 0
-    except:
-        new_ihs.PAR_max = 1.0
-
-    assert new_ihs.PAR_max == 1.0
-
-    try:
-        new_ihs.bw_min = "c"
-    except:
-        new_ihs.bw_min = 1.0
-
-    try:
-        new_ihs.bw_min = -1
-    except:
-        new_ihs.bw_min = 1.0
-
-    assert new_ihs.bw_min == 1.0
-
-    try:
-        new_ihs.bw_max = "d"
-    except:
-        new_ihs.bw_max = 10.0
-
-    try:
-        new_ihs.bw_max = -1
-    except:
-        new_ihs.bw_max = 10.0
-
-    try:
-        new_ihs.bw_max = 0
-    except:
-        new_ihs.bw_max = 10.0
-
-    assert new_ihs.bw_max == 10.0
 
 
 def test_ihs_update():
@@ -210,89 +104,6 @@ def test_sghs_params():
     assert new_sghs.bw_max == 10
 
 
-def test_sghs_params_setter():
-    new_sghs = hs.SGHS()
-
-    try:
-        new_sghs.HMCR = "a"
-    except:
-        new_sghs.HMCR = 0.5
-
-    assert new_sghs.HMCR == 0.5
-
-    try:
-        new_sghs.PAR = "b"
-    except:
-        new_sghs.PAR = 0.5
-
-    assert new_sghs.PAR == 0.5
-
-    try:
-        new_sghs.LP = 0.0
-    except:
-        new_sghs.LP = 100
-
-    try:
-        new_sghs.LP = 0
-    except:
-        new_sghs.LP = 100
-
-    assert new_sghs.LP == 100
-
-    try:
-        new_sghs.HMCRm = "a"
-    except:
-        new_sghs.HMCRm = 0.98
-
-    try:
-        new_sghs.HMCRm = -1
-    except:
-        new_sghs.HMCRm = 0.98
-
-    assert new_sghs.HMCRm == 0.98
-
-    try:
-        new_sghs.PARm = "b"
-    except:
-        new_sghs.PARm = 0.9
-
-    try:
-        new_sghs.PARm = -1
-    except:
-        new_sghs.PARm = 0.9
-
-    assert new_sghs.PARm == 0.9
-
-    try:
-        new_sghs.bw_min = "c"
-    except:
-        new_sghs.bw_min = 1.0
-
-    try:
-        new_sghs.bw_min = -1
-    except:
-        new_sghs.bw_min = 1.0
-
-    assert new_sghs.bw_min == 1.0
-
-    try:
-        new_sghs.bw_max = "d"
-    except:
-        new_sghs.bw_max = 10.0
-
-    try:
-        new_sghs.bw_max = -1
-    except:
-        new_sghs.bw_max = 10.0
-
-    try:
-        new_sghs.bw_max = 0
-    except:
-        new_sghs.bw_max = 10.0
-
-    assert new_sghs.bw_max == 10.0
-
-
 def test_sghs_compile():
     search_space = search.SearchSpace(
         n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -300,34 +111,6 @@ def test_sghs_compile():
 
     new_sghs = hs.SGHS()
     new_sghs.compile(search_space)
-
-    try:
-        new_sghs.lp = "a"
-    except:
-        new_sghs.lp = 1
-
-    assert new_sghs.lp == 1
-
-    try:
-        new_sghs.lp = -1
-    except:
-        new_sghs.lp = 1
-
-    assert new_sghs.lp == 1
-
-    try:
-        new_sghs.HMCR_history = "a"
-    except:
-        new_sghs.HMCR_history = []
-
-    assert new_sghs.HMCR_history == []
-
-    try:
-        new_sghs.PAR_history = "a"
-    except:
-        new_sghs.PAR_history = []
-
-    assert new_sghs.PAR_history == []
 
 
 def test_sghs_generate_new_harmony():
@@ -373,24 +156,6 @@ def test_nghs_params():
     params = {"pm": 0.1}
 
     new_nghs = hs.NGHS(params=params)
-
-    assert new_nghs.pm == 0.1
-
-
-def test_nghs_params_setter():
-    new_nghs = hs.NGHS()
-
-    try:
-        new_nghs.pm = "a"
-    except:
-        new_nghs.pm = 0.1
-
-    assert new_nghs.pm == 0.1
-
-    try:
-        new_nghs.pm = -1
-    except:
-        new_nghs.pm = 0.1
 
     assert new_nghs.pm == 0.1
 

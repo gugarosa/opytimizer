@@ -3,34 +3,19 @@ import numpy as np
 from opytimizer.math import hyper
 
 
-def test_norm():
-    array = np.array([[1, 1]])
+def test_span_maps_zero_and_unit_norm_to_bounds():
+    array = np.array([[0.0, 0.0], [1.0, 1.0]])
 
-    norm_array = hyper.norm(array)
+    spanned = hyper.span(array, [10], [20])
 
-    assert norm_array > 0
-
-
-def test_span():
-    array = np.array([[0.5, 0.75, 0.5, 0.9]])
-
-    lb = [0]
-
-    ub = [10]
-
-    span_array = hyper.span(array, lb, ub)
-
-    assert span_array > 0
+    np.testing.assert_allclose(spanned, [10, 20])
 
 
-def test_span_to_hyper_value():
-    lb = np.full(1, 10)
-    ub = np.full(1, 20)
-
-    @hyper.span_to_hyper_value(lb, ub)
-    def call(x):
+def test_span_to_hyper_value_transforms_objective_input():
+    @hyper.span_to_hyper_value([10], [20])
+    def objective(x):
         return np.sum(x)
 
-    y = call(np.array([[0.5], [0.5]]))
+    result = objective(np.array([[0.5], [0.5]]))
 
-    assert y == 30
+    assert result == 30

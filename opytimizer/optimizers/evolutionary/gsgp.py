@@ -1,5 +1,4 @@
-"""Geometric Semantic Genetic Programming.
-"""
+"""Geometric Semantic Genetic Programming."""
 
 import copy
 from hashlib import sha1
@@ -8,13 +7,9 @@ from typing import Any, Dict, Optional
 import numpy as np
 
 import opytimizer.math.general as g
-import opytimizer.math.random as r
 from opytimizer.core.node import Node
 from opytimizer.optimizers.evolutionary.gp import GP
 from opytimizer.spaces.tree import TreeSpace
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GSGP(GP):
@@ -42,11 +37,7 @@ class GSGP(GP):
 
         """
 
-        logger.info("Overriding class: GP -> GSGP.")
-
         super(GSGP, self).__init__(params)
-
-        logger.info("Class overrided.")
 
     def _mutation(self, space: TreeSpace) -> None:
         """Mutates a number of individuals pre-selected through a tournament procedure.
@@ -85,18 +76,18 @@ class GSGP(GP):
         """
 
         mutated_tree = copy.deepcopy(tree)
-        mutation_point = int(r.generate_uniform_random_number(2, max_nodes))
+        mutation_point = int(np.random.uniform(2, max_nodes))
         sub_tree, _ = mutated_tree.find_node(mutation_point)
 
         # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
         # and find_node() stops at a terminal node whose father is a root
         if sub_tree:
-            position = r.generate_uniform_random_number(size=n_variables)
+            position = np.random.uniform(0.0, 1.0, n_variables)
             position_hash = sha1(repr(position).encode("ascii")).hexdigest()[:4]
 
             terminal = Node(position_hash, "TERMINAL", position)
 
-            operator_id = r.generate_integer_random_number(0, 3)
+            operator_id = np.random.randint(0, 3, None)
             if operator_id == 0:
                 terminal.value = np.exp(terminal.value)
             elif operator_id == 1:
@@ -104,7 +95,7 @@ class GSGP(GP):
             elif operator_id == 2:
                 terminal.value = np.cos(np.sin(terminal.value))
 
-            if r.generate_uniform_random_number() <= 0.5:
+            if np.random.uniform(0.0, 1.0, 1) <= 0.5:
                 root = Node("SUM", "FUNCTION")
             else:
                 root = Node("MUL", "FUNCTION")
@@ -175,15 +166,15 @@ class GSGP(GP):
         """
 
         father_offspring = copy.deepcopy(father)
-        father_point = int(r.generate_uniform_random_number(2, max_father))
+        father_point = int(np.random.uniform(2, max_father))
         sub_father, _ = father_offspring.find_node(father_point)
 
         mother_offspring = copy.deepcopy(mother)
-        mother_point = int(r.generate_uniform_random_number(2, max_mother))
+        mother_point = int(np.random.uniform(2, max_mother))
         sub_mother, _ = mother_offspring.find_node(mother_point)
 
         if sub_father and sub_mother:
-            position = r.generate_uniform_random_number(size=n_variables)
+            position = np.random.uniform(0.0, 1.0, n_variables)
             position_hash = sha1(repr(position).encode("ascii")).hexdigest()[:4]
 
             terminal = Node(position_hash, "TERMINAL", position)

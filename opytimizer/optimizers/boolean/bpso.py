@@ -1,20 +1,13 @@
-"""Boolean Particle Swarm Optimization.
-"""
+"""Boolean Particle Swarm Optimization."""
 
 import copy
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BPSO(Optimizer):
@@ -38,68 +31,12 @@ class BPSO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BPSO.")
-
         super(BPSO, self).__init__()
 
         self.c1 = np.array([1])
         self.c2 = np.array([1])
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def c1(self) -> np.ndarray:
-        """Cognitive constant."""
-
-        return self._c1
-
-    @c1.setter
-    def c1(self, c1: np.ndarray) -> None:
-        if not isinstance(c1, np.ndarray):
-            raise e.TypeError("`c1` should be a numpy array")
-
-        self._c1 = c1
-
-    @property
-    def c2(self) -> np.ndarray:
-        """Social constant."""
-
-        return self._c2
-
-    @c2.setter
-    def c2(self, c2: np.ndarray) -> None:
-        if not isinstance(c2, np.ndarray):
-            raise e.TypeError("`c2` should be a numpy array")
-
-        self._c2 = c2
-
-    @property
-    def local_position(self) -> np.ndarray:
-        """Array of local positions."""
-
-        return self._local_position
-
-    @local_position.setter
-    def local_position(self, local_position: np.ndarray) -> None:
-        if not isinstance(local_position, np.ndarray):
-            raise e.TypeError("`local_position` should be a numpy array")
-
-        self._local_position = local_position
-
-    @property
-    def velocity(self) -> np.ndarray:
-        """Array of velocities."""
-
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity: np.ndarray) -> None:
-        if not isinstance(velocity, np.ndarray):
-            raise e.TypeError("`velocity` should be a numpy array")
-
-        self._velocity = velocity
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -116,12 +53,12 @@ class BPSO(Optimizer):
             (space.n_agents, space.n_variables, space.n_dimensions), dtype=bool
         )
 
-    def evaluate(self, space: Space, function: Function) -> None:
+    def evaluate(self, space: Space, function: Callable) -> None:
         """Evaluates the search space according to the objective function.
 
         Args:
             space: A Space object that will be evaluated.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -146,8 +83,8 @@ class BPSO(Optimizer):
         """
 
         for i, agent in enumerate(space.agents):
-            r1 = r.generate_binary_random_number(agent.position.shape)
-            r2 = r.generate_binary_random_number(agent.position.shape)
+            r1 = np.random.randint(0, 2, agent.position.shape)
+            r2 = np.random.randint(0, 2, agent.position.shape)
 
             local_partial = np.logical_and(
                 self.c1,

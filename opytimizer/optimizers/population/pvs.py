@@ -1,18 +1,13 @@
-"""Passing Vehicle Search.
-"""
+"""Passing Vehicle Search."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
 import opytimizer.math.random as r
 from opytimizer.core import Optimizer
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class PVS(Optimizer):
@@ -35,20 +30,16 @@ class PVS(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> PVS.")
-
         super(PVS, self).__init__()
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Passing Vehicle Search over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -58,7 +49,7 @@ class PVS(Optimizer):
 
             R = [0, 0]
             while R[0] == R[1]:
-                R = r.generate_integer_random_number(0, space.n_agents, i, 2)
+                R = r.integer(0, space.n_agents, exclude=i, size=2)
 
             # Calculates the selected agents distances (eq. 16)
             D1 = 1 / space.n_agents * agent.fit
@@ -66,9 +57,9 @@ class PVS(Optimizer):
             D3 = 1 / space.n_agents * space.agents[R[1]].fit
 
             # Calculates the selected agents velocities (eq. 17)
-            V1 = r.generate_uniform_random_number() * (1 - D1)
-            V2 = r.generate_uniform_random_number() * (1 - D2)
-            V3 = r.generate_uniform_random_number() * (1 - D3)
+            V1 = np.random.uniform(0.0, 1.0, 1) * (1 - D1)
+            V2 = np.random.uniform(0.0, 1.0, 1) * (1 - D2)
+            V3 = np.random.uniform(0.0, 1.0, 1) * (1 - D3)
 
             # Calculates both `x` and `y` distance differences (eq. 18 and 19)
             x = np.fabs(D3 - D1)
@@ -78,7 +69,7 @@ class PVS(Optimizer):
             x1 = (V3 * x) / (V1 - V3)
             y1 = (V2 * x) / (V1 - V3)
 
-            rnd = r.generate_uniform_random_number()
+            rnd = np.random.uniform(0.0, 1.0, 1)
 
             if V3 < V1:
                 if (y - y1) > x1:

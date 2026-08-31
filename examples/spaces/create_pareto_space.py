@@ -1,4 +1,5 @@
-import opytimizer.math.random as r
+import numpy as np
+
 from opytimizer.spaces import ParetoSpace
 
 # Defines the number of points `n` and the number of objectives `k`
@@ -7,7 +8,7 @@ n_objectives = 3
 
 # Defines the agents to be initialized within the ParetoSpace
 # Note they are a multi-dimensional vector of shape [n, k],
-data_points = r.generate_uniform_random_number(size=(n_points, n_objectives))
+data_points = np.random.uniform(size=(n_points, n_objectives))
 
 # Creates the ParetoSpace
 s = ParetoSpace(data_points)

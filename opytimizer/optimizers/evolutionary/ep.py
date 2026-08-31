@@ -1,20 +1,13 @@
-"""Evolutionary Programming.
-"""
+"""Evolutionary Programming."""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class EP(Optimizer):
@@ -44,51 +37,6 @@ class EP(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def bout_size(self) -> float:
-        """Size of bout during the tournament selection."""
-
-        return self._bout_size
-
-    @bout_size.setter
-    def bout_size(self, bout_size: float) -> None:
-        if not isinstance(bout_size, (float, int)):
-            raise e.TypeError("`bout_size` should be a float or integer")
-        if bout_size < 0 or bout_size > 1:
-            raise e.ValueError("`bout_size` should be between 0 and 1")
-
-        self._bout_size = bout_size
-
-    @property
-    def clip_ratio(self) -> float:
-        """Clipping ratio to helps the algorithm's convergence."""
-
-        return self._clip_ratio
-
-    @clip_ratio.setter
-    def clip_ratio(self, clip_ratio: float) -> None:
-        if not isinstance(clip_ratio, (float, int)):
-            raise e.TypeError("`clip_ratio` should be a float or integer")
-        if clip_ratio < 0 or clip_ratio > 1:
-            raise e.ValueError("`clip_ratio` should be between 0 and 1")
-
-        self._clip_ratio = clip_ratio
-
-    @property
-    def strategy(self) -> np.ndarray:
-        """Array of strategies."""
-
-        return self._strategy
-
-    @strategy.setter
-    def strategy(self, strategy: np.ndarray) -> None:
-        if not isinstance(strategy, np.ndarray):
-            raise e.TypeError("`strategy` should be a numpy array")
-
-        self._strategy = strategy
-
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
@@ -103,17 +51,17 @@ class EP(Optimizer):
 
         for i in range(space.n_agents):
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                self.strategy[i][j] = 0.05 * r.generate_uniform_random_number(
-                    0, ub - lb, size=space.agents[i].n_dimensions
+                self.strategy[i][j] = 0.05 * np.random.uniform(
+                    0, ub - lb, space.agents[i].n_dimensions
                 )
 
-    def _mutate_parent(self, agent: Agent, index: int, function: Function) -> Agent:
+    def _mutate_parent(self, agent: Agent, index: int, function: Callable) -> Agent:
         """Mutates a parent into a new child (eq. 5.1).
 
         Args:
             agent: An agent instance to be reproduced.
             index: Index of current agent.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (Agent): A mutated child.
@@ -122,7 +70,7 @@ class EP(Optimizer):
 
         a = copy.deepcopy(agent)
 
-        r1 = r.generate_gaussian_random_number()
+        r1 = np.random.normal(0.0, 1.0, 1)
 
         a.position += self.strategy[index] * r1
         a.clip_by_bound()
@@ -148,7 +96,7 @@ class EP(Optimizer):
 
         n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
-        r1 = r.generate_gaussian_random_number(size=(n_variables, n_dimensions))
+        r1 = np.random.normal(0.0, 1.0, (n_variables, n_dimensions))
         self.strategy[index] += r1 * (np.sqrt(np.abs(self.strategy[index])))
 
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
@@ -156,12 +104,12 @@ class EP(Optimizer):
                 np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
             )
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Evolutionary Programming over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -181,7 +129,7 @@ class EP(Optimizer):
 
         for i, agent in enumerate(space.agents):
             for _ in range(n_individuals):
-                index = r.generate_integer_random_number(0, len(space.agents))
+                index = np.random.randint(0, len(space.agents), None)
                 if agent.fit < space.agents[index].fit:
                     wins[i] += 1
 

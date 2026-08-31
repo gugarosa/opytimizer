@@ -1,18 +1,14 @@
-"""Black Widow Optimization.
-"""
+"""Black Widow Optimization."""
 
 import copy
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
+
+import numpy as np
 
 import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class BWO(Optimizer):
@@ -37,8 +33,6 @@ class BWO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> BWO.")
-
         super(BWO, self).__init__()
 
         self.pp = 0.6
@@ -46,53 +40,6 @@ class BWO(Optimizer):
         self.pm = 0.4
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def pp(self) -> float:
-        """Procreating rate."""
-
-        return self._pp
-
-    @pp.setter
-    def pp(self, pp: float) -> None:
-        if not isinstance(pp, (float, int)):
-            raise e.TypeError("`pp` should be a float or integer")
-        if pp < 0 or pp > 1:
-            raise e.ValueError("`pp` should be between 0 and 1")
-
-        self._pp = pp
-
-    @property
-    def cr(self) -> float:
-        """Cannibalism rate."""
-
-        return self._cr
-
-    @cr.setter
-    def cr(self, cr: float) -> None:
-        if not isinstance(cr, (float, int)):
-            raise e.TypeError("`cr` should be a float or integer")
-        if cr < 0 or cr > 1:
-            raise e.ValueError("`cr` should be between 0 and 1")
-
-        self._cr = cr
-
-    @property
-    def pm(self) -> float:
-        """Mutation rate."""
-
-        return self._pm
-
-    @pm.setter
-    def pm(self, pm: float) -> None:
-        if not isinstance(pm, (float, int)):
-            raise e.TypeError("`pm` should be a float or integer")
-        if pm < 0 or pm > 1:
-            raise e.ValueError("`pm` should be between 0 and 1")
-
-        self._pm = pm
 
     def _procreating(self, x1: Agent, x2: Agent) -> Tuple[Agent, Agent]:
         """Procreates a pair of parents into offsprings (eq. 1).
@@ -108,7 +55,7 @@ class BWO(Optimizer):
 
         y1, y2 = copy.deepcopy(x1), copy.deepcopy(x2)
 
-        alpha = r.generate_uniform_random_number()
+        alpha = np.random.uniform(0.0, 1.0, 1)
         y1.position = alpha * x1.position + (1 - alpha) * x2.position
         y2.position = alpha * x2.position + (1 - alpha) * x1.position
 
@@ -126,10 +73,8 @@ class BWO(Optimizer):
         """
 
         if alpha.n_variables > 1:
-            r1 = r.generate_integer_random_number(0, alpha.n_variables)
-            r2 = r.generate_integer_random_number(
-                0, alpha.n_variables, exclude_value=r1
-            )
+            r1 = np.random.randint(0, alpha.n_variables, None)
+            r2 = r.integer(0, alpha.n_variables, exclude=r1, size=None)
 
             alpha.position[r1], alpha.position[r2] = (
                 alpha.position[r2],
@@ -138,12 +83,12 @@ class BWO(Optimizer):
 
         return alpha
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Black Widow Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 
@@ -160,7 +105,7 @@ class BWO(Optimizer):
         agents2 = []
 
         for _ in range(0, n_reproduct):
-            idx = r.generate_uniform_random_number(0, n_agents, size=2)
+            idx = np.random.uniform(0, n_agents, 2)
 
             father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(
                 space.agents[int(idx[1])]
@@ -185,7 +130,7 @@ class BWO(Optimizer):
             agents2.extend(new_agents[:n_cannibals])
 
         for _ in range(0, n_mutate):
-            idx = int(r.generate_uniform_random_number(0, n_reproduct))
+            idx = int(np.random.uniform(0, n_reproduct))
 
             alpha = self._mutation(agents1[idx])
             alpha.clip_by_bound()

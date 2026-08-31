@@ -16,46 +16,6 @@ def test_sbo_params():
     assert new_sbo.z == 0.02
 
 
-def test_sbo_params_setter():
-    new_sbo = sbo.SBO()
-
-    try:
-        new_sbo.alpha = "a"
-    except:
-        new_sbo.alpha = 0.75
-
-    try:
-        new_sbo.alpha = -1
-    except:
-        new_sbo.alpha = 0.75
-
-    assert new_sbo.alpha == 0.75
-
-    try:
-        new_sbo.p_mutation = "b"
-    except:
-        new_sbo.p_mutation = 0.05
-
-    try:
-        new_sbo.p_mutation = 1.5
-    except:
-        new_sbo.p_mutation = 0.05
-
-    assert new_sbo.p_mutation == 0.05
-
-    try:
-        new_sbo.z = "c"
-    except:
-        new_sbo.z = 0.02
-
-    try:
-        new_sbo.z = 1.5
-    except:
-        new_sbo.z = 0.02
-
-    assert new_sbo.z == 0.02
-
-
 def test_sbo_compile():
     search_space = search.SearchSpace(
         n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
@@ -63,13 +23,6 @@ def test_sbo_compile():
 
     new_sbo = sbo.SBO()
     new_sbo.compile(search_space)
-
-    try:
-        new_sbo.sigma = 1
-    except:
-        new_sbo.sigma = []
-
-    assert new_sbo.sigma == []
 
 
 def test_sbo_update():

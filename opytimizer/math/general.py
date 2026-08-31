@@ -1,29 +1,9 @@
-"""General-based mathematical functions.
-"""
+"""General-based mathematical functions."""
 
 from itertools import islice
 from typing import Any, Iterable, List, Optional
 
 import numpy as np
-
-import opytimizer.math.random as r
-
-
-def euclidean_distance(x: np.ndarray, y: np.ndarray) -> float:
-    """Calculates the Euclidean distance between two n-dimensional points.
-
-    Args:
-        x: N-dimensional point.
-        y: N-dimensional point.
-
-    Returns:
-        (float): Euclidean distance between `x` and `y`.
-
-    """
-
-    distance = np.linalg.norm(x - y)
-
-    return distance
 
 
 def kmeans(
@@ -51,7 +31,7 @@ def kmeans(
     labels = np.zeros(n_samples)
 
     for i in range(n_clusters):
-        idx = r.generate_integer_random_number(0, n_samples)
+        idx = np.random.randint(0, n_samples)
         centroids[i] = x[idx]
 
     for _ in range(max_iterations):
@@ -102,15 +82,13 @@ def tournament_selection(fitness: List[float], n: int, size: int = 2) -> np.arra
 
     """
 
-    selected = []
-    for _ in range(n):
-        step = [np.random.choice(fitness) for _ in range(size)]
-        selected.append(np.where(min(step) == fitness)[0][0])
-
-    return selected
+    return [
+        np.where(np.min(np.random.choice(fitness, size)) == fitness)[0][0]
+        for _ in range(n)
+    ]
 
 
-def weighted_wheel_selection(weights: List[float]) -> int:
+def weighted_wheel_selection(weights: List[float]) -> Optional[int]:
     """Selects an individual from a weight-based roulette.
 
     Args:
@@ -122,10 +100,6 @@ def weighted_wheel_selection(weights: List[float]) -> int:
     """
 
     cumulative_sum = np.cumsum(weights)
-    prob = r.generate_uniform_random_number() * cumulative_sum[-1]
+    prob = np.random.uniform() * cumulative_sum[-1]
 
-    for i, c_sum in enumerate(cumulative_sum):
-        if c_sum > prob:
-            return i
-
-    return None
+    return next((i for i, c_sum in enumerate(cumulative_sum) if c_sum > prob), None)

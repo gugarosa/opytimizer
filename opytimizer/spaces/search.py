@@ -1,5 +1,4 @@
-"""Traditional-based search space.
-"""
+"""Traditional-based search space."""
 
 import copy
 from typing import List, Optional, Tuple, Union
@@ -7,9 +6,6 @@ from typing import List, Optional, Tuple, Union
 import numpy as np
 
 from opytimizer.core import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class SearchSpace(Space):
@@ -37,17 +33,13 @@ class SearchSpace(Space):
 
         """
 
-        logger.info("Overriding class: Space -> SearchSpace.")
-
         n_dimensions = 1
 
-        super(SearchSpace, self).__init__(
+        super().__init__(
             n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
         )
 
         self.build()
-
-        logger.info("Class overrided.")
 
     def _initialize_agents(self) -> None:
         """Initializes agents with their positions and defines a best agent."""

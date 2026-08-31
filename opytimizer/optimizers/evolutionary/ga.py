@@ -1,23 +1,15 @@
-"""Genetic Algorithm.
-"""
+"""Genetic Algorithm."""
 
 import copy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.distribution as d
 import opytimizer.math.general as g
-import opytimizer.math.random as r
 import opytimizer.utils.constant as c
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class GA(Optimizer):
@@ -47,53 +39,6 @@ class GA(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def p_selection(self) -> float:
-        """Probability of selection."""
-
-        return self._p_selection
-
-    @p_selection.setter
-    def p_selection(self, p_selection: float) -> None:
-        if not isinstance(p_selection, (float, int)):
-            raise e.TypeError("`p_selection` should be a float or integer")
-        if p_selection < 0 or p_selection > 1:
-            raise e.ValueError("`p_selection` should be between 0 and 1")
-
-        self._p_selection = p_selection
-
-    @property
-    def p_mutation(self) -> float:
-        """Probability of mutation."""
-
-        return self._p_mutation
-
-    @p_mutation.setter
-    def p_mutation(self, p_mutation: float) -> None:
-        if not isinstance(p_mutation, (float, int)):
-            raise e.TypeError("`p_mutation` should be a float or integer")
-        if p_mutation < 0 or p_mutation > 1:
-            raise e.ValueError("`p_mutation` should be between 0 and 1")
-
-        self._p_mutation = p_mutation
-
-    @property
-    def p_crossover(self) -> float:
-        """Probability of crossover."""
-
-        return self._p_crossover
-
-    @p_crossover.setter
-    def p_crossover(self, p_crossover: float) -> None:
-        if not isinstance(p_crossover, (float, int)):
-            raise e.TypeError("`p_crossover` should be a float or integer")
-        if p_crossover < 0 or p_crossover > 1:
-            raise e.ValueError("`p_crossover` should be between 0 and 1")
-
-        self._p_crossover = p_crossover
-
     def _roulette_selection(self, n_agents: int, fitness: List[float]) -> List[int]:
         """Performs a roulette selection on the population (p. 8).
 
@@ -120,7 +65,7 @@ class GA(Optimizer):
 
         probs = [fit / total_fitness for fit in inv_fitness]
 
-        selected = d.generate_choice_distribution(n_agents, probs, n_individuals)
+        selected = np.random.choice(n_agents, n_individuals, p=probs, replace=False)
 
         return selected
 
@@ -138,9 +83,9 @@ class GA(Optimizer):
 
         alpha, beta = copy.deepcopy(father), copy.deepcopy(mother)
 
-        r1 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
         if r1 < self.p_crossover:
-            r2 = r.generate_uniform_random_number()
+            r2 = np.random.uniform(0.0, 1.0, 1)
 
             alpha.position = r2 * father.position + (1 - r2) * mother.position
             beta.position = r2 * mother.position + (1 - r2) * father.position
@@ -160,22 +105,22 @@ class GA(Optimizer):
         """
 
         for j in range(alpha.n_variables):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < self.p_mutation:
-                alpha.position[j] += r.generate_gaussian_random_number()
+                alpha.position[j] += np.random.normal(0.0, 1.0, 1)
 
-            r2 = r.generate_uniform_random_number()
+            r2 = np.random.uniform(0.0, 1.0, 1)
             if r2 < self.p_mutation:
-                beta.position[j] += r.generate_gaussian_random_number()
+                beta.position[j] += np.random.normal(0.0, 1.0, 1)
 
         return alpha, beta
 
-    def update(self, space: Space, function: Function) -> None:
+    def update(self, space: Space, function: Callable) -> None:
         """Wraps Genetic Algorithm over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         """
 

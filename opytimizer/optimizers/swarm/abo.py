@@ -1,20 +1,13 @@
-"""Artificial Butterfly Optimization.
-"""
+"""Artificial Butterfly Optimization."""
 
 import copy
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class ABO(Optimizer):
@@ -37,8 +30,6 @@ class ABO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> ABO.")
-
         super(ABO, self).__init__()
 
         self.sunspot_ratio = 0.9
@@ -46,47 +37,15 @@ class ABO(Optimizer):
 
         self.build(params)
 
-        logger.info("Class overrided.")
-
-    @property
-    def sunspot_ratio(self) -> float:
-        """Ratio of sunspot butterflies."""
-
-        return self._sunspot_ratio
-
-    @sunspot_ratio.setter
-    def sunspot_ratio(self, sunspot_ratio: float) -> None:
-        if not isinstance(sunspot_ratio, (float, int)):
-            raise e.TypeError("`sunspot_ratio` should be a float or integer")
-        if sunspot_ratio < 0 or sunspot_ratio > 1:
-            raise e.ValueError("`sunspot_ratio` should be between 0 and 1")
-
-        self._sunspot_ratio = sunspot_ratio
-
-    @property
-    def a(self) -> float:
-        """Free flight constant."""
-
-        return self._a
-
-    @a.setter
-    def a(self, a: float) -> None:
-        if not isinstance(a, (float, int)):
-            raise e.TypeError("`a` should be a float or integer")
-        if a < 0:
-            raise e.ValueError("`a` should be >= 0")
-
-        self._a = a
-
     def _flight_mode(
-        self, agent: Agent, neighbour: Agent, function: Function
+        self, agent: Agent, neighbour: Agent, function: Callable
     ) -> Tuple[Agent, bool]:
         """Flies to a new location according to the flight mode (eq. 1).
 
         Args:
             agent: Current agent.
             neighbour: Selected neigbour.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
 
         Returns:
             (Tuple[Agent, bool]): Current agent or an agent with updated position, along with a boolean that indicates whether
@@ -94,8 +53,8 @@ class ABO(Optimizer):
 
         """
 
-        j = r.generate_integer_random_number(0, agent.n_variables)
-        r1 = r.generate_uniform_random_number(-1, 1)
+        j = np.random.randint(0, agent.n_variables, None)
+        r1 = np.random.uniform(-1, 1, 1)
 
         temp = copy.deepcopy(agent)
 
@@ -112,13 +71,13 @@ class ABO(Optimizer):
         return agent.position, agent.fit, False
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Artificial Butterfly Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
@@ -128,7 +87,7 @@ class ABO(Optimizer):
 
         n_sunspots = int(self.sunspot_ratio * len(space.agents))
         for agent in space.agents[:n_sunspots]:
-            k = r.generate_integer_random_number(0, len(space.agents))
+            k = np.random.randint(0, len(space.agents), None)
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
             agent.position, agent.fit, _ = self._flight_mode(
@@ -136,7 +95,7 @@ class ABO(Optimizer):
             )
 
         for agent in space.agents[n_sunspots:]:
-            k = r.generate_integer_random_number(0, len(space.agents) - n_sunspots)
+            k = np.random.randint(0, len(space.agents) - n_sunspots, None)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
             agent.position, agent.fit, is_better = self._flight_mode(
@@ -144,13 +103,13 @@ class ABO(Optimizer):
             )
 
             if not is_better:
-                k = r.generate_integer_random_number(0, len(space.agents))
-                r1 = r.generate_uniform_random_number()
+                k = np.random.randint(0, len(space.agents), None)
+                r1 = np.random.uniform(0.0, 1.0, 1)
 
                 # Calculates `D` (eq. 4)
                 D = np.fabs(2 * r1 * space.agents[k].position - agent.position)
 
-                r2 = r.generate_uniform_random_number()
+                r2 = np.random.uniform(0.0, 1.0, 1)
 
                 # Updates the agent's position (eq. 3)
                 a = self.a - self.a * (iteration / n_iterations)

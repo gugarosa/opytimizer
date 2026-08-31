@@ -20,58 +20,6 @@ def test_goa_params():
     assert new_goa.l == 1.5
 
 
-def test_goa_params_setter():
-    new_goa = goa.GOA()
-
-    try:
-        new_goa.c_min = "a"
-    except:
-        new_goa.c_min = 0.00001
-
-    try:
-        new_goa.c_min = -1
-    except:
-        new_goa.c_min = 0.00001
-
-    assert new_goa.c_min == 0.00001
-
-    try:
-        new_goa.c_max = "b"
-    except:
-        new_goa.c_max = 2.0
-
-    try:
-        new_goa.c_max = 0
-    except:
-        new_goa.c_max = 1.0
-
-    assert new_goa.c_max == 1.0
-
-    try:
-        new_goa.f = "c"
-    except:
-        new_goa.f = 0.5
-
-    try:
-        new_goa.f = -1
-    except:
-        new_goa.f = 0.5
-
-    assert new_goa.f == 0.5
-
-    try:
-        new_goa.l = "d"
-    except:
-        new_goa.l = 1.5
-
-    try:
-        new_goa.l = -1
-    except:
-        new_goa.l = 1.5
-
-    assert new_goa.l == 1.5
-
-
 def test_goa_social_force():
     new_goa = goa.GOA()
 

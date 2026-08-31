@@ -1,10 +1,13 @@
 import numpy as np
-from opytimark.markers.n_dimensional import Sphere
 
 from opytimizer import Opytimizer
 from opytimizer.functions import ConstrainedFunction
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
+
+
+def sphere(x):
+    return np.sum(x**2)
 
 
 # Defines a constraint function that returns a boolean
@@ -24,10 +27,10 @@ n_variables = 2
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creates the space, optimizer and function
+# Creates the space, optimizer and constrained objective
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
-function = ConstrainedFunction(Sphere(), [c_1], penalty=100.0)
+function = ConstrainedFunction(sphere, [c_1], penalty=100.0)
 
 # Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, function, save_agents=False)

@@ -1,6 +1,5 @@
 import numpy as np
 
-from opytimizer.core import function
 from opytimizer.optimizers.misc import cem
 from opytimizer.spaces import search
 
@@ -18,34 +17,6 @@ def test_cem_params():
     assert new_cem.alpha == 0.7
 
 
-def test_cem_params_setter():
-    new_cem = cem.CEM()
-
-    try:
-        new_cem.n_updates = "a"
-    except:
-        new_cem.n_updates = 10
-
-    try:
-        new_cem.n_updates = -1
-    except:
-        new_cem.n_updates = 10
-
-    assert new_cem.n_updates == 10
-
-    try:
-        new_cem.alpha = "b"
-    except:
-        new_cem.alpha = 0.5
-
-    try:
-        new_cem.alpha = -1
-    except:
-        new_cem.alpha = 0.5
-
-    assert new_cem.alpha == 0.5
-
-
 def test_cem_compile():
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
@@ -53,20 +24,6 @@ def test_cem_compile():
 
     new_cem = cem.CEM()
     new_cem.compile(search_space)
-
-    try:
-        new_cem.mean = 1
-    except:
-        new_cem.mean = np.array([1])
-
-    assert new_cem.mean == 1
-
-    try:
-        new_cem.std = 1
-    except:
-        new_cem.std = np.array([1])
-
-    assert new_cem.std == 1
 
 
 def test_cem_create_new_samples():
@@ -113,7 +70,7 @@ def test_cem_update():
     def square(x):
         return np.sum(x**2)
 
-    new_function = function.Function(pointer=square)
+    new_function = square
 
     search_space = search.SearchSpace(
         n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]

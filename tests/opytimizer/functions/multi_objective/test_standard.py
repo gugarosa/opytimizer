@@ -1,34 +1,25 @@
-from opytimizer.functions.multi_objective import standard
+import pytest
+
+from opytimizer.functions.multi_objective import MultiObjectiveFunction
 
 
-def test_standard_functions():
-    new_standard = standard.MultiObjectiveFunction([])
-
-    assert type(new_standard.functions) == list
+def square(x):
+    return x**2
 
 
-def test_standard_functions_setter():
-    new_standard = standard.MultiObjectiveFunction([])
-
-    try:
-        new_standard.functions = None
-    except:
-        new_standard.functions = [1, 2]
-
-    assert len(new_standard.functions) == 2
+def cube(x):
+    return x**3
 
 
-def test_standard_call():
-    def square(x):
-        return x**2
+def test_multi_objective_function_invokes_raw_callables():
+    function = MultiObjectiveFunction([square, cube])
 
-    assert square(2) == 4
+    assert function.functions == [square, cube]
+    assert function(2) == [4, 8]
+    assert not hasattr(function, "built")
 
-    def cube(x):
-        return x**3
 
-    assert cube(2) == 8
-
-    new_standard = standard.MultiObjectiveFunction(functions=[square, cube])
-
-    assert new_standard(2) == [4, 8]
+@pytest.mark.parametrize("functions", [None, [square, 1]])
+def test_multi_objective_function_validates_callables(functions):
+    with pytest.raises(TypeError):
+        MultiObjectiveFunction(functions)

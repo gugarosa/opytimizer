@@ -1,20 +1,13 @@
-"""Manta Ray Foraging Optimization.
-"""
+"""Manta Ray Foraging Optimization."""
 
 import copy
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
-import opytimizer.utils.exception as e
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
-from opytimizer.core.function import Function
 from opytimizer.core.space import Space
-from opytimizer.utils import logging
-
-logger = logging.get_logger(__name__)
 
 
 class MRFO(Optimizer):
@@ -38,30 +31,11 @@ class MRFO(Optimizer):
 
         """
 
-        logger.info("Overriding class: Optimizer -> MRFO.")
-
         super(MRFO, self).__init__()
 
         self.S = 2.0
 
         self.build(params)
-
-        logger.info("Class overrided.")
-
-    @property
-    def S(self) -> float:
-        """Somersault foraging."""
-
-        return self._S
-
-    @S.setter
-    def S(self, S: float) -> None:
-        if not isinstance(S, (float, int)):
-            raise e.TypeError("`S` should be a float or integer")
-        if S < 0:
-            raise e.ValueError("`S` should be >= 0")
-
-        self._S = S
 
     def _cyclone_foraging(
         self,
@@ -85,9 +59,9 @@ class MRFO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
-        r3 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
+        r2 = np.random.uniform(0.0, 1.0, 1)
+        r3 = np.random.uniform(0.0, 1.0, 1)
 
         beta = (
             2
@@ -99,9 +73,7 @@ class MRFO(Optimizer):
             r_position = np.zeros((agents[i].n_variables, agents[i].n_dimensions))
 
             for j, (lb, ub) in enumerate(zip(agents[i].lb, agents[i].ub)):
-                r_position[j] = r.generate_uniform_random_number(
-                    lb, ub, size=agents[i].n_dimensions
-                )
+                r_position[j] = np.random.uniform(lb, ub, agents[i].n_dimensions)
 
             if i == 0:
                 cyclone_foraging = (
@@ -146,8 +118,8 @@ class MRFO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
+        r2 = np.random.uniform(0.0, 1.0, 1)
 
         alpha = 2 * r1 * np.sqrt(np.abs(np.log(r1)))
 
@@ -180,28 +152,28 @@ class MRFO(Optimizer):
 
         """
 
-        r1 = r.generate_uniform_random_number()
-        r2 = r.generate_uniform_random_number()
+        r1 = np.random.uniform(0.0, 1.0, 1)
+        r2 = np.random.uniform(0.0, 1.0, 1)
 
         somersault_foraging = position + self.S * (r1 * best_position - r2 * position)
 
         return somersault_foraging
 
     def update(
-        self, space: Space, function: Function, iteration: int, n_iterations: int
+        self, space: Space, function: Callable, iteration: int, n_iterations: int
     ) -> None:
         """Wraps Manta Ray Foraging Optimization over all agents and variables.
 
         Args:
             space: Space containing agents and update-related information.
-            function: A Function object that will be used as the objective function.
+            function: A callable that will be used as the objective function.
             iteration: Current iteration.
             n_iterations: Maximum number of iterations.
 
         """
 
         for i, agent in enumerate(space.agents):
-            r1 = r.generate_uniform_random_number()
+            r1 = np.random.uniform(0.0, 1.0, 1)
 
             if r1 < 0.5:
                 agent.position = self._cyclone_foraging(
