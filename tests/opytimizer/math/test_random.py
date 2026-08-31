@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from opytimizer.math import random
 
@@ -21,3 +22,8 @@ def test_integer_excludes_without_redrawing(monkeypatch):
 
     assert calls == [(0, 2, 4)]
     np.testing.assert_array_equal(values, [0, 2, 0, 2])
+
+
+def test_integer_rejects_excluding_the_only_value():
+    with pytest.raises(ValueError):
+        random.integer(0, 1, exclude=0)
