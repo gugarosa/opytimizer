@@ -4,7 +4,6 @@ from opfython.models.unsupervised import UnsupervisedOPF
 from sklearn.datasets import load_digits
 
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
@@ -55,13 +54,12 @@ n_variables = 1
 lower_bound = [1]
 upper_bound = [15]
 
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
-function = Function(unsupervised_opf_clustering)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+opt = Opytimizer(space, optimizer, unsupervised_opf_clustering)
 
 # Runs the optimization task
 opt.start(n_iterations=3)

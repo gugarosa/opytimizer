@@ -3,9 +3,7 @@ import opfython.stream.splitter as s
 from opfython.models.supervised import SupervisedOPF
 from sklearn.datasets import load_digits
 
-import opytimizer.math.random as r
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.boolean import BPSO
 from opytimizer.spaces import BooleanSpace
 
@@ -50,19 +48,12 @@ def supervised_opf_feature_selection(opytimizer):
 n_agents = 5
 n_variables = 64
 
-# Parameters for the optimizer
-params = {
-    "c1": r.generate_binary_random_number(size=(n_variables, 1)),
-    "c2": r.generate_binary_random_number(size=(n_variables, 1)),
-}
-
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = BooleanSpace(n_agents, n_variables)
 optimizer = BPSO()
-function = Function(supervised_opf_feature_selection)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+opt = Opytimizer(space, optimizer, supervised_opf_feature_selection)
 
 # Runs the optimization task
 opt.start(n_iterations=3)

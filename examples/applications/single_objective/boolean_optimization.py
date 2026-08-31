@@ -1,11 +1,19 @@
 import numpy as np
-from opytimark.markers.boolean import Knapsack
 
-import opytimizer.math.random as r
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.boolean import BPSO
 from opytimizer.spaces import BooleanSpace
+
+values = np.array([55, 10, 47, 5, 4])
+weights = np.array([95, 4, 60, 32, 23])
+
+
+def knapsack(x):
+    selected = x.ravel()
+    if weights @ selected > 100:
+        return np.finfo(float).max
+    return -(values @ selected)
+
 
 # Random seed for experimental consistency
 np.random.seed(0)
@@ -16,19 +24,16 @@ n_variables = 5
 
 # Parameters for the optimizer
 params = {
-    "c1": r.generate_binary_random_number(size=(n_variables, 1)),
-    "c2": r.generate_binary_random_number(size=(n_variables, 1)),
+    "c1": np.random.randint(0, 2, size=(n_variables, 1)),
+    "c2": np.random.randint(0, 2, size=(n_variables, 1)),
 }
 
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = BooleanSpace(n_agents, n_variables)
 optimizer = BPSO(params)
-function = Function(
-    Knapsack(values=(55, 10, 47, 5, 4), weights=(95, 4, 60, 32, 23), max_capacity=100)
-)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function, save_agents=False)
+opt = Opytimizer(space, optimizer, knapsack, save_agents=False)
 
 # Runs the optimization task
 opt.start(n_iterations=1000)

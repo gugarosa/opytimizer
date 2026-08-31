@@ -1,2 +1,57 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opytimizer"
+version = "3.1.4"
+description = "Nature-Inspired Python Optimizer"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache 2.0" }
+authors = [
+    { name = "Gustavo Rosa", email = "gustavo.rosa@unesp.br" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "dill>=0.3.4",
+    "numpy>=1.19.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/gugarosa/opytimizer"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=2.17.0",
+    "pytest>=9.0.3",
+]
+docs = [
+    "sphinx>=9",
+]
+
+[tool.setuptools.packages.find]
+include = ["opytimizer*"]
+
 [tool.black]
 line-length = 88
+target-version = ["py311", "py312", "py313"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+addopts = ["-v", "--durations=10"]
+norecursedirs = ["build"]

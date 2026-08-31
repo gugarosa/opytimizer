@@ -4,7 +4,6 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import KFold, cross_val_score
 
 from opytimizer import Opytimizer
-from opytimizer.core import Function
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
@@ -43,13 +42,12 @@ n_variables = 1
 lower_bound = [0.000001]
 upper_bound = [10]
 
-# Creates the space, optimizer and function
+# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
-function = Function(_svm)
 
 # Bundles every piece into Opytimizer class
-opt = Opytimizer(space, optimizer, function)
+opt = Opytimizer(space, optimizer, _svm)
 
 # Runs the optimization task
 opt.start(n_iterations=100)
