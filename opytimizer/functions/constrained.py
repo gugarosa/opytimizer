@@ -19,7 +19,8 @@ class ConstrainedFunction:
         Args:
             function: Callable that returns the fitness value.
             constraints: Constraints to be applied to the fitness function.
-            penalty: Penalization factor when a constraint is not valid.
+            penalty: Non-negative relative penalty applied to the current fitness
+                magnitude for each invalid constraint. Zero fitness stays zero.
 
         """
 
@@ -39,7 +40,7 @@ class ConstrainedFunction:
         self.penalty = penalty
 
     def __call__(self, x: np.ndarray) -> float:
-        """Calculates the constrained objective value.
+        """Calculates a minimized objective without rewarding constraint violations.
 
         Args:
             x: Array of positions.
@@ -53,6 +54,6 @@ class ConstrainedFunction:
 
         for constraint in self.constraints:
             if not constraint(x):
-                fitness += self.penalty * fitness
+                fitness += self.penalty * abs(fitness)
 
         return fitness

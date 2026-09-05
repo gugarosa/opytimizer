@@ -1,9 +1,12 @@
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
 import pytest
 
-from opytimizer.spaces import SearchSpace
+from opytimizer import Opytimizer
+from opytimizer.core import Optimizer
+from opytimizer.spaces import HyperComplexSpace, SearchSpace
 from opytimizer.utils.callback import (
     Callback,
     CheckpointCallback,
@@ -35,6 +38,32 @@ def test_checkpoint_callback_saves_on_frequency():
     assert saved == ["iter_2_model.pkl"]
 
 
+@pytest.mark.parametrize("relative", [False, True])
+def test_checkpoint_callback_preserves_directory_and_saves_state(
+    tmp_path, monkeypatch, relative
+):
+    (tmp_path / "checkpoints").mkdir()
+    monkeypatch.chdir(tmp_path)
+    path = Path("checkpoints") / "model.pkl"
+    if not relative:
+        path = tmp_path / path
+    model = Opytimizer(
+        SearchSpace(1, 1, 0, 1), Optimizer(), lambda x: float(np.sum(x**2))
+    )
+
+    model.start(1, [CheckpointCallback(str(path), frequency=1)])
+
+    checkpoint = path.with_name("iter_1_model.pkl")
+    assert checkpoint.is_file()
+    loaded = Opytimizer.load(str(checkpoint))
+    assert loaded.total_iterations == 1
+    assert loaded.history.best_agent == model.history.best_agent
+    np.testing.assert_array_equal(
+        loaded.space.best_agent.position, model.space.best_agent.position
+    )
+    assert loaded.function(np.array([2])) == 4
+
+
 @pytest.mark.parametrize(
     "args,error",
     [
@@ -58,6 +87,33 @@ def test_discrete_search_callback_validates_space_values():
         DiscreteSearchCallback([[0, 1]]).on_task_begin(model)
     with pytest.raises(ValueError):
         DiscreteSearchCallback([[0, 2], [0, 1]]).on_task_begin(model)
+
+
+@pytest.mark.parametrize("values", [[], 0, [[0, 1]]])
+def test_discrete_search_callback_rejects_empty_or_non_vector_values(values):
+    model = SimpleNamespace(space=SearchSpace(1, 1, 0, 1))
+
+    with pytest.raises(ValueError, match="non-empty"):
+        DiscreteSearchCallback([values]).on_task_begin(model)
+
+
+@pytest.mark.parametrize(
+    "position,expected",
+    [
+        ([[0.2, 0.8]], [[0, 1]]),
+        ([[0.2, 0.8, 0.5]], [[0, 1, 0]]),
+    ],
+)
+def test_discrete_search_callback_projects_each_dimension(position, expected):
+    space = HyperComplexSpace(1, 1, len(position[0]))
+    space.agents[0].position[:] = position
+    model = Opytimizer(space, Optimizer(), lambda x: float(np.sum(x**2)))
+
+    model.start(0, [DiscreteSearchCallback([[0, 1]])])
+
+    np.testing.assert_array_equal(space.agents[0].position, expected)
+    np.testing.assert_array_equal(space.best_agent.position, expected)
+    assert space.best_agent.fit == np.sum(np.asarray(expected) ** 2)
 
 
 def test_discrete_search_callback_maps_to_nearest_values():

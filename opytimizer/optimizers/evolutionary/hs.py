@@ -442,7 +442,7 @@ class GOGHS(NGHS):
                 position = agent.position[j].item()
                 if A[j] > position:
                     A[j] = position
-                elif B[j] < position:
+                if B[j] < position:
                     B[j] = position
 
             a.position[j] = k * (A[j] + B[j]) - new_agent.position[j]

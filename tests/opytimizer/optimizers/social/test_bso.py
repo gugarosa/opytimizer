@@ -39,6 +39,20 @@ def test_bso_clusterize():
     new_bso._clusterize(search_space.agents)
 
 
+def test_bso_clusterize_single_cluster_retains_every_agent(monkeypatch):
+    search_space = search.SearchSpace(3, 1, [0], [10])
+    for agent, position in zip(search_space.agents, [0.0, 5.0, 10.0]):
+        agent.position[:] = position
+        agent.fit = position**2
+    monkeypatch.setattr(np.random, "randint", lambda low, high: 2)
+
+    indexes, best_indexes = bso.BSO({"m": 1})._clusterize(search_space.agents)
+
+    assert len(indexes) == 1
+    np.testing.assert_array_equal(indexes[0], [0, 1, 2])
+    assert best_indexes == [0]
+
+
 def test_bso_sigmoid():
     new_bso = bso.BSO()
 

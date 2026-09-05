@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from opytimizer.optimizers.evolutionary import hs
 from opytimizer.spaces import search
@@ -190,18 +191,22 @@ def test_nghs_update():
     assert search_space.agents[0].fit > 0
 
 
-def test_goghs_generate_opposition_harmony():
+@pytest.mark.parametrize(
+    "positions", [[3.0, 2.0, 1.0], [1.0, 2.0, 3.0], [2.0, 2.0, 2.0]]
+)
+def test_goghs_generate_opposition_harmony_uses_both_extrema(monkeypatch, positions):
     new_goghs = hs.GOGHS()
-
-    search_space = search.SearchSpace(
-        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(3, 1, [-10], [10])
+    for agent, position in zip(search_space.agents, positions):
+        agent.position[:] = position
+    monkeypatch.setattr(np.random, "uniform", lambda *args: np.array([0.5]))
 
     agent = new_goghs._generate_opposition_harmony(
         search_space.agents[0], search_space.agents
     )
 
-    assert agent.fit > 0
+    expected = 0.5 * (min(positions) + max(positions)) - positions[0]
+    np.testing.assert_allclose(agent.position, [[expected]])
 
 
 def test_goghs_update():
