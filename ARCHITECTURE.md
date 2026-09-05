@@ -1,6 +1,6 @@
 # Opytimizer Architecture
 
-> Version 5.0.0 · Apache 2.0 · Python 3.11+
+> Version 5.0.1 · Apache 2.0 · Python 3.11+
 
 ## Overview
 
@@ -121,5 +121,13 @@ uv run --group docs sphinx-build -b html docs docs/_build/html
 
 Project metadata, dependency groups, pytest settings, and formatter settings
 live in `pyproject.toml`. GitHub Actions tests Python 3.11 through 3.13 from the
-committed lockfile. Sphinx generates API pages from one autosummary entry during
-documentation builds.
+committed lockfile. It also builds a wheel and checks optimization and checkpoint
+round trips in an isolated environment using the lowest compatible runtime
+dependencies. Interpreter-specific dependency minimums retain NumPy 1.x support
+on Python 3.11 and 3.12; the lockfile does not pin library consumers.
+Sphinx generates API pages from one autosummary entry during documentation builds.
+
+Successful main-branch CI publishes an unreleased project version to GitHub
+with wheel and source-distribution assets. Pull requests and feature branches
+never publish releases. Existing releases are left unchanged, and this workflow
+does not publish to PyPI.

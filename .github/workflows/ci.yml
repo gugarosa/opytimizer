@@ -21,3 +21,85 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: uv sync --locked
       - run: uv run pytest
+      - run: uv build
+      - name: Check wheel with minimum runtime dependencies
+        run: |
+          uv venv --python "${{ matrix.python-version }}" .wheel-venv
+          uv pip install --python .wheel-venv/bin/python --resolution lowest dist/*.whl
+          .wheel-venv/bin/python -I - <<'PY'
+          import sys
+          import tempfile
+          from importlib.metadata import version
+          from pathlib import Path
+
+          import numpy as np
+
+          import opytimizer
+          from opytimizer.optimizers.swarm import PSO
+          from opytimizer.spaces import SearchSpace
+
+          assert Path(opytimizer.__file__).resolve().is_relative_to(
+              Path(sys.prefix).resolve()
+          )
+          assert opytimizer.__version__ == version("opytimizer")
+          optimization = opytimizer.Opytimizer(
+              SearchSpace(5, 2, [-1, -1], [1, 1]),
+              PSO(),
+              lambda x: float(np.sum(x**2)),
+          )
+          optimization.start(n_iterations=2)
+          best = optimization.space.best_agent
+          assert np.isfinite(best.fit)
+          with tempfile.TemporaryDirectory() as directory:
+              checkpoint = str(Path(directory) / "checkpoint.pkl")
+              optimization.save(checkpoint)
+              restored = opytimizer.Opytimizer.load(checkpoint)
+          assert callable(restored.function)
+          assert restored.function(np.ones((2, 1))) == 2.0
+          assert restored.space.best_agent.fit == best.fit
+          np.testing.assert_array_equal(restored.space.best_agent.position, best.position)
+          restored.start(n_iterations=1)
+          assert restored.space.best_agent.fit <= best.fit
+          PY
+
+  release:
+    name: Release to GitHub
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: github-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: "3.13"
+      - name: Publish unreleased version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(python -c 'from pathlib import Path; import tomllib; print(tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"])')"
+          released_tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[] | select(.draft == false) | .tag_name')
+          if grep -Fxq "$tag" <<< "$released_tags"; then
+            echo "$tag is already released."
+            exit 0
+          fi
+          existing_tag=$(git tag --list "$tag")
+          if [ -n "$existing_tag" ]; then
+            tag_commit=$(git rev-parse "$tag^{commit}")
+            if [ "$tag_commit" != "$GITHUB_SHA" ]; then
+              echo "::error::Tag $tag points to a different commit."
+              exit 1
+            fi
+          fi
+          uv build
+          gh release create "$tag" dist/*.whl dist/*.tar.gz \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --generate-notes

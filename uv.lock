@@ -2,7 +2,8 @@ version = 1
 revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
     "python_full_version < '3.12'",
 ]
 
@@ -452,7 +453,8 @@ name = "numpy"
 version = "2.5.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9a/80/db0b4559e57ec36362bedbb05530a87fafbcb6067708c946967a41d449e7/numpy-2.5.2.tar.gz", hash = "sha256:d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860", size = 20773161, upload-time = "2026-08-09T13:48:27.962Z" }
 wheels = [
@@ -525,7 +527,7 @@ wheels = [
 
 [[package]]
 name = "opytimizer"
-version = "5.0.0"
+version = "5.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "dill" },
@@ -545,8 +547,12 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "dill", specifier = ">=0.3.4" },
-    { name = "numpy", specifier = ">=1.19.5" },
+    { name = "dill", marker = "python_full_version < '3.12'", specifier = ">=0.3.6" },
+    { name = "dill", marker = "python_full_version == '3.12.*'", specifier = ">=0.3.8" },
+    { name = "dill", marker = "python_full_version >= '3.13'", specifier = ">=0.3.9" },
+    { name = "numpy", marker = "python_full_version < '3.12'", specifier = ">=1.23.2" },
+    { name = "numpy", marker = "python_full_version == '3.12.*'", specifier = ">=1.26.0" },
+    { name = "numpy", marker = "python_full_version >= '3.13'", specifier = ">=2.1.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -760,7 +766,8 @@ name = "sphinx"
 version = "9.1.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.12'",
+    "python_full_version >= '3.13'",
+    "python_full_version == '3.12.*'",
 ]
 dependencies = [
     { name = "alabaster" },
