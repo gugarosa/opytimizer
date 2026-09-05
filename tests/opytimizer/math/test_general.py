@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from opytimizer.math import general
 
@@ -12,6 +13,31 @@ def test_kmeans_groups_nearest_samples(monkeypatch):
     labels = general.kmeans(samples, n_clusters=2)
 
     np.testing.assert_array_equal(labels, [0, 0, 1, 1])
+
+
+@pytest.mark.parametrize(
+    "samples,n_clusters,indexes,expected",
+    [
+        (np.array([[[0.0]], [[5.0]], [[10.0]]]), 1, [2], [0, 0, 0]),
+        (np.array([[[5.0]]]), 2, [0, 0], [0]),
+        (
+            np.array([[[0.0, 0.0]], [[0.0, 1.0]], [[10.0, 10.0]], [[10.0, 11.0]]]),
+            2,
+            [0, 2],
+            [0, 0, 1, 1],
+        ),
+    ],
+)
+def test_kmeans_preserves_sample_axis(
+    monkeypatch, samples, n_clusters, indexes, expected
+):
+    indexes = iter(indexes)
+    monkeypatch.setattr(np.random, "randint", lambda low, high: next(indexes))
+
+    labels = general.kmeans(samples, n_clusters=n_clusters)
+
+    assert labels.shape == (len(samples),)
+    np.testing.assert_array_equal(labels, expected)
 
 
 def test_n_wise_keeps_the_final_partial_group():

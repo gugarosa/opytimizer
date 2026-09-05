@@ -34,6 +34,29 @@ def test_constrained_function_applies_each_failed_constraint():
     assert function(np.array([2])) == 16
 
 
+@pytest.mark.parametrize("penalty,expected", [(0, -4), (0.5, -2), (1, 0), (2, 4)])
+def test_constrained_function_does_not_reward_negative_fitness(penalty, expected):
+    function = ConstrainedFunction(lambda x: -square(x), [lambda x: False], penalty)
+
+    assert function(np.array([2])) == expected
+
+
+def test_constrained_function_penalizes_each_violation_with_negative_fitness():
+    function = ConstrainedFunction(
+        lambda x: -square(x), [lambda x: False, lambda x: False], 0.5
+    )
+
+    assert function(np.array([2])) == -1
+
+
+def test_constrained_function_preserves_feasible_and_zero_fitness():
+    feasible = ConstrainedFunction(lambda x: -square(x), [lambda x: True], 2)
+    zero = ConstrainedFunction(square, [lambda x: False], 2)
+
+    assert feasible(np.array([2])) == -4
+    assert zero(np.zeros(2)) == 0
+
+
 @pytest.mark.parametrize(
     "args,error",
     [

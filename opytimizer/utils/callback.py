@@ -1,6 +1,7 @@
 """Callbacks."""
 
-from typing import List, TypeVar, Union
+from pathlib import Path
+from typing import List, Optional, TypeVar, Union
 
 import numpy as np
 
@@ -81,11 +82,12 @@ class Callback:
 class CheckpointCallback(Callback):
     """A callback that periodically saves the optimization model."""
 
-    def __init__(self, file_path: str = None, frequency: int = 0) -> None:
+    def __init__(self, file_path: Optional[str] = None, frequency: int = 0) -> None:
         """Initialization method.
 
         Args:
-            file_path: Path of file to be saved.
+            file_path: Path of file to be saved. The iteration prefix is added to
+                the filename, preserving its directory, which must already exist.
             frequency: Interval between checkpoints.
 
         """
@@ -112,7 +114,8 @@ class CheckpointCallback(Callback):
         """
 
         if self.frequency > 0 and iteration % self.frequency == 0:
-            opt_model.save(f"iter_{iteration}_{self.file_path}")
+            path = Path(self.file_path)
+            opt_model.save(str(path.with_name(f"iter_{iteration}_{path.name}")))
 
 
 class DiscreteSearchCallback(Callback):
@@ -121,11 +124,14 @@ class DiscreteSearchCallback(Callback):
 
     """
 
-    def __init__(self, allowed_values: List[Union[int, float]] = None) -> None:
+    def __init__(
+        self, allowed_values: Optional[List[List[Union[int, float]]]] = None
+    ) -> None:
         """Initialization method.
 
         Args:
-            allowed_values: Possible values between lower and upper bounds that variables can be mapped.
+            allowed_values: One non-empty list of possible values per variable.
+                Every dimension is mapped independently to its nearest value.
 
         """
 
@@ -150,13 +156,12 @@ class DiscreteSearchCallback(Callback):
 
         if len(self.allowed_values) != n_variables:
             raise ValueError(f"`allowed_values` should contain {n_variables} lists")
-        if not all(
-            np.all((np.asarray(values) >= lower) & (np.asarray(values) <= upper))
-            for values, lower, upper in zip(
-                self.allowed_values, lower_bound, upper_bound
-            )
-        ):
-            raise ValueError("`allowed_values` should stay within the space bounds")
+        for values, lower, upper in zip(self.allowed_values, lower_bound, upper_bound):
+            values = np.asarray(values)
+            if values.ndim != 1 or values.size == 0:
+                raise ValueError("`allowed_values` should contain non-empty vectors")
+            if not np.all((values >= lower) & (values <= upper)):
+                raise ValueError("`allowed_values` should stay within the space bounds")
 
     def on_evaluate_before(self, *evaluate_args) -> None:
         """Performs a callback prior to the `evaluate` method."""
@@ -167,7 +172,8 @@ class DiscreteSearchCallback(Callback):
 
         for agent in space.agents:
             for i in range(agent.n_variables):
+                values = np.asarray(self.allowed_values[i])
                 min_value_idx = np.argmin(
-                    abs(agent.position[i] - self.allowed_values[i])
+                    np.abs(agent.position[i, :, None] - values), axis=1
                 )
-                agent.position[i] = self.allowed_values[i][min_value_idx]
+                agent.position[i] = values[min_value_idx]

@@ -13,7 +13,7 @@ def generate_levy_distribution(beta: float = 0.1, size: int = 1) -> np.ndarray:
         Multiobjective Cuckoo Search for Design Optimization (2013).
 
     Args:
-        beta: Skewness parameter.
+        beta: Stability exponent of the Lévy distribution.
         size: Size of array.
 
     Returns:
@@ -26,7 +26,7 @@ def generate_levy_distribution(beta: float = 0.1, size: int = 1) -> np.ndarray:
 
     sigma = (num / den) ** (1 / beta)
 
-    u = np.random.normal(0, sigma**2, size=size)
+    u = np.random.normal(0, sigma, size=size)
     v = np.random.normal(size=size)
 
     levy_array = u / np.fabs(v) ** (1 / beta)

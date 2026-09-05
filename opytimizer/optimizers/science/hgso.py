@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.general as g
 from opytimizer.core import Optimizer
 from opytimizer.core.agent import Agent
 from opytimizer.core.space import Space
@@ -47,12 +46,23 @@ class HGSO(Optimizer):
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
 
+        Clusters are balanced and non-empty; the largest cluster determines
+        the pressure array's second dimension. Compile again after changing
+        the cluster count.
+
         Args:
             space: A Space object containing meta-information.
 
         """
 
-        n_agents_per_cluster = int(len(space.agents) / self.n_clusters)
+        if not isinstance(self.n_clusters, (int, np.integer)):
+            raise TypeError("`n_clusters` should be an integer")
+        if not 1 <= self.n_clusters <= len(space.agents):
+            raise ValueError("`n_clusters` should be between 1 and the population size")
+
+        n_agents_per_cluster = (
+            len(space.agents) + self.n_clusters - 1
+        ) // self.n_clusters
 
         self.coefficient = self.l1 * np.random.uniform(0.0, 1.0, self.n_clusters)
         self.pressure = self.l2 * np.random.uniform(
@@ -105,7 +115,7 @@ class HGSO(Optimizer):
 
         """
 
-        clusters = g.n_wise(space.agents, self.pressure.shape[1])
+        clusters = np.array_split(space.agents, self.pressure.shape[0])
         for i, cluster in enumerate(clusters):
             # Calculates the system's current temperature (eq. 8)
             T = np.exp(-iteration / n_iterations)
@@ -134,7 +144,8 @@ class HGSO(Optimizer):
         r1 = np.random.uniform(0.0, 1.0)
         N = int(len(space.agents) * (r1 * (0.2 - 0.1) + 0.1))
 
-        for agent in space.agents[-N:]:
+        for agent in space.agents[len(space.agents) - N :]:
             # Updates bad agent's position (eq. 12)
             r2 = np.random.uniform(0.0, 1.0, 1)
-            agent.position = agent.lb + r2 * (agent.ub - agent.lb)
+            agent.position[:] = agent.lb[:, None] + r2 * (agent.ub - agent.lb)[:, None]
+            agent.fit = function(agent.position)

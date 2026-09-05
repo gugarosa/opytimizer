@@ -1,6 +1,7 @@
 """Differential Evolution."""
 
 import copy
+from numbers import Real
 from typing import Any, Callable, Dict, Optional
 
 import numpy as np
@@ -36,6 +37,17 @@ class DE(Optimizer):
         self.F = 0.7
 
         self.build(params)
+        self._validate_parameters()
+
+    def _validate_parameters(self) -> None:
+        if not isinstance(self.CR, Real):
+            raise TypeError("`CR` should be a real number")
+        if not 0 <= self.CR <= 1:
+            raise ValueError("`CR` should be between 0 and 1")
+        if not isinstance(self.F, Real):
+            raise TypeError("`F` should be a real number")
+        if not 0 <= self.F <= 2:
+            raise ValueError("`F` should be between 0 and 2")
 
     def _mutate_agent(
         self, agent: Agent, alpha: Agent, beta: Agent, gamma: Agent
@@ -74,6 +86,8 @@ class DE(Optimizer):
             function: A callable that will be used as the objective function.
 
         """
+
+        self._validate_parameters()
 
         for i, agent in enumerate(space.agents):
             C = np.random.choice(

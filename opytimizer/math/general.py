@@ -35,8 +35,8 @@ def kmeans(
         centroids[i] = x[idx]
 
     for _ in range(max_iterations):
-        dists = np.squeeze(np.array([np.linalg.norm(x - c, axis=1) for c in centroids]))
-        updated_labels = np.squeeze(np.array(np.argmin(dists, axis=0)))
+        dists = np.array([np.linalg.norm(x - c, axis=(1, 2)) for c in centroids])
+        updated_labels = np.argmin(dists, axis=0)
 
         ratio = np.sum(labels != updated_labels) / n_samples
         if ratio <= tol:

@@ -1,5 +1,6 @@
 """Cross-Entropy Method."""
 
+from numbers import Real
 from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
@@ -35,6 +36,17 @@ class CEM(Optimizer):
         self.alpha = 0.7
 
         self.build(params)
+        self._validate_parameters()
+
+    def _validate_parameters(self) -> None:
+        if not isinstance(self.n_updates, (int, np.integer)):
+            raise TypeError("`n_updates` should be an integer")
+        if self.n_updates <= 0:
+            raise ValueError("`n_updates` should be > 0")
+        if not isinstance(self.alpha, Real):
+            raise TypeError("`alpha` should be a real number")
+        if not self.alpha >= 0:
+            raise ValueError("`alpha` should be >= 0")
 
     def compile(self, space: Space) -> None:
         """Compiles additional information that is used by this optimizer.
@@ -79,7 +91,9 @@ class CEM(Optimizer):
 
         """
 
-        new_mean = self.alpha * self.mean + (1 - self.alpha) * np.mean(updates)
+        new_mean = self.alpha * self.mean + (1 - self.alpha) * np.mean(
+            updates, axis=(0, 2)
+        )
 
         return new_mean
 
@@ -95,7 +109,7 @@ class CEM(Optimizer):
         """
 
         new_std = self.alpha * self.std + (1 - self.alpha) * np.sqrt(
-            np.mean((updates - self.mean) ** 2)
+            np.mean((updates - self.mean[None, :, None]) ** 2, axis=(0, 2))
         )
 
         return new_std
@@ -109,6 +123,7 @@ class CEM(Optimizer):
 
         """
 
+        self._validate_parameters()
         self._create_new_samples(space.agents, function)
 
         space.agents.sort(key=lambda x: x.fit)

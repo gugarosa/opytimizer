@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict, Optional
 
 import numpy as np
 
-import opytimizer.math.random as r
 from opytimizer.core import Optimizer
 from opytimizer.core.space import Space
 
@@ -37,19 +36,24 @@ class PVS(Optimizer):
     def update(self, space: Space, function: Callable) -> None:
         """Wraps Passing Vehicle Search over all agents and variables.
 
+        Sampling peers without replacement preserves their distribution but changes
+        seeded trajectories relative to rejection sampling.
+
         Args:
             space: Space containing agents and update-related information.
             function: A callable that will be used as the objective function.
 
         """
 
+        if space.n_agents < 3:
+            raise ValueError("PVS requires at least 3 agents")
+
         space.agents.sort(key=lambda x: x.fit)
         for i, agent in enumerate(space.agents):
             a = copy.deepcopy(agent)
 
-            R = [0, 0]
-            while R[0] == R[1]:
-                R = r.integer(0, space.n_agents, exclude=i, size=2)
+            R = np.random.choice(space.n_agents - 1, 2, replace=False)
+            R += R >= i
 
             # Calculates the selected agents distances (eq. 16)
             D1 = 1 / space.n_agents * agent.fit
