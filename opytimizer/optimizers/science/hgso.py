@@ -1,6 +1,7 @@
 """Henry Gas Solubility Optimization."""
 
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable, Mapping
+from typing import Any
 
 import numpy as np
 
@@ -10,10 +11,24 @@ from opytimizer.core.space import Space
 
 
 class HGSO(Optimizer):
-    """An HGSO class, inherited from Optimizer.
+    """Clustered Henry-gas-solubility search with worst-agent replacement.
 
-    This is the designed class to define HGSO-related
-    variables and methods.
+    Attributes:
+        n_clusters: Number of non-empty clusters. Defaults to ``2`` and must not
+            exceed the population size when compiled.
+        l1: Initial Henry-coefficient scale. Defaults to ``0.0005``.
+        l2: Initial pressure scale. Defaults to ``100``.
+        l3: Temperature-constant scale. Defaults to ``0.001``.
+        alpha: Weight of the solubility/global-best movement term. Defaults to ``1``.
+        beta: Scale of the fitness-dependent attraction coefficient. Defaults to ``1``.
+        K: Multiplicative solubility factor. Defaults to ``1``.
+        coefficient: One Henry coefficient per compiled cluster.
+        pressure: Per-cluster pressures, with enough columns for the largest
+            balanced cluster.
+        constant: One temperature constant per compiled cluster.
+
+    The final three arrays are created by ``compile``. Changing the cluster
+    count requires recompilation; repeated runs otherwise retain optimizer state.
 
     References:
         F. Hashim et al. Henry gas solubility optimization: A novel physics-based algorithm.
@@ -21,15 +36,15 @@ class HGSO(Optimizer):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: Mapping[str, Any] | None = None) -> None:
+        """Configure clustering, gas scales, and movement weights.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the configuration attributes documented above.
 
         """
 
-        super(HGSO, self).__init__()
+        super().__init__()
 
         self.n_clusters = 2
 

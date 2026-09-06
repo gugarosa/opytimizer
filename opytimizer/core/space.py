@@ -8,9 +8,17 @@ from opytimizer.core.agent import Agent
 
 
 class Space:
-    """A Space class for agents, variables and methods
-    related to the search space.
+    """Own population configuration, candidate agents, and the best-agent state.
 
+    The base constructor configures the space without populating ``agents``.
+    ``build`` creates the population and invokes the initializer hook. Concrete
+    spaces normally call it from their constructors.
+
+    Attributes:
+        agents: Mutable candidate population. Preserve each position's
+            ``(n_variables, n_dimensions)`` shape when updating it.
+        best_agent: Independent best-position/fitness state maintained by
+            initialization and optimizer evaluation.
     """
 
     def __init__(
@@ -22,7 +30,7 @@ class Space:
         upper_bound: Optional[Union[float, List, Tuple, np.ndarray]] = 1.0,
         mapping: Optional[List[str]] = None,
     ) -> None:
-        """Initialization method.
+        """Configure population dimensions and bounds without creating candidates.
 
         Args:
             n_agents: Number of agents.
@@ -60,17 +68,15 @@ class Space:
         ]
 
     def _initialize_agents(self) -> None:
-        """Initializes agents with their positions and defines a best agent.
+        """Initialize candidate positions and best-agent state in a subclass.
 
-        As each child has a different procedure of initialization,
-        you will need to implement it directly on its class.
-
+        The base hook does nothing, leaving the newly created zero positions.
         """
 
         pass
 
     def build(self) -> None:
-        """Builds the object by creating and initializing the agents."""
+        """Replace the population and invoke the space-specific initializer."""
 
         self._create_agents()
         self._initialize_agents()

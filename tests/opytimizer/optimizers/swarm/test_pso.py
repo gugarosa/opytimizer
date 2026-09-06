@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from opytimizer.optimizers.swarm import pso
 from opytimizer.spaces import search
@@ -122,3 +123,27 @@ def test_vpso_update():
     new_vpso.compile(search_space)
 
     new_vpso.update(search_space)
+
+
+@pytest.mark.parametrize(
+    "optimizer_type", [pso.PSO, pso.AIWPSO, pso.RPSO, pso.SAVPSO, pso.VPSO]
+)
+def test_pso_variants_preserve_shared_configuration_and_fresh_state(optimizer_type):
+    space = search.SearchSpace(3, 2, [0, 0], [10, 10])
+    optimizer = optimizer_type({"w": 0.5, "c1": 1.0, "c2": 2.0})
+    optimizer.compile(space)
+    previous_velocity = optimizer.velocity
+    optimizer.velocity[:] = 3
+    optimizer.local_position[:] = 4
+
+    optimizer.compile(space)
+
+    assert (optimizer.w, optimizer.c1, optimizer.c2) == (0.5, 1.0, 2.0)
+    assert optimizer.velocity is not previous_velocity
+    np.testing.assert_array_equal(optimizer.velocity, np.zeros((3, 2, 1)))
+    np.testing.assert_array_equal(optimizer.local_position, np.zeros((3, 2, 1)))
+    if isinstance(optimizer, pso.RPSO):
+        assert optimizer.mass.shape == (3, 2, 1)
+        assert np.all((optimizer.mass >= 0) & (optimizer.mass < 1))
+    if isinstance(optimizer, pso.VPSO):
+        np.testing.assert_array_equal(optimizer.v_velocity, np.ones((3, 2, 1)))

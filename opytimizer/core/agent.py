@@ -9,7 +9,18 @@ import opytimizer.utils.constant as c
 
 
 class Agent:
-    """An Agent class for all optimization techniques."""
+    """Hold one mutable candidate position and optimizer-maintained metadata.
+
+    Attributes:
+        position: Array of shape ``(n_variables, n_dimensions)``, initially zero.
+        fit: Fitness used by the optimizer. Some strategies, such as PSO, keep a
+            personal-best score here rather than the current position's score.
+        lb: Per-variable lower bounds.
+        ub: Per-variable upper bounds.
+        mapping: Variable names used by ``mapped_position``.
+        ts: Unix timestamp used for creation or best-improvement metadata, not
+            an elapsed-duration clock.
+    """
 
     def __init__(
         self,
@@ -19,13 +30,13 @@ class Agent:
         upper_bound: List[Union[int, float]],
         mapping: Optional[List[str]] = None,
     ) -> None:
-        """Initialization method.
+        """Allocate a zero position and retain the supplied bound configuration.
 
         Args:
             n_variables: Number of decision variables.
             n_dimensions: Number of dimensions.
-            lower_bound: Minimum possible values.
-            upper_bound: Maximum possible values.
+            lower_bound: Per-variable lower bounds. A scalar is valid for one variable.
+            upper_bound: Per-variable upper bounds. A scalar is valid for one variable.
             mapping: String-based identifiers for mapping variables' names.
 
         """
@@ -71,7 +82,7 @@ class Agent:
 
     @property
     def mapped_position(self) -> Dict[str, np.ndarray]:
-        """Dictionary mapping variables names and array of positions."""
+        """Map variable names to live position rows, not independent copies."""
 
         return dict(zip(self.mapping, self.position))
 
@@ -88,12 +99,11 @@ class Agent:
             self.position[j] = np.round(np.random.uniform(0, 1, self.n_dimensions))
 
     def fill_with_static(self, values: np.ndarray) -> None:
-        """Fills the agent's decision variables with static values. Note that this
-        method ignore the agent's bounds, so use it carefully.
+        """Fill positions without enforcing bounds.
 
         Args:
-            values: Values to be filled.
-
+            values: Per-variable values, broadcast across dimensions, or a matrix
+                matching ``position``. A scalar is accepted for one variable.
         """
 
         values = np.asarray(values)

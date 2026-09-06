@@ -9,6 +9,7 @@ version = release
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinx.ext.napoleon",
 ]
 autosummary_generate = True
@@ -16,3 +17,4 @@ exclude_patterns = ["_build"]
 html_theme = "alabaster"
 autodoc_default_options = {"members": True, "show-inheritance": True}
 autodoc_member_order = "bysource"
+autodoc_typehints_format = "short"

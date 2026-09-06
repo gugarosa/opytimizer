@@ -8,8 +8,10 @@ Opytimizer requires Python 3.11 or newer.
 
 .. toctree::
     :maxdepth: 2
-    :caption: Reference
+    :caption: Documentation
 
+    usage
+    development
     api
 
 Indices and tables

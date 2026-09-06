@@ -31,10 +31,11 @@ opt = Opytimizer(space, optimizer, sphere, save_agents=False)
 # Runs the optimization task
 opt.start(n_iterations=10, callbacks=[CheckpointCallback(frequency=10)])
 
-# Deletes the optimization objecs
+# Deletes the optimization object
 del opt
 
 # Loads the task from file and resumes it
-# Note that the following lines achieves the same results as a 35-iteration running
+# This deterministic objective and standard PSO can continue the same search.
+# Other algorithms may restart iteration-local schedules when start() is called.
 opt = Opytimizer.load("iter_10_checkpoint.pkl")
 opt.start(n_iterations=25)

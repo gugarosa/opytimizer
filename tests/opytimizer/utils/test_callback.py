@@ -1,5 +1,6 @@
 from pathlib import Path
 from types import SimpleNamespace
+from typing import get_type_hints
 
 import numpy as np
 import pytest
@@ -27,6 +28,16 @@ def test_callback_hooks_are_noops():
     assert callback.on_update_after() is None
 
 
+def test_callback_annotations_refer_to_the_actual_model():
+    assert get_type_hints(Callback.on_task_begin)["opt_model"] is Opytimizer
+    assert (
+        get_type_hints(CheckpointCallback.on_iteration_end)["opt_model"] is Opytimizer
+    )
+    assert (
+        get_type_hints(DiscreteSearchCallback.on_task_begin)["opt_model"] is Opytimizer
+    )
+
+
 def test_checkpoint_callback_saves_on_frequency():
     saved = []
     model = SimpleNamespace(save=saved.append)
@@ -39,8 +50,9 @@ def test_checkpoint_callback_saves_on_frequency():
 
 
 @pytest.mark.parametrize("relative", [False, True])
+@pytest.mark.parametrize("path_type", [str, Path])
 def test_checkpoint_callback_preserves_directory_and_saves_state(
-    tmp_path, monkeypatch, relative
+    tmp_path, monkeypatch, relative, path_type
 ):
     (tmp_path / "checkpoints").mkdir()
     monkeypatch.chdir(tmp_path)
@@ -51,11 +63,13 @@ def test_checkpoint_callback_preserves_directory_and_saves_state(
         SearchSpace(1, 1, 0, 1), Optimizer(), lambda x: float(np.sum(x**2))
     )
 
-    model.start(1, [CheckpointCallback(str(path), frequency=1)])
+    callback = CheckpointCallback(path_type(path), frequency=1)
+    assert callback.file_path == str(path)
+    model.start(1, [callback])
 
     checkpoint = path.with_name("iter_1_model.pkl")
     assert checkpoint.is_file()
-    loaded = Opytimizer.load(str(checkpoint))
+    loaded = Opytimizer.load(checkpoint)
     assert loaded.total_iterations == 1
     assert loaded.history.best_agent == model.history.best_agent
     np.testing.assert_array_equal(

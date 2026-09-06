@@ -35,19 +35,26 @@ return the negative value being maximized.
 
 ## Runtime flow
 
-`Opytimizer.start()` coordinates the algorithm:
+`Opytimizer` retains the supplied space and optimizer and compiles optimizer
+state during construction. Repeated `start()` calls do not recompile.
 
-1. prepare optimizer state for the selected space;
-2. evaluate the initial population;
-3. update positions;
-4. clip positions to the space bounds;
-5. evaluate candidates and retain improvements;
-6. record history and dispatch callbacks;
-7. repeat for the requested iterations.
+`Opytimizer.start()` then coordinates each run:
+
+1. validate the iteration budget and dispatch the task-begin hooks;
+2. evaluate the initial population between evaluation hooks;
+3. update positions between update hooks, then clip to bounds;
+4. evaluate candidates, record history, and dispatch iteration-end hooks;
+5. repeat for the requested iterations;
+6. dispatch task-end hooks and record elapsed time on normal completion.
 
 The optimizer method signatures determine which runtime values are supplied to
 each algorithm. This keeps the orchestrator shared while allowing algorithms to
 request values such as the space, iteration, or objective.
+
+Iteration-local counters restart while the cumulative counter and optimizer state
+continue. Callback sequences are per invocation. Exceptions propagate without
+rollback or a guaranteed task-end hook. See the [usage guide](docs/usage.rst) for
+ordering, history shapes, repeated runs, and resource ownership.
 
 ## Package layout
 
@@ -93,8 +100,14 @@ support algorithms whose operations are not direct NumPy calls.
 
 ## Persistence
 
-Optimization state can be saved and restored with `dill`, including callbacks
-and user-defined objectives. Checkpoints use the same serialization path.
+Optimization state can be saved and restored with `dill`, including the space,
+optimizer, user-defined objective, history, and counters. The driver does not
+retain its callback sequence; supply callbacks again when resuming. Checkpoints
+use the same serialization path and do not recompile the restored optimizer.
+
+Only load trusted checkpoints: pickle-based loading can execute code. Keep the
+software environment compatible rather than treating checkpoints as a
+version-independent interchange format.
 
 ## Dependencies
 
@@ -117,6 +130,7 @@ uv sync
 uv run pytest
 uv build
 uv run --group docs sphinx-build -b html docs docs/_build/html
+uv run --group docs sphinx-build -b doctest docs docs/_build/doctest
 ```
 
 Project metadata, dependency groups, pytest settings, and formatter settings
@@ -126,6 +140,9 @@ round trips in an isolated environment using the lowest compatible runtime
 dependencies. Interpreter-specific dependency minimums retain NumPy 1.x support
 on Python 3.11 and 3.12; the lockfile does not pin library consumers.
 Sphinx generates API pages from one autosummary entry during documentation builds.
+Warnings-as-errors documentation builds and executable guide examples are also CI
+gates. The [contributor guide](docs/development.rst) explains extension hooks,
+state ownership, docstring conventions, and behavioral regression expectations.
 
 Successful main-branch CI publishes an unreleased project version to GitHub
 with wheel and source-distribution assets. Pull requests and feature branches

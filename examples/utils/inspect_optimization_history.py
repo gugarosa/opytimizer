@@ -34,7 +34,8 @@ opt.start(n_iterations=10)
 opt.save("opt_task.pkl")
 
 # One can load the optimization task from disk or work directly with the attribute that is saved
-# History keys are saved as lists, where the last dimension stands for their iteration
+# Raw histories append one entry per record; get_convergence concatenates positions
+# across records (one column per iteration for this one-dimensional SearchSpace).
 # opt = Opytimizer.load('opt_task.pkl')
 
 # Prints the last iteration best agent and checks that it matches the best agent in space

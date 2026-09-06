@@ -2,7 +2,8 @@
 
 import copy
 import time
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable, Mapping
+from typing import Any
 
 import numpy as np
 
@@ -13,10 +14,20 @@ from opytimizer.core.space import Space
 
 
 class PSO(Optimizer):
-    """A PSO class, inherited from Optimizer.
+    """Particle swarm search with persistent velocities and personal bests.
 
-    This is the designed class to define PSO-related
-    variables and methods.
+    Attributes:
+        w: Inertia weight multiplying the previous velocity. Defaults to ``0.7``.
+        c1: Cognitive weight attracting a particle to its personal best. Defaults
+            to ``1.7``.
+        c2: Social weight attracting a particle to the global best. Defaults to
+            ``1.7``.
+        local_position: Personal-best positions, created by ``compile`` with shape
+            ``(n_agents, n_variables, n_dimensions)``.
+        velocity: Mutable velocity buffer with the same shape as ``local_position``.
+
+    Particle fitness stores the personal-best score, which need not be the score
+    of the current position. Its matching position is in ``local_position``.
 
     References:
         J. Kennedy, R. C. Eberhart and Y. Shi. Swarm intelligence.
@@ -24,15 +35,16 @@ class PSO(Optimizer):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: Mapping[str, Any] | None = None) -> None:
+        """Configure PSO coefficients; allocate particle state later in ``compile``.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Optional overrides for ``w``, ``c1``, and ``c2``. Subclasses may
+                define additional parameters, described in their own attributes.
 
         """
 
-        super(PSO, self).__init__()
+        super().__init__()
 
         self.w = 0.7
         self.c1 = 1.7
@@ -41,7 +53,7 @@ class PSO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        """Reset the shared personal-best and velocity buffers for this population.
 
         Args:
             space: A Space object containing meta-information.
@@ -56,11 +68,11 @@ class PSO(Optimizer):
         )
 
     def evaluate(self, space: Space, function: Callable) -> None:
-        """Evaluates the search space according to the objective function.
+        """Evaluate live positions and retain strict personal/global improvements.
 
         Args:
             space: A Space object that will be evaluated.
-            function: A callable that will be used as the objective function.
+            function: Scalar objective receiving a particle's position array.
 
         """
 
@@ -99,10 +111,16 @@ class PSO(Optimizer):
 
 
 class AIWPSO(PSO):
-    """An AIWPSO class, inherited from PSO.
+    """Adapt PSO inertia from the fraction of particles improving their fitness.
 
-    This is the designed class to define AIWPSO-related
-    variables and methods.
+    Attributes:
+        w_min: Lower adaptation weight. Defaults to ``0.1``.
+        w_max: Upper adaptation weight. Defaults to ``0.9``.
+        fitness: Previous personal-best scores, initialized at iteration zero of
+            each run.
+
+    Inherited ``w`` sets the initial inertia; adaptation subsequently updates it.
+    The cognitive and social coefficients retain the usual PSO meanings.
 
     References:
         A. Nickabadi, M. M. Ebadzadeh and R. Safabakhsh.
@@ -111,20 +129,20 @@ class AIWPSO(PSO):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: Mapping[str, Any] | None = None) -> None:
+        """Configure adaptive inertia limits and inherited PSO parameters.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for ``w_min``, ``w_max``, or inherited PSO parameters.
 
         """
 
         self.w_min = 0.1
         self.w_max = 0.9
 
-        super(AIWPSO, self).__init__(params)
+        super().__init__(params)
 
-    def _compute_success(self, agents: List[Agent]) -> None:
+    def _compute_success(self, agents: list[Agent]) -> None:
         """Computes the particles' success for updating inertia weight (eq. 16).
 
         Args:
@@ -170,10 +188,13 @@ class AIWPSO(PSO):
 
 
 class RPSO(PSO):
-    """An RPSO class, inherited from Optimizer.
+    """Mass-weighted PSO inspired by relativistic velocity.
 
-    This is the designed class to define RPSO-related
-    variables and methods.
+    Configuration is inherited from :class:`PSO`.
+
+    Attributes:
+        mass: Per-component masses drawn uniformly from ``[0, 1)`` by ``compile``,
+            with shape ``(n_agents, n_variables, n_dimensions)``.
 
     References:
         M. Roder, G. H. de Rosa, L. A. Passos, A. L. D. Rossi and J. P. Papa.
@@ -182,30 +203,15 @@ class RPSO(PSO):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(RPSO, self).__init__(params)
-
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        """Reset shared PSO state, then sample the additional mass buffer.
 
         Args:
             space: A Space object containing meta-information.
 
         """
 
-        self.local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        super().compile(space)
         self.mass = np.random.uniform(
             0.0, 1.0, (space.n_agents, space.n_variables, space.n_dimensions)
         )
@@ -236,10 +242,11 @@ class RPSO(PSO):
 
 
 class SAVPSO(PSO):
-    """An SAVPSO class, inherited from Optimizer.
+    """Self-adaptive velocity PSO with population-mean boundary corrections.
 
-    This is the designed class to define SAVPSO-related
-    variables and methods.
+    The constructor and state initialization are inherited from :class:`PSO`.
+    This variant uses ``w`` but does not use the inherited ``c1``/``c2`` values in
+    its update formula.
 
     References:
         H. Lu and W. Chen.
@@ -247,16 +254,6 @@ class SAVPSO(PSO):
         Journal of global optimization (2008).
 
     """
-
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(SAVPSO, self).__init__(params)
 
     def update(self, space: Space) -> None:
         """Wraps Self-adaptive Velocity Particle Swarm Optimization over all agents and variables.
@@ -304,10 +301,13 @@ class SAVPSO(PSO):
 
 
 class VPSO(PSO):
-    """A VPSO class, inherited from Optimizer.
+    """PSO combining ordinary and vertical velocity components.
 
-    This is the designed class to define VPSO-related
-    variables and methods.
+    Configuration is inherited from :class:`PSO`.
+
+    Attributes:
+        v_velocity: Vertical velocity buffer initialized to ones by ``compile``.
+            Its shape matches the shared PSO velocity buffer.
 
     References:
         W.-P. Yang. Vertical particle swarm optimization algorithm and its application in soft-sensor modeling.
@@ -315,30 +315,15 @@ class VPSO(PSO):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(VPSO, self).__init__(params)
-
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        """Reset shared PSO state and initialize vertical velocities to ones.
 
         Args:
             space: A Space object containing meta-information.
 
         """
 
-        self.local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        super().compile(space)
         self.v_velocity = np.ones(
             (space.n_agents, space.n_variables, space.n_dimensions)
         )

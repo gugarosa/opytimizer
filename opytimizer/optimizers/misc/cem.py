@@ -1,7 +1,8 @@
 """Cross-Entropy Method."""
 
+from collections.abc import Callable, Mapping
 from numbers import Real
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -11,10 +12,20 @@ from opytimizer.core.space import Space
 
 
 class CEM(Optimizer):
-    """A CEM class, inherited from Optimizer.
+    """Fit per-variable Gaussian sampling distributions to elite candidates.
 
-    This is the designed class to define CEM-related
-    variables and methods.
+    Attributes:
+        n_updates: Positive number of best agents used to update the distribution.
+            Defaults to ``5``; if larger than the population, all agents are used.
+        alpha: Non-negative weight of the previous mean and standard deviation.
+            Defaults to ``0.7``. Values above one are accepted but extrapolate
+            rather than form a convex average.
+        mean: Sampling means of shape ``(n_variables,)``, created by ``compile``.
+        std: Sampling standard deviations of shape ``(n_variables,)``, initially
+            set to each variable's bound span.
+
+    Each variable shares its distribution across dimensions. Updates first
+    smooth the mean, then calculate deviations around that updated mean.
 
     References:
         R. Y. Rubinstein. Optimization of Computer simulation Models with Rare Events.
@@ -22,15 +33,15 @@ class CEM(Optimizer):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: Mapping[str, Any] | None = None) -> None:
+        """Configure elite selection and distribution smoothing.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Optional overrides for ``n_updates`` and ``alpha``.
 
         """
 
-        super(CEM, self).__init__()
+        super().__init__()
 
         self.n_updates = 5
         self.alpha = 0.7
@@ -63,7 +74,7 @@ class CEM(Optimizer):
             self.mean[j] = np.random.uniform(lb, ub)
             self.std[j] = ub - lb
 
-    def _create_new_samples(self, agents: List[Agent], function: Callable) -> None:
+    def _create_new_samples(self, agents: list[Agent], function: Callable) -> None:
         """Creates new agents based on current mean and standard deviation.
 
         Args:
@@ -81,10 +92,11 @@ class CEM(Optimizer):
             agent.fit = function(agent.position)
 
     def _update_mean(self, updates: np.ndarray) -> np.ndarray:
-        """Calculates and updates mean.
+        """Return smoothed means without mutating the current mean buffer.
 
         Args:
-            updates: An array of updates' positions.
+            updates: Elite positions of shape
+                ``(n_elites, n_variables, n_dimensions)``.
 
         Returns:
             (np.ndarray): The new mean values.
@@ -98,10 +110,11 @@ class CEM(Optimizer):
         return new_mean
 
     def _update_std(self, updates: np.ndarray) -> np.ndarray:
-        """Calculates and updates standard deviation.
+        """Return smoothed deviations around the current per-variable means.
 
         Args:
-            updates: An array of updates' positions.
+            updates: Elite positions of shape
+                ``(n_elites, n_variables, n_dimensions)``.
 
         Returns:
             (np.ndarray): The new standard deviation values.

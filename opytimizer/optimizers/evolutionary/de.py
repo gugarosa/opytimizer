@@ -1,8 +1,9 @@
 """Differential Evolution."""
 
 import copy
+from collections.abc import Callable, Mapping
 from numbers import Real
-from typing import Any, Callable, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -12,10 +13,15 @@ from opytimizer.core.space import Space
 
 
 class DE(Optimizer):
-    """A DE class, inherited from Optimizer.
+    """Differential evolution with binomial crossover and greedy replacement.
 
-    This is the designed class to define DE-related
-    variables and methods.
+    Attributes:
+        CR: Crossover probability in ``[0, 1]``. Defaults to ``0.9``.
+        F: Differential weight in ``[0, 2]``. Defaults to ``0.7``.
+
+    Each target requires three distinct other agents, so the population must
+    contain at least four agents. Parameter domains are checked at construction
+    and before updates, including after public parameter mutations.
 
     References:
         R. Storn. On the usage of differential evolution for function optimization.
@@ -23,15 +29,15 @@ class DE(Optimizer):
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: Mapping[str, Any] | None = None) -> None:
+        """Set and validate the crossover probability and differential weight.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Optional overrides for ``CR`` and ``F``.
 
         """
 
-        super(DE, self).__init__()
+        super().__init__()
 
         self.CR = 0.9
         self.F = 0.7
