@@ -1,6 +1,16 @@
-"""Pigeon-Inspired Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, List, Optional
+"""Pigeon-Inspired Optimization.
+
+References:
+    H. Duan and P. Qiao.
+    Pigeon-inspired optimization: a new swarm intelligence optimizer for air robot path planning.
+    International Journal of Intelligent Computing and Cybernetics (2014).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +21,21 @@ from opytimizer.core.space import Space
 
 
 class PIO(Optimizer):
-    """A PIO class, inherited from Optimizer.
-
-    This is the designed class to define PIO-related
-    variables and methods.
-
-    References:
-        H. Duan and P. Qiao.
-        Pigeon-inspired optimization:a new swarm intelligence optimizerfor air robot path planning.
-        International Journal of IntelligentComputing and Cybernetics (2014).
+    """Search using pigeon map-and-compass movement followed by landmark attraction.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure pigeon navigation phases.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``n_c1`` (150) ends the map-and-compass phase, and ``n_c2`` (200) ends landmark updates.
+            ``R`` (0.2) controls exponential velocity decay.
+            Compilation sets ``n_p`` to the population size and zeros the population-shaped ``velocity``.
+            Landmark updates reduce ``n_p`` in place to select the leading pigeons used for the center.
 
         """
 
@@ -41,30 +49,11 @@ class PIO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_p = space.n_agents
 
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-    def _calculate_center(self, agents: List[Agent]) -> np.ndarray:
-        """Calculates the center position (eq. 8).
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (np.ndarray): The center position.
-
-        """
-
+    def _calculate_center(self, agents: list[Agent]) -> np.ndarray:
         total_pos = np.zeros((agents[0].n_variables, agents[0].n_dimensions))
         total_fit = 0.0
 
@@ -72,43 +61,26 @@ class PIO(Optimizer):
             total_pos += agent.position * agent.fit
             total_fit += agent.fit
 
+        # Fitness-weighted landmark center (eq. 8)
         center = total_pos / (self.n_p * total_fit + c.EPSILON)
 
         return center
 
     def _update_center_position(self, position: np.ndarray, center: np.ndarray) -> None:
-        """Updates a pigeon position based on the center (eq. 9).
-
-        Args:
-            position: Agent's current position.
-            center: Center position.
-
-        Returns:
-            (np.ndarray): A new center-based position.
-
-        """
-
         r1 = np.random.uniform(0.0, 1.0, 1)
+        # Landmark attraction (eq. 9)
         new_position = position + r1 * (center - position)
 
         return new_position
 
     def update(self, space: Space, iteration: int) -> None:
-        """Wraps Pigeon-Inspired Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-
-        """
-
         if iteration < self.n_c1:
             for i, agent in enumerate(space.agents):
                 # Updates current agent velocity (eq. 5)
                 r1 = np.random.uniform(0.0, 1.0, 1)
-                self.velocity[i] = self.velocity[i] * np.exp(
-                    -self.R * (iteration + 1)
-                ) + r1 * (space.best_agent.position - agent.position)
+                self.velocity[i] = self.velocity[i] * np.exp(-self.R * (iteration + 1)) + r1 * (
+                    space.best_agent.position - agent.position
+                )
 
                 # Updates current agent position (eq. 6)
                 agent.position += self.velocity[i]

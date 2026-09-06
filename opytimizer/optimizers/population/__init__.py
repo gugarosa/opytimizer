@@ -1,5 +1,8 @@
-"""An evolutionary package for all common opytimizer modules.
-It contains implementations of population-based optimizers.
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Expose population-inspired optimization strategies.
+
 """
 
 from opytimizer.optimizers.population.aeo import AEO

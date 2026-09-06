@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import sbo
@@ -17,9 +20,7 @@ def test_sbo_params():
 
 
 def test_sbo_compile():
-    search_space = search.SearchSpace(
-        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_sbo = sbo.SBO()
     new_sbo.compile(search_space)
@@ -29,9 +30,7 @@ def test_sbo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_sbo = sbo.SBO()
     new_sbo.compile(search_space)

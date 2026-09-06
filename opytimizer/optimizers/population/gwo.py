@@ -1,7 +1,17 @@
-"""Grey Wolf Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Grey Wolf Optimizer.
+
+References:
+    S. Mirjalili, S. Mirjalili and A. Lewis. Grey Wolf Optimizer.
+    Advances in Engineering Software (2014).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +20,18 @@ from opytimizer.core.space import Space
 
 
 class GWO(Optimizer):
-    """A GWO class, inherited from Optimizer.
-
-    This is the designed class to define GWO-related
-    variables and methods.
-
-    References:
-        S. Mirjalili, S. Mirjalili and A. Lewis. Grey Wolf Optimizer.
-        Advances in Engineering Software (2014).
+    """Implement Grey Wolf Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize grey-wolf hunting.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            This optimizer has no algorithm-specific configuration keys.
 
         """
 
@@ -33,17 +39,7 @@ class GWO(Optimizer):
 
         self.build(params)
 
-    def _calculate_coefficients(self, a: float) -> Tuple[float, float]:
-        """Calculates the mathematical coefficients.
-
-        Args:
-            a: Linear constant.
-
-        Returns:
-            (Tuple[float, float]): Both `A` and `C` coefficients.
-
-        """
-
+    def _calculate_coefficients(self, a: float) -> tuple[float, float]:
         r1 = np.random.uniform(0.0, 1.0, 1)
         r2 = np.random.uniform(0.0, 1.0, 1)
 
@@ -55,19 +51,7 @@ class GWO(Optimizer):
 
         return A, C
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Grey Wolf Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         space.agents.sort(key=lambda x: x.fit)
         alpha, beta, delta = copy.deepcopy(space.agents[:3])
 

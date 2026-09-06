@@ -1,17 +1,16 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.utils.history import History
 
-# Instantiates the History
 h = History()
 
-# Dumps a variable (it will be converted into a list)
 h.dump(x=1)
 h.dump(x=2)
 h.dump(x=3)
 
-# Any variable will be converted into a list
-# Even lists, dictionaries, etc
+# Custom values, including lists and dictionaries, are appended without copying
 h.dump(y=[1])
 
-# Access the variables
 print(h.x)
 print(h.y)

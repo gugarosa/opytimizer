@@ -1,7 +1,16 @@
-"""Moth-Flame Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Moth-Flame Optimization.
+
+References:
+    S. Mirjalili. Moth-flame optimization algorithm: A novel nature-inspired heuristic paradigm.
+    Knowledge-Based Systems (2015).
+
+"""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +19,18 @@ from opytimizer.core.space import Space
 
 
 class MFO(Optimizer):
-    """A MFO class, inherited from Optimizer.
-
-    This is the designed class to define MFO-related
-    variables and methods.
-
-    References:
-        S. Mirjalili. Moth-flame optimization algorithm: A novel nature-inspired heuristic paradigm.
-        Knowledge-Based Systems (2015).
+    """Move moths along logarithmic spirals around ranked flames.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure moth-flame spiral movement.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``b`` (1) controls the logarithmic spiral's exponential growth.
 
         """
 
@@ -36,15 +41,6 @@ class MFO(Optimizer):
         self.build(params)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Moth-Flame Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         flames = copy.deepcopy(space.agents)
         flames.sort(key=lambda x: x.fit)
 
@@ -62,16 +58,10 @@ class MFO(Optimizer):
                     D = np.fabs(flames[i].position[j] - agent.position[j])
 
                     # Updates current agent's position (eq. 3.12)
-                    agent.position[j] = (
-                        D * np.exp(self.b * t) * np.cos(2 * np.pi * t)
-                        + flames[i].position[j]
-                    )
+                    agent.position[j] = D * np.exp(self.b * t) * np.cos(2 * np.pi * t) + flames[i].position[j]
                 else:
                     # Calculates the distance (eq. 3.13)
                     D = np.fabs(flames[0].position[j] - agent.position[j])
 
                     # Updates current agent's position (eq. 3.12)
-                    agent.position[j] = (
-                        D * np.exp(self.b * t) * np.cos(2 * np.pi * t)
-                        + flames[0].position[j]
-                    )
+                    agent.position[j] = D * np.exp(self.b * t) * np.cos(2 * np.pi * t) + flames[0].position[j]

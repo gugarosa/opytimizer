@@ -1,7 +1,17 @@
-"""Red Fox Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Red Fox Optimization.
+
+References:
+    D. Polap and M. Woźniak. Red fox optimization algorithm.
+    Expert Systems with Applications (2021).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,21 @@ from opytimizer.core.space import Space
 
 
 class RFO(Optimizer):
-    """A RFO class, inherited from Optimizer.
-
-    This is the designed class to define RFO-related
-    variables and methods.
-
-    References:
-        D. Polap and M. Woźniak. Red fox optimization algorithm.
-        Expert Systems with Applications (2021).
+    """Implement Red Fox Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure fox observation and habitat replacement.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``phi`` is the observation angle, initially sampled uniformly from ``[0, 2 * pi)``.
+            ``theta`` is the radius used when ``phi`` is zero, initially sampled uniformly from ``[0, 1)``.
+            ``p_replacement`` (0.05) is the fraction replaced during updates, with the count fixed at compilation.
+            The two initial random draws still occur when their values are overridden.
 
         """
 
@@ -39,25 +48,9 @@ class RFO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_replacement = int(self.p_replacement * space.n_agents)
 
     def _rellocation(self, agent: Agent, best_agent: Agent, function: Callable) -> None:
-        """Performs the fox rellocation procedure.
-
-        Args:
-            agent: Current agent.
-            best_agent: Best agent.
-            function: A callable that will be used as the objective function.
-
-        """
-
         temp = copy.deepcopy(agent)
 
         # Calculates the square root of euclidean distance between agent and best agent (eq. 1)
@@ -74,15 +67,6 @@ class RFO(Optimizer):
             agent.fit = copy.deepcopy(temp.fit)
 
     def _noticing(self, agent: Agent, function: Callable, alpha: float) -> None:
-        """Performs the fox noticing procedure.
-
-        Args:
-            agent: Current agent.
-            function: A callable that will be used as the objective function.
-            alpha: Scaling parameter.
-
-        """
-
         mu = np.random.uniform(0.0, 1.0, 1)
         if mu > 0.75:
             if self.phi != 0:
@@ -107,14 +91,6 @@ class RFO(Optimizer):
             agent.fit = function(agent.position)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Red Fox Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         alpha = np.random.uniform(0, 0.2, 1)
 
         for agent in space.agents:
@@ -125,9 +101,7 @@ class RFO(Optimizer):
 
         # Calculates the habitat's center and diameter (eq. 6 and 7)
         habitat_center = (space.agents[0].position + space.agents[1].position) / 2
-        habitat_diameter = np.sqrt(
-            np.linalg.norm(space.agents[0].position - space.agents[1].position)
-        )
+        habitat_diameter = np.sqrt(np.linalg.norm(space.agents[0].position - space.agents[1].position))
 
         k = np.random.uniform(0.0, 1.0, 1)
 
@@ -140,8 +114,6 @@ class RFO(Optimizer):
             # If sampled number is smaller than 0.45 (eq. 8 - bottom)
             else:
                 # Reproduces parents into a new position (eq. 9)
-                agent.position = (
-                    k * (space.agents[0].position + space.agents[1].position) / 2
-                )
+                agent.position = k * (space.agents[0].position + space.agents[1].position) / 2
 
             agent.clip_by_bound()

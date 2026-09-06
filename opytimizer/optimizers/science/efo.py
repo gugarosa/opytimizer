@@ -1,7 +1,18 @@
-"""Electromagnetic Field Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Electromagnetic Field Optimization.
+
+References:
+    H. Abedinpourshotorban et al.
+    Electromagnetic field optimization: A physics-inspired metaheuristic optimization algorithm.
+    Swarm and Evolutionary Computation (2016).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,23 +21,23 @@ from opytimizer.core.space import Space
 
 
 class EFO(Optimizer):
-    """An EFO class, inherited from Optimizer.
-
-    This is the designed class to define EFO-related
-    variables and methods.
-
-    References:
-        H. Abedinpourshotorban et al.
-        Electromagnetic field optimization: A physics-inspired metaheuristic optimization algorithm.
-        Swarm and Evolutionary Computation (2016).
+    """Implement Electromagnetic Field Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure electromagnetic fields and replacement probabilities.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``positive_field`` (0.1) and ``negative_field`` (0.5) are the fractions of
+            sorted agents assigned to the positive and negative fields.
+            ``ps_ratio`` (0.1) is the probability of copying a positive-field coordinate.
+            ``r_ratio`` (0.4) is the probability of randomly resetting one coordinate.
+            ``phi`` (``(1 + sqrt(5)) / 2``) scales attraction relative to repulsion.
+            ``RI`` (0) is the mutable coordinate index used for random replacement.
 
         """
 
@@ -43,40 +54,17 @@ class EFO(Optimizer):
 
         self.build(params)
 
-    def _calculate_indexes(self, n_agents: int) -> Tuple[int, int, int]:
-        """Calculates the indexes of positive, negative and neutral particles.
-
-        Args:
-            n_agents: Number of agents in the space.
-
-        Returns:
-            (Tuple[int, int, int]): Positive, negative and neutral particles' indexes.
-
-        """
-
+    def _calculate_indexes(self, n_agents: int) -> tuple[int, int, int]:
         positive_index = int(np.random.uniform(0, n_agents * self.positive_field))
 
-        negative_index = int(
-            np.random.uniform(n_agents * (1 - self.negative_field), n_agents)
-        )
+        negative_index = int(np.random.uniform(n_agents * (1 - self.negative_field), n_agents))
 
-        neutral_index = int(
-            np.random.uniform(
-                n_agents * self.positive_field, n_agents * (1 - self.negative_field)
-            )
-        )
+        neutral_index = int(np.random.uniform(n_agents * self.positive_field, n_agents * (1 - self.negative_field)))
 
         return positive_index, negative_index, neutral_index
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Electromagnetic Field Optimization over all agents and variables (eq. 1-4).
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
+        # Wraps Electromagnetic Field Optimization over all agents and variables (eq. 1-4)
         space.agents.sort(key=lambda x: x.fit)
         n_agents = len(space.agents)
 
@@ -92,19 +80,14 @@ class EFO(Optimizer):
             else:
                 agent.position[j] = (
                     space.agents[neg].position[j]
-                    + self.phi
-                    * force
-                    * (space.agents[pos].position[j] - space.agents[neu].position[j])
-                    - force
-                    * (space.agents[neg].position[j] - space.agents[neu].position[j])
+                    + self.phi * force * (space.agents[pos].position[j] - space.agents[neu].position[j])
+                    - force * (space.agents[neg].position[j] - space.agents[neu].position[j])
                 )
         agent.clip_by_bound()
 
         r2 = np.random.uniform(0.0, 1.0, 1)
         if r2 < self.r_ratio:
-            agent.position[self.RI] = np.random.uniform(
-                agent.lb[self.RI], agent.ub[self.RI], 1
-            )
+            agent.position[self.RI] = np.random.uniform(agent.lb[self.RI], agent.ub[self.RI], 1)
 
             self.RI += 1
             if self.RI >= agent.n_variables:

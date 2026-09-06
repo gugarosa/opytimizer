@@ -1,4 +1,12 @@
-"""Shared configuration and evaluation hooks for optimization strategies."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Provide shared configuration and evaluation hooks for optimization strategies.
+
+The base optimizer remains concrete for evaluation-only workflows.
+Subclasses override compilation or movement only when those responsibilities differ.
+
+"""
 
 import copy
 import time
@@ -9,35 +17,29 @@ from opytimizer.core.space import Space
 
 
 class Optimizer:
-    """Define the strategy hooks used by :class:`opytimizer.Opytimizer`.
+    """Provide the strategy hooks used by :class:`opytimizer.Opytimizer`.
 
-    Override ``update`` to move candidates and ``compile`` when the algorithm
-    needs space-dependent state. The default evaluator minimizes a scalar
-    objective and maintains an independent best-position snapshot.
-
-    The base class is intentionally instantiable: its compilation and update
-    hooks do nothing, which is useful for evaluation-only workflows.
     """
 
     def build(self, params: Mapping[str, Any] | None = None) -> None:
         """Apply parameter overrides to this optimizer without copying values.
 
         Args:
-            params: Attribute names and values. ``None`` leaves defaults intact.
+            params: Attribute overrides.
 
         Raises:
-            TypeError: If ``params`` is not a mapping or ``None``.
+            TypeError: The overrides are not a mapping or None.
 
         Notes:
-            This method does not restrict attribute names or validate algorithm
-            domains. Subclasses own those checks; use their documented parameter
-            names rather than relying on misspellings to be rejected.
+            None leaves existing values intact. Keys are not restricted and values are not copied.
+            Subclasses validate meaningful parameter domains at configuration or consumption boundaries.
+
         """
 
         if params is None:
             return
         if not isinstance(params, Mapping):
-            raise TypeError("`params` should be a mapping or None")
+            raise TypeError("`params` must be a mapping.")
 
         for key, value in params.items():
             setattr(self, key, value)
@@ -51,6 +53,7 @@ class Optimizer:
 
         Args:
             space: Initialized population whose dimensions determine state shape.
+
         """
 
         pass
@@ -60,12 +63,12 @@ class Optimizer:
 
         Args:
             space: Population whose agents and best-agent state are updated.
-            function: Callable receiving a live position array of shape
-                ``(n_variables, n_dimensions)`` and returning a scalar fitness.
+            function: Scalar objective receiving a live array of shape ``(n_variables, n_dimensions)``.
 
         Notes:
             Exceptions from the objective propagate. Subclasses may override
             this hook for different state semantics, such as PSO personal bests.
+
         """
 
         for agent in space.agents:
@@ -83,6 +86,7 @@ class Optimizer:
         positional arguments matching ``Opytimizer`` attributes, commonly
         ``space``, ``function``, ``iteration``, and ``n_iterations``. The driver
         resolves those arguments by name and clips the population afterward.
+
         """
 
         pass

@@ -1,3 +1,8 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+import numpy as np
+import torch
 import torchvision
 from learnergy.models.bernoulli import RBM
 
@@ -5,7 +10,6 @@ from opytimizer import Opytimizer
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Creates training and testing dataset
 train = torchvision.datasets.MNIST(
     root="./data",
     train=True,
@@ -14,13 +18,21 @@ train = torchvision.datasets.MNIST(
 )
 
 
-def rbm(opytimizer):
-    # Gathers params
+def rbm(opytimizer: np.ndarray) -> torch.Tensor:
+    """Train a fresh RBM on MNIST and return its reconstruction error.
+
+    Args:
+        opytimizer: Position rows containing learning rate, momentum, and weight decay in that order.
+
+    Returns:
+        Reconstruction error after five epochs on the shared training dataset.
+
+    """
+
     lr = opytimizer[0][0]
     momentum = opytimizer[1][0]
     decay = opytimizer[2][0]
 
-    # Creates an RBM
     model = RBM(
         n_visible=784,
         n_hidden=128,
@@ -32,26 +44,20 @@ def rbm(opytimizer):
         use_gpu=False,
     )
 
-    # Training an RBM
     error, _ = model.fit(train, batch_size=128, epochs=5)
 
     return error
 
 
-# Number of agents and decision variables
 n_agents = 10
 n_variables = 3
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [0, 0, 0]
 upper_bound = [1, 1, 1]
 
-# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, rbm)
 
-# Runs the optimization task
 opt.start(n_iterations=10)

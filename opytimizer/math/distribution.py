@@ -1,4 +1,9 @@
-"""Distribution-based mathematical generators."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Distribution-based mathematical generators.
+
+"""
 
 from math import gamma, pi, sin
 
@@ -17,7 +22,7 @@ def generate_levy_distribution(beta: float = 0.1, size: int = 1) -> np.ndarray:
         size: Size of array.
 
     Returns:
-        (np.ndarray): Lévy distribution n-dimensional array.
+        Lévy distribution n-dimensional array.
 
     """
 

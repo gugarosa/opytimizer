@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from types import new_class
 
 import numpy as np
@@ -45,18 +48,14 @@ def test_loa_params():
 
 
 def test_loa_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
 
 
 def test_loa_get_nomad_lions():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -65,9 +64,7 @@ def test_loa_get_nomad_lions():
 
 
 def test_loa_get_pride_lions():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -79,9 +76,7 @@ def test_loa_hunting():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -92,9 +87,7 @@ def test_loa_hunting():
 
 
 def test_loa_moving_safe_place():
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -108,9 +101,7 @@ def test_loa_roaming():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -124,9 +115,7 @@ def test_loa_mating_operator():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -145,9 +134,7 @@ def test_loa_mating():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -161,9 +148,7 @@ def test_loa_defense():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -179,9 +164,7 @@ def test_loa_nomad_roaming():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -195,9 +178,7 @@ def test_loa_nomad_mating():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -208,9 +189,7 @@ def test_loa_nomad_mating():
 
 
 def test_loa_nomad_attack():
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -222,9 +201,7 @@ def test_loa_nomad_attack():
 
 
 def test_loa_migrating():
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -236,9 +213,7 @@ def test_loa_migrating():
 
 
 def test_loa_equilibrium():
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -251,9 +226,7 @@ def test_loa_equilibrium():
 
 
 def test_loa_check_prides_for_males():
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)
@@ -270,9 +243,7 @@ def test_loa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=100, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_loa = loa.LOA()
     new_loa.compile(search_space)

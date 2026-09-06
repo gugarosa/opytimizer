@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -10,9 +13,7 @@ def test_pvs_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pvs = pvs.PVS()
 
@@ -20,9 +21,7 @@ def test_pvs_update():
 
 
 @pytest.mark.parametrize("n_agents", [1, 2])
-def test_pvs_rejects_insufficient_peers_before_sorting_or_sampling(
-    monkeypatch, n_agents
-):
+def test_pvs_rejects_insufficient_peers_before_sorting_or_sampling(monkeypatch, n_agents):
     search_space = search.SearchSpace(n_agents, 1, [0], [10])
     for i, agent in enumerate(search_space.agents):
         agent.fit = float(n_agents - i)

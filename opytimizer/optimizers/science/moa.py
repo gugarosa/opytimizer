@@ -1,6 +1,15 @@
-"""Magnetic Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Magnetic Optimization Algorithm.
+
+References:
+    M.-H. Tayarani and M.-R. Akbarzadeh. Magnetic-inspired optimization algorithms: Operators and structures.
+    Swarm and Evolutionary Computation (2014).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +19,19 @@ from opytimizer.core.space import Space
 
 
 class MOA(Optimizer):
-    """An MOA class, inherited from Optimizer.
-
-    This is the designed class to define MOA-related
-    variables and methods.
-
-    References:
-        M.-H. Tayarani and M.-R. Akbarzadeh. Magnetic-inspired optimization algorithms: Operators and structures.
-        Swarm and Evolutionary Computation (2014).
+    """Implement Magnetic Optimization Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure fitness-dependent magnetic mass.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``alpha`` (1.0) is the mass offset and ``rho`` (2.0) scales normalized fitness in the mass.
+            Compilation requires a perfect-square population for the toroidal neighbor grid.
 
         """
 
@@ -37,32 +43,15 @@ class MOA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         if not np.sqrt(space.n_agents).is_integer():
-            raise ValueError("`n_agents` should have a perfect square")
+            raise ValueError("`n_agents` must be a perfect square.")
 
     def update(self, space: Space) -> None:
-        """Wraps Magnetic Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers the best and worst agents and calculates a list of normalized fitness (eq. 2)
         best, worst = space.agents[0], space.agents[-1]
-        fitness = [
-            (agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON)
-            for agent in space.agents
-        ]
+        fitness = [(agent.fit - best.fit) / (worst.fit - best.fit + c.EPSILON) for agent in space.agents]
 
         # Calculates the masses (eq. 3)
         mass = [self.alpha + self.rho * fit for fit in fitness]
@@ -83,11 +72,7 @@ class MOA(Optimizer):
                 distance = np.linalg.norm(agent.position - space.agents[n].position)
 
                 # Calculates the force between agents (eq. 5)
-                force += (
-                    (space.agents[n].position - agent.position)
-                    * fitness[n]
-                    / (distance + c.EPSILON)
-                )
+                force += (space.agents[n].position - agent.position) * fitness[n] / (distance + c.EPSILON)
 
             force = np.mean(force)
 

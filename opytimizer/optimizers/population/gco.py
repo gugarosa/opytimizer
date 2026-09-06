@@ -1,7 +1,17 @@
-"""Germinal Center Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Germinal Center Optimization.
+
+References:
+    C. Villaseñor et al. Germinal center optimization algorithm.
+    International Journal of Computational Intelligence Systems (2018).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +22,20 @@ from opytimizer.core.space import Space
 
 
 class GCO(Optimizer):
-    """A GCO class, inherited from Optimizer.
-
-    This is the designed class to define GCO-related
-    variables and methods.
-
-    References:
-        C. Villaseñor et al. Germinal center optimization algorithm.
-        International Journal of Computational Intelligence Systems (2018).
+    """Implement Germinal Center Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure germinal-center mutation.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``CR`` (0.7) is the per-variable mutation probability and ``F`` (1.25)
+            scales the difference between donor cells.
+            Compilation initializes cell lifetimes to 70 and duplication counters to one.
 
         """
 
@@ -39,52 +47,22 @@ class GCO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.life = np.random.uniform(70, 70, space.n_agents)
         self.counter = np.ones(space.n_agents)
 
-    def _mutate_cell(
-        self, agent: Agent, alpha: Agent, beta: Agent, gamma: Agent
-    ) -> Agent:
-        """Mutates a new cell based on distinct cells (alg. 2).
-
-        Args:
-            agent: Current agent.
-            alpha: 1st picked agent.
-            beta: 2nd picked agent.
-            gamma: 3rd picked agent.
-
-        Returns:
-            (Agent): A mutated cell.
-
-        """
-
+    def _mutate_cell(self, agent: Agent, alpha: Agent, beta: Agent, gamma: Agent) -> Agent:
+        # Mutates a new cell based on distinct cells (alg. 2)
         a = copy.deepcopy(agent)
 
         for j in range(a.n_variables):
             r2 = np.random.uniform(0.0, 1.0, 1)
             if r2 < self.CR:
-                a.position[j] = alpha.position[j] + self.F * (
-                    beta.position[j] - gamma.position[j]
-                )
+                a.position[j] = alpha.position[j] + self.F * (beta.position[j] - gamma.position[j])
 
         return a
 
-    def _dark_zone(self, agents: List[Agent], function: Callable) -> None:
-        """Performs the dark-zone update process (alg. 1).
-
-        Args:
-            agents: List of agents.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _dark_zone(self, agents: list[Agent], function: Callable) -> None:
+        # Performs the dark-zone update process (alg. 1)
         for i, agent in enumerate(agents):
             r1 = np.random.uniform(0, 100, 1)
             if r1 < self.life[i]:
@@ -92,9 +70,7 @@ class GCO(Optimizer):
             else:
                 self.counter[i] = 1
 
-            C = np.random.choice(
-                len(agents), 3, p=self.counter / np.sum(self.counter), replace=False
-            )
+            C = np.random.choice(len(agents), 3, p=self.counter / np.sum(self.counter), replace=False)
 
             a = self._mutate_cell(agent, agents[C[0]], agents[C[1]], agents[C[2]])
             a.clip_by_bound()
@@ -106,14 +82,8 @@ class GCO(Optimizer):
 
                 self.life[i] += 10
 
-    def _light_zone(self, agents: List[Agent]) -> None:
-        """Performs the light-zone update process (alg. 1).
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _light_zone(self, agents: list[Agent]) -> None:
+        # Performs the light-zone update process (alg. 1)
         fits = [agent.fit for agent in agents]
         min_fit, max_fit = np.min(fits), np.max(fits)
 
@@ -123,13 +93,5 @@ class GCO(Optimizer):
             self.life[i] += 10 * life_fit
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Germinal Center Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         self._dark_zone(space.agents, function)
         self._light_zone(space.agents)

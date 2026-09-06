@@ -1,8 +1,18 @@
-"""Lion Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Lion Optimization Algorithm.
+
+References:
+    M. Yazdani and F. Jolai. Lion Optimization Algorithm (LOA): A nature-inspired metaheuristic algorithm.
+    Journal of Computational Design and Engineering (2016).
+
+"""
 
 import copy
 import itertools
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -13,8 +23,7 @@ from opytimizer.core.space import Space
 
 
 class Lion(Agent):
-    """A Lion class complements its inherited parent with additional information neeeded by
-    the Lion Optimization Algorithm.
+    """Represent a lion with best-position, gender, nomad, and pride state.
 
     """
 
@@ -22,12 +31,12 @@ class Lion(Agent):
         self,
         n_variables: int,
         n_dimensions: int,
-        lower_bound: Union[List, Tuple, np.ndarray],
-        upper_bound: Union[List, Tuple, np.ndarray],
+        lower_bound: list | tuple | np.ndarray,
+        upper_bound: list | tuple | np.ndarray,
         position: np.ndarray,
         fit: float,
     ) -> None:
-        """Initialization method.
+        """Copy an agent's position and fitness into independent lion state.
 
         Args:
             n_variables: Number of decision variables.
@@ -36,6 +45,11 @@ class Lion(Agent):
             upper_bound: Maximum possible values.
             position: Position array.
             fit: Fitness value.
+
+        Notes:
+            ``best_position`` initially copies ``position`` and ``p_fit`` copies ``fit``.
+            New lions have ``nomad`` and ``female`` set to False, with ``pride`` and ``group`` set to zero.
+            LOA compilation assigns their actual nomad, gender, and pride memberships.
 
         """
 
@@ -55,22 +69,24 @@ class Lion(Agent):
 
 
 class LOA(Optimizer):
-    """An LOA class, inherited from Optimizer.
-
-    This is the designed class to define LOA-related
-    variables and methods.
-
-    References:
-        M. Yazdani and F. Jolai. Lion Optimization Algorithm (LOA): A nature-inspired metaheuristic algorithm.
-        Journal of Computational Design and Engineering (2016).
+    """Implement Lion Optimization Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure lion population structure and reproduction.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``N`` (0.2) is the nomad fraction and ``P`` (4) is the number of prides.
+            ``S`` (0.8) is the female probability in prides, with ``1 - S`` used for nomads.
+            ``R`` (0.2) is retained as a configuration attribute but is not used by this implementation.
+            Roaming currently samples ``int(len(pride) * P)`` locations.
+            ``I`` (0.4) is the fraction of pride members selected for migration.
+            ``Ma`` (0.3) is the mating probability and ``Mu`` (0.2) is the per-variable cub mutation probability.
+            Compilation replaces the space's agents with independent ``Lion`` copies.
 
         """
 
@@ -89,13 +105,6 @@ class LOA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         space.agents = [
             Lion(
                 agent.n_variables,
@@ -121,43 +130,16 @@ class LOA(Optimizer):
             agent.female = bool(pride_gender[i])
             agent.pride = i % self.P
 
-    def _get_nomad_lions(self, agents: List[Lion]) -> List[Lion]:
-        """Gets all nomad lions.
-
-        Args:
-            agents: Agents.
-
-        Returns:
-            (List[Lion]): A list of nomad lions.
-
-        """
-
+    def _get_nomad_lions(self, agents: list[Lion]) -> list[Lion]:
         return [agent for agent in agents if agent.nomad]
 
-    def _get_pride_lions(self, agents: List[Lion]) -> List[List[Lion]]:
-        """Gets all non-nomad (pride) lions.
-
-        Args:
-            agents: Agents.
-
-        Returns:
-            (List[List[Lion]]): A list of lists, where each one indicates a particular pride with its lions.
-
-        """
-
+    def _get_pride_lions(self, agents: list[Lion]) -> list[list[Lion]]:
         agents = [agent for agent in agents if not agent.nomad]
 
         return [[agent for agent in agents if agent.pride == i] for i in range(self.P)]
 
-    def _hunting(self, prides: List[Lion], function: Callable) -> None:
-        """Performs the hunting procedure (s. 2.2.2).
-
-        Args:
-            prides: List of prides holding their corresponding lions.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _hunting(self, prides: list[Lion], function: Callable) -> None:
+        # Performs the hunting procedure (s. 2.2.2)
         for pride in prides:
             for agent in pride:
                 if agent.female:
@@ -169,9 +151,7 @@ class LOA(Optimizer):
             second_group = np.sum([agent.fit for agent in pride if agent.group == 2])
             third_group = np.sum([agent.fit for agent in pride if agent.group == 3])
 
-            prey = np.mean(
-                [agent.position for agent in pride if agent.group == 0], axis=0
-            )
+            prey = np.mean([agent.position for agent in pride if agent.group == 0], axis=0)
 
             groups_idx = np.argsort([first_group, second_group, third_group]) + 1
             center = groups_idx[0]
@@ -183,14 +163,10 @@ class LOA(Optimizer):
                     for j in range(agent.n_variables):
                         if agent.position[j] < prey[j]:
                             # Updates its position (eq. 5 - top)
-                            agent.position[j] = np.random.uniform(
-                                agent.position[j], prey[j], 1
-                            )
+                            agent.position[j] = np.random.uniform(agent.position[j], prey[j], 1)
                         else:
                             # Updates its position (eq. 5 - bottom)
-                            agent.position[j] = np.random.uniform(
-                                prey[j], agent.position[j], 1
-                            )
+                            agent.position[j] = np.random.uniform(prey[j], agent.position[j], 1)
 
                 if agent.group in [left, right]:
                     for j in range(agent.n_variables):
@@ -198,14 +174,10 @@ class LOA(Optimizer):
 
                         if encircling < prey[j]:
                             # Updates its position (eq. 4 - top)
-                            agent.position[j] = np.random.uniform(
-                                encircling, prey[j], 1
-                            )
+                            agent.position[j] = np.random.uniform(encircling, prey[j], 1)
                         else:
                             # Updates its position (eq. 4 - bottom)
-                            agent.position[j] = np.random.uniform(
-                                prey[j], encircling, 1
-                            )
+                            agent.position[j] = np.random.uniform(prey[j], encircling, 1)
 
                 agent.clip_by_bound()
 
@@ -219,14 +191,8 @@ class LOA(Optimizer):
                     r1 = np.random.uniform(0.0, 1.0, 1)
                     prey += r1 * p_improvement * (prey - agent.position)
 
-    def _moving_safe_place(self, prides: List[Lion]) -> None:
-        """Move prides to safe locations (s. 2.2.3).
-
-        Args:
-            prides: List of prides holding their corresponding lions.
-
-        """
-
+    def _moving_safe_place(self, prides: list[Lion]) -> None:
+        # Move prides to safe locations (s. 2.2.3)
         for pride in prides:
             # Calculates the number of improved lions (eq. 7)
             n_improved = np.sum([1 for agent in pride if agent.fit < agent.p_fit])
@@ -252,19 +218,10 @@ class LOA(Optimizer):
                     R2 = R2.T - R2.dot(R1) * R1 / (np.linalg.norm(R1) ** 2 + c.EPSILON)
 
                     # Updates agent's position (eq. 6)
-                    agent.position += (
-                        2 * distance * rand * R1 + u * np.tan(theta) * distance * R2
-                    )
+                    agent.position += 2 * distance * rand * R1 + u * np.tan(theta) * distance * R2
 
-    def _roaming(self, prides: List[Lion], function: Callable) -> None:
-        """Performs the roaming procedure (s. 2.2.4).
-
-        Args:
-            prides: List of prides holding their corresponding lions.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _roaming(self, prides: list[Lion], function: Callable) -> None:
+        # Performs the roaming procedure (s. 2.2.4)
         for pride in prides:
             n_roaming = int(len(pride) * self.P)
 
@@ -275,9 +232,7 @@ class LOA(Optimizer):
                     for s in selected:
                         theta = np.random.uniform(-np.pi / 6, np.pi / 6, 1)
 
-                        distance = np.linalg.norm(
-                            pride[s].best_position - agent.position
-                        )
+                        distance = np.linalg.norm(pride[s].best_position - agent.position)
 
                         # Generates the step (eq. 10)
                         step = np.random.uniform(0, 2 * distance, 1)
@@ -289,21 +244,7 @@ class LOA(Optimizer):
                         if agent.fit < agent.p_fit:
                             agent.best_position = copy.deepcopy(agent.position)
 
-    def _mating_operator(
-        self, agent: List[Lion], males: List[Lion], function: Callable
-    ) -> Tuple[Lion, Lion]:
-        """Wraps the mating operator.
-
-        Args:
-            agent: Current agent.
-            males: List of males that will be breed.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Tuple[Lion, Lion]): A pair of offsprings that resulted from mating.
-
-        """
-
+    def _mating_operator(self, agent: list[Lion], males: list[Lion], function: Callable) -> tuple[Lion, Lion]:
         males_average = np.mean([male.position for male in males], axis=0)
         beta = np.random.normal(0.5, 0.1, 1)
 
@@ -337,18 +278,8 @@ class LOA(Optimizer):
 
         return a1, a2
 
-    def _mating(self, prides: List[Lion], function: Callable) -> Lion:
-        """Generates offsprings from mating (s. 2.2.5).
-
-        Args:
-            prides: List of prides holding their corresponding lions.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Lion): Cubs generated from the mating procedure.
-
-        """
-
+    def _mating(self, prides: list[Lion], function: Callable) -> Lion:
+        # Generates offsprings from mating (s. 2.2.5)
         prides_cubs = []
         for pride in prides:
             cubs = []
@@ -367,20 +298,9 @@ class LOA(Optimizer):
         return prides_cubs
 
     def _defense(
-        self, nomads: List[Lion], prides: List[List[Lion]], cubs: List[Lion]
-    ) -> Tuple[List[Lion], List[List[Lion]]]:
-        """Performs the defense procedure (s. 2.2.6).
-
-        Args:
-            nomads: Nomad lions.
-            prides: List of prides holding their corresponding lions.
-            cubs: List of cubs holding their corresponding lions.
-
-        Returns:
-            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
-
-        """
-
+        self, nomads: list[Lion], prides: list[list[Lion]], cubs: list[Lion]
+    ) -> tuple[list[Lion], list[list[Lion]]]:
+        # Performs the defense procedure (s. 2.2.6)
         new_prides = []
         for pride, cub in zip(prides, cubs):
             pride_female = [agent for agent in pride if agent.female]
@@ -391,32 +311,21 @@ class LOA(Optimizer):
 
             pride_male.sort(key=lambda x: x.fit)
 
-            new_pride = (
-                pride_female + cub_female + cub_male + pride_male[: -len(cub_male)]
-            )
+            new_pride = pride_female + cub_female + cub_male + pride_male[: -len(cub_male)]
             new_prides.append(new_pride)
 
             nomads += pride_male[-len(cub_male) :]
 
         return nomads, new_prides
 
-    def _nomad_roaming(self, nomads: List[Lion], function: Callable) -> None:
-        """Performs the roaming procedure for nomad lions (s. 2.2.4).
-
-        Args:
-            nomads: Nomad lions.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _nomad_roaming(self, nomads: list[Lion], function: Callable) -> None:
+        # Performs the roaming procedure for nomad lions (s. 2.2.4)
         nomads.sort(key=lambda x: x.fit)
         for agent in nomads:
             best_fit = nomads[0].fit
 
             # Calculates the roaming probability (eq. 12)
-            prob = 0.1 + np.minimum(
-                0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON)
-            )
+            prob = 0.1 + np.minimum(0.5, (agent.fit - best_fit) / (best_fit + c.EPSILON))
 
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < prob:
@@ -431,18 +340,8 @@ class LOA(Optimizer):
             if agent.fit < agent.p_fit:
                 agent.best_position = copy.deepcopy(agent.position)
 
-    def _nomad_mating(self, nomads: List[Lion], function: Callable) -> List[Lion]:
-        """Generates offsprings from nomad lions mating (s. 2.2.5).
-
-        Args:
-            nomads: Nomad lions.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (List[Lion]): Updated nomad lions.
-
-        """
-
+    def _nomad_mating(self, nomads: list[Lion], function: Callable) -> list[Lion]:
+        # Generates offsprings from nomad lions mating (s. 2.2.5)
         cubs = []
 
         for agent in nomads:
@@ -461,20 +360,8 @@ class LOA(Optimizer):
 
         return nomads
 
-    def _nomad_attack(
-        self, nomads: List[Lion], prides: List[List[Lion]]
-    ) -> Tuple[List[Lion], List[List[Lion]]]:
-        """Performs the nomad's attacking procedure (s. 2.2.6).
-
-        Args:
-            nomads: Nomad lions.
-            prides: List of prides holding their corresponding lions.
-
-        Returns:
-            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
-
-        """
-
+    def _nomad_attack(self, nomads: list[Lion], prides: list[list[Lion]]) -> tuple[list[Lion], list[list[Lion]]]:
+        # Performs the nomad's attacking procedure (s. 2.2.6)
         for agent in nomads:
             if agent.female:
                 attack_prides = np.random.randint(0, 2, self.P)
@@ -484,26 +371,12 @@ class LOA(Optimizer):
                         males = [agent for agent in pride if not agent.female]
                         if len(males) > 0:
                             if agent.fit < males[0].fit:
-                                agent, males[0] = copy.deepcopy(
-                                    males[0]
-                                ), copy.deepcopy(agent)
+                                agent, males[0] = copy.deepcopy(males[0]), copy.deepcopy(agent)
 
         return nomads, prides
 
-    def _migrating(
-        self, nomads: List[Lion], prides: List[List[Lion]]
-    ) -> Tuple[List[Lion], List[List[Lion]]]:
-        """Performs the nomad's migration procedure (s. 2.2.7).
-
-        Args:
-            nomads: Nomad lions.
-            prides: List of prides holding their corresponding lions.
-
-        Returns:
-            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
-
-        """
-
+    def _migrating(self, nomads: list[Lion], prides: list[list[Lion]]) -> tuple[list[Lion], list[list[Lion]]]:
+        # Performs the nomad's migration procedure (s. 2.2.7)
         new_prides = []
 
         for pride in prides:
@@ -517,26 +390,14 @@ class LOA(Optimizer):
 
                     nomads.append(n)
 
-            new_prides.append(
-                [agent for i, agent in enumerate(pride) if i not in selected]
-            )
+            new_prides.append([agent for i, agent in enumerate(pride) if i not in selected])
 
         return nomads, new_prides
 
     def _equilibrium(
-        self, nomads: List[Lion], prides: List[List[Lion]], n_agents: List[Agent]
-    ) -> Tuple[List[Lion], List[List[Lion]]]:
-        """Performs the population's equilibrium procedure (s. 2.2.8).
-
-        Args:
-            nomads: Nomad lions.
-            prides: List of prides holding their corresponding lions.
-
-        Returns:
-            (Tuple[List[Lion], List[List[Lion]]]): Both updated nomad and pride lions.
-
-        """
-
+        self, nomads: list[Lion], prides: list[list[Lion]], n_agents: list[Agent]
+    ) -> tuple[list[Lion], list[list[Lion]]]:
+        # Performs the population's equilibrium procedure (s. 2.2.8)
         nomad_female = [agent for agent in nomads if agent.female]
         nomad_male = [agent for agent in nomads if not agent.female]
 
@@ -562,17 +423,8 @@ class LOA(Optimizer):
 
         return nomads, prides
 
-    def _check_prides_for_males(self, prides: List[List[Lion]]) -> None:
-        """Checks if there is at least one male per pride.
-
-        Args:
-            prides: List of prides holding their corresponding lions.
-
-        """
-
-        males_prides = [
-            len([agent for agent in pride if not agent.female]) for pride in prides
-        ]
+    def _check_prides_for_males(self, prides: list[list[Lion]]) -> None:
+        males_prides = [len([agent for agent in pride if not agent.female]) for pride in prides]
 
         for males_per_pride, pride in zip(males_prides, prides):
             if males_per_pride == 0:
@@ -580,14 +432,6 @@ class LOA(Optimizer):
                 pride[idx].female = False
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Lion Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         nomads = self._get_nomad_lions(space.agents)
         prides = self._get_pride_lions(space.agents)
 
@@ -614,6 +458,4 @@ class LOA(Optimizer):
 
         correct_nomad_size = int(self.N * space.n_agents)
         space.agents[:correct_nomad_size] = copy.deepcopy(nomads[:correct_nomad_size])
-        space.agents[correct_nomad_size:] = copy.deepcopy(
-            list(itertools.chain.from_iterable(prides))
-        )
+        space.agents[correct_nomad_size:] = copy.deepcopy(list(itertools.chain.from_iterable(prides)))

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from typing import get_type_hints
 
 import numpy as np
@@ -80,9 +83,7 @@ def test_history_preserves_snapshots_and_concatenation_shapes(n_dimensions):
     expected = np.hstack((first + 100, first + 110))
     np.testing.assert_array_equal(positions, expected)
     np.testing.assert_array_equal(fitness, [(first + 100).sum(), (first + 110).sum()])
-    np.testing.assert_array_equal(
-        history.get_convergence("local_position", index=1), expected
-    )
+    np.testing.assert_array_equal(history.get_convergence("local_position", index=1), expected)
     np.testing.assert_array_equal(history.best_agent[0][0], first)
 
 

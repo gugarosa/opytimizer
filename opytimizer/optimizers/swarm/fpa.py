@@ -1,7 +1,17 @@
-"""Flower Pollination Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Flower Pollination Algorithm.
+
+References:
+    X.-S. Yang. Flower pollination algorithm for global optimization.
+    International conference on unconventional computing and natural computation (2012).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +22,19 @@ from opytimizer.core.space import Space
 
 
 class FPA(Optimizer):
-    """A FPA class, inherited from Optimizer.
-
-    This is the designed class to define FPA-related
-    variables and methods.
-
-    References:
-        X.-S. Yang. Flower pollination algorithm for global optimization.
-        International conference on unconventional computing and natural computation (2012).
+    """Search through local pollination and global Lévy-flight pollination.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure flower pollination steps.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``beta`` (1.5) controls the Lévy distribution, and ``eta`` (0.2) scales global pollination.
+            ``p`` (0.8) selects local pollination when the uniform draw does not exceed it.
 
         """
 
@@ -39,21 +46,9 @@ class FPA(Optimizer):
 
         self.build(params)
 
-    def _global_pollination(
-        self, agent_position: np.ndarray, best_position: np.ndarray
-    ) -> np.ndarray:
-        """Updates the agent's position based on a global pollination (eq. 1).
-
-        Args:
-            agent_position: Agent's current position.
-            best_position: Best agent's current position.
-
-        Returns:
-            (np.ndarray): A new position.
-
-        """
-
+    def _global_pollination(self, agent_position: np.ndarray, best_position: np.ndarray) -> np.ndarray:
         step = d.generate_levy_distribution(self.beta)
+        # Global pollination toward the best flower (eq. 1)
         global_pollination = self.eta * step * (best_position - agent_position)
         new_position = agent_position + global_pollination
 
@@ -66,41 +61,19 @@ class FPA(Optimizer):
         l_position: np.ndarray,
         epsilon: float,
     ) -> np.ndarray:
-        """Updates the agent's position based on a local pollination (eq. 3).
-
-        Args:
-            agent_position: Agent's current position.
-            k_position: Agent's (index k) current position.
-            l_position: Agent's (index l) current position.
-            epsilon: An uniform random generated number.
-
-        Returns:
-            (np.ndarray): A new position.
-
-        """
-
+        # Local differential pollination (eq. 3)
         local_pollination = epsilon * (k_position - l_position)
         new_position = agent_position + local_pollination
 
         return new_position
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Flower Pollination Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for agent in space.agents:
             a = copy.deepcopy(agent)
 
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 > self.p:
-                a.position = self._global_pollination(
-                    agent.position, space.best_agent.position
-                )
+                a.position = self._global_pollination(agent.position, space.best_agent.position)
             else:
                 epsilon = np.random.uniform(0.0, 1.0, 1)
 

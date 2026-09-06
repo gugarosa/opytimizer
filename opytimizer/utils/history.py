@@ -1,4 +1,9 @@
-"""Snapshots and convergence views of optimization history."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Provide snapshots and convergence views of optimization history.
+
+"""
 
 from typing import Any
 
@@ -6,57 +11,48 @@ import numpy as np
 
 
 class History:
-    """Append named observations and retrieve their concatenated history.
+    """Record optimization snapshots and retrieve their concatenated history.
 
-    ``dump`` creates history attributes lazily. Agent positions are copied into
-    Python lists; arbitrary values are retained as supplied. The driver records
-    agent/best-agent snapshots per completed iteration and elapsed ``time`` per
-    normally completed run.
     """
 
     def __init__(self, save_agents: bool = False) -> None:
         """Configure whether population snapshots should be retained.
 
+        Histories are created lazily, one list per key. Agent positions are copied into lists.
+        Arbitrary custom values remain live references. The driver records snapshots per completed iteration
+        and elapsed time per normally completed run.
+
         Args:
-            save_agents: Retain ``agents`` records as well as best-agent records.
-                Population histories can be much larger than best-only histories.
+            save_agents: Whether to retain population records in addition to best-agent records.
 
         """
 
         if not isinstance(save_agents, bool):
-            raise TypeError("`save_agents` should be a boolean")
+            raise TypeError("`save_agents` must be a boolean.")
 
         self.save_agents = save_agents
-
-    def _parse(
-        self, key: str, value: Any
-    ) -> list[Any] | tuple[list[Any], float] | None:
-        """Copy position arrays into the known history record formats."""
-
-        if key == "agents":
-            return [(v.position.tolist(), v.fit) for v in value]
-
-        if key == "best_agent":
-            return (value.position.tolist(), value.fit)
-
-        if key == "local_position":
-            return [v.tolist() for v in value]
 
     def dump(self, **kwargs: Any) -> None:
         """Append one observation per named history.
 
-        ``agents`` stores a population of position/fitness pairs; ``best_agent``
-        stores one such pair; ``local_position`` stores position lists. Other
-        values are appended without copying. ``agents`` is omitted entirely when
-        ``save_agents`` is false.
+        ``agents`` stores population position/fitness pairs. ``best_agent`` stores one pair.
+        ``local_position`` stores position lists. Other values are appended without copying.
+        Population records are omitted when ``save_agents`` is False.
+
+        Args:
+            **kwargs: Named observations to append.
+
         """
 
         for key, value in kwargs.items():
-            if key == "agents" and not self.save_agents:
-                continue
-
-            if key in ("agents", "best_agent", "local_position"):
-                output = self._parse(key, value)
+            if key == "agents":
+                if not self.save_agents:
+                    continue
+                output = [(agent.position.tolist(), agent.fit) for agent in value]
+            elif key == "best_agent":
+                output = (value.position.tolist(), value.fit)
+            elif key == "local_position":
+                output = [position.tolist() for position in value]
             else:
                 output = value
 
@@ -72,19 +68,18 @@ class History:
 
         Args:
             key: Name previously recorded by ``dump``.
-            index: NumPy index selecting an agent for ``agents`` or an entry in
-                ``local_position``. Ignored for other keys.
+            index: Agent or local-position index, ignored for other keys.
 
         Returns:
-            A ``(positions, fitness)`` pair for ``agents`` and ``best_agent``.
-            With an integer agent index and ``(n_variables, n_dimensions)``
-            positions, these have shapes
-            ``(n_variables, n_records * n_dimensions)`` and ``(n_records,)``.
-            Other keys return one array concatenated with ``numpy.hstack``.
+            A position/fitness pair for agent records, or a horizontally concatenated array for other records.
 
         Raises:
-            AttributeError: If the key has not been recorded, including disabled
-                population histories.
+            AttributeError: The key has not been recorded.
+
+        Notes:
+            Integer-indexed position histories have shape ``(n_variables, n_records * n_dimensions)``.
+            Their fitness histories have shape ``(n_records,)``.
+
         """
 
         attr = np.asarray(getattr(self, key), dtype=object)

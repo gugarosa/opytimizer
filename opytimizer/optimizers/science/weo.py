@@ -1,7 +1,18 @@
-"""Water Evaporation Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Water Evaporation Optimization.
+
+References:
+    A. Kaveh and T. Bakhshpoori.
+    Water Evaporation Optimization: A novel physically inspired optimization algorithm.
+    Computers & Structures (2016).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,23 +23,20 @@ from opytimizer.core.space import Space
 
 
 class WEO(Optimizer):
-    """A WEO class, inherited from Optimizer.
-
-    This is the designed class to define WEO-related
-    variables and methods.
-
-    References:
-        A. Kaveh and T. Bakhshpoori.
-        Water Evaporation Optimization: A novel physically inspired optimization algorithm.
-        Computers & Structures (2016).
+    """Implement Water Evaporation Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure monolayer energy and droplet contact angles.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``E_min`` (-3.5) and ``E_max`` (-0.5) bound the monolayer substrate energy.
+            ``theta_min`` (``-pi / 3.6``) and ``theta_max`` (``-pi / 9``) bound droplet contact angles in radians.
+            The first half of the run uses monolayer evaporation, and the second uses droplet evaporation.
 
         """
 
@@ -43,38 +51,13 @@ class WEO(Optimizer):
         self.build(params)
 
     def _evaporation_flux(self, theta: float) -> float:
-        """Calculates the evaporation flux (eq. 7).
-
-        Args:
-            theta: Radian-based angle.
-
-        Returns:
-            (float): Evaporation flux.
-
-        """
-
         # Calculates the evaporation flux (eq. 7)
-        J = (
-            (1 / 2.6)
-            * ((2 / 3 + np.cos(theta) ** 3 / 3 - np.cos(theta)) ** (-2 / 3))
-            * (1 - np.cos(theta))
-        )
+        # Calculates the evaporation flux (eq. 7)
+        J = (1 / 2.6) * ((2 / 3 + np.cos(theta) ** 3 / 3 - np.cos(theta)) ** (-2 / 3)) * (1 - np.cos(theta))
 
         return J
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Water Evaporation Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         space.agents.sort(key=lambda x: x.fit)
         best, worst = space.agents[0], space.agents[-1]
 
@@ -88,9 +71,7 @@ class WEO(Optimizer):
                 ) + self.E_min
 
                 # Calculates the Monolayer Evaporation Probability matrix (eq. 6)
-                r1 = np.random.uniform(
-                    0.0, 1.0, (agent.n_variables, agent.n_dimensions)
-                )
+                r1 = np.random.uniform(0.0, 1.0, (agent.n_variables, agent.n_dimensions))
                 MEP = np.where(r1 < np.exp(E_sub), 1, 0)
 
                 # Generates the step size (eq. 10)

@@ -1,7 +1,17 @@
-"""Artificial Butterfly Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Artificial Butterfly Optimization.
+
+References:
+    X. Qi, Y. Zhu and H. Zhang. A new meta-heuristic butterfly-inspired algorithm.
+    Journal of Computational Science (2017).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,19 @@ from opytimizer.core.space import Space
 
 
 class ABO(Optimizer):
-    """An ABO class, inherited from Optimizer.
-
-    This is the designed class to define ABO-related
-    variables and methods.
-
-    References:
-        X. Qi, Y. Zhu and H. Zhang. A new meta-heuristic butterfly-inspired algorithm.
-        Journal of Computational Science (2017).
+    """Search using sunspot and canopy butterfly flight modes.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure artificial butterfly search.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``sunspot_ratio`` (0.9) selects the fraction of ranked agents treated as sunspot butterflies.
+            ``a`` (2.0) is the initial exploration coefficient, reduced linearly over iterations.
 
         """
 
@@ -37,31 +44,14 @@ class ABO(Optimizer):
 
         self.build(params)
 
-    def _flight_mode(
-        self, agent: Agent, neighbour: Agent, function: Callable
-    ) -> Tuple[Agent, bool]:
-        """Flies to a new location according to the flight mode (eq. 1).
-
-        Args:
-            agent: Current agent.
-            neighbour: Selected neigbour.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Tuple[Agent, bool]): Current agent or an agent with updated position, along with a boolean that indicates whether
-            agent is better or not than current one.
-
-        """
-
+    def _flight_mode(self, agent: Agent, neighbour: Agent, function: Callable) -> tuple[Agent, bool]:
         j = np.random.randint(0, agent.n_variables, None)
         r1 = np.random.uniform(-1, 1, 1)
 
         temp = copy.deepcopy(agent)
 
         # Updates temporary agent's position (eq. 1)
-        temp.position[j] = (
-            agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
-        )
+        temp.position[j] = agent.position[j] + (agent.position[j] - neighbour.position[j]) * r1
         temp.clip_by_bound()
 
         temp.fit = function(temp.position)
@@ -70,19 +60,7 @@ class ABO(Optimizer):
 
         return agent.position, agent.fit, False
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Artificial Butterfly Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         space.agents.sort(key=lambda x: x.fit)
 
         n_sunspots = int(self.sunspot_ratio * len(space.agents))
@@ -90,17 +68,13 @@ class ABO(Optimizer):
             k = np.random.randint(0, len(space.agents), None)
 
             # Performs a flight mode using sunspot butterflies (eq. 1)
-            agent.position, agent.fit, _ = self._flight_mode(
-                agent, space.agents[k], function
-            )
+            agent.position, agent.fit, _ = self._flight_mode(agent, space.agents[k], function)
 
         for agent in space.agents[n_sunspots:]:
             k = np.random.randint(0, len(space.agents) - n_sunspots, None)
 
             # Performs a flight mode using canopy butterflies (eq. 1)
-            agent.position, agent.fit, is_better = self._flight_mode(
-                agent, space.agents[k], function
-            )
+            agent.position, agent.fit, is_better = self._flight_mode(agent, space.agents[k], function)
 
             if not is_better:
                 k = np.random.randint(0, len(space.agents), None)

@@ -1,7 +1,18 @@
-"""Simulated Annealing."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Simulated Annealing.
+
+References:
+    A. Khachaturyan, S. Semenovsovskaya and B. Vainshtein.
+    The thermodynamic approach to the structure analysis of crystals.
+    Acta Crystallographica (1981).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,23 +21,19 @@ from opytimizer.core.space import Space
 
 
 class SA(Optimizer):
-    """A SA class, inherited from Optimizer.
-
-    This is the designed class to define SA-related
-    variables and methods.
-
-    References:
-        A. Khachaturyan, S. Semenovsovskaya and B. Vainshtein.
-        The thermodynamic approach to the structure analysis of crystals.
-        Acta Crystallographica (1981).
+    """Implement Simulated Annealing.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure annealing temperature and cooling.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``T`` (100) is the initial temperature used when accepting worse solutions.
+            ``beta`` (0.999) multiplies ``T`` after each update, so temperature persists across runs.
 
         """
 
@@ -38,14 +45,6 @@ class SA(Optimizer):
         self.build(params)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Simulated Annealing over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A function object.
-
-        """
-
         for agent in space.agents:
             a = copy.deepcopy(agent)
 

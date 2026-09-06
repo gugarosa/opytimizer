@@ -1,6 +1,15 @@
-"""Sooty Tern Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Sooty Tern Optimization Algorithm.
+
+References:
+    G. Dhiman and A. Kaur. STOA: A bio-inspired based optimization algorithm for industrial engineering problems.
+    Engineering Applications of Artificial Intelligence (2019).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -9,22 +18,19 @@ from opytimizer.core.space import Space
 
 
 class STOA(Optimizer):
-    """An STOA class, inherited from Optimizer.
-
-    This is the designed class to define STOA-related
-    variables and methods.
-
-    References:
-        G. Dhiman and A. Kaur. STOA: A bio-inspired based optimization algorithm for industrial engineering problems.
-        Engineering Applications of Artificial Intelligence (2019).
+    """Search through sooty tern collision avoidance and spiral attack movement.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure sooty tern migration and spiral geometry.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``Cf`` (2.0) is the initial collision-avoidance coefficient, decreased linearly over iterations.
+            ``u`` (1.0) scales the spiral radius, and ``v`` (1.0) controls its exponential growth.
 
         """
 
@@ -37,15 +43,6 @@ class STOA(Optimizer):
         self.build(params)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Sooty Tern Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         # Calculates the movement of search space (eq. 2)
         Sa = self.Cf - (iteration * (self.Cf / n_iterations))
 

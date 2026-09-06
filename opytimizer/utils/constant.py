@@ -1,21 +1,20 @@
-"""Constants."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Define numerical safeguards and expression arities.
+
+"""
 
 import sys
 
-# Constant value used to avoid division by zero, zero logarithms
-# and any possible mathematical errors
+# Avoid exact-zero denominators and logarithm arguments
 EPSILON = 1e-32
 
-# When the agents are initialized, their fitness are defined as
-# the maximum float possible
+# Rank unevaluated candidates behind ordinary finite objective values
 FLOAT_MAX = sys.float_info.max
 
-# When working with relativity theories, it is necessary
-# to define a constant for the speed of light
 LIGHT_SPEED = 3e5
 
-# When using Genetic Programming, each function node needs an unique number of arguments,
-# which is defined by this dictionary
 FUNCTION_N_ARGS = {
     "SUM": 2,
     "SUB": 2,
@@ -29,6 +28,4 @@ FUNCTION_N_ARGS = {
     "COS": 1,
 }
 
-# Test passes if the best solution found by the agent in the target function
-# is smaller than this value
 TEST_EPSILON = 100

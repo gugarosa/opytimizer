@@ -1,7 +1,18 @@
-"""Artificial Bee Colony."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Artificial Bee Colony.
+
+References:
+    D. Karaboga and B. Basturk.
+    A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm.
+    Journal of Global Optimization (2007).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,23 +23,19 @@ from opytimizer.core.space import Space
 
 
 class ABC(Optimizer):
-    """An ABC class, inherited from Optimizer.
-
-    This is the designed class to define ABC-related
-    variables and methods.
-
-    References:
-        D. Karaboga and B. Basturk.
-        A powerful and efficient algorithm for numerical function optimization: Artificial bee colony (ABC) algorithm.
-        Journal of Global Optimization (2007).
+    """Search food sources with employed, onlooker, and scout bees.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure artificial bee colony search.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``n_trials`` (10) is the failed-improvement threshold before scouting a food source.
+            Compilation creates ``trial``, a zero-initialized failure counter for each agent.
 
         """
 
@@ -39,28 +46,9 @@ class ABC(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.trial = np.zeros(space.n_agents)
 
-    def _evaluate_location(
-        self, agent: Agent, neighbour: Agent, function: Callable, index: int
-    ) -> None:
-        """Evaluates a food source location and update its value if possible (eq. 2.2).
-
-        Args:
-            agent: An agent.
-            neighbour: A neightbour agent.
-            function: A function object.
-            index: Index of trial.
-
-        """
-
+    def _evaluate_location(self, agent: Agent, neighbour: Agent, function: Callable, index: int) -> None:
         r1 = np.random.uniform(-1, 1, 1)
 
         a = copy.deepcopy(agent)
@@ -78,34 +66,19 @@ class ABC(Optimizer):
         else:
             self.trial[index] += 1
 
-    def _send_employee(self, agents: List[Agent], function: Callable) -> None:
-        """Sends employee bees onto food source to evaluate its nectar.
-
-        Args:
-            agents: List of agents.
-            function: A function object.
-
-        """
-
+    def _send_employee(self, agents: list[Agent], function: Callable) -> None:
         for i, agent in enumerate(agents):
             source = np.random.randint(0, len(agents), None)
             self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_onlooker(self, agents: List[Agent], function: Callable) -> None:
-        """Sends onlooker bees to select new food sources (eq. 2.1).
-
-        Args:
-            agents: List of agents.
-            function: A function object.
-
-        """
-
+    def _send_onlooker(self, agents: list[Agent], function: Callable) -> None:
         total = sum(agent.fit for agent in agents)
 
         k = 0
         while k < len(agents):
             for i, agent in enumerate(agents):
                 r1 = np.random.uniform(0.0, 1.0, 1)
+                # Food-source selection probability (eq. 2.1)
                 probs = (agent.fit / (total + c.EPSILON)) + 0.1
 
                 if r1 < probs:
@@ -114,15 +87,7 @@ class ABC(Optimizer):
                     source = np.random.randint(0, len(agents), None)
                     self._evaluate_location(agent, agents[source], function, i)
 
-    def _send_scout(self, agents: List[Agent], function: Callable) -> None:
-        """Sends scout bees to scout for new possible food sources.
-
-        Args:
-            agents: List of agents.
-            function: A function object.
-
-        """
-
+    def _send_scout(self, agents: list[Agent], function: Callable) -> None:
         max_trial, max_index = np.max(self.trial), np.argmax(self.trial)
         if max_trial > self.n_trials:
             self.trial[max_index] = 0
@@ -136,14 +101,6 @@ class ABC(Optimizer):
                 agents[max_index] = copy.deepcopy(a)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Artificial Bee Colony over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         self._send_employee(space.agents, function)
         self._send_onlooker(space.agents, function)
         self._send_scout(space.agents, function)

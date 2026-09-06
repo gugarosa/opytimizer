@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.evolutionary import bsa
@@ -17,18 +20,14 @@ def test_bsa_params():
 
 
 def test_bsa_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
 
 
 def test_bsa_permute():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -37,9 +36,7 @@ def test_bsa_permute():
 
 
 def test_bsa_mutate():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -50,9 +47,7 @@ def test_bsa_mutate():
 
 
 def test_bsa_crossover():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)
@@ -65,9 +60,7 @@ def test_bsa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=75, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=75, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_bsa = bsa.BSA()
     new_bsa.compile(search_space)

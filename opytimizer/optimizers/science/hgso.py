@@ -1,4 +1,13 @@
-"""Henry Gas Solubility Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Henry Gas Solubility Optimization.
+
+References:
+    F. Hashim et al. Henry gas solubility optimization: A novel physics-based algorithm.
+    Future Generation Computer Systems (2019).
+
+"""
 
 from collections.abc import Callable, Mapping
 from typing import Any
@@ -13,34 +22,24 @@ from opytimizer.core.space import Space
 class HGSO(Optimizer):
     """Clustered Henry-gas-solubility search with worst-agent replacement.
 
-    Attributes:
-        n_clusters: Number of non-empty clusters. Defaults to ``2`` and must not
-            exceed the population size when compiled.
-        l1: Initial Henry-coefficient scale. Defaults to ``0.0005``.
-        l2: Initial pressure scale. Defaults to ``100``.
-        l3: Temperature-constant scale. Defaults to ``0.001``.
-        alpha: Weight of the solubility/global-best movement term. Defaults to ``1``.
-        beta: Scale of the fitness-dependent attraction coefficient. Defaults to ``1``.
-        K: Multiplicative solubility factor. Defaults to ``1``.
-        coefficient: One Henry coefficient per compiled cluster.
-        pressure: Per-cluster pressures, with enough columns for the largest
-            balanced cluster.
-        constant: One temperature constant per compiled cluster.
-
-    The final three arrays are created by ``compile``. Changing the cluster
-    count requires recompilation; repeated runs otherwise retain optimizer state.
-
-    References:
-        F. Hashim et al. Henry gas solubility optimization: A novel physics-based algorithm.
-        Future Generation Computer Systems (2019).
-
     """
 
     def __init__(self, params: Mapping[str, Any] | None = None) -> None:
         """Configure clustering, gas scales, and movement weights.
 
         Args:
-            params: Overrides for the configuration attributes documented above.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``n_clusters`` (2) is the number of balanced, non-empty clusters and must
+            be an integer between one and the population size when compiled.
+            ``l1`` (0.0005), ``l2`` (100), and ``l3`` (0.001) scale initial Henry coefficients,
+            gas pressures, and temperature constants, respectively.
+            ``alpha`` (1.0) weights solubility-based attraction toward the global best.
+            ``beta`` (1.0) scales fitness-dependent attraction and ``K`` (1.0) scales solubility.
+            Compilation creates one ``coefficient`` and ``constant`` per cluster, plus a
+            ``pressure`` array with one row per cluster and columns for the largest cluster.
+            Changing the cluster count requires recompilation, while repeated runs otherwise retain state.
 
         """
 
@@ -59,48 +58,19 @@ class HGSO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Clusters are balanced and non-empty; the largest cluster determines
-        the pressure array's second dimension. Compile again after changing
-        the cluster count.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         if not isinstance(self.n_clusters, (int, np.integer)):
-            raise TypeError("`n_clusters` should be an integer")
+            raise TypeError("`n_clusters` must be an integer.")
         if not 1 <= self.n_clusters <= len(space.agents):
-            raise ValueError("`n_clusters` should be between 1 and the population size")
+            raise ValueError("`n_clusters` must be between 1 and the population size.")
 
-        n_agents_per_cluster = (
-            len(space.agents) + self.n_clusters - 1
-        ) // self.n_clusters
+        n_agents_per_cluster = (len(space.agents) + self.n_clusters - 1) // self.n_clusters
 
         self.coefficient = self.l1 * np.random.uniform(0.0, 1.0, self.n_clusters)
-        self.pressure = self.l2 * np.random.uniform(
-            0.0, 1.0, (self.n_clusters, n_agents_per_cluster)
-        )
+        self.pressure = self.l2 * np.random.uniform(0.0, 1.0, (self.n_clusters, n_agents_per_cluster))
         self.constant = self.l3 * np.random.uniform(0.0, 1.0, self.n_clusters)
 
-    def _update_position(
-        self, agent: Agent, cluster_agent: Agent, best_agent: Agent, solubility: float
-    ) -> np.ndarray:
-        """Updates the position of a single gas (eq. 10).
-
-        Args:
-            agent: Current agent.
-            cluster_agent: Best cluster's agent.
-            best_agent: Best agent.
-            solubility: Solubility for current agent.
-
-        Returns:
-            (np.ndarray): An updated position.
-
-        """
-
+    def _update_position(self, agent: Agent, cluster_agent: Agent, best_agent: Agent, solubility: float) -> np.ndarray:
+        # Updates the position of a single gas (eq. 10)
         gamma = self.beta * np.exp(-(best_agent.fit + 0.05) / (agent.fit + 0.05))
         flag = np.sign(np.random.uniform(-1, 1, 1))
 
@@ -109,27 +79,12 @@ class HGSO(Optimizer):
         new_position = (
             agent.position
             + flag * r1 * gamma * (cluster_agent.position - agent.position)
-            + flag
-            * r1
-            * self.alpha
-            * (solubility * best_agent.position - agent.position)
+            + flag * r1 * self.alpha * (solubility * best_agent.position - agent.position)
         )
 
         return new_position
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Henry Gas Solubility Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         clusters = np.array_split(space.agents, self.pressure.shape[0])
         for i, cluster in enumerate(clusters):
             # Calculates the system's current temperature (eq. 8)
@@ -146,9 +101,7 @@ class HGSO(Optimizer):
                 solubility = self.K * self.coefficient[i] * self.pressure[i][j]
 
                 # Updates agent's position (eq. 10)
-                agent.position = self._update_position(
-                    agent, cluster[0], space.best_agent, solubility
-                )
+                agent.position = self._update_position(agent, cluster[0], space.best_agent, solubility)
                 agent.clip_by_bound()
 
                 agent.fit = function(agent.position)

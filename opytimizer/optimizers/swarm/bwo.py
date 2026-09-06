@@ -1,7 +1,18 @@
-"""Black Widow Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Black Widow Optimization.
+
+References:
+    V. Hayyolalam and A. Kazem.
+    Black Widow Optimization Algorithm: A novel meta-heuristic approach for solving engineering optimization problems.
+    Engineering Applications of Artificial Intelligence (2020).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,24 +23,19 @@ from opytimizer.core.space import Space
 
 
 class BWO(Optimizer):
-    """A BWO class, inherited from Optimizer.
-
-    This is the designed class to define BWO-related
-    variables and methods.
-
-    References:
-        V. Hayyolalam and A. Kazem.
-        Black Widow Optimization Algorithm: A novel meta-heuristic approach
-        for solving engineering optimization problems.
-        Engineering Applications of Artificial Intelligence (2020).
+    """Search through black widow reproduction, cannibalism, and mutation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure black widow population operators.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``pp`` (0.6), ``cr`` (0.44), and ``pm`` (0.4) scale the population size into reproduction,
+            cannibal-survivor, and mutation counts, respectively, using integer truncation.
 
         """
 
@@ -41,20 +47,10 @@ class BWO(Optimizer):
 
         self.build(params)
 
-    def _procreating(self, x1: Agent, x2: Agent) -> Tuple[Agent, Agent]:
-        """Procreates a pair of parents into offsprings (eq. 1).
-
-        Args:
-            x1: Father to produce the offsprings.
-            x2: Mother to produce the offsprings.
-
-        Returns:
-            (Tuple[Agent, Agent]): Two generated offsprings based on parents.
-
-        """
-
+    def _procreating(self, x1: Agent, x2: Agent) -> tuple[Agent, Agent]:
         y1, y2 = copy.deepcopy(x1), copy.deepcopy(x2)
 
+        # Complementary offspring interpolation (eq. 1)
         alpha = np.random.uniform(0.0, 1.0, 1)
         y1.position = alpha * x1.position + (1 - alpha) * x2.position
         y2.position = alpha * x2.position + (1 - alpha) * x1.position
@@ -62,16 +58,7 @@ class BWO(Optimizer):
         return y1, y2
 
     def _mutation(self, alpha: Agent) -> Agent:
-        """Performs the mutation over an offspring (s. 3.4).
-
-        Args:
-            alpha: Offspring to be mutated.
-
-        Returns:
-            (Agent): The mutated offspring.
-
-        """
-
+        # Variable-swap mutation (s. 3.4)
         if alpha.n_variables > 1:
             r1 = np.random.randint(0, alpha.n_variables, None)
             r2 = r.integer(0, alpha.n_variables, exclude=r1, size=None)
@@ -84,14 +71,6 @@ class BWO(Optimizer):
         return alpha
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Black Widow Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         n_agents = len(space.agents)
         n_variables = space.n_variables
 
@@ -107,9 +86,7 @@ class BWO(Optimizer):
         for _ in range(0, n_reproduct):
             idx = np.random.uniform(0, n_agents, 2)
 
-            father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(
-                space.agents[int(idx[1])]
-            )
+            father, mother = copy.deepcopy(space.agents[int(idx[0])]), copy.deepcopy(space.agents[int(idx[1])])
 
             new_agents = []
 

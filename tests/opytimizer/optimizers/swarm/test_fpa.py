@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import fpa
@@ -38,9 +41,7 @@ def test_fpa_update():
 
     new_fpa = fpa.FPA()
 
-    search_space = search.SearchSpace(
-        n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=2, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_fpa.update(search_space, square)
 

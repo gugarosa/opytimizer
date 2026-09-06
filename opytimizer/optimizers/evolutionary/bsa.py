@@ -1,7 +1,20 @@
-"""Backtracking Search Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Backtracking Search Optimization Algorithm.
+
+Compilation snapshots the population for later permutation and mutation.
+Updates cross trial agents with the current population and retain fitness improvements.
+
+References:
+    P. Civicioglu. Backtracking search optimization algorithm for numerical optimization problems.
+    Applied Mathematics and Computation (2013).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +25,19 @@ from opytimizer.core.space import Space
 
 
 class BSA(Optimizer):
-    """A BSA class, inherited from Optimizer.
-
-    This is the designed class to define BSOA-related
-    variables and methods.
-
-    References:
-        P. Civicioglu. Backtracking search optimization algorithm for numerical optimization problems.
-        Applied Mathematics and Computation (2013).
+    """Optimize a population using backtracking search.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the differential scale and crossover mix rate.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``F`` (differential scale, 3.0) and
+            ``mix_rate`` (fraction controlling crossed variables, 1).
 
         """
 
@@ -39,23 +49,9 @@ class BSA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.old_agents = copy.deepcopy(space.agents)
 
-    def _permute(self, agents: List[Agent]) -> None:
-        """Performs the permuting operator.
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _permute(self, agents: list[Agent]) -> None:
         a = np.random.uniform(0.0, 1.0, 1)
         b = np.random.uniform(0.0, 1.0, 1)
 
@@ -65,42 +61,20 @@ class BSA(Optimizer):
         i = np.random.randint(0, len(agents), None)
         j = r.integer(0, len(agents), exclude=i, size=None)
 
-        self.old_agents[i], self.old_agents[j] = copy.deepcopy(
-            self.old_agents[j]
-        ), copy.deepcopy(self.old_agents[i])
+        self.old_agents[i], self.old_agents[j] = copy.deepcopy(self.old_agents[j]), copy.deepcopy(self.old_agents[i])
 
-    def _mutate(self, agents: List[Agent]) -> List[Agent]:
-        """Performs the mutation operator.
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (List[Agent]): A list holding the trial agents.
-
-        """
-
+    def _mutate(self, agents: list[Agent]) -> list[Agent]:
         trial_agents = copy.deepcopy(agents)
 
         r1 = np.random.uniform(0.0, 1.0, 1)
 
         for trial_agent, agent, old_agent in zip(trial_agents, agents, self.old_agents):
-            trial_agent.position = agent.position + self.F * r1 * (
-                old_agent.position - agent.position
-            )
+            trial_agent.position = agent.position + self.F * r1 * (old_agent.position - agent.position)
             trial_agent.clip_by_bound()
 
         return trial_agents
 
-    def _crossover(self, agents: List[Agent], trial_agents: List[Agent]) -> None:
-        """Performs the crossover operator.
-
-        Args:
-            agents: List of agents.
-            trial_agents: List of trial agents.
-
-        """
-
+    def _crossover(self, agents: list[Agent], trial_agents: list[Agent]) -> None:
         n_agents = len(agents)
         n_variables = agents[0].n_variables
 
@@ -129,14 +103,6 @@ class BSA(Optimizer):
                     trial_agents[i].position[j] = copy.deepcopy(agents[i].position[j])
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Backtracking Search Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         self._permute(space.agents)
         trial_agents = self._mutate(space.agents)
         self._crossover(space.agents, trial_agents)

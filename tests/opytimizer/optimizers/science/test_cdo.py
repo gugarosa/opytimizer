@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.science import cdo
@@ -10,9 +13,7 @@ def test_cdo_update():
 
     new_cdo = cdo.CDO()
 
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_cdo.compile(search_space)
     new_cdo.update(search_space, square, 1, 10)

@@ -18,6 +18,16 @@ An ordinary optimization
    from opytimizer.spaces import SearchSpace
 
    def sphere(position):
+       """Compute the squared Euclidean norm.
+
+       Args:
+           position: Candidate position array.
+
+       Returns:
+           Scalar fitness to minimize.
+
+       """
+
        return float(np.sum(position**2))
 
    np.random.seed(7)
@@ -80,7 +90,15 @@ Callbacks and repeated runs
    from opytimizer.utils.callback import Callback
 
    class Iterations(Callback):
+       """Collect completed iteration counters.
+
+       """
+
        def __init__(self):
+           """Initialize the counter collection.
+
+           """
+
            self.seen = []
 
        def on_iteration_end(self, iteration, opt_model):

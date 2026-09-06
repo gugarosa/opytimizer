@@ -1,8 +1,11 @@
-"""Node."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Node.
+
+"""
 
 from __future__ import annotations
-
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -10,16 +13,18 @@ import opytimizer.utils.constant as c
 
 
 class Node:
-    """A Node instance is used for composing tree-based structures."""
+    """A Node instance is used for composing tree-based structures.
+
+    """
 
     def __init__(
         self,
-        name: Union[str, int],
+        name: str | int,
         category: str,
-        value: Optional[np.ndarray] = None,
-        left: Optional[Node] = None,
-        right: Optional[Node] = None,
-        parent: Optional[Node] = None,
+        value: np.ndarray | None = None,
+        left: Node | None = None,
+        right: Node | None = None,
+        parent: Node | None = None,
     ) -> None:
         """Initialization method.
 
@@ -31,17 +36,27 @@ class Node:
             right: Pointer to node's right child.
             parent: Pointer to node's parent.
 
+        Raises:
+            TypeError: The name, terminal value, or related node reference has an invalid type.
+            ValueError: The category is neither ``TERMINAL`` nor ``FUNCTION``.
+
+        Notes:
+            Child and parent references are retained as supplied, not linked
+            automatically. Terminal values share their input arrays. Function
+            nodes ignore ``value`` and evaluate their children on each access
+            to ``position``.
+
         """
 
         if not isinstance(name, (str, int)):
-            raise TypeError("`name` should be a string or integer")
+            raise TypeError("`name` should be a string or integer.")
         if category not in ("TERMINAL", "FUNCTION"):
-            raise ValueError("`category` should be `TERMINAL` or `FUNCTION`")
+            raise ValueError("`category` should be `TERMINAL` or `FUNCTION`.")
         if category == "TERMINAL" and not isinstance(value, np.ndarray):
-            raise TypeError("terminal `value` should be a numpy array")
+            raise TypeError("`value` should be a numpy array for a terminal.")
         for label, node in (("left", left), ("right", right), ("parent", parent)):
             if node is not None and not isinstance(node, Node):
-                raise TypeError(f"`{label}` should be a Node")
+                raise TypeError(f"`{label}` should be a Node.")
 
         self.name = name
         self.category = category
@@ -54,43 +69,57 @@ class Node:
         self.flag = True
 
     def __repr__(self) -> str:
-        """Representation of a formal string."""
+        """Represent the node category, name, and branch flag.
+
+        """
 
         return f"{self.category}:{self.name}:{self.flag}"
 
     @property
     def min_depth(self) -> int:
-        """Minimum depth of node."""
+        """Minimum depth of node.
+
+        """
 
         return _properties(self)["min_depth"]
 
     @property
     def max_depth(self) -> int:
-        """Maximum depth of node."""
+        """Maximum depth of node.
+
+        """
 
         return _properties(self)["max_depth"]
 
     @property
     def n_leaves(self) -> int:
-        """Number of leaves node."""
+        """Number of leaf nodes.
+
+        """
 
         return _properties(self)["n_leaves"]
 
     @property
     def n_nodes(self) -> int:
-        """Number of nodes."""
+        """Number of nodes.
+
+        """
 
         return _properties(self)["n_nodes"]
 
     @property
     def position(self) -> np.ndarray:
-        """Position after traversing the node."""
+        """Evaluate the tree into a position array without copying terminal values.
+
+        """
 
         return _evaluate(self)
 
     @property
-    def post_order(self) -> List[Node]:
-        """Traverses the node in post-order."""
+    def post_order(self) -> list[Node]:
+        """Traverses the node in post-order.
+
+        """
 
         post_order, stacked = [], []
 
@@ -105,11 +134,7 @@ class Node:
 
             self = stacked.pop()
 
-            if (
-                self.right is not None
-                and len(stacked) > 0
-                and stacked[-1] is self.right
-            ):
+            if self.right is not None and len(stacked) > 0 and stacked[-1] is self.right:
                 stacked.pop()
                 stacked.append(self)
 
@@ -125,8 +150,10 @@ class Node:
         return post_order
 
     @property
-    def pre_order(self) -> List[Node]:
-        """Traverses the node in pre-order."""
+    def pre_order(self) -> list[Node]:
+        """Traverses the node in pre-order.
+
+        """
 
         pre_order, stacked = [], [self]
 
@@ -142,14 +169,14 @@ class Node:
 
         return pre_order
 
-    def find_node(self, position: int) -> Tuple[Optional[Node], bool]:
-        """Finds a node at a given position.
+    def find_node(self, position: int) -> tuple[Node | None, bool]:
+        """Find the parent insertion point associated with a pre-order position.
 
         Args:
-            position: Position of the node.
+            position: Index in the pre-order traversal.
 
         Returns:
-            (Node): Node at desired position.
+            Ancestor node and left-child flag, or ``(None, False)`` when no insertion point exists.
 
         """
 
@@ -169,17 +196,7 @@ class Node:
         return None, False
 
 
-def _evaluate(node: Node) -> np.ndarray:
-    """Evaluates a node and outputs its solution array.
-
-    Args:
-        node: An instance of the Node class (can be a tree of Nodes).
-
-    Returns:
-        (np.ndarray): Output solution of size (n_variables x n_dimensions).
-
-    """
-
+def _evaluate(node: Node | None) -> np.ndarray | None:
     if node:
         x = _evaluate(node.left)
         y = _evaluate(node.right)
@@ -220,18 +237,7 @@ def _evaluate(node: Node) -> np.ndarray:
     return None
 
 
-def _properties(node: Node) -> Dict[str, Any]:
-    """Traverses the node and returns some useful properties.
-
-    Args:
-        node: An instance of the Node class (can be a tree of Nodes).
-
-    Returns:
-        (Dict[str, Any]): Dictionary containing some useful properties: `min_depth`, `max_depth`,
-        `n_leaves` and `n_nodes`.
-
-    """
-
+def _properties(node: Node) -> dict[str, int]:
     min_depth, max_depth = 0, -1
     n_leaves = n_nodes = 0
 

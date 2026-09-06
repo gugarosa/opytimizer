@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.optimizers.swarm import pio
 from opytimizer.spaces import search
 
@@ -15,18 +18,14 @@ def test_pio_params():
 
 
 def test_pio_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
     new_pio.compile(search_space)
 
 
 def test_pio_calculate_center():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
     new_pio.compile(search_space)
@@ -35,9 +34,7 @@ def test_pio_calculate_center():
 
 
 def test_pio_update_center_position():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
     new_pio.compile(search_space)
@@ -47,9 +44,7 @@ def test_pio_update_center_position():
 
 
 def test_pio_update():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_pio = pio.PIO()
     new_pio.compile(search_space)

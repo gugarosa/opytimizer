@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from pathlib import Path
 from types import SimpleNamespace
 from typing import get_type_hints
@@ -30,12 +33,8 @@ def test_callback_hooks_are_noops():
 
 def test_callback_annotations_refer_to_the_actual_model():
     assert get_type_hints(Callback.on_task_begin)["opt_model"] is Opytimizer
-    assert (
-        get_type_hints(CheckpointCallback.on_iteration_end)["opt_model"] is Opytimizer
-    )
-    assert (
-        get_type_hints(DiscreteSearchCallback.on_task_begin)["opt_model"] is Opytimizer
-    )
+    assert get_type_hints(CheckpointCallback.on_iteration_end)["opt_model"] is Opytimizer
+    assert get_type_hints(DiscreteSearchCallback.on_task_begin)["opt_model"] is Opytimizer
 
 
 def test_checkpoint_callback_saves_on_frequency():
@@ -51,17 +50,13 @@ def test_checkpoint_callback_saves_on_frequency():
 
 @pytest.mark.parametrize("relative", [False, True])
 @pytest.mark.parametrize("path_type", [str, Path])
-def test_checkpoint_callback_preserves_directory_and_saves_state(
-    tmp_path, monkeypatch, relative, path_type
-):
+def test_checkpoint_callback_preserves_directory_and_saves_state(tmp_path, monkeypatch, relative, path_type):
     (tmp_path / "checkpoints").mkdir()
     monkeypatch.chdir(tmp_path)
     path = Path("checkpoints") / "model.pkl"
     if not relative:
         path = tmp_path / path
-    model = Opytimizer(
-        SearchSpace(1, 1, 0, 1), Optimizer(), lambda x: float(np.sum(x**2))
-    )
+    model = Opytimizer(SearchSpace(1, 1, 0, 1), Optimizer(), lambda x: float(np.sum(x**2)))
 
     callback = CheckpointCallback(path_type(path), frequency=1)
     assert callback.file_path == str(path)
@@ -72,9 +67,7 @@ def test_checkpoint_callback_preserves_directory_and_saves_state(
     loaded = Opytimizer.load(checkpoint)
     assert loaded.total_iterations == 1
     assert loaded.history.best_agent == model.history.best_agent
-    np.testing.assert_array_equal(
-        loaded.space.best_agent.position, model.space.best_agent.position
-    )
+    np.testing.assert_array_equal(loaded.space.best_agent.position, model.space.best_agent.position)
     assert loaded.function(np.array([2])) == 4
 
 

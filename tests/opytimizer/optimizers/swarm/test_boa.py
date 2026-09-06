@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.optimizers.swarm import boa
 from opytimizer.spaces import search
 
@@ -15,18 +18,14 @@ def test_boa_params():
 
 
 def test_boa_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
     new_boa.compile(search_space)
 
 
 def test_boa_best_movement():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
     new_boa.compile(search_space)
@@ -40,9 +39,7 @@ def test_boa_best_movement():
 
 
 def test_boa_local_movement():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
     new_boa.compile(search_space)
@@ -57,9 +54,7 @@ def test_boa_local_movement():
 
 
 def test_boa_update():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_boa = boa.BOA()
     new_boa.compile(search_space)

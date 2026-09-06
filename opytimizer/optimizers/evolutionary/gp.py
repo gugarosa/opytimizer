@@ -1,8 +1,22 @@
-"""Genetic Programming."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Genetic Programming.
+
+Updates require a TreeSpace and apply tournament-selected reproduction (page 99),
+crossover (page 101), and subtree mutation (page 105). Pruning limits the nodes searched
+for mutation and crossover. Evaluation copies bounded tree outputs into agents and records
+the best tree alongside the best agent.
+
+References:
+    J. Koza. Genetic programming: On the programming of computers by means of natural selection (1992).
+
+"""
 
 import copy
 import time
-from typing import Any, Callable, Dict, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -14,21 +28,21 @@ from opytimizer.spaces.tree import TreeSpace
 
 
 class GP(Optimizer):
-    """A GP class, inherited from Optimizer.
-
-    This is the designed class to define GP-related
-    variables and methods.
-
-    References:
-        J. Koza. Genetic programming: On the programming of computers by means of natural selection (1992).
+    """Optimize expression trees with genetic programming.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize tree reproduction, variation, and pruning fractions.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``p_reproduction`` (reproduced population fraction, 0.25),
+            ``p_mutation`` (mutated population fraction, 0.1), ``p_crossover``
+            (crossed population fraction, 0.1), and ``prunning_ratio``
+            (fraction of nodes excluded from variation searches, 0.0).
 
         """
 
@@ -42,16 +56,6 @@ class GP(Optimizer):
         self.build(params)
 
     def _prune_nodes(self, n_nodes: int) -> int:
-        """Prunes the amount of possible nodes used for mutation and crossover.
-
-        Args:
-            n_nodes: Number of current nodes.
-
-        Returns:
-            (int): Amount of prunned nodes.
-
-        """
-
         prunned_nodes = int(n_nodes * (1 - self.prunning_ratio))
         if prunned_nodes <= 2:
             return 2
@@ -59,13 +63,6 @@ class GP(Optimizer):
         return prunned_nodes
 
     def _reproduction(self, space: TreeSpace) -> None:
-        """Reproducts a number of individuals pre-selected through a tournament procedure (p. 99).
-
-        Args:
-            space: A TreeSpace object.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         n_individuals = int(space.n_agents * self.p_reproduction)
@@ -80,13 +77,6 @@ class GP(Optimizer):
             fitness[worst] = 0
 
     def _mutation(self, space: TreeSpace) -> None:
-        """Mutates a number of individuals pre-selected through a tournament procedure.
-
-        Args:
-            space: A TreeSpace object.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         n_individuals = int(space.n_agents * self.p_mutation)
@@ -102,29 +92,15 @@ class GP(Optimizer):
                 space.trees[s] = space.grow(space.min_depth, space.max_depth)
 
     def _mutate(self, space: TreeSpace, tree: Node, max_nodes: int) -> Node:
-        """Actually performs the mutation on a single tree (p. 105).
-
-        Args:
-            space: A TreeSpace object.
-            tree: A Node instance to be mutated.
-            max_nodes: Maximum number of nodes to be searched.
-
-        Returns:
-            (Node): A mutated tree.
-
-        """
-
         mutated_tree = copy.deepcopy(tree)
         mutation_point = int(np.random.uniform(2, max_nodes))
 
         sub_tree, flag = mutated_tree.find_node(mutation_point)
 
-        # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
-        # and find_node() stops at a terminal node whose father is a root
+        # A missing parent requires replacing the whole tree rather than attaching a subtree
         if sub_tree:
             branch = space.grow(space.min_depth, space.max_depth)
 
-            # Checks if sub-tree should be positioned in the left
             if flag:
                 sub_tree.left = branch
                 branch.flag = True
@@ -139,13 +115,6 @@ class GP(Optimizer):
         return mutated_tree
 
     def _crossover(self, space: TreeSpace) -> None:
-        """Crossover a number of individuals pre-selected through a tournament procedure (p. 101).
-
-        Args:
-            space: A TreeSpace object.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         n_individuals = int(space.n_agents * self.p_crossover)
@@ -165,22 +134,7 @@ class GP(Optimizer):
                     space.trees[s[0]], space.trees[s[1]], max_f_nodes, max_m_nodes
                 )
 
-    def _cross(
-        self, father: Node, mother: Node, max_father: int, max_mother: int
-    ) -> Tuple[Node, Node]:
-        """Actually performs the crossover over a father and mother nodes.
-
-        Args:
-            father: A father's node to be crossed.
-            mother: A mother's node to be crossed.
-            max_father: Maximum of nodes from father to be used.
-            max_mother: Maximum of nodes from mother to be used.
-
-        Returns:
-            (Tuple[Node, Node]): Two offsprings based on the crossover operator.
-
-        """
-
+    def _cross(self, father: Node, mother: Node, max_father: int, max_mother: int) -> tuple[Node, Node]:
         father_offspring = copy.deepcopy(father)
         father_point = int(np.random.uniform(2, max_father))
 
@@ -192,11 +146,9 @@ class GP(Optimizer):
         sub_mother, flag_mother = mother_offspring.find_node(mother_point)
 
         if sub_father and sub_mother:
-            # If father's node is positioned in the left
             if flag_father:
                 branch = sub_father.left
 
-                # If mother's node is positioned in the left
                 if flag_mother:
                     sub_father.left = sub_mother.left
                     sub_mother.left.flag = True
@@ -206,7 +158,6 @@ class GP(Optimizer):
             else:
                 branch = sub_father.right
 
-                # If mother's node is positioned in the left
                 if flag_mother:
                     sub_father.right = sub_mother.left
                     sub_mother.left.flag = False
@@ -216,8 +167,6 @@ class GP(Optimizer):
 
             sub_mother.parent = sub_father
 
-            # Now, for creating the mother's offspring
-            # Check if it is positioned in the left
             if flag_mother:
                 sub_mother.left = branch
                 branch.flag = True
@@ -230,14 +179,6 @@ class GP(Optimizer):
         return father, mother
 
     def evaluate(self, space: Space, function: Callable) -> None:
-        """Evaluates the search space according to the objective function.
-
-        Args:
-            space: A TreeSpace object.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for tree, agent in zip(space.trees, space.agents):
             agent.position = copy.deepcopy(tree.position)
             agent.clip_by_bound()
@@ -250,13 +191,6 @@ class GP(Optimizer):
                 space.best_agent.ts = int(time.time())
 
     def update(self, space: Space) -> None:
-        """Wraps Genetic Programming over all trees and variables.
-
-        Args:
-            space: TreeSpace containing agents and update-related information.
-
-        """
-
         self._reproduction(space)
         self._crossover(space)
         self._mutation(space)

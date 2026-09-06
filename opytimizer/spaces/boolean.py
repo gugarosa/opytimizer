@@ -1,7 +1,11 @@
-"""Boolean-based search space."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Boolean-based search space.
+
+"""
 
 import copy
-from typing import List, Optional
 
 import numpy as np
 
@@ -9,15 +13,12 @@ from opytimizer.core import Space
 
 
 class BooleanSpace(Space):
-    """A BooleanSpace class for agents, variables and methods
-    related to the boolean search space.
+    """Own a population of binary decision variables.
 
     """
 
-    def __init__(
-        self, n_agents: int, n_variables: int, mapping: Optional[List[str]] = None
-    ) -> None:
-        """Initialization method.
+    def __init__(self, n_agents: int, n_variables: int, mapping: list[str] | None = None) -> None:
+        """Build binary positions and an independent copy of the first best agent.
 
         Args:
             n_agents: Number of agents.
@@ -30,15 +31,11 @@ class BooleanSpace(Space):
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 
-        super().__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
-        )
+        super().__init__(n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping)
 
         self.build()
 
     def _initialize_agents(self) -> None:
-        """Initializes agents with their positions and defines a best agent."""
-
         for agent in self.agents:
             agent.fill_with_binary()
 

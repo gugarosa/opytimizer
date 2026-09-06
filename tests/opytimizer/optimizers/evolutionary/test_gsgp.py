@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import sys
 
 from opytimizer.optimizers.evolutionary import gsgp
@@ -69,6 +72,4 @@ def test_gsgp_cross():
         upper_bound=[10],
     )
 
-    new_gsgp._cross(
-        tree_space.trees[0], tree_space.trees[1], tree_space.n_variables, 1, 1
-    )
+    new_gsgp._cross(tree_space.trees[0], tree_space.trees[1], tree_space.n_variables, 1, 1)

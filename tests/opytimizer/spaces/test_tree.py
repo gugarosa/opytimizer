@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -7,9 +10,7 @@ from opytimizer.spaces import TreeSpace
 
 def test_tree_space_builds_trees_agents_and_terminals():
     np.random.seed(0)
-    space = TreeSpace(
-        2, 1, 0, 1, n_terminals=2, min_depth=1, max_depth=3, functions=["SUM"]
-    )
+    space = TreeSpace(2, 1, 0, 1, n_terminals=2, min_depth=1, max_depth=3, functions=["SUM"])
 
     assert len(space.terminals) == 2
     assert len(space.trees) == 2

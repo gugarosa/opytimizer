@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer import Opytimizer
@@ -5,52 +8,46 @@ from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
 
-def sphere(x):
+def sphere(x: np.ndarray) -> float:
+    """Evaluate the sphere objective.
+
+    Args:
+        x: Candidate position array.
+
+    Returns:
+        Sum of squared decision variables.
+
+    """
+
     return np.sum(x**2)
 
 
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Number of agents and decision variables
 n_agents = 3
 n_variables = 2
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creates the space, optimizer and objective
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, sphere, save_agents=True)
 
-# Runs the optimization task
 opt.start(n_iterations=10)
 
-# Saves the optimization task
 opt.save("opt_task.pkl")
 
-# One can load the optimization task from disk or work directly with the attribute that is saved
-# Raw histories append one entry per record; get_convergence concatenates positions
-# across records (one column per iteration for this one-dimensional SearchSpace).
-# opt = Opytimizer.load('opt_task.pkl')
-
-# Prints the last iteration best agent and checks that it matches the best agent in space
-# Also prints a random iteration best agent
+# The same history is available after loading a trusted checkpoint with Opytimizer.load
+# get_convergence concatenates positions, giving one column per iteration in SearchSpace
 best_agent_pos, best_agent_fit = opt.history.get_convergence("best_agent")
 print(f"Best agent (position, fit): ({best_agent_pos[:, -1]}, {best_agent_fit[-1]})")
-print(
-    f"Best agent (position, fit): ({opt.space.best_agent.position}, {opt.space.best_agent.fit})"
-)
-print(
-    f"Iter 4 - Best agent (position, fit): ({best_agent_pos[:, 3]}, {best_agent_fit[3]})"
-)
+print(f"Best agent (position, fit): ({opt.space.best_agent.position}, {opt.space.best_agent.fit})")
+print(f"Iter 4 - Best agent (position, fit): ({best_agent_pos[:, 3]}, {best_agent_fit[3]})")
 
-# As `save_agents` was passed as True to Opytimizer(),
-# we can also inspect the convergence of the agents itself
+# Population histories are available because save_agents is True
 agent_0_pos, agent_0_fit = opt.history.get_convergence("agents", index=0)
 print(f"Agent[0] (position, fit): ({agent_0_pos[:, -1]}, {agent_0_fit[-1]})")
 print(f"Iter 4 - Agent[0] (position, fit): ({agent_0_pos[:, 3]}, {agent_0_fit[3]})")

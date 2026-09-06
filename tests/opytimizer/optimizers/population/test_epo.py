@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.optimizers.population import epo
 from opytimizer.spaces import search
 
@@ -15,8 +18,6 @@ def test_epo_params():
 def test_epo_update():
     new_epo = epo.EPO()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_epo.update(search_space, 1, 10)

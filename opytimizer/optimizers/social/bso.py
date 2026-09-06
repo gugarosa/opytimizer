@@ -1,7 +1,17 @@
-"""Brain Storm Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Brain Storm Optimization.
+
+References:
+    Y. Shi. Brain Storm Optimization Algorithm.
+    International Conference in Swarm Intelligence (2011).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -13,22 +23,23 @@ from opytimizer.core.space import Space
 
 
 class BSO(Optimizer):
-    """A BSO class, inherited from Optimizer.
-
-    This is the designed class to define BSO-related
-    variables and methods.
-
-    References:
-        Y. Shi. Brain Storm Optimization Algorithm.
-        International Conference in Swarm Intelligence (2011).
+    """Implement Brain Storm Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure idea clustering and recombination.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``m`` (5) is the number of idea clusters.
+            ``p_replacement_cluster`` (0.2) is the probability of resampling a selected cluster's best idea.
+            ``p_single_cluster`` (0.8) selects one-cluster rather than two-cluster recombination.
+            ``p_single_best`` (0.4) selects the cluster's best idea in one-cluster recombination.
+            ``p_double_best`` (0.5) selects both cluster leaders in two-cluster recombination.
+            ``k`` (20) sets the width of the sigmoid perturbation schedule.
 
         """
 
@@ -45,17 +56,7 @@ class BSO(Optimizer):
 
         self.build(params)
 
-    def _clusterize(self, agents: List[Agent]) -> Tuple[np.ndarray, np.ndarray]:
-        """Performs the clusterization over the agents' positions.
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (Tuple[np.ndarray, np.ndarray]): Agents indexes and best agent index per cluster.
-
-        """
-
+    def _clusterize(self, agents: list[Agent]) -> tuple[np.ndarray, np.ndarray]:
         ideas = np.array([agent.position for agent in agents])
         labels = g.kmeans(ideas, self.m)
 
@@ -80,31 +81,9 @@ class BSO(Optimizer):
         return ideas_idx_per_cluster, best_idx_per_cluster
 
     def _sigmoid(self, x: float) -> float:
-        """Calculates the sigmoid function.
-
-        Args:
-            x: Input value.
-
-        Returns:
-            Output value.
-
-        """
-
         return 1 / (1 + np.exp(-x))
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Brain Storm Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Number of iterations.s
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         ideas_idx_per_cluster, best_idx_per_cluster = self._clusterize(space.agents)
 
         r1 = np.random.uniform(0.0, 1.0, 1)
@@ -121,24 +100,17 @@ class BSO(Optimizer):
                 if len(ideas_idx_per_cluster[c]) > 0:
                     r3 = np.random.uniform(0.0, 1.0, 1)
                     if r3 < self.p_single_best:
-                        a.position = copy.deepcopy(
-                            space.agents[best_idx_per_cluster[c]].position
-                        )
+                        a.position = copy.deepcopy(space.agents[best_idx_per_cluster[c]].position)
                     else:
                         j = np.random.randint(0, len(ideas_idx_per_cluster[c]), None)
 
-                        a.position = copy.deepcopy(
-                            space.agents[ideas_idx_per_cluster[c][j]].position
-                        )
+                        a.position = copy.deepcopy(space.agents[ideas_idx_per_cluster[c][j]].position)
             else:
                 if self.m > 1:
                     c1 = np.random.randint(0, self.m, None)
                     c2 = r.integer(0, self.m, exclude=c1, size=None)
 
-                    if (
-                        len(ideas_idx_per_cluster[c1]) > 0
-                        and len(ideas_idx_per_cluster[c2]) > 0
-                    ):
+                    if len(ideas_idx_per_cluster[c1]) > 0 and len(ideas_idx_per_cluster[c2]) > 0:
                         r4 = np.random.uniform(0.0, 1.0, 1)
                         if r4 < self.p_double_best:
                             a.position = (
@@ -146,12 +118,8 @@ class BSO(Optimizer):
                                 + space.agents[best_idx_per_cluster[c2]].position
                             ) / 2
                         else:
-                            u = np.random.randint(
-                                0, len(ideas_idx_per_cluster[c1]), None
-                            )
-                            v = np.random.randint(
-                                0, len(ideas_idx_per_cluster[c2]), None
-                            )
+                            u = np.random.randint(0, len(ideas_idx_per_cluster[c1]), None)
+                            v = np.random.randint(0, len(ideas_idx_per_cluster[c2]), None)
 
                             a.position = (
                                 space.agents[ideas_idx_per_cluster[c1][u]].position

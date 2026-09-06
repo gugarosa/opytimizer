@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import os
 from copy import deepcopy
 from pathlib import Path
@@ -184,11 +187,11 @@ def test_opytimizer_propagates_objective_failures_without_task_end():
     recorder = Recorder()
 
     def fail(position):
-        raise RuntimeError("objective failed")
+        raise RuntimeError("`objective` failed.")
 
     model.function = fail
 
-    with pytest.raises(RuntimeError, match="objective failed"):
+    with pytest.raises(RuntimeError, match=r"`objective` failed\."):
         model.start(1, [recorder])
 
     assert recorder.events == ["task_begin", "evaluate_before"]

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import cs
@@ -17,23 +20,17 @@ def test_cs_params():
 
 
 def test_cs_generate_new_nests():
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10])
 
     new_cs = cs.CS()
 
-    new_agents = new_cs._generate_new_nests(
-        search_space.agents, search_space.best_agent
-    )
+    new_agents = new_cs._generate_new_nests(search_space.agents, search_space.best_agent)
 
     assert len(new_agents) == 20
 
 
 def test_cs_generate_abandoned_nests():
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10])
 
     new_cs = cs.CS()
 
@@ -46,9 +43,7 @@ def test_cs_evaluate_nests():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10])
 
     new_cs = cs.CS()
 
@@ -60,9 +55,7 @@ def test_cs_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[-10, -10], upper_bound=[10, 10])
 
     new_cs = cs.CS()
 

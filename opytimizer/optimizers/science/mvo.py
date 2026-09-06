@@ -1,6 +1,17 @@
-"""Multi-Verse Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Callable, Dict, Optional
+"""Multi-Verse Optimizer.
+
+References:
+    S. Mirjalili, S. M. Mirjalili and A. Hatamlou.
+    Multi-verse optimizer: a nature-inspired algorithm for global optimization.
+    Neural Computing and Applications (2016).
+
+"""
+
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,23 +21,19 @@ from opytimizer.core.space import Space
 
 
 class MVO(Optimizer):
-    """A MVO class, inherited from Optimizer.
-
-    This is the designed class to define MVO-related
-    variables and methods.
-
-    References:
-        S. Mirjalili, S. M. Mirjalili and A. Hatamlou.
-        Multi-verse optimizer: a nature-inspired algorithm for global optimization.
-        Neural Computing and Applications (2016).
+    """Implement Multi-Verse Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure wormhole probability and travel distance.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``WEP_min`` (0.2) and ``WEP_max`` (1.0) bound the linearly increasing wormhole probability.
+            ``p`` (6.0) controls the reciprocal exponent in the travel-distance reduction schedule.
 
         """
 
@@ -39,22 +46,9 @@ class MVO(Optimizer):
 
         self.build(params)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Multi-Verse Optimizer over all agents and variables (eq. 3.1-3.4).
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
-        WEP = self.WEP_min + (iteration + 1) * (
-            (self.WEP_max - self.WEP_min) / n_iterations
-        )
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
+        # Wraps Multi-Verse Optimizer over all agents and variables (eq. 3.1-3.4)
+        WEP = self.WEP_min + (iteration + 1) * ((self.WEP_max - self.WEP_min) / n_iterations)
         TDR = 1 - ((iteration + 1) ** (1 / self.p) / n_iterations ** (1 / self.p))
 
         fitness = [agent.fit for agent in space.agents]

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -47,9 +50,7 @@ def test_de_accepts_numpy_scalar_parameters(phase):
     ],
 )
 @pytest.mark.parametrize("phase", ["construction", "update"])
-def test_de_rejects_invalid_parameters_before_sampling(
-    monkeypatch, name, value, error, phase
-):
+def test_de_rejects_invalid_parameters_before_sampling(monkeypatch, name, value, error, phase):
     def unexpected_sampling(*args, **kwargs):
         pytest.fail("invalid parameters reached sampling")
 
@@ -75,9 +76,7 @@ def test_de_accepts_parameter_boundaries(CR, F):
 def test_de_mutate_agent():
     new_de = de.DE()
 
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     agent = new_de._mutate_agent(
         search_space.agents[0],
@@ -95,8 +94,6 @@ def test_de_update():
 
     new_de = de.DE()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_de.update(search_space, square)

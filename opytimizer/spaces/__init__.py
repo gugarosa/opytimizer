@@ -1,5 +1,8 @@
-"""Customizable space module that provides different search spaces
-implementations.
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Provide customizable search-space implementations.
+
 """
 
 from opytimizer.spaces.boolean import BooleanSpace

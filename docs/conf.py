@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from importlib.metadata import version as package_version
 
 project = "opytimizer"
@@ -18,3 +21,4 @@ html_theme = "alabaster"
 autodoc_default_options = {"members": True, "show-inheritance": True}
 autodoc_member_order = "bysource"
 autodoc_typehints_format = "short"
+autoclass_content = "both"

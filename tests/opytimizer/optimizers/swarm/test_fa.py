@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.optimizers.swarm import fa
 from opytimizer.spaces import search
 
@@ -17,8 +20,6 @@ def test_fa_params():
 def test_fa_update():
     new_fa = fa.FA()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_fa.update(search_space, 100)

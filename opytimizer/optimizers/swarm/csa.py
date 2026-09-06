@@ -1,8 +1,18 @@
-"""Crow Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Crow Search Algorithm.
+
+References:
+    A. Askarzadeh. A novel metaheuristic method for solving constrained engineering optimization problems:
+    Crow search algorithm. Computers & Structures (2016).
+
+"""
 
 import copy
 import time
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +21,20 @@ from opytimizer.core.space import Space
 
 
 class CSA(Optimizer):
-    """A CSA class, inherited from Optimizer.
-
-    This is the designed class to define CSA-related
-    variables and methods.
-
-    References:
-        A. Askarzadeh. A novel metaheuristic method for
-        solving constrained engineering optimization problems: Crow search algorithm.
-        Computers & Structures (2016).
+    """Search by following remembered crow locations or relocating randomly.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure crow flight length and awareness.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``fl`` (2.0) scales flights toward another crow's memory, and ``AP`` (0.1) selects random relocation.
+            Compilation zeros ``memory`` with shape ``(n_agents, n_variables, n_dimensions)``.
+            Evaluation retains personal-best fitness and matching remembered positions.
 
         """
 
@@ -39,24 +46,9 @@ class CSA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.memory = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
     def evaluate(self, space: Space, function: Callable) -> None:
-        """Evaluates the search space according to the objective function.
-
-        Args:
-            space: A Space object that will be evaluated.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i, agent in enumerate(space.agents):
             fit = function(agent.position)
             if fit < agent.fit:
@@ -71,18 +63,10 @@ class CSA(Optimizer):
                 space.best_agent.ts = int(time.time())
 
     def update(self, space: Space) -> None:
-        """Wraps Crow Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
-
         for agent in space.agents:
             r1 = np.random.uniform(0.0, 1.0, 1)
             r2 = np.random.uniform(0.0, 1.0, 1)
 
-            # Generates a random integer (e.g. selects the crow)
             j = np.random.randint(0, len(space.agents), None)
 
             if r1 >= self.AP:

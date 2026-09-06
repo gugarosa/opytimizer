@@ -143,6 +143,9 @@ Sphinx generates API pages from one autosummary entry during documentation build
 Warnings-as-errors documentation builds and executable guide examples are also CI
 gates. The [contributor guide](docs/development.rst) explains extension hooks,
 state ownership, docstring conventions, and behavioral regression expectations.
+The canonical [code conventions](CONVENTIONS.md) adapt cpmux/phitrain style,
+including Apache headers, Google-style documentation, explicit diagnostics, and
+120-character formatting. Runtime dependencies and Python support are unchanged.
 
 Successful main-branch CI publishes an unreleased project version to GitHub
 with wheel and source-distribution assets. Pull requests and feature branches

@@ -1,7 +1,17 @@
-"""Chernobyl Disaster Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Chernobyl Disaster Optimizer.
+
+References:
+    H. A. Shehadeh. Chernobyl disaster optimizer (CDO): a novel meta-heuristic method for global optimization.
+    Neural Computing and Applications (2023). https://doi.org/10.1007/s00521-023-08261-1
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +21,20 @@ from opytimizer.core.space import Space
 
 
 class CDO(Optimizer):
-    """An CDO class, inherited from Optimizer.
-
-    This is the designed class to define CDO-related
-    variables and methods.
-
-    References:
-        H. Abedinpourshotorban et al.
-        Electromagnetic field optimization: A physics-inspired metaheuristic optimization algorithm.
-        Swarm and Evolutionary Computation (2016).
+    """Implement Chernobyl Disaster Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize radiation-inspired population movement.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            This optimizer has no algorithm-specific configuration keys.
+            Compilation initializes alpha, beta, and gamma position buffers to zero
+            and their fitness values to the largest supported floating-point value.
 
         """
 
@@ -36,13 +43,6 @@ class CDO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.gamma_pos = np.zeros((space.n_variables, space.n_dimensions))
         self.gamma_fit = c.FLOAT_MAX
 
@@ -52,19 +52,7 @@ class CDO(Optimizer):
         self.alpha_pos = np.zeros((space.n_variables, space.n_dimensions))
         self.alpha_fit = c.FLOAT_MAX
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Chernobyl Disaster Optimizer over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         for agent in space.agents:
 
             fit = function(agent.position)

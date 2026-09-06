@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -54,17 +57,13 @@ def test_grid_space_uses_bounded_step_lattice(step, lower, upper, expected):
     assert np.all(space.grid >= lower)
     assert np.all(space.grid <= upper)
     assert space.n_agents == len(expected)
-    np.testing.assert_array_equal(
-        [agent.position[:, 0] for agent in space.agents], space.grid
-    )
+    np.testing.assert_array_equal([agent.position[:, 0] for agent in space.agents], space.grid)
 
 
 def test_grid_space_preserves_cartesian_order():
     space = GridSpace(2, [2, 1], [0, 10], [5, 11])
 
-    np.testing.assert_array_equal(
-        space.grid, [[0, 10], [2, 10], [4, 10], [0, 11], [2, 11], [4, 11]]
-    )
+    np.testing.assert_array_equal(space.grid, [[0, 10], [2, 10], [4, 10], [0, 11], [2, 11], [4, 11]])
 
 
 @pytest.mark.parametrize("step", [0, -1, np.nan, np.inf])
@@ -73,11 +72,9 @@ def test_grid_space_rejects_invalid_steps(step):
         GridSpace(1, step, 0, 1)
 
 
-@pytest.mark.parametrize(
-    "lower,upper", [(2, 1), (np.nan, 1), (0, np.inf), (-np.inf, 0)]
-)
+@pytest.mark.parametrize("lower,upper", [(2, 1), (np.nan, 1), (0, np.inf), (-np.inf, 0)])
 def test_grid_space_rejects_invalid_bounds(lower, upper):
-    with pytest.raises(ValueError, match="bounds"):
+    with pytest.raises(ValueError, match="`lower_bound` and `upper_bound`"):
         GridSpace(1, 1, lower, upper)
 
 

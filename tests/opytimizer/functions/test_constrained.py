@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -42,9 +45,7 @@ def test_constrained_function_does_not_reward_negative_fitness(penalty, expected
 
 
 def test_constrained_function_penalizes_each_violation_with_negative_fitness():
-    function = ConstrainedFunction(
-        lambda x: -square(x), [lambda x: False, lambda x: False], 0.5
-    )
+    function = ConstrainedFunction(lambda x: -square(x), [lambda x: False, lambda x: False], 0.5)
 
     assert function(np.array([2])) == -1
 

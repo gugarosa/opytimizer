@@ -1,6 +1,15 @@
-"""Butterfly Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Butterfly Optimization Algorithm.
+
+References:
+    S. Arora and S. Singh. Butterfly optimization algorithm: a novel approach for global optimization.
+    Soft Computing (2019).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +19,20 @@ from opytimizer.core.space import Space
 
 
 class BOA(Optimizer):
-    """A BOA class, inherited from Optimizer.
-
-    This is the designed class to define BOA-related
-    variables and methods.
-
-    References:
-        S. Arora and S. Singh. Butterfly optimization algorithm: a novel approach for global optimization.
-        Soft Computing (2019).
+    """Move butterflies using fragrance-driven global and local attraction.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure butterfly fragrance and movement selection.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``c`` (0.01) is the fragrance multiplier, and ``a`` (0.1) is the fitness exponent.
+            ``p`` (0.8) is the probability of moving toward the best butterfly rather than moving locally.
+            Compilation initializes the per-agent ``fragrance`` buffer to zero.
 
         """
 
@@ -38,13 +45,6 @@ class BOA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.fragrance = np.zeros(space.n_agents)
 
     def _best_movement(
@@ -54,22 +54,7 @@ class BOA(Optimizer):
         fragrance: np.ndarray,
         random: float,
     ) -> np.ndarray:
-        """Updates the agent's position towards the best butterfly (eq. 2).
-
-        Args:
-            agent_positio: Agent's current position.
-            best_positio: Best agent's current position.
-            fragrance: Agent's current fragrance value.
-            random: A random number between 0 and 1.
-
-        Returns:
-            (np.ndarray): A new position based on best movement.
-
-        """
-
-        new_position = (
-            agent_position + (random**2 * best_position - agent_position) * fragrance
-        )
+        new_position = agent_position + (random**2 * best_position - agent_position) * fragrance
 
         return new_position
 
@@ -81,34 +66,11 @@ class BOA(Optimizer):
         fragrance: np.ndarray,
         random: float,
     ) -> np.ndarray:
-        """Updates the agent's position using a local movement (eq. 3).
-
-        Args:
-            agent_positio: Agent's current position.
-            j_positio: Agent `j` current position.
-            k_positio: Agent `k` current position.
-            fragrance: Agent's current fragrance value.
-            random: A random number between 0 and 1.
-
-        Returns:
-            (np.ndarray): A new position based on local movement.
-
-        """
-
-        new_position = (
-            agent_position + (random**2 * j_position - k_position) * fragrance
-        )
+        new_position = agent_position + (random**2 * j_position - k_position) * fragrance
 
         return new_position
 
     def update(self, space: Space) -> None:
-        """Wraps Butterfly Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
-
         for i, agent in enumerate(space.agents):
             # Calculates fragrance for current agent (eq. 1)
             self.fragrance[i] = self.c * agent.fit**self.a
@@ -117,9 +79,7 @@ class BOA(Optimizer):
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < self.p:
                 # Moves current agent towards the best one (eq. 2)
-                agent.position = self._best_movement(
-                    agent.position, space.best_agent.position, self.fragrance[i], r1
-                )
+                agent.position = self._best_movement(agent.position, space.best_agent.position, self.fragrance[i], r1)
             else:
                 j = np.random.randint(0, len(space.agents), None)
                 k = r.integer(0, len(space.agents), exclude=j, size=None)

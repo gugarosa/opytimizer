@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -38,25 +41,19 @@ def test_hgso_params():
 
 
 def test_hgso_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)
 
 
 def test_hgso_update_position():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)
 
-    position = new_hgso._update_position(
-        search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5
-    )
+    position = new_hgso._update_position(search_space.agents[0], search_space.agents[1], search_space.best_agent, 0.5)
 
     assert position[0][0] != 0
 
@@ -65,9 +62,7 @@ def test_hgso_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hgso = hgso.HGSO()
     new_hgso.compile(search_space)
@@ -88,9 +83,7 @@ def make_space(n_agents, n_dimensions):
     "n_agents,n_clusters,n_dimensions",
     [(1, 1, 1), (5, 2, 1), (7, 3, 1), (3, 3, 2), (10, 2, 1), (10, np.int64(2), 3)],
 )
-def test_hgso_run_preserves_shapes_bounds_and_fitness(
-    n_agents, n_clusters, n_dimensions
-):
+def test_hgso_run_preserves_shapes_bounds_and_fitness(n_agents, n_clusters, n_dimensions):
     space = make_space(n_agents, n_dimensions)
 
     def objective(position):
@@ -121,12 +114,8 @@ def test_hgso_cluster_count_takes_effect_when_recompiled():
     assert optimizer.pressure.shape == (3, 2)
 
 
-@pytest.mark.parametrize(
-    "n_agents,n_dimensions,n_replacements", [(4, 1, 0), (10, 1, 1), (10, 3, 1)]
-)
-def test_hgso_replaces_only_worst_agents_with_matching_fitness(
-    monkeypatch, n_agents, n_dimensions, n_replacements
-):
+@pytest.mark.parametrize("n_agents,n_dimensions,n_replacements", [(4, 1, 0), (10, 1, 1), (10, 3, 1)])
+def test_hgso_replaces_only_worst_agents_with_matching_fitness(monkeypatch, n_agents, n_dimensions, n_replacements):
     space = make_space(n_agents, n_dimensions)
     optimizer = hgso.HGSO()
     optimizer.compile(space)
@@ -139,26 +128,18 @@ def test_hgso_replaces_only_worst_agents_with_matching_fitness(
         evaluated.append(position.copy())
         return float(np.sum(position**2))
 
-    monkeypatch.setattr(
-        optimizer, "_update_position", lambda agent, *args: agent.position.copy()
-    )
+    monkeypatch.setattr(optimizer, "_update_position", lambda agent, *args: agent.position.copy())
     monkeypatch.setattr(
         np.random,
         "uniform",
-        lambda low=0.0, high=1.0, size=None: (
-            np.full(size, 0.5) if size is not None else 0.5
-        ),
+        lambda low=0.0, high=1.0, size=None: (np.full(size, 0.5) if size is not None else 0.5),
     )
 
     optimizer.update(space, objective, 0, 2)
 
     assert len(evaluated) == n_agents + n_replacements
     for agent in space.agents:
-        expected = (
-            np.broadcast_to([[0.5], [15]], (2, n_dimensions))
-            if id(agent) in worst
-            else original[id(agent)]
-        )
+        expected = np.broadcast_to([[0.5], [15]], (2, n_dimensions)) if id(agent) in worst else original[id(agent)]
         np.testing.assert_array_equal(agent.position, expected)
         assert agent.fit == float(np.sum(agent.position**2))
 

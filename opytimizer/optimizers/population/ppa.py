@@ -1,6 +1,15 @@
-"""Parasitism-Predation Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional, Tuple
+"""Parasitism-Predation Algorithm.
+
+References:
+    A. Mohamed et al. Parasitism – Predation algorithm (PPA): A novel approach for feature selection.
+    Ain Shams Engineering Journal (2020).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +21,20 @@ from opytimizer.core.space import Space
 
 
 class PPA(Optimizer):
-    """A PPA class, inherited from Optimizer.
-
-    This is the designed class to define PPA-related
-    variables and methods.
-
-    References:
-        A. Mohamed et al. Parasitism – Predation algorithm (PPA): A novel approach for feature selection.
-        Ain Shams Engineering Journal (2020).
+    """Implement Parasitism-Predation Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize nesting, parasitism, and predation phases.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            This optimizer has no algorithm-specific configuration keys.
+            Compilation allocates zero velocities, and iteration progress divides
+            the population into crows, cats, and cuckoos.
 
         """
 
@@ -36,53 +43,18 @@ class PPA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-        Args:
-            space: A Space object containing meta-information.
+    def _calculate_population(self, n_agents: int, iteration: int, n_iterations: int) -> tuple[int, int, int]:
+        n_crows = np.round(n_agents * (2 / 3 - iteration * ((2 / 3 - 1 / 2) / n_iterations)))
 
-        """
-
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
-
-    def _calculate_population(
-        self, n_agents: int, iteration: int, n_iterations: int
-    ) -> Tuple[int, int, int]:
-        """Calculates the number of crows, cats and cuckoos.
-
-        Args:
-            n_agents: Number of agents.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        Returns:
-            (Tuple[int, int, int]): The number of crows, cats and cuckoos.
-
-        """
-
-        n_crows = np.round(
-            n_agents * (2 / 3 - iteration * ((2 / 3 - 1 / 2) / n_iterations))
-        )
-
-        n_cats = np.round(
-            n_agents * (0.01 + iteration * ((1 / 3 - 0.01) / n_iterations))
-        )
+        n_cats = np.round(n_agents * (0.01 + iteration * ((1 / 3 - 0.01) / n_iterations)))
 
         n_cuckoos = n_agents - n_crows - n_cats
 
         return int(n_crows), int(n_cats), int(n_cuckoos)
 
     def _nesting_phase(self, space: Space, n_crows: int):
-        """Performs the nesting phase using the current number of crows.
-
-        Args:
-            space: Space containing agents and update-related information.
-            n_crows: Number of crows.
-
-        """
-
         crows = space.agents[:n_crows]
         for i, crow in enumerate(crows):
             idx = r.integer(0, space.n_agents, exclude=i, size=None)
@@ -103,17 +75,6 @@ class PPA(Optimizer):
         iteration: int,
         n_iterations: int,
     ):
-        """Performs the parasitism phase using the current number of cuckoos.
-
-        Args:
-            space: Space containing agents and update-related information.
-            n_crows: Number of crows.
-            n_cuckoos: Number of cuckoos.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         cuckoos = space.agents[n_crows : n_crows + n_cuckoos]
         fitness = [cuckoo.fit for cuckoo in cuckoos]
 
@@ -146,18 +107,6 @@ class PPA(Optimizer):
         iteration: int,
         n_iterations: int,
     ) -> None:
-        """Performs the predation phase using the current number of cats.
-
-        Args:
-            space: Space containing agents and update-related information.
-            n_crows: Number of crows.
-            n_cuckoos: Number of cuckoos.
-            n_cats: Number of cats.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         constant = 2 - iteration / n_iterations
 
         cats = space.agents[n_crows + n_cuckoos :]
@@ -166,30 +115,15 @@ class PPA(Optimizer):
 
             # Updates the cat's velocity (eq. 13)
             r1 = np.random.uniform(0.0, 1.0, 1)
-            self.velocity[idx] += (
-                r1 * constant * (space.best_agent.position - cat.position)
-            )
+            self.velocity[idx] += r1 * constant * (space.best_agent.position - cat.position)
 
             # Updates the cat's position and clips its limits (eq. 14)
             cat.position += self.velocity[idx]
             cat.clip_by_bound()
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Parasitism-Predation Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
-        n_crows, n_cats, n_cuckoos = self._calculate_population(
-            space.n_agents, iteration, n_iterations
-        )
+        n_crows, n_cats, n_cuckoos = self._calculate_population(space.n_agents, iteration, n_iterations)
 
         self._nesting_phase(space, n_crows)
         self._parasitism_phase(space, n_crows, n_cuckoos, iteration, n_iterations)
-        self._predation_phase(
-            space, n_crows, n_cuckoos, n_cats, iteration, n_iterations
-        )
+        self._predation_phase(space, n_crows, n_cuckoos, n_cats, iteration, n_iterations)

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import sfo
@@ -19,18 +22,14 @@ def test_sfo_params():
 
 
 def test_sfo_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
 
 
 def test_sfo_generate_random_agent():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
@@ -41,9 +40,7 @@ def test_sfo_generate_random_agent():
 
 
 def test_sfo_calculate_lambda_i():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
@@ -54,16 +51,12 @@ def test_sfo_calculate_lambda_i():
 
 
 def test_sfo_update_sailfish():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=3, lower_bound=[0, 0, 0], upper_bound=[10, 10, 10])
 
     new_sfo = sfo.SFO()
     new_sfo.compile(search_space)
 
-    position = new_sfo._update_sailfish(
-        search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5
-    )
+    position = new_sfo._update_sailfish(search_space.agents[0], search_space.best_agent, search_space.agents[0], 0.5)
 
     assert position[0][0] != 0
 

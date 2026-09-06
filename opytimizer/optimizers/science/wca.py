@@ -1,6 +1,18 @@
-"""Water Cycle Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Callable, Dict, List, Optional
+"""Water Cycle Algorithm.
+
+References:
+    H. Eskandar.
+    Water cycle algorithm – A novel metaheuristic optimization method for
+    solving constrained engineering optimization problems.
+    Computers & Structures (2012).
+
+"""
+
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,24 +22,20 @@ from opytimizer.core.space import Space
 
 
 class WCA(Optimizer):
-    """A WCA class, inherited from Optimizer.
-
-    This is the designed class to define WCA-related
-    variables and methods.
-
-    References:
-        H. Eskandar.
-        Water cycle algorithm – A novel metaheuristic optimization method for
-        solving constrained engineering optimization problems.
-        Computers & Structures (2012).
+    """Implement Water Cycle Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure rivers, the sea, and evaporation distance.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``nsr`` (2) is the combined number of rivers and the sea.
+            ``d_max`` (0.1) is the distance threshold for raining, reduced after each update.
+            Compilation allocates one integer flow count per river or sea.
 
         """
 
@@ -39,39 +47,17 @@ class WCA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.flows = np.zeros(self.nsr, dtype=int)
 
-    def _flow_intensity(self, agents: List[Agent]) -> None:
-        """Calculates the intensity of each possible flow (eq. 6).
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _flow_intensity(self, agents: list[Agent]) -> None:
+        # Calculates the intensity of each possible flow (eq. 6)
         cost = np.sum([agents[i].fit for i in range(self.nsr)])
 
         for i in range(self.nsr):
-            self.flows[i] = np.floor(
-                np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr)
-            )
+            self.flows[i] = np.floor(np.fabs(agents[i].fit / cost) * (len(agents) - self.nsr))
 
-    def _raining_process(self, agents: List[Agent], best_agent: Agent) -> None:
-        """Performs the raining process (eq. 11-12).
-
-        Args:
-            agents: List of agents.
-            best_agent: Global best agent.
-
-        """
-
+    def _raining_process(self, agents: list[Agent], best_agent: Agent) -> None:
+        # Performs the raining process (eq. 11-12)
         for i in range(0, self.nsr):
             for j in range(self.nsr, self.flows[i] + self.nsr):
                 distance = np.linalg.norm(best_agent.position - agents[j].position)
@@ -84,15 +70,8 @@ class WCA(Optimizer):
                         # Updates position (eq. 11)
                         agents[j].fill_with_uniform()
 
-    def _update_stream(self, agents: List[Agent], function: Callable) -> None:
-        """Updates every stream position (eq. 8).
-
-        Args:
-            agents: List of agents.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _update_stream(self, agents: list[Agent], function: Callable) -> None:
+        # Updates every stream position (eq. 8)
         n_flows = 0
 
         for i in range(0, self.nsr):
@@ -105,18 +84,8 @@ class WCA(Optimizer):
 
                 agents[j].fit = function(agents[j].position)
 
-    def _update_river(
-        self, agents: List[Agent], best_agent: Agent, function: Callable
-    ) -> None:
-        """Updates every river position (eq. 9).
-
-        Args:
-            agents: List of agents.
-            best_agent: Global best agent.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _update_river(self, agents: list[Agent], best_agent: Agent, function: Callable) -> None:
+        # Updates every river position (eq. 9)
         for i in range(1, self.nsr):
             r1 = np.random.uniform(0.0, 1.0, 1)
             agents[i].position += r1 * 2 * (best_agent.position - agents[i].position)
@@ -125,15 +94,6 @@ class WCA(Optimizer):
             agents[i].fit = function(agents[i].position)
 
     def update(self, space: Space, function: Callable, n_iterations: int) -> None:
-        """Wraps Water Cycle Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         self._flow_intensity(space.agents)
         self._update_stream(space.agents, function)
         self._update_river(space.agents, space.best_agent, function)

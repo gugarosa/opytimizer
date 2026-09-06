@@ -1,3 +1,8 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+import numpy as np
+import torch
 import torchvision
 from learnergy.models.bernoulli import DropoutRBM
 
@@ -5,7 +10,6 @@ from opytimizer import Opytimizer
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Creates training and testing dataset
 train = torchvision.datasets.MNIST(
     root="./data",
     train=True,
@@ -14,11 +18,19 @@ train = torchvision.datasets.MNIST(
 )
 
 
-def dropout_rbm(opytimizer):
-    # Gathers params
+def dropout_rbm(opytimizer: np.ndarray) -> torch.Tensor:
+    """Train a fresh dropout RBM on MNIST and return its reconstruction error.
+
+    Args:
+        opytimizer: One-row position array containing the dropout probability.
+
+    Returns:
+        Reconstruction error after five epochs on the shared training dataset.
+
+    """
+
     dropout = opytimizer[0][0]
 
-    # Creates an RBM
     model = DropoutRBM(
         n_visible=784,
         n_hidden=128,
@@ -31,26 +43,20 @@ def dropout_rbm(opytimizer):
         use_gpu=False,
     )
 
-    # Training an RBM
     error, _ = model.fit(train, batch_size=128, epochs=5)
 
     return error
 
 
-# Number of agents and decision variables
 n_agents = 5
 n_variables = 1
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [0]
 upper_bound = [1]
 
-# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, dropout_rbm)
 
-# Runs the optimization task
 opt.start(n_iterations=5)

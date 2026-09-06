@@ -1,4 +1,9 @@
-"""Optimization entry point."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Coordinate optimization strategies and per-run callbacks.
+
+"""
 
 from __future__ import annotations
 
@@ -27,9 +32,6 @@ def _emit(callbacks: Sequence[Callback] | None, event: str, *args: Any) -> None:
 class Opytimizer:
     """Coordinate a mutable population, optimization strategy, and objective.
 
-    The supplied space and optimizer are retained, not copied. Construction
-    compiles the optimizer once; repeated ``start`` calls continue its state and
-    append history. Use separate instances for independent optimization tasks.
     """
 
     def __init__(
@@ -41,29 +43,29 @@ class Opytimizer:
     ) -> None:
         """Bind an initialized space and compile the optimizer's state.
 
+        The space and optimizer are retained, not copied. Construction compiles once and can reset shared buffers.
+        Repeated runs continue optimizer state and append history. Use separate instances for independent tasks.
+
         Args:
             space: Initialized ``Space`` instance with its configured population.
-            optimizer: Strategy instance. Compilation may reset its existing
-                space-dependent buffers.
-            function: Callable taking a position array of shape
-                ``(n_variables, n_dimensions)`` and returning scalar fitness to
-                minimize.
-            save_agents: Whether to retain every agent's position and fitness at
-                each completed iteration, in addition to the best agent.
+            optimizer: Strategy whose space-dependent state is compiled during construction.
+            function: Scalar objective receiving an array of shape ``(n_variables, n_dimensions)``.
+            save_agents: Whether to retain population snapshots in addition to the best-agent history.
 
         Raises:
-            TypeError: If the supplied objects or history option have invalid types.
-            RuntimeError: If the space has not initialized its population.
+            TypeError: Supplied objects or the history option have invalid types.
+            RuntimeError: The space has not initialized its population.
+
         """
 
         if not isinstance(space, Space):
-            raise TypeError("`space` should be a Space")
+            raise TypeError("`space` must be a Space.")
         if len(space.agents) != space.n_agents:
-            raise RuntimeError("`space` should be initialized")
+            raise RuntimeError("`space` must be initialized.")
         if not isinstance(optimizer, Optimizer):
-            raise TypeError("`optimizer` should be an Optimizer")
+            raise TypeError("`optimizer` must be an Optimizer.")
         if not callable(function):
-            raise TypeError("`function` should be callable")
+            raise TypeError("`function` must be callable.")
 
         history = History(save_agents=save_agents)
 
@@ -81,7 +83,9 @@ class Opytimizer:
 
     @property
     def evaluate_args(self) -> list[Any]:
-        """Current model attributes requested by the evaluator, in signature order."""
+        """Return current model attributes requested by the evaluator in signature order.
+
+        """
 
         args = signature(self.optimizer.evaluate).parameters
 
@@ -89,7 +93,9 @@ class Opytimizer:
 
     @property
     def update_args(self) -> list[Any]:
-        """Current model attributes requested by the updater, in signature order."""
+        """Return current model attributes requested by the updater in signature order.
+
+        """
 
         args = signature(self.optimizer.update).parameters
 
@@ -98,10 +104,11 @@ class Opytimizer:
     def evaluate(self, callbacks: Sequence[Callback] | None = None) -> None:
         """Evaluate the population between the before/after evaluation hooks.
 
+        Objective errors propagate and prevent the after hook from running.
+
         Args:
             callbacks: Callbacks invoked in sequence order, or ``None``.
 
-        Objective errors propagate and prevent the after hook from running.
         """
 
         _emit(callbacks, "on_evaluate_before", *self.evaluate_args)
@@ -111,11 +118,11 @@ class Opytimizer:
     def update(self, callbacks: Sequence[Callback] | None = None) -> None:
         """Update candidates, dispatch update hooks, then clip positions.
 
+        The after-update hook precedes driver clipping. Errors propagate without rolling back changed state.
+
         Args:
             callbacks: Callbacks invoked in sequence order, or ``None``.
 
-        ``on_update_after`` runs before the driver's bound clipping. Algorithm
-        and callback errors propagate; state already changed is not rolled back.
         """
 
         _emit(callbacks, "on_update_before", *self.update_args)
@@ -131,36 +138,33 @@ class Opytimizer:
     ) -> None:
         """Run additional iterations in place without recompiling the optimizer.
 
+        A zero budget performs initial evaluation and task hooks without updates.
+        Results remain in ``space`` and ``history`` rather than a separate return object.
+
         Args:
-            n_iterations: Non-negative integer budget. Python and NumPy integers
-                are accepted. Zero evaluates the population and dispatches task
-                hooks without performing an update.
-            callbacks: Ordered callbacks for this invocation only. They are not
-                registered for subsequent runs; supply them again after loading
-                a checkpoint.
+            n_iterations: Non-negative Python or NumPy integer budget.
+            callbacks: Ordered callbacks for this invocation, supplied again when resuming a checkpoint.
 
         Raises:
-            TypeError: If the budget does not support integer indexing.
-            ValueError: If the budget is negative.
+            TypeError: The budget does not support integer indexing.
+            ValueError: The budget is negative.
 
         Notes:
-            The loop sets ``iteration`` to a zero-based index for each update;
-            before that it retains its previous value. ``total_iterations`` is
-            incremented before each iteration-begin hook and is cumulative across
-            calls. History is appended after evaluation, before iteration-end
-            hooks. Elapsed time includes callbacks but excludes construction.
+            The loop sets ``iteration`` to a zero-based index for each update.
+            Before the first update it retains its previous value.
+            ``total_iterations`` is incremented before each iteration-begin hook and is cumulative across calls.
+            History is appended after evaluation, before iteration-end hooks.
+            Elapsed time includes callbacks but excludes construction.
+            Exceptions propagate without rollback. Task-end hooks and elapsed history require normal completion.
 
-            Exceptions propagate without rollback. Task-end hooks and elapsed
-            history are recorded only on normal completion. Results remain in
-            ``space`` and ``history``; this method returns ``None``.
         """
 
         try:
             iterations = operator.index(n_iterations)
         except TypeError as error:
-            raise TypeError("`n_iterations` should be an integer") from error
+            raise TypeError("`n_iterations` must be an integer.") from error
         if iterations < 0:
-            raise ValueError("`n_iterations` should be >= 0")
+            raise ValueError("`n_iterations` must be non-negative.")
 
         self.n_iterations = n_iterations
         callbacks = [] if callbacks is None else callbacks
@@ -180,9 +184,7 @@ class Opytimizer:
             self.update(callbacks)
             self.evaluate(callbacks)
 
-            self.history.dump(
-                agents=self.space.agents, best_agent=self.space.best_agent
-            )
+            self.history.dump(agents=self.space.agents, best_agent=self.space.best_agent)
 
             _emit(callbacks, "on_iteration_end", self.total_iterations, self)
 
@@ -194,13 +196,13 @@ class Opytimizer:
     def save(self, file_path: str | PathLike[str]) -> None:
         """Write this model's state to a dill checkpoint, replacing the file.
 
-        Args:
-            file_path: Text path or path-like object. Its parent directory must
-                already exist.
+        Filesystem and serialization errors propagate.
+        State includes the space, optimizer, objective, history, and counters.
+        The driver does not register its callback sequence as model state.
 
-        Filesystem and serialization errors propagate. The saved state includes
-        the space, optimizer, objective, history, and counters. The driver does
-        not register the callback sequence supplied to ``start`` as model state.
+        Args:
+            file_path: Text path or path-like object whose parent directory already exists.
+
         """
 
         with open(file_path, "wb") as output_file:
@@ -214,12 +216,12 @@ class Opytimizer:
             file_path: Text path or path-like object containing a saved model.
 
         Returns:
-            The saved model, without recompiling its optimizer. Pass callbacks
-            explicitly when calling ``start`` on the restored model.
+            The saved model without recompiling its optimizer or registering per-run callbacks.
 
         Warning:
             Dill uses pickle-based serialization and can execute code while
             loading. Never load checkpoints from untrusted sources.
+
         """
 
         with open(file_path, "rb") as input_file:

@@ -1,7 +1,19 @@
-"""Genetic Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Genetic Algorithm.
+
+Updates use roulette selection, arithmetic crossover, and Gaussian mutation as described
+on page 8 of the reference, then retain the best parent and offspring solutions.
+
+References:
+    M. Mitchell. An introduction to genetic algorithms. MIT Press (1998).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -13,21 +25,20 @@ from opytimizer.core.space import Space
 
 
 class GA(Optimizer):
-    """An GA class, inherited from Optimizer.
-
-    This is the designed class to define GA-related
-    variables and methods.
-
-    References:
-        M. Mitchell. An introduction to genetic algorithms. MIT Press (1998).
+    """Optimize a population with selection, crossover, and mutation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize genetic selection and variation probabilities.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``p_selection`` (selected population fraction, 0.75),
+            ``p_mutation`` (per-variable mutation probability, 0.25), and
+            ``p_crossover`` (pairwise crossover probability, 0.5).
 
         """
 
@@ -39,27 +50,14 @@ class GA(Optimizer):
 
         self.build(params)
 
-    def _roulette_selection(self, n_agents: int, fitness: List[float]) -> List[int]:
-        """Performs a roulette selection on the population (p. 8).
-
-        Args:
-            n_agents: Number of agents allowed in the space.
-            fitness: A fitness list of every agent.
-
-        Returns:
-            (List[int]): The selected indexes of the population.
-
-        """
-
+    def _roulette_selection(self, n_agents: int, fitness: list[float]) -> list[int]:
         n_individuals = int(n_agents * self.p_selection)
         if n_individuals % 2 != 0:
             n_individuals += 1
 
         max_fitness = np.max(fitness)
 
-        # Re-arrange the list of fitness by inverting it
-        # Note that we apply a trick due to it being designed for minimization
-        # f'(x) = f_max - f(x)
+        # Invert fitness for minimization: f'(x) = f_max - f(x)
         inv_fitness = [max_fitness - fit + c.EPSILON for fit in fitness]
         total_fitness = np.sum(inv_fitness)
 
@@ -69,18 +67,7 @@ class GA(Optimizer):
 
         return selected
 
-    def _crossover(self, father: Agent, mother: Agent) -> Tuple[Agent, Agent]:
-        """Performs the crossover between a pair of parents (p. 8).
-
-        Args:
-            father: Father to produce the offsprings.
-            mother: Mother to produce the offsprings.
-
-        Returns:
-            (Tuple[Agent, Agent]): Two generated offsprings based on parents.
-
-        """
-
+    def _crossover(self, father: Agent, mother: Agent) -> tuple[Agent, Agent]:
         alpha, beta = copy.deepcopy(father), copy.deepcopy(mother)
 
         r1 = np.random.uniform(0.0, 1.0, 1)
@@ -92,18 +79,7 @@ class GA(Optimizer):
 
         return alpha, beta
 
-    def _mutation(self, alpha: Agent, beta: Agent) -> Tuple[Agent, Agent]:
-        """Performs the mutation over offsprings (p. 8).
-
-        Args:
-            alpha: First offspring.
-            beta: Second offspring.
-
-        Returns:
-            (Tuple[Agent, Agent]): Two mutated offsprings.
-
-        """
-
+    def _mutation(self, alpha: Agent, beta: Agent) -> tuple[Agent, Agent]:
         for j in range(alpha.n_variables):
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < self.p_mutation:
@@ -116,14 +92,6 @@ class GA(Optimizer):
         return alpha, beta
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Genetic Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         new_agents = []
         n_agents = len(space.agents)
 

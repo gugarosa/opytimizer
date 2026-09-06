@@ -1,7 +1,17 @@
-"""Equilibrium Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Equilibrium Optimizer.
+
+References:
+    A. Faramarzi et al. Equilibrium optimizer: A novel optimization algorithm.
+    Knowledge-Based Systems (2020).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,22 @@ from opytimizer.core.space import Space
 
 
 class EO(Optimizer):
-    """An EO class, inherited from Optimizer.
-
-    This is the designed class to define EO-related
-    variables and methods.
-
-    References:
-        A. Faramarzi et al. Equilibrium optimizer: A novel optimization algorithm.
-        Knowledge-Based Systems (2020).
+    """Implement Equilibrium Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure equilibrium concentration dynamics.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``a1`` (2.0) scales the exponential movement term and ``a2`` (1.0)
+            controls its iteration-dependent time exponent.
+            ``GP`` (0.5) is the threshold below which generation is disabled,
+            and ``V`` (1.0) scales the generation contribution as a volume divisor.
+            Compilation copies the first agent into four equilibrium candidates.
 
         """
 
@@ -40,23 +50,9 @@ class EO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.C = [copy.deepcopy(space.agents[0]) for _ in range(4)]
 
-    def _calculate_equilibrium(self, agents: List[Agent]) -> None:
-        """Calculates the equilibrium concentrations.
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _calculate_equilibrium(self, agents: list[Agent]) -> None:
         for agent in agents:
             if agent.fit < self.C[0].fit:
                 self.C[0] = copy.deepcopy(agent)
@@ -68,16 +64,6 @@ class EO(Optimizer):
                 self.C[3] = copy.deepcopy(agent)
 
     def _average_concentration(self, function: Callable) -> Agent:
-        """Averages the concentrations.
-
-        Args:
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Agent): Averaged concentration.
-
-        """
-
         C_avg = copy.deepcopy(self.C[0])
         C_avg.position = np.mean([c.position for c in self.C], axis=0)
         C_avg.clip_by_bound()
@@ -86,19 +72,7 @@ class EO(Optimizer):
 
         return C_avg
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Equilibrium Optimizer over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         self._calculate_equilibrium(space.agents)
         C_avg = self._average_concentration(function)
 
@@ -135,7 +109,5 @@ class EO(Optimizer):
 
             # Updates agent's position (eq. 16)
             agent.position = (
-                C_pool[i].position
-                + (agent.position - C_pool[i].position) * F
-                + (G / (lambd * self.V)) * (1 - F)
+                C_pool[i].position + (agent.position - C_pool[i].position) * F + (G / (lambd * self.V)) * (1 - F)
             )

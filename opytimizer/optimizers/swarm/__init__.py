@@ -1,5 +1,8 @@
-"""An evolutionary package for all common opytimizer modules.
-It contains implementations of swarm-based optimizers.
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Expose the supported swarm-based optimizer classes.
+
 """
 
 from opytimizer.optimizers.swarm.abc import ABC

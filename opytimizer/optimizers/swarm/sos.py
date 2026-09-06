@@ -1,7 +1,17 @@
-"""Symbiotic Organisms Search."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Symbiotic Organisms Search.
+
+References:
+    M.-Y. Cheng and D. Prayogo. Symbiotic Organisms Search: A new metaheuristic optimization algorithm.
+    Computers & Structures (2014).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +22,18 @@ from opytimizer.core.space import Space
 
 
 class SOS(Optimizer):
-    """An SOS class, inherited from Optimizer.
-
-    This is the designed class to define SOS-related
-    variables and methods.
-
-    References:
-        M.-Y. Cheng and D. Prayogo. Symbiotic Organisms Search: A new metaheuristic optimization algorithm.
-        Computers & Structures (2014).
+    """Search with mutualism, commensalism, and parasitism between organisms.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize symbiotic organism search.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            No algorithm-specific parameter defaults or compiled buffers are defined.
 
         """
 
@@ -35,19 +41,7 @@ class SOS(Optimizer):
 
         self.build(params)
 
-    def _mutualism(
-        self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Callable
-    ) -> None:
-        """Performs the mutualism operation.
-
-        Args:
-            agent_i: Selected `i` agent.
-            agent_j: Selected `j` agent.
-            best_agent: Global best agent.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _mutualism(self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Callable) -> None:
         a = copy.deepcopy(agent_i)
         b = copy.deepcopy(agent_j)
 
@@ -75,19 +69,7 @@ class SOS(Optimizer):
             agent_j.position = copy.deepcopy(b.position)
             agent_j.fit = copy.deepcopy(b.fit)
 
-    def _commensalism(
-        self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Callable
-    ) -> None:
-        """Performs the commensalism operation.
-
-        Args:
-            agent_i: Selected `i` agent.
-            agent_j: Selected `j` agent.
-            best_agent: Global best agent.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _commensalism(self, agent_i: Agent, agent_j: Agent, best_agent: Agent, function: Callable) -> None:
         a = copy.deepcopy(agent_i)
 
         # Updates the agent's position (eq. 4)
@@ -101,15 +83,6 @@ class SOS(Optimizer):
             agent_i.fit = copy.deepcopy(a.fit)
 
     def _parasitism(self, agent_i: Agent, agent_j: Agent, function: Callable) -> None:
-        """Performs the parasitism operation.
-
-        Args:
-            agent_i: Selected `i` agent.
-            agent_j: Selected `j` agent.
-            function: A callable that will be used as the objective function.
-
-        """
-
         r1 = np.random.randint(0, agent_i.n_variables, None)
 
         p = copy.deepcopy(agent_i)
@@ -122,14 +95,6 @@ class SOS(Optimizer):
             agent_j.fit = copy.deepcopy(p.fit)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Symbiotic Organisms Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i, agent in enumerate(space.agents):
             j = r.integer(0, len(space.agents), exclude=i, size=None)
             self._mutualism(agent, space.agents[j], space.best_agent, function)

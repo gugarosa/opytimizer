@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.science import sma
@@ -13,9 +16,7 @@ def test_sma_params():
 
 
 def test_sma_compile():
-    search_space = search.SearchSpace(
-        n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=2, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sma = sma.SMA()
     new_sma.compile(search_space)
@@ -25,9 +26,7 @@ def test_sma_update_weight():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sma = sma.SMA()
     new_sma.compile(search_space)
@@ -36,9 +35,7 @@ def test_sma_update_weight():
 
 
 def test_sma_update():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_sma = sma.SMA()
     new_sma.compile(search_space)

@@ -1,7 +1,13 @@
-"""General-based mathematical functions."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
+"""General-based mathematical functions.
+
+"""
+
+from collections.abc import Iterable, Iterator
 from itertools import islice
-from typing import Any, Iterable, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -21,7 +27,7 @@ def kmeans(
         tol: Tolerance value to stop the clustering.
 
     Returns:
-        (np.ndarray): An array holding the assigned cluster per input sample.
+        An array holding the assigned cluster per input sample.
 
     """
 
@@ -52,15 +58,15 @@ def kmeans(
     return labels
 
 
-def n_wise(x: List[Any], size: int = 2) -> Iterable:
-    """Iterates over an iterator and returns n-wise samples from it.
+def n_wise(x: Iterable[Any], size: int = 2) -> Iterator[tuple[Any, ...]]:
+    """Consume an iterable lazily in consecutive groups of up to ``size`` values.
 
     Args:
-        x (list): Values to be iterated over.
+        x: Values to be iterated over.
         size: Amount of samples per iteration.
 
     Returns:
-        (Iterable): N-wise samples from the iterator.
+        Iterator of tuples, including a final shorter group when values remain.
 
     """
 
@@ -69,33 +75,30 @@ def n_wise(x: List[Any], size: int = 2) -> Iterable:
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
-def tournament_selection(fitness: List[float], n: int, size: int = 2) -> np.array:
+def tournament_selection(fitness: list[float], n: int, size: int = 2) -> list[int]:
     """Selects n-individuals based on a tournament selection.
 
     Args:
-        fitness (list): List of individuals fitness.
+        fitness: List of individuals fitness.
         n: Number of individuals to be selected.
         size: Tournament size.
 
     Returns:
-        (np.array): Indexes of selected individuals.
+        Indexes of selected individuals.
 
     """
 
-    return [
-        np.where(np.min(np.random.choice(fitness, size)) == fitness)[0][0]
-        for _ in range(n)
-    ]
+    return [np.where(np.min(np.random.choice(fitness, size)) == fitness)[0][0] for _ in range(n)]
 
 
-def weighted_wheel_selection(weights: List[float]) -> Optional[int]:
+def weighted_wheel_selection(weights: list[float]) -> int | None:
     """Selects an individual from a weight-based roulette.
 
     Args:
         weights: List of individuals weights.
 
     Returns:
-        (int): Weight-based roulette individual.
+        Selected index, or ``None`` when no cumulative weight exceeds the sampled threshold.
 
     """
 

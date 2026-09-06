@@ -25,7 +25,9 @@ A minimal optimizer
    from opytimizer.spaces import SearchSpace
 
    class HalvingOptimizer(Optimizer):
-       """Move every component halfway toward zero."""
+       """Move every component halfway toward zero.
+
+       """
 
        def update(self, space):
            for agent in space.agents:
@@ -83,22 +85,20 @@ success-shaped defaults after a failure.
 Docstrings and types
 --------------------
 
-Keep the existing Google-style docstrings and Sphinx Napoleon integration.
-Prefer a short statement of purpose over boilerplate such as "Initialization
-method" or a restatement of the class name.
+The canonical `code conventions <https://github.com/gugarosa/opytimizer/blob/main/CONVENTIONS.md>`_
+adapt the cpmux/phitrain rules to this numerical library.
+They specify headers, modern typing/import syntax, Google-style docstrings,
+error prose, comments, and logical phase spacing.
 
-Document:
+Regular classes keep a single-sentence summary and document constructor arguments
+on ``__init__``. Private helpers and concrete lifecycle overrides have no
+docstrings. Keep shared contracts on their public base declarations.
 
-* Accepted parameters, defaults, units, and meaningful domains.
-* Array axes and shapes, not just "a NumPy array".
-* What is mutated, copied, returned, or deferred until compilation.
-* Expected failures and important ordering constraints.
-* Configuration separately from compiled or evolving runtime state.
-
-Use ``Args``, ``Returns``, ``Raises``, ``Attributes``, and ``Notes`` where they
-add information. Preserve algorithm references. Use actual forward references
-for concrete model types, not unconstrained type variables pretending to name
-those models. An annotation is not runtime validation.
+Do not delete useful parameter meaning, array shapes, ownership details, or
+scientific references to meet docstring placement rules. Preserve that information
+in constructor notes, module documentation, or public guides.
+Use actual model forward references rather than unrelated type variables.
+An annotation is not runtime validation.
 
 Modern Python syntax is useful when it removes redundant knowledge or clarifies a
 contract. Keep all changes compatible with the declared Python support range;
@@ -123,7 +123,10 @@ Use the repository's existing tools:
 
 Start with the relevant tests and expand according to the affected surface.
 Documentation builds and executable examples are CI gates alongside the runtime
-test matrix. No new runtime dependency is needed for this workflow.
+test matrix. The pytest convention checks guard headers, imports, docstring
+placement, diagnostic form, and mechanically checkable comment rules.
+Semantic phase boundaries and meaningful prose still need human review.
+No new runtime dependency is needed for this workflow.
 
 Design references
 -----------------

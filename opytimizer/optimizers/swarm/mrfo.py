@@ -1,7 +1,18 @@
-"""Manta Ray Foraging Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Manta Ray Foraging Optimization.
+
+References:
+    W. Zhao, Z. Zhang and L. Wang.
+    Manta Ray Foraging Optimization: An effective bio-inspired optimizer for engineering applications.
+    Engineering Applications of Artificial Intelligence (2020).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +22,18 @@ from opytimizer.core.space import Space
 
 
 class MRFO(Optimizer):
-    """An MRFO class, inherited from Optimizer.
-
-    This is the designed class to define MRFO-related
-    variables and methods.
-
-    References:
-        W. Zhao, Z. Zhang and L. Wang.
-        Manta Ray Foraging Optimization: An effective bio-inspired optimizer for engineering applications.
-        Engineering Applications of Artificial Intelligence (2020).
+    """Search through manta ray cyclone, chain, and somersault foraging.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure manta ray somersault movement.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``S`` (2.0) scales somersault displacement relative to the current and global-best positions.
 
         """
 
@@ -39,35 +45,18 @@ class MRFO(Optimizer):
 
     def _cyclone_foraging(
         self,
-        agents: List[Agent],
+        agents: list[Agent],
         best_position: np.ndarray,
         i: int,
         iteration: int,
         n_iterations: int,
     ) -> np.ndarray:
-        """Performs the cyclone foraging procedure (eq. 3-7).
-
-        Args:
-            agents: List of agents.
-            best_position: Global best position.
-            i: Index of current manta ray.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        Returns:
-            (np.ndarray): A new cyclone foraging.
-
-        """
-
+        # Cyclone foraging balances random and best-position targets (eq. 3-7)
         r1 = np.random.uniform(0.0, 1.0, 1)
         r2 = np.random.uniform(0.0, 1.0, 1)
         r3 = np.random.uniform(0.0, 1.0, 1)
 
-        beta = (
-            2
-            * np.exp(r1 * (n_iterations - iteration + 1) / n_iterations)
-            * np.sin(2 * np.pi * r1)
-        )
+        beta = 2 * np.exp(r1 * (n_iterations - iteration + 1) / n_iterations) * np.sin(2 * np.pi * r1)
 
         if iteration / n_iterations < r2:
             r_position = np.zeros((agents[i].n_variables, agents[i].n_dimensions))
@@ -77,9 +66,7 @@ class MRFO(Optimizer):
 
             if i == 0:
                 cyclone_foraging = (
-                    r_position
-                    + r3 * (r_position - agents[i].position)
-                    + beta * (r_position - agents[i].position)
+                    r_position + r3 * (r_position - agents[i].position) + beta * (r_position - agents[i].position)
                 )
             else:
                 cyclone_foraging = (
@@ -103,21 +90,8 @@ class MRFO(Optimizer):
 
         return cyclone_foraging
 
-    def _chain_foraging(
-        self, agents: List[Agent], best_position: np.ndarray, i: int
-    ) -> np.ndarray:
-        """Performs the chain foraging procedure (eq. 1-2).
-
-        Args:
-            agents: List of agents.
-            best_position: Global best position.
-            i: Index of current manta ray.
-
-        Returns:
-            (np.ndarray): A new chain foraging.
-
-        """
-
+    def _chain_foraging(self, agents: list[Agent], best_position: np.ndarray, i: int) -> np.ndarray:
+        # Chain foraging follows the preceding ray and global best (eq. 1-2)
         r1 = np.random.uniform(0.0, 1.0, 1)
         r2 = np.random.uniform(0.0, 1.0, 1)
 
@@ -138,40 +112,16 @@ class MRFO(Optimizer):
 
         return chain_foraging
 
-    def _somersault_foraging(
-        self, position: np.ndarray, best_position: np.ndarray
-    ) -> np.ndarray:
-        """Performs the somersault foraging procedure (eq. 8).
-
-        Args:
-            position: Agent's current position.
-            best_position: Global best position.
-
-        Returns:
-            (np.ndarray): A new somersault foraging.
-
-        """
-
+    def _somersault_foraging(self, position: np.ndarray, best_position: np.ndarray) -> np.ndarray:
         r1 = np.random.uniform(0.0, 1.0, 1)
         r2 = np.random.uniform(0.0, 1.0, 1)
 
+        # Somersault displacement (eq. 8)
         somersault_foraging = position + self.S * (r1 * best_position - r2 * position)
 
         return somersault_foraging
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Manta Ray Foraging Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         for i, agent in enumerate(space.agents):
             r1 = np.random.uniform(0.0, 1.0, 1)
 
@@ -180,9 +130,7 @@ class MRFO(Optimizer):
                     space.agents, space.best_agent.position, i, iteration, n_iterations
                 )
             else:
-                agent.position = self._chain_foraging(
-                    space.agents, space.best_agent.position, i
-                )
+                agent.position = self._chain_foraging(space.agents, space.best_agent.position, i)
             agent.clip_by_bound()
 
             agent.fit = function(agent.position)
@@ -191,6 +139,4 @@ class MRFO(Optimizer):
                 space.best_agent.fit = copy.deepcopy(agent.fit)
 
         for agent in space.agents:
-            agent.position = self._somersault_foraging(
-                agent.position, space.best_agent.position
-            )
+            agent.position = self._somersault_foraging(agent.position, space.best_agent.position)

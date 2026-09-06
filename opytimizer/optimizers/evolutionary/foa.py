@@ -1,7 +1,22 @@
-"""Forest Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Forest Optimization Algorithm.
+
+Compilation initializes tree ages, and updates seed zero-aged trees locally, remove
+old or excess trees, and seed a fraction of removed trees globally. The best tree's age
+is reset after each update. Population limits are checked before updates and limiting.
+
+References:
+    M. Ghaemi, Mohammad-Reza F.-D. Forest Optimization Algorithm.
+    Expert Systems with Applications (2014).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from numbers import Integral
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +26,25 @@ from opytimizer.core.space import Space
 
 
 class FOA(Optimizer):
-    """A FOA class, inherited from Optimizer.
-
-    This is the designed class to define FOA-related
-    variables and methods.
-
-    References:
-        M. Ghaemi, Mohammad-Reza F.-D. Forest Optimization Algorithm.
-        Expert Systems with Applications (2014).
+    """Optimize a population through local and global forest seeding.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize forest lifetime, population limits, and seeding parameters.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``life_time`` (maximum tree age, 6), ``area_limit``
+            (positive integral population limit, 30), ``LSC`` (local children per tree, 1),
+            ``GSC`` (global seeding steps per candidate, 1), and ``transfer_rate``
+            (fraction of removed trees selected for global seeding, 0.1).
+
+        Raises:
+            TypeError: The population limit is not an integer.
+            ValueError: The population limit is not positive.
 
         """
 
@@ -39,26 +57,18 @@ class FOA(Optimizer):
         self.transfer_rate = 0.1
 
         self.build(params)
+        self._validate_area_limit()
+
+    def _validate_area_limit(self) -> None:
+        if not isinstance(self.area_limit, Integral):
+            raise TypeError("`area_limit` must be an integer.")
+        if self.area_limit <= 0:
+            raise ValueError("`area_limit` must be positive.")
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.age = [0] * space.n_agents
 
     def _local_seeding(self, space: Space, function: Callable) -> None:
-        """Performs the local seeding on zero-aged trees.
-
-        Args:
-            space: A Space object containing meta-information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         new_agents = []
         for i, agent in enumerate(space.agents):
             if self.age[i] == 0:
@@ -79,16 +89,8 @@ class FOA(Optimizer):
 
         self.age += [0] * len(new_agents)
 
-    def _population_limiting(self, space: Space) -> List[Agent]:
-        """Limits the population by removing old trees.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        Returns:
-            (List[Agent]): A list of candidate trees that were removed from the forest.
-
-        """
+    def _population_limiting(self, space: Space) -> list[Agent]:
+        self._validate_area_limit()
 
         candidate = []
 
@@ -99,9 +101,7 @@ class FOA(Optimizer):
 
                 candidate.append(agent)
 
-        space.agents, self.age = map(
-            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit))
-        )
+        space.agents, self.age = map(list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit)))
 
         if len(space.agents) > self.area_limit:
             candidate += space.agents[self.area_limit :]
@@ -111,18 +111,7 @@ class FOA(Optimizer):
 
         return candidate
 
-    def _global_seeding(
-        self, space: Space, function: Callable, candidate: List[Agent]
-    ) -> None:
-        """Performs the global seeding.
-
-        Args:
-            space: A Space object containing meta-information.
-            function: A callable that will be used as the objective function.
-            candidate: Candidate trees.
-
-        """
-
+    def _global_seeding(self, space: Space, function: Callable, candidate: list[Agent]) -> None:
         new_agents = []
 
         n_candidate = int(len(candidate) * self.transfer_rate)
@@ -144,20 +133,12 @@ class FOA(Optimizer):
         self.age += [0] * len(new_agents)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Forest Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
+        self._validate_area_limit()
 
         self._local_seeding(space, function)
         candidate = self._population_limiting(space)
         self._global_seeding(space, function, candidate)
 
-        space.agents, self.age = map(
-            list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit))
-        )
+        space.agents, self.age = map(list, zip(*sorted(zip(space.agents, self.age), key=lambda x: x[0].fit)))
 
         self.age[0] = 0

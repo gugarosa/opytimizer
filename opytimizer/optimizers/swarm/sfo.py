@@ -1,7 +1,19 @@
-"""Sailfish Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Sailfish Optimizer.
+
+References:
+    S. Shadravan, H. Naji and V. Bardsiri.
+    The Sailfish Optimizer: A novel nature-inspired metaheuristic algorithm
+    for solving constrained engineering optimization problems.
+    Engineering Applications of Artificial Intelligence (2019).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,24 +23,20 @@ from opytimizer.core.space import Space
 
 
 class SFO(Optimizer):
-    """A SFO class, inherited from Optimizer.
-
-    This is the designed class to define SFO-related
-    variables and methods.
-
-    References:
-        S. Shadravan, H. Naji and V. Bardsiri.
-        The Sailfish Optimizer: A novel nature-inspired metaheuristic algorithm
-        for solving constrained engineering optimization problems.
-        Engineering Applications of Artificial Intelligence (2019).
+    """Search through sailfish pursuit and sardine prey movement.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure sailfish prey density and attack power.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``PP`` (0.1) is the sailfish-to-sardine ratio used to allocate ``int(n_agents / PP)`` sardines.
+            ``A`` (4) scales attack power, and ``e`` (0.001) controls its iteration-dependent change.
+            Compilation creates the ``sardines`` population from randomized deep copies of the best agent.
 
         """
 
@@ -41,72 +49,28 @@ class SFO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
-        self.sardines = [
-            self._generate_random_agent(space.best_agent)
-            for _ in range(int(space.n_agents / self.PP))
-        ]
+        self.sardines = [self._generate_random_agent(space.best_agent) for _ in range(int(space.n_agents / self.PP))]
         self.sardines.sort(key=lambda x: x.fit)
 
     def _generate_random_agent(self, agent: Agent) -> Agent:
-        """Generates a new random-based agent.
-
-        Args:
-            agent: Agent to be copied.
-
-        Returns:
-            (Agent): Random-based agent.
-
-        """
-
         a = copy.deepcopy(agent)
         a.fill_with_uniform()
 
         return a
 
     def _calculate_lambda_i(self, n_sailfishes: int, n_sardines: int) -> float:
-        """Calculates the lambda value (eq. 7).
-
-        Args:
-            n_sailfishes (int): Number of sailfishes.
-            n_sardines (int): Number of sardines.
-
-        Returns:
-            (float): Lambda value from current iteration.
-
-        """
-
         # Calculates the prey density (eq. 8)
         PD = 1 - (n_sailfishes / (n_sailfishes + n_sardines))
 
         r1 = np.random.uniform(0.0, 1.0, 1)
+        # Density-scaled pursuit coefficient (eq. 7)
         lambda_i = 2 * r1 * PD - PD
 
         return lambda_i
 
-    def _update_sailfish(
-        self, agent: Agent, best_agent: Agent, best_sardine: Agent, lambda_i: float
-    ) -> np.ndarray:
-        """Updates the sailfish's position (eq. 6).
-
-        Args:
-            agent: Current agent's.
-            best_agent: Best sailfish.
-            best_sardine: Best sardine.
-            lambda_i: Lambda value.
-
-        Returns:
-            (np.ndarray): An updated position.
-
-        """
-
+    def _update_sailfish(self, agent: Agent, best_agent: Agent, best_sardine: Agent, lambda_i: float) -> np.ndarray:
         r1 = np.random.uniform(0.0, 1.0, 1)
+        # Sailfish pursuit of the best sardine (eq. 6)
         new_position = best_sardine.position - lambda_i * (
             r1 * (best_agent.position - best_sardine.position) / 2 - agent.position
         )
@@ -114,15 +78,6 @@ class SFO(Optimizer):
         return new_position
 
     def update(self, space: Space, function: Callable, iteration: int) -> None:
-        """Wraps Sailfish Optimizer over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-
-        """
-
         best_sardine = self.sardines[0]
 
         n_sailfishes = len(space.agents)
@@ -132,9 +87,7 @@ class SFO(Optimizer):
         for agent in space.agents:
             lambda_i = self._calculate_lambda_i(n_sailfishes, n_sardines)
 
-            agent.position = self._update_sailfish(
-                agent, space.best_agent, best_sardine, lambda_i
-            )
+            agent.position = self._update_sailfish(agent, space.best_agent, best_sardine, lambda_i)
             agent.clip_by_bound()
 
             agent.fit = function(agent.position)
@@ -168,12 +121,9 @@ class SFO(Optimizer):
             for sardine in self.sardines:
                 # Updates the sardine's position (eq. 9)
                 r1 = np.random.uniform(0.0, 1.0, 1)
-                sardine.position = r1 * (
-                    space.best_agent.position - sardine.position + AP
-                )
+                sardine.position = r1 * (space.best_agent.position - sardine.position + AP)
                 sardine.clip_by_bound()
 
-                # Re-calculates its fitness
                 sardine.fit = function(sardine.position)
 
         space.agents.sort(key=lambda x: x.fit)

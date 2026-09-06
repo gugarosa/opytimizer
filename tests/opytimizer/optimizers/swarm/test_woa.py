@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.optimizers.swarm import woa
 from opytimizer.spaces import search
 
@@ -11,9 +14,7 @@ def test_woa_params():
 
 
 def test_woa_generate_random_agent():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_woa = woa.WOA()
     agent = new_woa._generate_random_agent(search_space.agents[0])
@@ -22,9 +23,7 @@ def test_woa_generate_random_agent():
 
 
 def test_woa_update():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_woa = woa.WOA()
 

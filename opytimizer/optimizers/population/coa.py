@@ -1,7 +1,17 @@
-"""Coyote Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Coyote Optimization Algorithm.
+
+References:
+    J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
+    IEEE Congress on Evolutionary Computation (2018).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,19 @@ from opytimizer.core.space import Space
 
 
 class COA(Optimizer):
-    """A COA class, inherited from Optimizer.
-
-    This is the designed class to define COA-related
-    variables and methods.
-
-    References:
-        J. Pierezan and L. Coelho. Coyote Optimization Algorithm: A New Metaheuristic for Global Optimization Problems.
-        IEEE Congress on Evolutionary Computation (2018).
+    """Implement Coyote Optimization Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure coyote packs.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``n_p`` (2) sets the number of packs.
+            Compilation derives the coyotes per pack, with any remainder in the final pack.
 
         """
 
@@ -37,27 +44,9 @@ class COA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_c = space.n_agents // self.n_p
 
-    def _get_agents_from_pack(self, agents: List[Agent], index: int) -> List[Agent]:
-        """Gets a set of agents from a specified pack.
-
-        Args:
-            agents: List of agents.
-            index: Index of pack.
-
-        Returns:
-            (List[Agent]): A sorted list of agents that belongs to the specified pack.
-
-        """
-
+    def _get_agents_from_pack(self, agents: list[Agent], index: int) -> list[Agent]:
         start, end = index * self.n_c, (index + 1) * self.n_c
 
         if (index + 1) == self.n_p:
@@ -65,14 +54,8 @@ class COA(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _transition_packs(self, agents: List[Agent]) -> None:
-        """Transits coyotes between packs (eq. 4).
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _transition_packs(self, agents: list[Agent]) -> None:
+        # Transits coyotes between packs (eq. 4)
         p_e = 0.005 * len(agents)
         r1 = np.random.uniform(0.0, 1.0, 1)
 
@@ -89,14 +72,6 @@ class COA(Optimizer):
             agents[i], agents[j] = copy.deepcopy(agents[j]), copy.deepcopy(agents[i])
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Coyote Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i in range(self.n_p):
             pack_agents = self._get_agents_from_pack(space.agents, i)
 
@@ -104,9 +79,7 @@ class COA(Optimizer):
             alpha = pack_agents[0]
 
             # Computes the cultural tendency (eq. 6)
-            tendency = np.median(
-                np.array([agent.position for agent in pack_agents]), axis=0
-            )
+            tendency = np.median(np.array([agent.position for agent in pack_agents]), axis=0)
 
             for agent in pack_agents:
                 a = copy.deepcopy(agent)

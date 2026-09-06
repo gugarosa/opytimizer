@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import bwo
@@ -21,9 +24,7 @@ def test_bwo_params():
 
 
 def test_bwo_procreating():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_bwo = bwo.BWO()
 
@@ -34,9 +35,7 @@ def test_bwo_procreating():
 
 
 def test_bwo_mutation():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_bwo = bwo.BWO()
 
@@ -49,9 +48,7 @@ def test_bwo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_bwo = bwo.BWO()
 

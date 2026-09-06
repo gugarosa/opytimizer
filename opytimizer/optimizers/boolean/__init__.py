@@ -1,5 +1,8 @@
-"""A boolean package for all common opytimizer modules.
-It contains implementations of boolean-based optimizers.
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Expose Boolean optimizer implementations.
+
 """
 
 from opytimizer.optimizers.boolean.bmrfo import BMRFO

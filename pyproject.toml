@@ -50,11 +50,12 @@ docs = [
 include = ["opytimizer*"]
 
 [tool.black]
-line-length = 88
+line-length = 120
 target-version = ["py311"]
 
 [tool.isort]
 profile = "black"
+line_length = 120
 
 [tool.pytest.ini_options]
 addopts = ["-v", "--durations=10"]

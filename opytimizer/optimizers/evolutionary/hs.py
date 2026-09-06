@@ -1,7 +1,40 @@
-"""Harmony Search-based algorithms."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Harmony Search-based algorithms.
+
+HS improvises bounded harmonies and replaces the worst harmony on improvement.
+IHS schedules pitch adjustment and bandwidth, while GHS draws adjusted pitches from the best harmony.
+SGHS compiles learning histories and adapts parameter means from sampled values.
+NGHS replaces the worst harmony with a best/worst extrapolation, and GOGHS also tests an
+opposition harmony derived from the population's per-variable extrema.
+
+References:
+    HS: Z. W. Geem, J. H. Kim, and G. V. Loganathan.
+    A new heuristic optimization algorithm: Harmony search. Simulation (2001).
+
+    IHS: M. Mahdavi, M. Fesanghary, and E. Damangir.
+    An improved harmony search algorithm for solving optimization problems.
+    Applied Mathematics and Computation (2007).
+
+    GHS: M. Omran and M. Mahdavi. Global-best harmony search.
+    Applied Mathematics and Computation (2008).
+
+    SGHS: Q.-K. Pan, P. Suganthan, M. Tasgetiren and J. Liang.
+    A self-adaptive global best harmony search algorithm for continuous optimization problems.
+    Applied Mathematics and Computation (2010).
+
+    NGHS: D. Zou, L. Gao, J. Wu and S. Li.
+    Novel global harmony search algorithm for unconstrained problems. Neurocomputing (2010).
+
+    GOGHS: Z. Guo, S. Wang, X. Yue and H. Yang.
+    Global harmony search with generalized opposition-based learning. Soft Computing (2017).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +45,19 @@ from opytimizer.core.space import Space
 
 
 class HS(Optimizer):
-    """A HS class, inherited from Optimizer.
-
-    This is the designed class to define HS-related
-    variables and methods.
-
-    References:
-        Z. W. Geem, J. H. Kim, and G. V. Loganathan.
-        A new heuristic optimization algorithm: Harmony search. Simulation (2001).
+    """Optimize a population by improvising harmonies from memory.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize harmony memory and pitch adjustment controls.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``HMCR`` (memory consideration probability, 0.7),
+            ``PAR`` (pitch adjustment probability, 0.7), and ``bw`` (pitch bandwidth, 1.0).
 
         """
 
@@ -39,17 +69,7 @@ class HS(Optimizer):
 
         self.build(params)
 
-    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
-        """It generates a new harmony.
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (Agent): A new agent (harmony) based on music generation process.
-
-        """
-
+    def _generate_new_harmony(self, agents: list[Agent]) -> Agent:
         a = copy.deepcopy(agents[0])
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
@@ -68,14 +88,6 @@ class HS(Optimizer):
         return a
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Harmony Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         agent = self._generate_new_harmony(space.agents)
         agent.clip_by_bound()
 
@@ -89,23 +101,21 @@ class HS(Optimizer):
 
 
 class IHS(HS):
-    """An IHS class, inherited from HS.
-
-    This is the designed class to define IHS-related
-    variables and methods.
-
-    References:
-        M. Mahdavi, M. Fesanghary, and E. Damangir.
-        An improved harmony search algorithm for solving optimization problems.
-        Applied Mathematics and Computation (2007).
+    """Optimize harmonies with scheduled pitch probability and bandwidth.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the improved harmony search schedules.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for harmony search parameters and schedule bounds.
+
+        Notes:
+            In addition to HS parameters, supported keys are ``PAR_min`` (initial pitch
+            probability, 0), ``PAR_max`` (final pitch probability, 1), ``bw_min`` (final
+            bandwidth, 1), and ``bw_max`` (initial bandwidth, 10).
+            Each update recomputes ``PAR`` and ``bw`` from the iteration.
 
         """
 
@@ -117,26 +127,10 @@ class IHS(HS):
 
         super(IHS, self).__init__(params)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Improved Harmony Search over all agents and variables.
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
+        self.PAR = self.PAR_min + (((self.PAR_max - self.PAR_min) / n_iterations) * iteration)
 
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
-        self.PAR = self.PAR_min + (
-            ((self.PAR_max - self.PAR_min) / n_iterations) * iteration
-        )
-
-        self.bw = self.bw_max * np.exp(
-            (np.log(self.bw_min / self.bw_max) / n_iterations) * iteration
-        )
+        self.bw = self.bw_max * np.exp((np.log(self.bw_min / self.bw_max) / n_iterations) * iteration)
 
         agent = self._generate_new_harmony(space.agents)
         agent.clip_by_bound()
@@ -151,38 +145,11 @@ class IHS(HS):
 
 
 class GHS(IHS):
-    """A GHS class, inherited from IHS.
-
-    This is the designed class to define GHS-related
-    variables and methods.
-
-    References:
-        M. Omran and M. Mahdavi. Global-best harmony search.
-        Applied Mathematics and Computation (2008).
+    """Optimize harmonies using pitches from the global best.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(GHS, self).__init__(params)
-
-    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
-        """It generates a new harmony.
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (Agent): A new agent (harmony) based on music generation process.
-
-        """
-
+    def _generate_new_harmony(self, agents: list[Agent]) -> Agent:
         a = copy.deepcopy(agents[0])
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
@@ -202,23 +169,21 @@ class GHS(IHS):
 
 
 class SGHS(HS):
-    """A SGHS class, inherited from HS.
-
-    This is the designed class to define SGHS-related
-    variables and methods.
-
-    References:
-        Q.-K. Pan, P. Suganthan, M. Tasgetiren and J. Liang.
-        A self-adaptive global best harmony search algorithm for continuous optimization problems.
-        Applied Mathematics and Computation (2010).
+    """Optimize harmonies with self-adaptive global-best search.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize parameter learning and bandwidth adaptation.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for harmony search parameters and learning controls.
+
+        Notes:
+            In addition to HS parameters, supported keys are ``LP`` (learning period, 100),
+            ``HMCRm`` (mean memory probability, 0.98), ``PARm`` (mean pitch probability, 0.9),
+            ``bw_min`` (minimum bandwidth, 1), and ``bw_max`` (maximum bandwidth, 10).
+            Each update resamples ``HMCR`` and ``PAR`` and recomputes ``bw``.
 
         """
 
@@ -233,29 +198,12 @@ class SGHS(HS):
         super(SGHS, self).__init__(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.lp = 1
 
         self.HMCR_history = []
         self.PAR_history = []
 
-    def _generate_new_harmony(self, agents: List[Agent]) -> Agent:
-        """It generates a new harmony.
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (Agent): A new agent (harmony) based on music generation process.
-
-        """
-
+    def _generate_new_harmony(self, agents: list[Agent]) -> Agent:
         a = copy.deepcopy(agents[0])
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
@@ -272,19 +220,7 @@ class SGHS(HS):
 
         return a
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Self-Adaptive Global-Best Harmony Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         self.HMCR = np.random.normal(self.HMCRm, 0.01, 1)[0]
         self.PAR = np.random.normal(self.PARm, 0.05, 1)[0]
 
@@ -292,10 +228,7 @@ class SGHS(HS):
         self.PAR_history.append(self.PAR)
 
         if iteration < n_iterations // 2:
-            self.bw = (
-                self.bw_max
-                - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
-            )
+            self.bw = self.bw_max - ((self.bw_max - self.bw_min) / n_iterations) * 2 * iteration
         else:
             self.bw = self.bw_min
 
@@ -319,23 +252,19 @@ class SGHS(HS):
 
 
 class NGHS(HS):
-    """A NGHS class, inherited from HS.
-
-    This is the designed class to define NGHS-related
-    variables and methods.
-
-    References:
-        D. Zou, L. Gao, J. Wu and S. Li.
-        Novel global harmony search algorithm for unconstrained problems.
-        Neurocomputing (2010).
+    """Optimize harmonies through best/worst extrapolation and mutation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the novel global harmony mutation probability.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for harmony search parameters and mutation probability.
+
+        Notes:
+            In addition to inherited HS parameters, ``pm`` sets the per-variable random
+            mutation probability (0.1). This variant does not use ``HMCR``, ``PAR``, or ``bw``.
 
         """
 
@@ -344,17 +273,6 @@ class NGHS(HS):
         super(NGHS, self).__init__(params)
 
     def _generate_new_harmony(self, best: Agent, worst: Agent) -> Agent:
-        """It generates a new harmony.
-
-        Args:
-            best: Best agent.
-            worst: Worst agent.
-
-        Returns:
-            (Agent): A new agent (harmony) based on music generation process.
-
-        """
-
         a = copy.deepcopy(best)
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
@@ -372,14 +290,6 @@ class NGHS(HS):
         return a
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Novel Global Harmony Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
         agent.clip_by_bound()
 
@@ -392,42 +302,11 @@ class NGHS(HS):
 
 
 class GOGHS(NGHS):
-    """A GOGHS class, inherited from NGHS.
-
-    This is the designed class to define GOGHS-related
-    variables and methods.
-
-    References:
-        Z. Guo, S. Wang, X. Yue and H. Yang.
-        Global harmony search with generalized opposition-based learning.
-        Soft Computing (2017).
+    """Optimize harmonies with generalized opposition-based learning.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(GOGHS, self).__init__(params)
-
-    def _generate_opposition_harmony(
-        self, new_agent: Agent, agents: List[Agent]
-    ) -> Agent:
-        """It generates a new opposition-based harmony.
-
-        Args:
-            new_agent: Newly created agent.
-            agents: List of agents.
-
-        Returns:
-            (Agent): A new agent (harmony) based on opposition generation process.
-
-        """
-
+    def _generate_opposition_harmony(self, new_agent: Agent, agents: list[Agent]) -> Agent:
         a = copy.deepcopy(agents[0])
 
         A = np.zeros((a.n_variables))
@@ -450,14 +329,6 @@ class GOGHS(NGHS):
         return a
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Generalized Opposition Global-Best Harmony Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         agent = self._generate_new_harmony(space.agents[0], space.agents[-1])
         opp_agent = self._generate_opposition_harmony(agent, space.agents)
 
