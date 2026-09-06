@@ -1,7 +1,16 @@
-"""Thermal Exchange Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Thermal Exchange Optimization.
+
+References:
+    A. Kaveh and A. Dadras. A novel meta-heuristic optimization algorithm: Thermal exchange optimization.
+    Advances in Engineering Software (2017).
+
+"""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +20,21 @@ from opytimizer.core.space import Space
 
 
 class TEO(Optimizer):
-    """A TEO class, inherited from Optimizer.
-
-    This is the designed class to define TEO-related
-    variables and methods.
-
-    References:
-        A. Kaveh and A. Dadras. A novel meta-heuristic optimization algorithm: Thermal exchange optimization.
-        Advances in Engineering Software (2017).
+    """Implement Thermal Exchange Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure thermal exchange and elite memory.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``c1`` and ``c2`` (both True) enable the constant and time-dependent environment terms.
+            ``pro`` (0.05) is the probability of randomly resetting one variable.
+            ``n_TM`` (4) limits the number of elite agents stored in ``TM`` (initially an empty list).
+            Updates retain the memory between runs, and compilation copies agents into the environment.
 
         """
 
@@ -43,25 +51,9 @@ class TEO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.environment = copy.deepcopy(space.agents)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Thermal Exchange Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
 
         self.TM.append(copy.deepcopy(space.agents[0]))
@@ -83,9 +75,7 @@ class TEO(Optimizer):
             beta = agent.fit / space.agents[-1].fit
 
             # Updates the agent's position (eq. 11)
-            agent.position = env.position + (agent.position - env.position) * np.exp(
-                -beta * time
-            )
+            agent.position = env.position + (agent.position - env.position) * np.exp(-beta * time)
 
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < self.pro:
@@ -93,6 +83,4 @@ class TEO(Optimizer):
 
                 # Resets its position (eq. 12)
                 r2 = np.random.uniform(0.0, 1.0, 1)
-                agent.position[idx] = agent.lb[idx] + r2 * (
-                    agent.ub[idx] - agent.lb[idx]
-                )
+                agent.position[idx] = agent.lb[idx] + r2 * (agent.ub[idx] - agent.lb[idx])

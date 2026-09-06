@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer import Opytimizer
@@ -6,34 +9,47 @@ from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
 
-def sphere(x):
+def sphere(x: np.ndarray) -> float:
+    """Evaluate the sphere objective.
+
+    Args:
+        x: Candidate position array.
+
+    Returns:
+        Sum of squared decision variables.
+
+    """
+
     return np.sum(x**2)
 
 
-# Defines a constraint function that returns a boolean
-# whether the constraint is valid or not
-def c_1(x):
+def c_1(x: np.ndarray) -> np.ndarray:
+    """Check whether the sum of the first two variables is negative.
+
+    Args:
+        x: Two-variable candidate position array.
+
+    Returns:
+        Single-element boolean array indicating constraint validity.
+
+    """
+
     return x[0] + x[1] < 0
 
 
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Number of agents and decision variables
 n_agents = 20
 n_variables = 2
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creates the space, optimizer and constrained objective
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 function = ConstrainedFunction(sphere, [c_1], penalty=100.0)
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, function, save_agents=False)
 
-# Runs the optimization task
 opt.start(n_iterations=1000)

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.science import esa
@@ -13,9 +16,7 @@ def test_esa_params():
 
 
 def test_esa_compile():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_esa = esa.ESA()
     new_esa.compile(search_space)
@@ -25,9 +26,7 @@ def test_esa_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_esa = esa.ESA()
     new_esa.compile(search_space)

@@ -1,7 +1,17 @@
-"""Grasshopper Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Grasshopper Optimization Algorithm.
+
+References:
+    S. Saremi, S. Mirjalili and A. Lewis. Grasshopper Optimisation Algorithm: Theory and application.
+    Advances in Engineering Software (2017).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,19 @@ from opytimizer.core.space import Space
 
 
 class GOA(Optimizer):
-    """A GOA class, inherited from Optimizer.
-
-    This is the designed class to define GOA-related
-    variables and methods.
-
-    References:
-        S. Saremi, S. Mirjalili and A. Lewis. Grasshopper Optimisation Algorithm: Theory and application.
-        Advances in Engineering Software (2017).
+    """Search with grasshopper social forces and a decreasing comfort coefficient.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure grasshopper comfort and social attraction.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``c_min`` (0.00001) and ``c_max`` (1) bound the linearly decreasing comfort coefficient.
+            ``f`` (0.5) controls attraction intensity, and ``l`` (1.5) controls its distance scale.
 
         """
 
@@ -41,34 +48,12 @@ class GOA(Optimizer):
         self.build(params)
 
     def _social_force(self, r: np.ndarray) -> np.ndarray:
-        """Calculates the social force based on an input value.
-
-        Args:
-            r: Array of values.
-
-        Returns:
-            (np.ndarray): The social force based on the input value.
-
-        """
-
         # Calculates the social force (eq. 2.3)
         s = self.f * np.exp(-r / self.l) - np.exp(-r)
 
         return s
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Grasshopper Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         # Calculates the comfort coefficient (eq. 2.8)
         comfort = self.c_max - iteration * ((self.c_max - self.c_min) / n_iterations)
 

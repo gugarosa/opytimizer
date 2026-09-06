@@ -1,7 +1,20 @@
-"""Passing Vehicle Search."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Passing Vehicle Search.
+
+Sampling peers without replacement preserves their distribution but changes
+seeded trajectories relative to rejection sampling.
+
+References:
+    P. Savsani and V. Savsani. Passing vehicle search (PVS): A novel metaheuristic algorithm.
+    Applied Mathematical Modelling (2016).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +23,19 @@ from opytimizer.core.space import Space
 
 
 class PVS(Optimizer):
-    """A PVS class, inherited from Optimizer.
-
-    This is the designed class to define PVS-related
-    variables and methods.
-
-    References:
-        P. Savsani and V. Savsani. Passing vehicle search (PVS): A novel metaheuristic algorithm.
-        Applied Mathematical Modelling (2016).
+    """Implement Passing Vehicle Search.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize passing-vehicle search.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            This optimizer has no algorithm-specific configuration keys.
+            Updating requires at least three agents to sample two distinct peers.
 
         """
 
@@ -34,19 +44,8 @@ class PVS(Optimizer):
         self.build(params)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Passing Vehicle Search over all agents and variables.
-
-        Sampling peers without replacement preserves their distribution but changes
-        seeded trajectories relative to rejection sampling.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         if space.n_agents < 3:
-            raise ValueError("PVS requires at least 3 agents")
+            raise ValueError("`n_agents` must be at least 3 for PVS.")
 
         space.agents.sort(key=lambda x: x.fit)
         for i, agent in enumerate(space.agents):
@@ -82,7 +81,6 @@ class PVS(Optimizer):
 
                     # Updates the temporary agent's position accordingly (eq. 20)
                     a.position += Vco * rnd * (a.position - space.agents[R[1]].position)
-                # If difference between `y` gaps is smaller than `x1`
                 else:
                     # Updates the temporary agent's position accordingly (eq. 21)
                     a.position += rnd * (a.position - space.agents[R[0]].position)

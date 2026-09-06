@@ -1,16 +1,19 @@
-"""Traditional-based search space."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Traditional-based search space.
+
+"""
 
 import copy
-from typing import List, Optional, Tuple, Union
 
-import numpy as np
+from numpy.typing import ArrayLike
 
 from opytimizer.core import Space
 
 
 class SearchSpace(Space):
-    """A SearchSpace class for agents, variables and methods
-    related to the search space.
+    """Own a population of bounded real-valued decision variables.
 
     """
 
@@ -18,11 +21,11 @@ class SearchSpace(Space):
         self,
         n_agents: int,
         n_variables: int,
-        lower_bound: Union[float, List, Tuple, np.ndarray],
-        upper_bound: Union[float, List, Tuple, np.ndarray],
-        mapping: Optional[List[str]] = None,
+        lower_bound: ArrayLike,
+        upper_bound: ArrayLike,
+        mapping: list[str] | None = None,
     ) -> None:
-        """Initialization method.
+        """Build uniformly bounded positions and an independent copy of the first best agent.
 
         Args:
             n_agents: Number of agents.
@@ -35,15 +38,11 @@ class SearchSpace(Space):
 
         n_dimensions = 1
 
-        super().__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
-        )
+        super().__init__(n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping)
 
         self.build()
 
     def _initialize_agents(self) -> None:
-        """Initializes agents with their positions and defines a best agent."""
-
         for agent in self.agents:
             agent.fill_with_uniform()
 

@@ -1,51 +1,73 @@
-"""Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Provide shared configuration and evaluation hooks for optimization strategies.
+
+The base optimizer remains concrete for evaluation-only workflows.
+Subclasses override compilation or movement only when those responsibilities differ.
+
+"""
 
 import copy
 import time
-from typing import Any, Callable, Mapping, Optional
+from collections.abc import Callable, Mapping
+from typing import Any
 
 from opytimizer.core.space import Space
 
 
 class Optimizer:
-    """An Optimizer class that holds meta-heuristics-related properties
-    and methods.
+    """Provide the strategy hooks used by :class:`opytimizer.Opytimizer`.
 
     """
 
-    def build(self, params: Optional[Mapping[str, Any]] = None) -> None:
-        """Builds the object by creating its parameters.
+    def build(self, params: Mapping[str, Any] | None = None) -> None:
+        """Apply parameter overrides to this optimizer without copying values.
 
         Args:
-            params: Key-value parameters to the meta-heuristic.
+            params: Attribute overrides.
+
+        Raises:
+            TypeError: The overrides are not a mapping or None.
+
+        Notes:
+            None leaves existing values intact. Keys are not restricted and values are not copied.
+            Subclasses validate meaningful parameter domains at configuration or consumption boundaries.
 
         """
 
-        for key, value in (params or {}).items():
+        if params is None:
+            return
+        if not isinstance(params, Mapping):
+            raise TypeError("`params` must be a mapping.")
+
+        for key, value in params.items():
             setattr(self, key, value)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        """Prepare space-dependent state before the first evaluation.
 
-        This method is called before the optimization procedure and makes sure
-        that the additional variable is available as a property.
+        ``Opytimizer`` calls this once during construction, not on every
+        ``start``. Override it to allocate buffers using the space's population
+        and position dimensions. The default implementation does nothing.
+
+        Args:
+            space: Initialized population whose dimensions determine state shape.
 
         """
 
         pass
 
     def evaluate(self, space: Space, function: Callable) -> None:
-        """Evaluates the search space according to the objective function.
-
-        If you need a specific evaluate method, please re-implement
-        it on child's class.
-
-        Also, note that function only accept arguments that are
-        found on Opytimizer class.
+        """Evaluate current positions and retain strict global improvements.
 
         Args:
-            space: A Space object that will be evaluated.
-            function: Objective callable.
+            space: Population whose agents and best-agent state are updated.
+            function: Scalar objective receiving a live array of shape ``(n_variables, n_dimensions)``.
+
+        Notes:
+            Exceptions from the objective propagate. Subclasses may override
+            this hook for different state semantics, such as PSO personal bests.
 
         """
 
@@ -58,13 +80,12 @@ class Optimizer:
                 space.best_agent.ts = int(time.time())
 
     def update(self) -> None:
-        """Updates the agents' position array.
+        """Move candidates in a subclass-specific way.
 
-        As each child has a different procedure of update, you will need
-        to implement it directly on its class.
-
-        Also, note that function only accept arguments that are
-        found on Opytimizer class.
+        The default implementation does nothing. Override this method with named
+        positional arguments matching ``Opytimizer`` attributes, commonly
+        ``space``, ``function``, ``iteration``, and ``n_iterations``. The driver
+        resolves those arguments by name and clips the population afterward.
 
         """
 

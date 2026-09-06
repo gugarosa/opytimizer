@@ -1,7 +1,17 @@
-"""Fruit-Fly Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Fruit-Fly Optimization Algorithm.
+
+References:
+    W.-T. Pan. A new Fruit Fly Optimization Algorithm: Taking the financial distress model as an example.
+    Knowledge-Based Systems (2012).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +22,19 @@ from opytimizer.core.space import Space
 
 
 class FFOA(Optimizer):
-    """A FFOA class, inherited from Optimizer.
-
-    This is the designed class to define FFOA-related
-    variables and methods.
-
-    References:
-        W.-T. Pan. A new Fruit Fly Optimization Algorithm: Taking the financial distress model as an example.
-        Knowledge-Based Systems (2012).
+    """Search by evaluating fruit-fly smell positions from two coordinate populations.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize fruit-fly search configuration.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            No algorithm-specific parameter defaults are defined.
+            Compilation deep-copies agents into ``x_axis`` and ``y_axis``, which retain improving coordinates.
 
         """
 
@@ -36,26 +43,11 @@ class FFOA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         # Lists of `x` and `y` axis (eq. 1)
         self.x_axis = copy.deepcopy(space.agents)
         self.y_axis = copy.deepcopy(space.agents)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Fruit-Fly Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for a, x_axis, y_axis in zip(space.agents, self.x_axis, self.y_axis):
             r1 = np.random.uniform(0.0, 1.0, 1)
             r2 = np.random.uniform(0.0, 1.0, 1)

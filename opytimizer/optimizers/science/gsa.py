@@ -1,6 +1,15 @@
-"""Gravitational Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, List, Optional
+"""Gravitational Search Algorithm.
+
+References:
+    E. Rashedi, H. Nezamabadi-Pour and S. Saryazdi. GSA: a gravitational search algorithm.
+    Information Sciences (2009).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +20,19 @@ from opytimizer.core.space import Space
 
 
 class GSA(Optimizer):
-    """A GSA class, inherited from Optimizer.
-
-    This is the designed class to define GSA-related
-    variables and methods.
-
-    References:
-        E. Rashedi, H. Nezamabadi-Pour and S. Saryazdi. GSA: a gravitational search algorithm.
-        Information Sciences (2009).
+    """Implement Gravitational Search Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure gravitational attraction.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``G`` (2.467) is the initial gravity scale, divided by ``iteration + 1`` during updates.
+            Compilation allocates zero velocities for the population.
 
         """
 
@@ -37,28 +43,10 @@ class GSA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
-
-    def _calculate_mass(self, agents: List[Agent]) -> float:
-        """Calculates agents' mass (eq. 16).
-
-        Args:
-            agents: List of agents.
-
-        Returns:
-            (float): The agents' mass.
-
-        """
-
+    def _calculate_mass(self, agents: list[Agent]) -> float:
+        # Calculates agents' mass (eq. 16)
         best, worst = agents[0].fit, agents[-1].fit
 
         # Calculates agents' masses (eq. 15)
@@ -67,21 +55,8 @@ class GSA(Optimizer):
 
         return norm_mass
 
-    def _calculate_force(
-        self, agents: List[Agent], mass: np.ndarray, gravity: float
-    ) -> float:
-        """Calculates agents' force (eq. 7-9).
-
-        Args:
-            agents: List of agents.
-            mass: An array of agents' mass.
-            gravity: Current gravity value.
-
-        Returns:
-            (float): The attraction force between all agents.
-
-        """
-
+    def _calculate_force(self, agents: list[Agent], mass: np.ndarray, gravity: float) -> float:
+        # Calculates agents' force (eq. 7-9)
         force = [
             [
                 gravity
@@ -99,14 +74,6 @@ class GSA(Optimizer):
         return force
 
     def update(self, space: Space, iteration: int) -> None:
-        """Wraps Gravitational Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
 
         gravity = self.G / (iteration + 1)

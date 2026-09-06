@@ -1,7 +1,17 @@
-"""Bat Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Bat Algorithm.
+
+References:
+    X.-S. Yang. A new metaheuristic bat-inspired algorithm.
+    Nature inspired cooperative strategies for optimization (2010).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +20,21 @@ from opytimizer.core.space import Space
 
 
 class BA(Optimizer):
-    """A BA class, inherited from Optimizer.
-
-    This is the designed class to define BA-related
-    variables and methods.
-
-    References:
-        X.-S. Yang. A new metaheuristic bat-inspired algorithm.
-        Nature inspired cooperative strategies for optimization (2010).
+    """Search with frequency-driven bat velocities and local random walks.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure bat frequencies, loudness, and pulse rates.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``f_min`` (0) and ``f_max`` (2) bound initial frequency samples.
+            ``A`` (0.5) and ``r`` (0.5) scale initial loudness and pulse rates and their later adjustments.
+            Compilation samples per-agent ``frequency``, ``loudness``, and ``pulse_rate`` and zeros
+            ``velocity`` with shape ``(n_agents, n_variables, n_dimensions)``.
 
         """
 
@@ -40,30 +49,12 @@ class BA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.frequency = np.random.uniform(self.f_min, self.f_max, space.n_agents)
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
         self.loudness = np.random.uniform(0, self.A, space.n_agents)
         self.pulse_rate = np.random.uniform(0, self.r, space.n_agents)
 
     def update(self, space: Space, function: Callable, iteration: int) -> None:
-        """Wraps Bat Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-
-        """
-
         alpha = 0.9
 
         for i, agent in enumerate(space.agents):
@@ -73,9 +64,7 @@ class BA(Optimizer):
             self.frequency[i] = self.f_min + (self.f_min - self.f_max) * beta
 
             # Updates velocity (eq. 3)
-            self.velocity[i] += (
-                agent.position - space.best_agent.position
-            ) * self.frequency[i]
+            self.velocity[i] += (agent.position - space.best_agent.position) * self.frequency[i]
 
             # Updates agent's position (eq. 4)
             agent.position += self.velocity[i]
@@ -85,9 +74,7 @@ class BA(Optimizer):
             if p > self.pulse_rate[i]:
                 # Performs a local random walk (eq. 5)
                 # We apply 0.001 to limit the step size
-                agent.position = space.best_agent.position + 0.001 * e * np.mean(
-                    self.loudness
-                )
+                agent.position = space.best_agent.position + 0.001 * e * np.mean(self.loudness)
             agent.clip_by_bound()
 
             agent.fit = function(agent.position)

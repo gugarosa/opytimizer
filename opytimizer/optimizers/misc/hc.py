@@ -1,6 +1,16 @@
-"""Hill-Climbing."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Hill-Climbing.
+
+Updates perturb all agent positions with Gaussian noise, following page 252 of the reference.
+
+References:
+    S. Skiena. The Algorithm Design Manual (2010).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -9,21 +19,19 @@ from opytimizer.core.space import Space
 
 
 class HC(Optimizer):
-    """An HC class, inherited from Optimizer.
-
-    This is the designed class to define HC-related
-    variables and methods.
-
-    References:
-        S. Skiena. The Algorithm Design Manual (2010).
+    """Perturb a population with Gaussian hill-climbing steps.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the Gaussian perturbation distribution.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``r_mean`` (noise mean, 0.0) and
+            ``r_var`` (noise standard deviation passed to NumPy, 0.1).
 
         """
 
@@ -35,15 +43,6 @@ class HC(Optimizer):
         self.build(params)
 
     def update(self, space: Space) -> None:
-        """Wraps Hill Climbing over all agents and variables (p. 252).
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
-
         for agent in space.agents:
-            noise = np.random.normal(
-                self.r_mean, self.r_var, (agent.n_variables, agent.n_dimensions)
-            )
+            noise = np.random.normal(self.r_mean, self.r_var, (agent.n_variables, agent.n_dimensions))
             agent.position += noise

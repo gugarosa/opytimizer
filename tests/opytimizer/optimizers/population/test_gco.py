@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.population import gco
@@ -17,18 +20,14 @@ def test_gco_params():
 
 
 def test_gco_compile():
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
     new_gco.compile(search_space)
 
 
 def test_gco_mutate_cell():
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
     new_gco.compile(search_space)
@@ -47,9 +46,7 @@ def test_gco_dark_zone():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
     new_gco.compile(search_space)
@@ -58,9 +55,7 @@ def test_gco_dark_zone():
 
 
 def test_gco_light_zone():
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
     new_gco.compile(search_space)
@@ -72,9 +67,7 @@ def test_gco_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=4, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_gco = gco.GCO()
     new_gco.compile(search_space)

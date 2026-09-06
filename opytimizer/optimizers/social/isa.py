@@ -1,8 +1,19 @@
-"""Interactive Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Interactive Search Algorithm.
+
+References:
+    A. Mortazavi, V. Toğan and A. Nuhoğlu.
+    Interactive search algorithm: A new hybrid metaheuristic optimization algorithm.
+    Engineering Applications of Artificial Intelligence (2018).
+
+"""
 
 import copy
 import time
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -13,23 +24,21 @@ from opytimizer.core.space import Space
 
 
 class ISA(Optimizer):
-    """An ISA class, inherited from Optimizer.
-
-    This is the designed class to define ISA-related
-    variables and methods.
-
-    References:
-        A. Mortazavi, V. Toğan and A. Nuhoğlu.
-        Interactive search algorithm: A new hybrid metaheuristic optimization algorithm.
-        Engineering Applications of Artificial Intelligence (2018).
+    """Implement Interactive Search Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure interactive-search velocity and strategy selection.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``w`` (0.7) is velocity inertia and ``tau`` (0.3) is the probability of
+            pairwise interaction instead of the global and weighted-position strategy.
+            Compilation allocates zero local-best positions and velocities.
+            Evaluation updates local and global bests only on strict improvement.
 
         """
 
@@ -41,29 +50,10 @@ class ISA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
-        self.local_position = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
-        self.velocity = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.local_position = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
+        self.velocity = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
     def evaluate(self, space: Space, function: Callable) -> None:
-        """Evaluates the search space according to the objective function.
-
-        Args:
-            space: A Space object that will be evaluated.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i, agent in enumerate(space.agents):
             fit = function(agent.position)
             if fit < agent.fit:
@@ -77,26 +67,13 @@ class ISA(Optimizer):
                 space.best_agent.ts = int(time.time())
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Interactive Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
         best, worst = space.agents[0], space.agents[-1]
 
-        coef = [
-            (best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON)
-            for agent in space.agents
-        ]
+        coef = [(best.fit - agent.fit) / (best.fit - worst.fit + c.EPSILON) for agent in space.agents]
         w_coef = [cf / (np.sum(coef) + c.EPSILON) for cf in coef]
 
-        w_position = np.sum(
-            [cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0
-        )
+        w_position = np.sum([cf * agent.position for cf, agent in zip(w_coef, space.agents)], axis=0)
         w_fit = function(w_position)
 
         for i, agent in enumerate(space.agents):
@@ -119,14 +96,10 @@ class ISA(Optimizer):
                 r2 = np.random.uniform(0.0, 1.0, 1)
                 if agent.fit < space.agents[idx].fit:
                     # Updates agent's velocity (eq. 6.2 - top)
-                    self.velocity[i] = r2 * (
-                        agent.position - space.agents[idx].position
-                    )
+                    self.velocity[i] = r2 * (agent.position - space.agents[idx].position)
                 else:
                     # Updates agent's velocity (eq. 6.2 - bottom)
-                    self.velocity[i] = r2 * (
-                        space.agents[idx].position - agent.position
-                    )
+                    self.velocity[i] = r2 * (space.agents[idx].position - agent.position)
 
             # Updates agent's position and clip its bounds (eq. 6.3)
             agent.position += self.velocity[i]

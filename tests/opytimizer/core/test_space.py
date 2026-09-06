@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -41,3 +44,13 @@ def test_space_builds_and_clips_agents():
     assert len(space.agents) == 2
     assert np.array_equal(space.agents[0].position, [[0]])
     assert np.array_equal(space.agents[1].position, [[1]])
+
+
+def test_space_retains_nullable_bounds_when_building_zero_positions():
+    space = Space(lower_bound=None, upper_bound=None)
+
+    space.build()
+
+    assert space.lb.tolist() == [None]
+    assert space.ub.tolist() == [None]
+    assert np.array_equal(space.agents[0].position, [[0]])

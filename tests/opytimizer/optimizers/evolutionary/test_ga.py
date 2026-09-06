@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.evolutionary import ga
@@ -31,9 +34,7 @@ def test_ga_roulette_selection():
 
 
 def test_ga_crossover():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_ga = ga.GA()
 
@@ -44,9 +45,7 @@ def test_ga_crossover():
 
 
 def test_ga_mutation():
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_ga = ga.GA()
 
@@ -62,8 +61,6 @@ def test_ga_update():
 
     new_ga = ga.GA()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[1, 1], upper_bound=[10, 10])
 
     new_ga.update(search_space, square)

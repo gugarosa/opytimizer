@@ -1,8 +1,24 @@
-"""Geometric Semantic Genetic Programming."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Geometric Semantic Genetic Programming.
+
+Tournament-selected mutation combines a copied subtree with a transformed random terminal.
+Crossover produces one semantic offspring from two subtrees weighted by complementary terminals.
+Selection and pruning parameters are inherited from GP.
+
+References:
+    A. Moraglio, K. Krawiec, and C. G. Johnson. Geometric semantic genetic programming.
+    Lecture Notes in Computer Science (2012).
+
+    G. H. de Rosa, J. P. Papa, and L. P. Papa.
+    Feature selection using geometric semantic genetic programming.
+    Proceedings of the Genetic and Evolutionary Computation Conference Companion (2017).
+
+"""
 
 import copy
 from hashlib import sha1
-from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -13,40 +29,11 @@ from opytimizer.spaces.tree import TreeSpace
 
 
 class GSGP(GP):
-    """A GSGP class, inherited from GP.
-
-    This is the designed class to define GSGP-related
-    variables and methods.
-
-    References:
-        A. Moraglio, K. Krawiec, and C. G. Johnson.
-        Geometric semantic genetic programming.
-        Lecture Notes in Computer Science (2012).
-
-        G. H. de Rosa, J. P. Papa, and L. P. Papa.
-        Feature selection using geometric semantic genetic programming.
-        Proceedings of the Genetic and Evolutionary Computation Conference Companion (2017).
+    """Optimize expression trees with geometric semantic variation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
-
-        Args:
-            params: Contains key-value parameters to the meta-heuristics.
-
-        """
-
-        super(GSGP, self).__init__(params)
-
     def _mutation(self, space: TreeSpace) -> None:
-        """Mutates a number of individuals pre-selected through a tournament procedure.
-
-        Args:
-            space: A TreeSpace object.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         n_individuals = int(space.n_agents * self.p_mutation)
@@ -58,29 +45,14 @@ class GSGP(GP):
             n_nodes = space.trees[s].n_nodes
             if n_nodes > 1:
                 max_nodes = self._prune_nodes(n_nodes)
-                space.trees[s] = self._mutate(
-                    space.trees[s], space.n_variables, max_nodes
-                )
+                space.trees[s] = self._mutate(space.trees[s], space.n_variables, max_nodes)
 
     def _mutate(self, tree: Node, n_variables: int, max_nodes: int) -> Node:
-        """Actually performs the mutation on a single tree.
-
-        Args:
-            tree: A Node instance to be mutated.
-            n_variables: Number of variables.
-            max_nodes: Maximum number of nodes to be searched.
-
-        Returns:
-            (Node): A mutated tree.
-
-        """
-
         mutated_tree = copy.deepcopy(tree)
         mutation_point = int(np.random.uniform(2, max_nodes))
         sub_tree, _ = mutated_tree.find_node(mutation_point)
 
-        # If the mutation point's parent is not a root (this may happen when the mutation point is a function),
-        # and find_node() stops at a terminal node whose father is a root
+        # Without a parent subtree, retain the copied tree rather than constructing a semantic branch
         if sub_tree:
             position = np.random.uniform(0.0, 1.0, n_variables)
             position_hash = sha1(repr(position).encode("ascii")).hexdigest()[:4]
@@ -113,13 +85,6 @@ class GSGP(GP):
         return mutated_tree
 
     def _crossover(self, space: TreeSpace) -> None:
-        """Crossover a number of individuals pre-selected through a tournament procedure.
-
-        Args:
-            space: A TreeSpace object.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         n_individuals = int(space.n_agents * self.p_crossover)
@@ -151,20 +116,6 @@ class GSGP(GP):
         max_father: int,
         max_mother: int,
     ) -> Node:
-        """Actually performs the crossover over a father and mother nodes.
-
-        Args:
-            father: A father's node to be crossed.
-            mother: A mother's node to be crossed.
-            n_variables: Number of variables.
-            max_father: Maximum of nodes from father to be used.
-            max_mother: Maximum of nodes from mother to be used.
-
-        Returns:
-            (Node): Single offspring based on the crossover operator.
-
-        """
-
         father_offspring = copy.deepcopy(father)
         father_point = int(np.random.uniform(2, max_father))
         sub_father, _ = father_offspring.find_node(father_point)

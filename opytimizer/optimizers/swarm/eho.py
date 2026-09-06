@@ -1,7 +1,17 @@
-"""Elephant Herding Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Elephant Herding Optimization.
+
+References:
+    G.-G. Wang, S. Deb and L. Coelho. Elephant Herding Optimization.
+    International Symposium on Computational and Business Intelligence (2015).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,20 @@ from opytimizer.core.space import Space
 
 
 class EHO(Optimizer):
-    """An EHO class, inherited from Optimizer.
-
-    This is the designed class to define EHO-related
-    variables and methods.
-
-    References:
-        G.-G. Wang, S. Deb and L. Coelho. Elephant Herding Optimization.
-        International Symposium on Computational and Business Intelligence (2015).
+    """Search through clan-centered elephant movement and separation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure elephant clan movement.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``alpha`` (0.5) weights attraction toward the clan leader, and ``beta`` (0.1) scales clan centers.
+            ``n_clans`` (10) partitions agents into clans. Compilation sets ``n_ci`` to the integer
+            quotient of population size and clan count, with remaining agents assigned to the final clan.
 
         """
 
@@ -40,27 +48,9 @@ class EHO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_ci = space.n_agents // self.n_clans
 
-    def _get_agents_from_clan(self, agents: List[Agent], index: int) -> List[Agent]:
-        """Gets a set of agents from a specified clan.
-
-        Args:
-            agents: List of agents.
-            index: Index of clan.
-
-        Returns:
-            (List[Agent]): A sorted list of agents that belongs to the specified clan.
-
-        """
-
+    def _get_agents_from_clan(self, agents: list[Agent], index: int) -> list[Agent]:
         start, end = index * self.n_ci, (index + 1) * self.n_ci
 
         if (index + 1) == self.n_clans:
@@ -68,18 +58,7 @@ class EHO(Optimizer):
 
         return sorted(agents[start:end], key=lambda x: x.fit)
 
-    def _updating_operator(
-        self, agents: List[Agent], centers: np.ndarray, function: Callable
-    ) -> None:
-        """Performs the separating operator.
-
-        Args:
-            agents: List of agents.
-            centers: List of centers.
-            function: A callable that will be used as the objective function.
-
-        """
-
+    def _updating_operator(self, agents: list[Agent], centers: np.ndarray, function: Callable) -> None:
         for i in range(self.n_clans):
             clan_agents = self._get_agents_from_clan(agents, i)
             for j, agent in enumerate(clan_agents):
@@ -91,9 +70,7 @@ class EHO(Optimizer):
                     a.position = self.beta * centers[i]
                 else:
                     # Updates its position (eq. 1)
-                    a.position += (
-                        self.alpha * (clan_agents[0].position - a.position) * r1
-                    )
+                    a.position += self.alpha * (clan_agents[0].position - a.position) * r1
                 a.clip_by_bound()
 
                 a.fit = function(a.position)
@@ -101,14 +78,7 @@ class EHO(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def _separating_operator(self, agents: List[Agent]) -> None:
-        """Performs the separating operator.
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _separating_operator(self, agents: list[Agent]) -> None:
         for i in range(self.n_clans):
             clan_agents = self._get_agents_from_clan(agents, i)
 
@@ -117,22 +87,12 @@ class EHO(Optimizer):
             worst.fill_with_uniform()
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Elephant Herd Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         centers = []
 
         for i in range(self.n_clans):
             clan_agents = self._get_agents_from_clan(space.agents, i)
 
-            clan_center = np.mean(
-                np.array([agent.position for agent in clan_agents]), axis=0
-            )
+            clan_center = np.mean(np.array([agent.position for agent in clan_agents]), axis=0)
 
             centers.append(clan_center)
 

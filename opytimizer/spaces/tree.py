@@ -1,17 +1,21 @@
-"""Tree-based search space."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Tree-based search space.
+
+"""
 
 import copy
-from typing import List, Optional, Tuple, Union
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 import opytimizer.utils.constant as c
 from opytimizer.core import Agent, Node, Space
 
 
 class TreeSpace(Space):
-    """A TreeSpace class for trees, agents, variables and methods
-    related to a tree-based search space.
+    """Own random expression trees and their associated candidate agents.
 
     """
 
@@ -19,15 +23,15 @@ class TreeSpace(Space):
         self,
         n_agents: int,
         n_variables: int,
-        lower_bound: Union[float, List, Tuple, np.ndarray],
-        upper_bound: Union[float, List, Tuple, np.ndarray],
+        lower_bound: ArrayLike,
+        upper_bound: ArrayLike,
         n_terminals: int = 1,
         min_depth: int = 1,
         max_depth: int = 3,
-        functions: Optional[List[str]] = None,
-        mapping: Optional[List[str]] = None,
+        functions: list[str] | None = None,
+        mapping: list[str] | None = None,
     ) -> None:
-        """Initialization method.
+        """Build random terminals, GROW trees, and uniformly initialized candidate agents.
 
         Args:
             n_agents: Number of agents (trees).
@@ -40,32 +44,35 @@ class TreeSpace(Space):
             functions: Function nodes.
             mapping: String-based identifiers for mapping variables' names.
 
+        Notes:
+            Terminal nodes share the corresponding terminal agent's position
+            array. ``best_tree`` and ``best_agent`` are independent copies of
+            the first tree and candidate respectively.
+
         """
 
         n_dimensions = 1
 
-        super().__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
-        )
+        super().__init__(n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping)
 
         if not isinstance(n_terminals, int):
-            raise TypeError("`n_terminals` should be an integer")
+            raise TypeError("`n_terminals` should be an integer.")
         if n_terminals <= 0:
-            raise ValueError("`n_terminals` should be > 0")
+            raise ValueError("`n_terminals` should be > 0.")
         if not isinstance(min_depth, int):
-            raise TypeError("`min_depth` should be an integer")
+            raise TypeError("`min_depth` should be an integer.")
         if min_depth <= 0:
-            raise ValueError("`min_depth` should be > 0")
+            raise ValueError("`min_depth` should be > 0.")
         if not isinstance(max_depth, int):
-            raise TypeError("`max_depth` should be an integer")
+            raise TypeError("`max_depth` should be an integer.")
         if max_depth < min_depth:
-            raise ValueError("`max_depth` should be >= `min_depth`")
+            raise ValueError("`max_depth` should be >= `min_depth`.")
         if functions is None:
             functions = []
         elif not isinstance(functions, list):
-            raise TypeError("`functions` should be a list")
+            raise TypeError("`functions` should be a list.")
         if any(function not in c.FUNCTION_N_ARGS for function in functions):
-            raise ValueError("`functions` contains an unsupported function")
+            raise ValueError("`functions` contains an unsupported function.")
 
         self.n_terminals = n_terminals
         self.min_depth = min_depth
@@ -78,28 +85,19 @@ class TreeSpace(Space):
         self.build()
 
     def _create_terminals(self) -> None:
-        """Creates a list of terminals."""
-
         self.terminals = [
-            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub, self.mapping)
-            for _ in range(self.n_terminals)
+            Agent(self.n_variables, self.n_dimensions, self.lb, self.ub, self.mapping) for _ in range(self.n_terminals)
         ]
 
         for terminal in self.terminals:
             terminal.fill_with_uniform()
 
     def _create_trees(self) -> None:
-        """Creates a list of trees based on the GROW algorithm."""
-
-        self.trees = [
-            self.grow(self.min_depth, self.max_depth) for _ in range(self.n_agents)
-        ]
+        self.trees = [self.grow(self.min_depth, self.max_depth) for _ in range(self.n_agents)]
 
         self.best_tree = copy.deepcopy(self.trees[0])
 
     def _initialize_agents(self) -> None:
-        """Initializes agents with their positions and defines a best agent."""
-
         for agent in self.agents:
             agent.fill_with_uniform()
 
@@ -117,7 +115,7 @@ class TreeSpace(Space):
             max_depth: Maximum depth of the tree.
 
         Returns:
-            (Node): Random tree based on the GROW algorithm.
+            Random GROW tree with terminal values sharing the terminal agents' positions.
 
         """
 

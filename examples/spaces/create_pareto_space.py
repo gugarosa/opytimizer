@@ -1,19 +1,18 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.spaces import ParetoSpace
 
-# Defines the number of points `n` and the number of objectives `k`
 n_points = 10
 n_objectives = 3
 
-# Defines the agents to be initialized within the ParetoSpace
-# Note they are a multi-dimensional vector of shape [n, k],
+# Each row stores one candidate's objective values for Pareto ranking
 data_points = np.random.uniform(size=(n_points, n_objectives))
 
-# Creates the ParetoSpace
 s = ParetoSpace(data_points)
 
-# Prints out some properties
 print(s.n_agents, s.n_variables)
 print(s.agents, s.best_agent)
 print(s.best_agent.position)

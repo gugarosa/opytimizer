@@ -1,7 +1,17 @@
-"""Most Valuable Player Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Most Valuable Player Algorithm.
+
+References:
+    H. Bouchekara. Most Valuable Player Algorithm: a novel optimization algorithm inspired from sport.
+    Operational Research (2017).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -13,22 +23,19 @@ from opytimizer.core.space import Space
 
 
 class MVPA(Optimizer):
-    """A MVPA class, inherited from Optimizer.
-
-    This is the designed class to define MVPA-related
-    variables and methods.
-
-    References:
-        H. Bouchekara. Most Valuable Player Algorithm: a novel optimization algorithm inspired from sport.
-        Operational Research (2017).
+    """Implement Most Valuable Player Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure competing teams.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``n_teams`` (4) is the number of teams.
+            Compilation derives players per team, with any remainder in the final team.
 
         """
 
@@ -39,27 +46,9 @@ class MVPA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_p = space.n_agents // self.n_teams
 
-    def _get_agents_from_team(self, agents: List[Agent], index: int) -> List[Agent]:
-        """Gets a set of agents from a specified team.
-
-        Args:
-            agents: List of agents.
-            index: Index of team.
-
-        Returns:
-            (List[Agent]): A sorted list of agents that belongs to the specified team.
-
-        """
-
+    def _get_agents_from_team(self, agents: list[Agent], index: int) -> list[Agent]:
         start, end = index * self.n_p, (index + 1) * self.n_p
 
         if (index + 1) == self.n_teams:
@@ -68,14 +57,6 @@ class MVPA(Optimizer):
         return sorted(agents[start:end], key=lambda x: x.fit)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Most Valuable Player Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i in range(self.n_teams):
             team_i = self._get_agents_from_team(space.agents, i)
             franchise_i = copy.deepcopy(team_i[0])

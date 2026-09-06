@@ -1,27 +1,29 @@
-"""Grid-Search."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Grid-Search.
+
+References:
+    J. Bergstra and Y. Bengio. Random search for hyper-parameter optimization.
+    Journal of machine learning research (2012).
+
+"""
+
+from typing import Any
 
 from opytimizer.core import Optimizer
 
 
 class GS(Optimizer):
-    """A GS class, inherited from Optimizer.
-
-    This is the designed class to define grid search-related
-    variables and methods.
-
-    References:
-        J. Bergstra and Y. Bengio. Random search for hyper-parameter optimization.
-        Journal of machine learning research (2012).
+    """Evaluate a fixed grid with the base optimizer lifecycle.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize a grid search optimizer.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Base optimizer overrides without grid-search-specific parameters.
 
         """
 

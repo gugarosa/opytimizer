@@ -1,6 +1,19 @@
-"""Satin Bowerbird Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Callable, Dict, Optional
+"""Satin Bowerbird Optimizer.
+
+Movement, fitness-proportional selection, and Gaussian mutation follow equations 1-7 of the reference.
+
+References:
+    S. H. S. Moosavi and V. K. Bardsiri.
+    Satin bowerbird optimizer: a new optimization algorithm to optimize ANFIS for software development effort estimation.
+    Engineering Applications of Artificial Intelligence (2017).
+
+"""
+
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -9,24 +22,19 @@ from opytimizer.core.space import Space
 
 
 class SBO(Optimizer):
-    """A SBO class, inherited from Optimizer.
-
-    This is the designed class to define SBO-related
-    variables and methods.
-
-    References:
-        S. H. S. Moosavi and V. K. Bardsiri.
-        Satin bowerbird optimizer: a new optimization algorithm to optimize ANFIS
-        for software development effort estimation.
-        Engineering Applications of Artificial Intelligence (2017).
+    """Search with fitness-weighted bower attraction and Gaussian mutation.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure bowerbird attraction and mutation.
 
         Args:
-            params: Contains key-value parameters to the mp_mutation-heuristics.
+            params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``alpha`` (0.9) scales attraction, and ``p_mutation`` (0.05) is the per-variable mutation probability.
+            ``z`` (0.02) scales each bounds' span into the compiled mutation standard deviations ``sigma``.
 
         """
 
@@ -39,28 +47,10 @@ class SBO(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.sigma = [self.z * (ub - lb) for lb, ub in zip(space.lb, space.ub)]
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Satin Bowerbird Optimizer over all agents and variables (eq. 1-7).
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
-        fitness = [
-            1 / (1 + agent.fit) if agent.fit >= 0 else 1 + np.abs(agent.fit)
-            for agent in space.agents
-        ]
+        fitness = [1 / (1 + agent.fit) if agent.fit >= 0 else 1 + np.abs(agent.fit) for agent in space.agents]
         total_fitness = np.sum(fitness)
         probs = [fit / total_fitness for fit in fitness]
 
@@ -71,8 +61,7 @@ class SBO(Optimizer):
                 lambda_k = self.alpha / (1 + probs[s])
 
                 agent.position[j] += lambda_k * (
-                    (space.agents[s].position[j] + space.best_agent.position[j]) / 2
-                    - agent.position[j]
+                    (space.agents[s].position[j] + space.best_agent.position[j]) / 2 - agent.position[j]
                 )
 
                 r1 = np.random.uniform(0.0, 1.0, 1)

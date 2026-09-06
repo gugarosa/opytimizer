@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.population import hho
@@ -18,13 +21,9 @@ def test_hho_calculate_initial_coefficients():
 def test_hho_exploration_phase():
     new_hho = hho.HHO()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
-    new_hho._exploration_phase(
-        search_space.agents, search_space.agents[0], search_space.best_agent
-    )
+    new_hho._exploration_phase(search_space.agents, search_space.agents[0], search_space.best_agent)
 
 
 def test_hho_exploitation_phase():
@@ -35,9 +34,7 @@ def test_hho_exploitation_phase():
 
     new_hho = hho.HHO()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hho._exploitation_phase(
         1,
@@ -55,8 +52,6 @@ def test_hho_update():
 
     new_hho = hho.HHO()
 
-    search_space = search.SearchSpace(
-        n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=10, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_hho.update(search_space, square, 1, 10)

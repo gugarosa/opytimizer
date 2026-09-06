@@ -1,7 +1,17 @@
-"""Cohort Intelligence."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Cohort Intelligence.
+
+References:
+    A. J. Kulkarni, I. P. Durugkar, M. Kumar. Cohort Intelligence: A Self Supervised Learning Behavior.
+    IEEE International Conference on Systems, Man, and Cybernetics (2013).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,20 @@ from opytimizer.core.space import Space
 
 
 class CI(Optimizer):
-    """A CI class, inherited from Optimizer.
-
-    This is the designed class to define CI-related
-    variables and methods.
-
-    References:
-        A. J. Kulkarni, I. P. Durugkar, M. Kumar. Cohort Intelligence: A Self Supervised Learning Behavior.
-        IEEE International Conference on Systems, Man, and Cybernetics (2013).
+    """Implement Cohort Intelligence.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure cohort sampling intervals and attempts.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``r`` (0.8) scales the bounds around a selected cohort member.
+            ``t`` (3) is the number of candidate sampling attempts per agent per update.
+            Compilation creates independent lower and upper sampling bounds for each agent.
 
         """
 
@@ -38,13 +46,6 @@ class CI(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         lower = np.expand_dims(np.expand_dims(space.lb, -1), 0).astype(float)
         self.lower = np.repeat(lower, space.n_agents, axis=0)
 
@@ -52,14 +53,6 @@ class CI(Optimizer):
         self.upper = np.repeat(upper, space.n_agents, axis=0)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Cohort Intelligence over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         fitness = [agent.fit for agent in space.agents]
 
         for i, agent in enumerate(space.agents):

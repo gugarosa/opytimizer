@@ -1,23 +1,20 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.spaces.tree import TreeSpace
 
-# Define the number of agents, decision variables and terminals
 n_agents = 2
 n_variables = 5
 n_terminals = 2
 
-# Minimum and maximum depths of the trees
 min_depth = 2
 max_depth = 5
 
-# Function nodes
 func_nodes = ["SUM", "SUB", "MUL", "DIV"]
 
-# Also defines the corresponding lower and upper bounds
-# Note that they have to be the same size as `n_variables`
 lower_bound = [0.1, 0.3, 0.5, 0.7, 0.9]
 upper_bound = [0.2, 0.4, 0.6, 0.8, 1.0]
 
-# Creates the TreeSpace
 s = TreeSpace(
     n_agents,
     n_variables,
@@ -29,7 +26,6 @@ s = TreeSpace(
     func_nodes,
 )
 
-# Prints out some properties
 print(s.trees[0])
 print(f"Position: {s.trees[0].position}")
 print(f"\nPre Order: {s.trees[0].pre_order}")

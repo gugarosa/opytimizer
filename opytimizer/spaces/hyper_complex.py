@@ -1,7 +1,11 @@
-"""Hypercomplex-based search space."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Hypercomplex-based search space.
+
+"""
 
 import copy
-from typing import List, Optional
 
 import numpy as np
 
@@ -9,8 +13,7 @@ from opytimizer.core import Space
 
 
 class HyperComplexSpace(Space):
-    """An HyperComplexSpace class that will hold agents, variables and methods
-    related to the hypercomplex search space.
+    """Own a population of hypercomplex decision variables.
 
     """
 
@@ -19,9 +22,9 @@ class HyperComplexSpace(Space):
         n_agents: int,
         n_variables: int,
         n_dimensions: int,
-        mapping: Optional[List[str]] = None,
+        mapping: list[str] | None = None,
     ) -> None:
-        """Initialization method.
+        """Build uniform positions in the unit interval and copy the first best agent.
 
         Args:
             n_agents: Number of agents.
@@ -34,15 +37,11 @@ class HyperComplexSpace(Space):
         lower_bound = np.zeros(n_variables)
         upper_bound = np.ones(n_variables)
 
-        super().__init__(
-            n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping
-        )
+        super().__init__(n_agents, n_variables, n_dimensions, lower_bound, upper_bound, mapping)
 
         self.build()
 
     def _initialize_agents(self) -> None:
-        """Initializes agents with their positions and defines a best agent."""
-
         for agent in self.agents:
             agent.fill_with_uniform()
 

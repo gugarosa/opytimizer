@@ -1,7 +1,17 @@
-"""Electro-Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Electro-Search Algorithm.
+
+References:
+    A. Tabari and A. Ahmad. A new optimization method: Electro-Search algorithm.
+    Computers & Chemical Engineering (2017).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +20,21 @@ from opytimizer.core.space import Space
 
 
 class ESA(Optimizer):
-    """An ESA class, inherited from Optimizer.
-
-    This is the designed class to define ES-related
-    variables and methods.
-
-    References:
-        A. Tabari and A. Ahmad. A new optimization method: Electro-Search algorithm.
-        Computers & Chemical Engineering (2017).
+    """Implement Electro-Search Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure electron candidates for electro-search.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``n_electrons`` (5) is the number of candidate electrons sampled per agent.
+            Compilation initializes orbital-radius state with uniform draws from ``[0, 1)``.
+            Rydberg and acceleration coefficients use uniform draws from ``[0, 1)``.
+            Their sampling rationale is not documented in the original implementation.
 
         """
 
@@ -36,26 +45,9 @@ class ESA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
-        self.D = np.random.uniform(
-            0.0, 1.0, (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.D = np.random.uniform(0.0, 1.0, (space.n_agents, space.n_variables, space.n_dimensions))
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps EElectro-Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for i, agent in enumerate(space.agents):
             a = copy.deepcopy(agent)
 
@@ -72,8 +64,6 @@ class ESA(Optimizer):
 
             electrons.sort(key=lambda x: x.fit)
 
-            # Generates both Rydberg constant and acceleration coefficient
-            # Original implementation is missing up an informative description
             Re = np.random.uniform(0.0, 1.0, 1)
             Ac = np.random.uniform(0.0, 1.0, 1)
 

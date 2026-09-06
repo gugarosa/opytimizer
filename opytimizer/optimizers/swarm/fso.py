@@ -1,7 +1,18 @@
-"""Flying Squirrel Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Flying Squirrel Optimizer.
+
+References:
+    G. Azizyan et al.
+    Flying Squirrel Optimizer (FSO): A novel SI-based optimization algorithm for engineering problems.
+    Iranian Journal of Optimization (2019).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +22,18 @@ from opytimizer.core.space import Space
 
 
 class FSO(Optimizer):
-    """A FSO class, inherited from Optimizer.
-
-    This is the designed class to define FSO-related
-    variables and methods.
-
-    References:
-        G. Azizyan et al.
-        Flying Squirrel Optimizer (FSO): A novel SI-based optimization algorithm for engineering problems.
-        Iranian Journal of Optimization (2019).
+    """Search with population-centered random walks and expanding Lévy flights.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure flying squirrel Lévy expansion.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``beta`` (0.5) is the initial Lévy exponent, expanded toward two over the iteration budget.
 
         """
 
@@ -37,25 +43,12 @@ class FSO(Optimizer):
 
         self.build(params)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Flying Squirrel Optimizer over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         mean_position = np.mean([agent.position for agent in space.agents], axis=0)
 
         # Calculates the Sigma Reduction Factor (eq. 5)
         SRF = (-np.log(1 - (1 / np.sqrt(iteration + 2)))) ** 2
 
-        # Calculates the Beta Expansion Factor
         BEF = self.beta + (2 - self.beta) * ((iteration + 1) / n_iterations)
 
         for agent in space.agents:
@@ -68,11 +61,7 @@ class FSO(Optimizer):
                 # Calculates the Lévy flight (eq. 6 to 18)
                 levy_step = d.generate_levy_distribution(BEF)
 
-                a.position[j] += (
-                    random_step
-                    * levy_step
-                    * (agent.position[j] - space.best_agent.position[j])
-                )
+                a.position[j] += random_step * levy_step * (agent.position[j] - space.best_agent.position[j])
             a.clip_by_bound()
 
             a.fit = function(a.position)

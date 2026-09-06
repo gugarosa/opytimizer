@@ -1,22 +1,41 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 from opytimizer.functions.multi_objective import MultiObjectiveFunction
 
 
-# Defines some test functions
-def test_function1(z):
+def test_function1(z: float) -> float:
+    """Add the first objective's offset.
+
+    Args:
+        z: Decision-variable value.
+
+    Returns:
+        Value increased by two.
+
+    """
+
     return z + 2
 
 
-def test_function2(z):
+def test_function2(z: float) -> float:
+    """Add the second objective's offset.
+
+    Args:
+        z: Decision-variable value.
+
+    Returns:
+        Value increased by five.
+
+    """
+
     return z + 5
 
 
-# Declares `x`
 x = 0
 
-# Any callable can be used directly
 h = MultiObjectiveFunction([test_function1, test_function2])
 
-# Tests the multi-objective callable
 print(f"x: {x}")
 print(f"f(x): {h.functions[0](x)}")
 print(f"g(x): {h.functions[1](x)}")

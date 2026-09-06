@@ -1,7 +1,20 @@
-"""Invasive Weed Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Invasive Weed Optimization.
+
+Spatial dispersal follows equation 1. Each parent produces a fitness-dependent number of
+bounded offspring, and updates retain the fittest parents and offspring.
+
+References:
+    A. R. Mehrabian and C. Lucas. A novel numerical optimization algorithm inspired from weed colonization.
+    Ecological informatics (2006).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +25,21 @@ from opytimizer.core.space import Space
 
 
 class IWO(Optimizer):
-    """An IWO class, inherited from Optimizer.
-
-    This is the designed class to define IWO-related
-    variables and methods.
-
-    References:
-        A. R. Mehrabian and C. Lucas. A novel numerical optimization algorithm inspired from weed colonization.
-        Ecological informatics (2006).
+    """Optimize a population through fitness-dependent weed colonization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize seed counts and the spatial dispersal schedule.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``min_seeds`` (minimum offspring count, 0), ``max_seeds``
+            (maximum offspring count, 5), ``e`` (dispersal decay exponent, 2),
+            ``final_sigma`` (final dispersal scale, 0.001), ``init_sigma`` (initial
+            dispersal scale, 3.0), and ``sigma`` (current scale, 0.0, recomputed each update).
 
         """
 
@@ -45,32 +57,11 @@ class IWO(Optimizer):
         self.build(params)
 
     def _spatial_dispersal(self, iteration: int, n_iterations: int) -> None:
-        """Calculates the Spatial Dispersal coefficient (eq. 1).
-
-        Args:
-            iteration: Current iteration number.
-            n_iterations: Maximum number of iterations.
-
-        """
-
-        coef = ((n_iterations - iteration) ** self.e) / (
-            (n_iterations + c.EPSILON) ** self.e
-        )
+        coef = ((n_iterations - iteration) ** self.e) / ((n_iterations + c.EPSILON) ** self.e)
 
         self.sigma = coef * (self.init_sigma - self.final_sigma) + self.final_sigma
 
     def _produce_offspring(self, agent: Agent, function: Callable) -> Agent:
-        """Reproduces and flowers a seed into a new offpsring.
-
-        Args:
-            agent: An agent instance to be reproduced.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Agent): An evolved offspring.
-
-        """
-
         a = copy.deepcopy(agent)
 
         for j, (lb, ub) in enumerate(zip(a.lb, a.ub)):
@@ -81,19 +72,7 @@ class IWO(Optimizer):
 
         return a
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Invasive Weed Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         self._spatial_dispersal(iteration, n_iterations)
 
         n_agents = len(space.agents)
@@ -102,9 +81,7 @@ class IWO(Optimizer):
         space.agents.sort(key=lambda x: x.fit)
 
         for agent in space.agents:
-            ratio = (agent.fit - space.agents[-1].fit) / (
-                space.agents[0].fit - space.agents[-1].fit + c.EPSILON
-            )
+            ratio = (agent.fit - space.agents[-1].fit) / (space.agents[0].fit - space.agents[-1].fit + c.EPSILON)
 
             n_seeds = int(self.min_seeds + (self.max_seeds - self.min_seeds) * ratio)
             for _ in range(n_seeds):

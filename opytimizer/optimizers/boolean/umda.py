@@ -1,6 +1,20 @@
-"""Univariate Marginal Distribution Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, List, Optional
+"""Univariate Marginal Distribution Algorithm.
+
+Marginal frequencies are clipped using equation 47 and resampled using equation 53.
+Sampling retains the comparison ``probs < uniform_draw`` used by this implementation.
+Bounds are validated at construction and before updates or direct probability calculation.
+
+References:
+    H. Mühlenbein. The equation for response to selection and its use for prediction.
+    Evolutionary Computation (1997).
+
+"""
+
+from numbers import Real
+from typing import Any
 
 import numpy as np
 
@@ -10,21 +24,25 @@ from opytimizer.core.space import Space
 
 
 class UMDA(Optimizer):
-    """An UMDA class, inherited from Optimizer.
-
-    This is the designed class to define UMDA-related variables and methods.
-
-    References:
-        H. Mühlenbein. The equation for response to selection and its use for prediction.
-        Evolutionary Computation (1997).
+    """Optimize Boolean variables using univariate marginal distributions.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the selection fraction and probability bounds.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``p_selection`` (selected population fraction, 0.75),
+            ``lower_bound`` (minimum marginal probability, 0.05), and
+            ``upper_bound`` (maximum marginal probability, 0.95).
+            Bounds must satisfy ``0 <= lower_bound <= upper_bound <= 1``.
+
+        Raises:
+            TypeError: A probability bound is not a real number.
+            ValueError: Probability bounds are outside their ordered unit interval.
 
         """
 
@@ -35,17 +53,17 @@ class UMDA(Optimizer):
         self.upper_bound = 0.95
 
         self.build(params)
+        self._validate_probability_bounds()
 
-    def _calculate_probability(self, agents: List[Agent]) -> np.ndarray:
-        """Calculates probabilities based on pre-selected agents' variables occurrence (eq. 47).
+    def _validate_probability_bounds(self) -> None:
+        for name in ("lower_bound", "upper_bound"):
+            if not isinstance(getattr(self, name), Real):
+                raise TypeError(f"`{name}` must be a real number.")
+        if not 0 <= self.lower_bound <= self.upper_bound <= 1:
+            raise ValueError("`lower_bound` and `upper_bound` must satisfy 0 <= lower_bound <= upper_bound <= 1.")
 
-        Args:
-            agents: List of pre-selected agents.
-
-        Returns:
-            (np.ndarray): Probability of variables occurence.
-
-        """
+    def _calculate_probability(self, agents: list[Agent]) -> np.ndarray:
+        self._validate_probability_bounds()
 
         probs = np.zeros((agents[0].n_variables, agents[0].n_dimensions))
 
@@ -58,16 +76,6 @@ class UMDA(Optimizer):
         return probs
 
     def _sample_position(self, probs: np.ndarray) -> np.ndarray:
-        """Samples new positions according to their probability of ocurrence (eq. 53).
-
-        Args:
-            probs: Array of probabilities.
-
-        Returns:
-            (np.ndarray): New sampled position.
-
-        """
-
         r1 = np.random.uniform(0.0, 1.0, (probs.shape[0], probs.shape[1]))
 
         new_position = np.where(probs < r1, True, False)
@@ -75,12 +83,7 @@ class UMDA(Optimizer):
         return new_position
 
     def update(self, space: Space) -> None:
-        """Wraps Univariate Marginal Distribution Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
+        self._validate_probability_bounds()
 
         n_agents = len(space.agents)
         n_selected = int(n_agents * self.p_selection)

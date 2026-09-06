@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import torch
 from sklearn.datasets import load_digits
@@ -9,157 +12,159 @@ from opytimizer import Opytimizer
 from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
-# Loads digits dataset
 digits = load_digits()
-
-# Gathers samples and targets
 X = digits.data
 Y = digits.target
 
-# Splits the data
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.5, random_state=42)
 
-# Reshapes the data
 X_train = X_train.reshape(-1, 8, 8)
 X_val = X_val.reshape(-1, 8, 8)
 
-# Converts to sequence shape
+# LSTM expects sequence length before the batch and feature axes
 X_train = np.swapaxes(X_train, 0, 1)
 X_val = np.swapaxes(X_val, 0, 1)
 
-# Converts from numpy array to torch tensors
 X_train = torch.from_numpy(X_train).float()
 X_val = torch.from_numpy(X_val).float()
 Y_train = torch.from_numpy(Y_train).long()
 
 
 class LSTM(torch.nn.Module):
-    def __init__(self, n_features, n_hidden, n_classes):
-        # Overriding initial class
+    """Classify image-row sequences with an LSTM and a linear output layer.
+
+    """
+
+    def __init__(self, n_features: int, n_hidden: int, n_classes: int) -> None:
+        """Allocate a recurrent layer and its classification output.
+
+        Args:
+            n_features: Number of input features per sequence step.
+            n_hidden: Number of recurrent hidden units.
+            n_classes: Number of output classes.
+
+        """
+
         super(LSTM, self).__init__()
 
-        # Saving number of hidden units as a property
         self.n_hidden = n_hidden
-
-        # Creates LSTM cell
         self.lstm = torch.nn.LSTM(n_features, n_hidden)
-
-        # Creates linear layer
         self.linear = torch.nn.Linear(n_hidden, n_classes, bias=False)
 
-    def forward(self, x):
-        # Gathers batch size
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         batch_size = x.size()[1]
 
-        # Variable to hold hidden state
+        # Independent batches start from zero rather than sharing recurrent state
         h0 = Variable(torch.zeros([1, batch_size, self.n_hidden]), requires_grad=False)
-
-        # Variable to hold cell state
         c0 = Variable(torch.zeros([1, batch_size, self.n_hidden]), requires_grad=False)
 
-        # Performs forward pass
         fx, _ = self.lstm.forward(x, (h0, c0))
 
         return self.linear.forward(fx[-1])
 
 
-def fit(model, loss, opt, x, y):
-    # Declares initial variables
+def fit(
+    model: torch.nn.Module,
+    loss: torch.nn.Module,
+    opt: optim.Optimizer,
+    x: torch.Tensor,
+    y: torch.Tensor,
+) -> float:
+    """Update model parameters with one training batch.
+
+    Args:
+        model: Model whose parameters are updated in place.
+        loss: Loss module comparing model outputs and target labels.
+        opt: Optimizer whose gradients and state are updated.
+        x: Sequence-first input batch tensor.
+        y: Target label tensor.
+
+    Returns:
+        Scalar loss before the parameter update.
+
+    """
+
     x = Variable(x, requires_grad=False)
     y = Variable(y, requires_grad=False)
 
-    # Resets the gradient
     opt.zero_grad()
-
-    # Performs the foward pass
     fw_x = model.forward(x)
     output = loss.forward(fw_x, y)
 
-    # Performs backward pass
     output.backward()
-
-    # Updates parameters
     opt.step()
 
     return output.item()
 
 
-def predict(model, x_val):
-    # Declares validation variable
+def predict(model: torch.nn.Module, x_val: torch.Tensor) -> np.ndarray:
+    """Predict class indices using the model's current training mode.
+
+    Args:
+        model: Trained CPU model evaluated without changing its mode.
+        x_val: Sequence-first validation input tensor.
+
+    Returns:
+        NumPy array of predicted class indices.
+
+    """
+
     x = Variable(x_val, requires_grad=False)
-
-    # Performs backward pass with this variable
     output = model.forward(x)
-
-    # Gets the index of the prediction
     y_val = output.data.numpy().argmax(axis=1)
 
     return y_val
 
 
-def lstm(opytimizer):
-    # Some model parameters
+def lstm(opytimizer: np.ndarray) -> float:
+    """Train a fresh recurrent classifier on the shared digit split.
+
+    Args:
+        opytimizer: Position rows containing SGD learning rate and momentum in that order.
+
+    Returns:
+        One minus validation accuracy after five training epochs.
+
+    """
+
     n_features = 8
     n_hidden = 128
     n_classes = 10
 
-    # Instanciating the model
     model = LSTM(n_features, n_hidden, n_classes)
 
-    # Input variables
     batch_size = 100
     epochs = 5
 
-    # Gathers parameters from Opytimizer
-    # Pay extremely attention to their order when declaring due to their bounds
     learning_rate = opytimizer[0][0]
     momentum = opytimizer[1][0]
 
-    # Declares the loss function
     loss = torch.nn.CrossEntropyLoss(reduction="mean")
-
-    # Declares the optimization algorithm
     opt = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
-    # Performs training loop
     for _ in range(epochs):
-        # Initial cost as 0.0
         cost = 0.0
-
-        # Calculates the number of batches
         num_batches = len(Y_train) // batch_size
 
-        # For every batch
         for k in range(num_batches):
-            # Declares initial and ending for each batch
             start, end = k * batch_size, (k + 1) * batch_size
-
-            # Cost will be the loss accumulated from model's fitting
             cost += fit(model, loss, opt, X_train[:, start:end, :], Y_train[start:end])
 
-    # Predicting samples from evaluating set
     preds = predict(model, X_val)
-
-    # Calculates accuracy
     acc = np.mean(preds == Y_val)
 
     return 1 - acc
 
 
-# Number of agents and decision variables
 n_agents = 10
 n_variables = 2
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [0, 0]
 upper_bound = [1, 1]
 
-# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, lstm)
 
-# Runs the optimization task
 opt.start(n_iterations=100)

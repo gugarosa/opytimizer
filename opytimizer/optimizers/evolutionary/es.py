@@ -1,7 +1,21 @@
-"""Evolution Strategies."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Evolution Strategies.
+
+Compilation sets the offspring count and initializes mutation strategies from the bounds.
+Updates mutate parents using equation 2, adapt strategies using equations 5-10,
+and retain the fittest members of the combined parent and child population.
+
+References:
+    T. Bäck and H.–P. Schwefel. An Overview of Evolutionary Algorithms for Parameter Optimization.
+    Evolutionary Computation (1993).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +25,18 @@ from opytimizer.core.space import Space
 
 
 class ES(Optimizer):
-    """An ES class, inherited from Optimizer.
-
-    This is the designed class to define ES-related
-    variables and methods.
-
-    References:
-        T. Bäck and H.–P. Schwefel. An Overview of Evolutionary Algorithms for Parameter Optimization.
-        Evolutionary Computation (1993).
+    """Optimize a population with self-adaptive evolution strategies.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the offspring fraction.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            The supported key is ``child_ratio`` (offspring count as a population fraction, 0.5).
 
         """
 
@@ -37,37 +47,14 @@ class ES(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.n_children = int(space.n_agents * self.child_ratio)
-        self.strategy = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         for i in range(self.n_children):
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                self.strategy[i][j] = 0.05 * np.random.uniform(
-                    0, ub - lb, space.agents[i].n_dimensions
-                )
+                self.strategy[i][j] = 0.05 * np.random.uniform(0, ub - lb, space.agents[i].n_dimensions)
 
     def _mutate_parent(self, agent: Agent, index: int, function: Callable) -> Agent:
-        """Mutates a parent into a new child (eq. 2).
-
-        Args:
-            agent: An agent instance to be reproduced.
-            index: Index of current agent.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Agent): A mutated child.
-
-        """
-
         a = copy.deepcopy(agent)
 
         r1 = np.random.normal(0.0, 1.0, 1)
@@ -79,16 +66,6 @@ class ES(Optimizer):
         return a
 
     def _update_strategy(self, index: int) -> np.ndarray:
-        """Updates the strategy (eq. 5-10).
-
-        Args:
-            index: Index of current agent.
-
-        Returns:
-            (np.ndarray): The updated strategy.
-
-        """
-
         n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
         tau = 1 / np.sqrt(2 * n_variables)
@@ -100,14 +77,6 @@ class ES(Optimizer):
         self.strategy[index] *= np.exp(tau_p * r1 + tau * r2)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Evolution Strategies over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         n_agents = len(space.agents)
 
         children = []

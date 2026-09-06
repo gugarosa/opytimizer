@@ -62,10 +62,22 @@ jobs:
           assert restored.space.best_agent.fit <= best.fit
           PY
 
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: "3.13"
+      - run: uv sync --locked --group docs
+      - run: uv run --no-sync sphinx-build -q -b html -W --keep-going docs docs/_build/html
+      - run: uv run --no-sync sphinx-build -q -b doctest -W --keep-going docs docs/_build/doctest
+
   release:
     name: Release to GitHub
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs: test
+    needs: [test, docs]
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 import pytest
 
@@ -28,9 +31,7 @@ def test_kmeans_groups_nearest_samples(monkeypatch):
         ),
     ],
 )
-def test_kmeans_preserves_sample_axis(
-    monkeypatch, samples, n_clusters, indexes, expected
-):
+def test_kmeans_preserves_sample_axis(monkeypatch, samples, n_clusters, indexes, expected):
     indexes = iter(indexes)
     monkeypatch.setattr(np.random, "randint", lambda low, high: next(indexes))
 

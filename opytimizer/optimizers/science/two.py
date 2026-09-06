@@ -1,7 +1,17 @@
-"""Tug Of War Optimization."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Tug Of War Optimization.
+
+References:
+    A. Kaveh. Tug of War Optimization.
+    Advances in Metaheuristic Algorithms for Optimal Design of Structures (2016).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -12,22 +22,21 @@ from opytimizer.core.space import Space
 
 
 class TWO(Optimizer):
-    """A TWO class, inherited from Optimizer.
-
-    This is the designed class to define TWO-related
-    variables and methods.
-
-    References:
-        A. Kaveh. Tug of War Optimization.
-        Advances in Metaheuristic Algorithms for Optimal Design of Structures (2016).
+    """Implement Tug Of War Optimization.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure friction and displacement for tug-of-war search.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``mu_s`` (1) is static friction and ``mu_k`` (1) is the initial kinetic friction,
+            reduced toward 0.1 with iteration progress.
+            ``delta_t`` (1) scales acceleration-induced displacement as a squared time step.
+            ``alpha`` (0.9) is the random-step decay base and ``beta`` (0.05) scales bound-relative noise.
 
         """
 
@@ -42,51 +51,23 @@ class TWO(Optimizer):
 
         self.build(params)
 
-    def _constraint_handle(
-        self, agents: List[Agent], best_agent: Agent, function: Callable, iteration: int
-    ) -> None:
-        """Performs the constraint handling procedure (eq. 11).
-
-        Args:
-            agents (list): List of agents.
-            best_agent (Agent): Global best agent.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-
-        """
-
+    def _constraint_handle(self, agents: list[Agent], best_agent: Agent, function: Callable, iteration: int) -> None:
+        # Performs the constraint handling procedure (eq. 11)
         for agent in agents:
             r1 = np.random.uniform(0.0, 1.0, 1)
             if r1 < 0.5:
                 r2 = np.random.normal(0.0, 1.0, 1)
 
-                agent.position = best_agent.position + (r2 / iteration) * (
-                    best_agent.position - agent.position
-                )
+                agent.position = best_agent.position + (r2 / iteration) * (best_agent.position - agent.position)
             agent.clip_by_bound()
 
             agent.fit = function(agent.position)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Tug of War Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         space.agents.sort(key=lambda x: x.fit)
         best_fit, worst_fit = space.agents[0].fit, space.agents[-1].fit
 
-        weights = [
-            (agent.fit - worst_fit) / (best_fit - worst_fit + c.EPSILON) + 1
-            for agent in space.agents
-        ]
+        weights = [(agent.fit - worst_fit) / (best_fit - worst_fit + c.EPSILON) + 1 for agent in space.agents]
 
         temp_agents = copy.deepcopy(space.agents)
 
@@ -98,10 +79,7 @@ class TWO(Optimizer):
             for j, temp2 in enumerate(temp_agents):
                 if weights[i] < weights[j]:
                     # Calculates the residual force (eq. 6)
-                    force = (
-                        np.maximum(weights[i] * self.mu_s, weights[j] * self.mu_s)
-                        - weights[i] * mu_k
-                    )
+                    force = np.maximum(weights[i] * self.mu_s, weights[j] * self.mu_s) - weights[i] * mu_k
 
                     # Calculates the gravitational acceleration (eq. 8)
                     g = temp2.position - temp1.position
@@ -109,9 +87,7 @@ class TWO(Optimizer):
                     # Calculates the acceleration (eq. 7)
                     acceleration = (force / (weights[i] * mu_k)) * g
 
-                    r1 = np.random.normal(
-                        0.0, 1.0, (temp1.n_variables, temp1.n_dimensions)
-                    )
+                    r1 = np.random.normal(0.0, 1.0, (temp1.n_variables, temp1.n_dimensions))
 
                     # Calculates the displacement (eq. 9-10)
                     delta += 0.5 * acceleration * self.delta_t**2 + np.multiply(

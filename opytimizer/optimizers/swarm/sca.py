@@ -1,6 +1,15 @@
-"""Sine Cosine Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Sine Cosine Algorithm.
+
+References:
+    S. Mirjalili. SCA: A Sine Cosine Algorithm for solving optimization problems.
+    Knowledge-Based Systems (2016).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -9,22 +18,20 @@ from opytimizer.core.space import Space
 
 
 class SCA(Optimizer):
-    """A SCA class, inherited from Optimizer.
-
-    This is the designed class to define SCA-related
-    variables and methods.
-
-    References:
-        S. Mirjalili. SCA: A Sine Cosine Algorithm for solving optimization problems.
-        Knowledge-Based Systems (2016).
+    """Move agents with alternating sine and cosine displacements.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure sine-cosine movement scales.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``r_min`` (0) and ``r_max`` (2) bound the random weight applied to the best position.
+            ``a`` (3) sets the initial movement amplitude, which decreases linearly over iterations.
+            Each update shares an amplitude, angle, target weight, and sine-or-cosine choice across agents.
 
         """
 
@@ -46,56 +53,19 @@ class SCA(Optimizer):
         r3: float,
         r4: float,
     ) -> np.ndarray:
-        """Updates a single particle position over a single variable (eq. 3.3).
-
-        Args:
-            agent_position: Agent's current position.
-            best_position: Global best position.
-            r1: Controls the next position's region.
-            r2: Defines how far the movement should be.
-            r3: Random weight for emphasizing or deemphasizing the movement.
-            r4: Random number to decide whether sine or cosine should be used.
-
-        Returns:
-            (np.ndarray): A new position.
-
-        """
-
+        # Sine-cosine movement toward the weighted best position (eq. 3.3)
         if r4 < 0.5:
-            new_position = agent_position + r1 * np.sin(r2) * np.fabs(
-                r3 * best_position - agent_position
-            )
-
+            new_position = agent_position + r1 * np.sin(r2) * np.fabs(r3 * best_position - agent_position)
         else:
-            new_position = agent_position + r1 * np.cos(r2) * np.fabs(
-                r3 * best_position - agent_position
-            )
+            new_position = agent_position + r1 * np.cos(r2) * np.fabs(r3 * best_position - agent_position)
 
         return new_position
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Sine Cosine Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
-        # Adaptively changing the r1 parameter, which controls the next position's region
         r1 = self.a - (iteration * self.a / n_iterations)
-
-        # The r2 parameter defines how far the movement should be
         r2 = np.random.uniform(0, 2 * np.pi, 1)
-
-        # A random weight for emphasizing or deemphasizing the movement
         r3 = np.random.uniform(self.r_min, self.r_max, 1)
-
-        # A random number to decide whether sine or cosine should be used
         r4 = np.random.uniform(0.0, 1.0, 1)
 
         for agent in space.agents:
-            agent.position = self._update_position(
-                agent.position, space.best_agent.position, r1, r2, r3, r4
-            )
+            agent.position = self._update_position(agent.position, space.best_agent.position, r1, r2, r3, r4)

@@ -1,7 +1,17 @@
-"""Owl Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Owl Search Algorithm.
+
+References:
+    M. Jain, S. Maurya, A. Rani and V. Singh.
+    Owl search algorithm: A novelnature-inspired heuristic paradigm for global optimization.
+    Journal of Intelligent & Fuzzy Systems (2018).
+
+"""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +21,18 @@ from opytimizer.core.space import Space
 
 
 class OSA(Optimizer):
-    """An OSA class, inherited from Optimizer.
-
-    This is the designed class to define OSA-related
-    variables and methods.
-
-    References:
-        M. Jain, S. Maurya, A. Rani and V. Singh.
-        Owl search algorithm: A novelnature-inspired heuristic paradigm for global optimization.
-        Journal of Intelligent & Fuzzy Systems (2018).
+    """Implement Owl Search Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure owl movement scaling.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``beta`` (1.9) is the initial movement scale, reduced linearly with iteration progress.
 
         """
 
@@ -38,15 +43,6 @@ class OSA(Optimizer):
         self.build(params)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Owl Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
 
         # Gathers best and worst agents (eq. 5 and 6)
@@ -70,15 +66,7 @@ class OSA(Optimizer):
             alpha = np.random.uniform(0.0, 0.5, 1)
             if p_vm < 0.5:
                 # Updates current's owl position (eq. 9 - top)
-                agent.position += (
-                    beta
-                    * intensity_change
-                    * np.fabs(alpha * best.position - agent.position)
-                )
+                agent.position += beta * intensity_change * np.fabs(alpha * best.position - agent.position)
             else:
                 # Updates current's owl position (eq. 9 - bottom)
-                agent.position -= (
-                    beta
-                    * intensity_change
-                    * np.fabs(alpha * best.position - agent.position)
-                )
+                agent.position -= beta * intensity_change * np.fabs(alpha * best.position - agent.position)

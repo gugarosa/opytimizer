@@ -1,6 +1,11 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import sys
+from types import MappingProxyType
 
 import numpy as np
+import pytest
 
 from opytimizer.core import Optimizer
 from opytimizer.spaces import SearchSpace
@@ -15,6 +20,31 @@ def test_optimizer_build_applies_mapping_without_lifecycle_state():
     assert not hasattr(optimizer, "algorithm")
     assert not hasattr(optimizer, "params")
     assert not hasattr(optimizer, "built")
+
+
+@pytest.mark.parametrize("params", [[], (), "", 0, False, ["rate"]])
+def test_optimizer_build_rejects_non_mappings(params):
+    optimizer = Optimizer()
+
+    with pytest.raises(TypeError, match="params"):
+        optimizer.build(params)
+
+    assert vars(optimizer) == {}
+
+
+def test_optimizer_build_preserves_mapping_semantics():
+    class FalseyMapping(dict):
+        def __bool__(self):
+            return False
+
+    optimizer = Optimizer()
+    optimizer.build(None)
+    optimizer.build({})
+    assert vars(optimizer) == {}
+
+    optimizer.build(MappingProxyType({"rate": 0.5}))
+    optimizer.build(FalseyMapping(rate=0.25))
+    assert optimizer.rate == 0.25
 
 
 def test_optimizer_base_hooks_are_noops():

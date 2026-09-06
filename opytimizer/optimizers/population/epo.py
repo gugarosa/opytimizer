@@ -1,6 +1,15 @@
-"""Emperor Penguin Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, Optional
+"""Emperor Penguin Optimizer.
+
+References:
+    G. Dhiman and V. Kumar. Emperor penguin optimizer: A bio-inspired algorithm for engineering problems.
+    Knowledge-Based Systems (2018).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -9,22 +18,19 @@ from opytimizer.core.space import Space
 
 
 class EPO(Optimizer):
-    """An EPO class, inherited from Optimizer.
-
-    This is the designed class to define EPO-related
-    variables and methods.
-
-    References:
-        G. Dhiman and V. Kumar. Emperor penguin optimizer: A bio-inspired algorithm for engineering problems.
-        Knowledge-Based Systems (2018).
+    """Implement Emperor Penguin Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure emperor-penguin movement.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``f`` (2.0) scales the exponential social-force term and ``l`` (1.5)
+            controls its decay with the iteration count.
 
         """
 
@@ -36,15 +42,6 @@ class EPO(Optimizer):
         self.build(params)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Emperor Penguin Optimization over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
         for agent in space.agents:
             R = np.random.uniform(0.0, 1.0, 1)
             if R >= 0.5:
@@ -65,9 +62,7 @@ class EPO(Optimizer):
             A = 2 * (T_p + P_grid) * r1 - T_p
 
             # Calculates the social forces of emperor penguin (eq. 12)
-            S = (
-                np.fabs(self.f * np.exp(-iteration / self.l) - np.exp(-iteration))
-            ) ** 2
+            S = (np.fabs(self.f * np.exp(-iteration / self.l) - np.exp(-iteration))) ** 2
 
             # Calculates the distance between current agent and emperor penguin (eq. 8)
             D_ep = np.fabs(S * space.best_agent.position - C * agent.position)

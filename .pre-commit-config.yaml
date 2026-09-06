@@ -18,6 +18,8 @@ repos:
     rev: 26.5.1
     hooks:
       - id: black
+        name: black with shared docstring layout
+        entry: python tools/format_python.py
   - repo: https://github.com/PyCQA/flake8
     rev: 7.3.0
     hooks:

@@ -1,7 +1,21 @@
-"""Evolutionary Programming."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Evolutionary Programming.
+
+Compilation initializes per-agent mutation strategies from the search bounds.
+Updates mutate parents using equation 5.1, adapt and clip strategies using equation 5.2,
+and retain tournament winners from the combined parent and child population.
+
+References:
+    A. E. Eiben and J. E. Smith. Introduction to Evolutionary Computing.
+    Natural Computing Series (2013).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +25,19 @@ from opytimizer.core.space import Space
 
 
 class EP(Optimizer):
-    """An EP class, inherited from Optimizer.
-
-    This is the designed class to define EP-related
-    variables and methods.
-
-    References:
-        A. E. Eiben and J. E. Smith. Introduction to Evolutionary Computing.
-        Natural Computing Series (2013).
+    """Optimize a population with adaptive mutation and tournament selection.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize tournament size and strategy clipping.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            Supported keys are ``bout_size`` (opponent count as a population fraction, 0.1)
+            and ``clip_ratio`` (scale applied after clipping strategies to bounds, 0.05).
 
         """
 
@@ -38,36 +49,13 @@ class EP(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
-        self.strategy = np.zeros(
-            (space.n_agents, space.n_variables, space.n_dimensions)
-        )
+        self.strategy = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
         for i in range(space.n_agents):
             for j, (lb, ub) in enumerate(zip(space.lb, space.ub)):
-                self.strategy[i][j] = 0.05 * np.random.uniform(
-                    0, ub - lb, space.agents[i].n_dimensions
-                )
+                self.strategy[i][j] = 0.05 * np.random.uniform(0, ub - lb, space.agents[i].n_dimensions)
 
     def _mutate_parent(self, agent: Agent, index: int, function: Callable) -> Agent:
-        """Mutates a parent into a new child (eq. 5.1).
-
-        Args:
-            agent: An agent instance to be reproduced.
-            index: Index of current agent.
-            function: A callable that will be used as the objective function.
-
-        Returns:
-            (Agent): A mutated child.
-
-        """
-
         a = copy.deepcopy(agent)
 
         r1 = np.random.normal(0.0, 1.0, 1)
@@ -79,40 +67,16 @@ class EP(Optimizer):
 
         return a
 
-    def _update_strategy(
-        self, index: int, lower_bound: np.ndarray, upper_bound: np.ndarray
-    ) -> np.ndarray:
-        """Updates the strategy and performs a clipping process to help its convergence (eq. 5.2).
-
-        Args:
-            index: Index of current agent.
-            lower_bound: An array holding the lower bounds.
-            upper_bound: An array holding the upper bounds.
-
-        Returns:
-            (np.ndarray): The updated strategy.
-
-        """
-
+    def _update_strategy(self, index: int, lower_bound: np.ndarray, upper_bound: np.ndarray) -> np.ndarray:
         n_variables, n_dimensions = self.strategy.shape[1], self.strategy.shape[2]
 
         r1 = np.random.normal(0.0, 1.0, (n_variables, n_dimensions))
         self.strategy[index] += r1 * (np.sqrt(np.abs(self.strategy[index])))
 
         for j, (lb, ub) in enumerate(zip(lower_bound, upper_bound)):
-            self.strategy[index][j] = (
-                np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
-            )
+            self.strategy[index][j] = np.clip(self.strategy[index][j], lb, ub) * self.clip_ratio
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Evolutionary Programming over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         n_agents = len(space.agents)
 
         children = []
@@ -133,10 +97,5 @@ class EP(Optimizer):
                 if agent.fit < space.agents[index].fit:
                     wins[i] += 1
 
-        space.agents = [
-            agents
-            for _, agents in sorted(
-                zip(wins, space.agents), key=lambda pair: pair[0], reverse=True
-            )
-        ]
+        space.agents = [agents for _, agents in sorted(zip(wins, space.agents), key=lambda pair: pair[0], reverse=True)]
         space.agents = space.agents[:n_agents]

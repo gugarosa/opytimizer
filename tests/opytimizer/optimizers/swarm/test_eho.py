@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.swarm import eho
@@ -17,18 +20,14 @@ def test_eho_params():
 
 
 def test_eho_compile():
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
     new_eho.compile(search_space)
 
 
 def test_eho_get_agents_from_clan():
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
     new_eho.compile(search_space)
@@ -46,9 +45,7 @@ def test_eho_updating_operator():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
     new_eho.compile(search_space)
@@ -59,9 +56,7 @@ def test_eho_updating_operator():
 
 
 def test_eho_separating_operator():
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
     new_eho.compile(search_space)
@@ -73,9 +68,7 @@ def test_eho_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=20, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_eho = eho.EHO()
     new_eho.compile(search_space)

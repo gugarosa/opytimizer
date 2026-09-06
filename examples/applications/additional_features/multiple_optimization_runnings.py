@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer import Opytimizer
@@ -5,31 +8,36 @@ from opytimizer.optimizers.swarm import PSO
 from opytimizer.spaces import SearchSpace
 
 
-def sphere(x):
+def sphere(x: np.ndarray) -> float:
+    """Evaluate the sphere objective.
+
+    Args:
+        x: Candidate position array.
+
+    Returns:
+        Sum of squared decision variables.
+
+    """
+
     return np.sum(x**2)
 
 
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Number of agents and decision variables
 n_agents = 20
 n_variables = 2
 
-# Lower and upper bounds (has to be the same size as `n_variables`)
 lower_bound = [-10, -10]
 upper_bound = [10, 10]
 
-# Creates the space and optimizer
 space = SearchSpace(n_agents, n_variables, lower_bound, upper_bound)
 optimizer = PSO()
 
-# Bundles every piece into Opytimizer class
 opt = Opytimizer(space, optimizer, sphere, save_agents=False)
 
-# Runs the optimization task
-# Every call on `start` will the continue the optimization for `n_iterations`
-# Note that the following lines achieves the same results as a 100-iteration running
+# Standard PSO retains its state between calls, giving 100 total iterations here
+# Other algorithms may restart iteration-local schedules on each call
 opt.start(n_iterations=50)
 opt.start(n_iterations=25)
 opt.start(n_iterations=25)

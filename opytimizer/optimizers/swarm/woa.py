@@ -1,7 +1,16 @@
-"""Whale Optimization Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Whale Optimization Algorithm.
+
+References:
+    S. Mirjalli and A. Lewis. The Whale Optimization Algorithm.
+    Advances in Engineering Software (2016).
+
+"""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +20,18 @@ from opytimizer.core.space import Space
 
 
 class WOA(Optimizer):
-    """A WOA class, inherited from Optimizer.
-
-    This is the designed class to define WOA-related
-    variables and methods.
-
-    References:
-        S. Mirjalli and A. Lewis. The Whale Optimization Algorithm.
-        Advances in Engineering Software (2016).
+    """Search through whale encircling, random exploration, and spiral movement.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure whale spiral movement.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``b`` (1) controls exponential growth of the spiral around the global-best position.
 
         """
 
@@ -37,31 +42,12 @@ class WOA(Optimizer):
         self.build(params)
 
     def _generate_random_agent(self, agent: Agent) -> Agent:
-        """Generates a new random-based agent.
-
-        Args:
-            agent: Agent to be copied.
-
-        Returns:
-            (Agent): Random-based agent.
-
-        """
-
         a = copy.deepcopy(agent)
         a.fill_with_uniform()
 
         return a
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Whale Optimization Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations (int): Maximum number of iterations
-
-        """
-
         coefficient = 2 - 2 * iteration / (n_iterations - 1)
 
         for agent in space.agents:
@@ -82,7 +68,4 @@ class WOA(Optimizer):
             else:
                 l = np.random.normal(0.0, 1.0, 1)
                 D = np.fabs(space.best_agent.position - agent.position)
-                agent.position = (
-                    D * np.exp(self.b * l) * np.cos(2 * np.pi * l)
-                    + space.best_agent.position
-                )
+                agent.position = D * np.exp(self.b * l) * np.cos(2 * np.pi * l) + space.best_agent.position

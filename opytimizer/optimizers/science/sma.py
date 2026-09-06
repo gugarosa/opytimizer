@@ -1,6 +1,16 @@
-"""Slime Mould Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, List, Optional
+"""Slime Mould Algorithm.
+
+References:
+    S. Li, H. Chen, M. Wang, A. A. Heidari, S. Mirjalili
+    Slime mould algorithm: A new method for stochastic optimization.
+    Future Generation Computer Systems (2020).
+
+"""
+
+from typing import Any
 
 import numpy as np
 
@@ -12,23 +22,19 @@ from opytimizer.core.space import Space
 
 
 class SMA(Optimizer):
-    """A SMA class, inherited from Optimizer.
-
-    This is the designed class to define SMA-related
-    variables and methods.
-
-    References:
-        S. Li, H. Chen, M. Wang, A. A. Heidari, S. Mirjalili
-        Slime mould algorithm: A new method for stochastic optimization.
-        Future Generation Computer Systems (2020).
+    """Implement Slime Mould Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure slime-mould random exploration.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``z`` (0.03) is the probability of uniformly resampling an agent instead of moving it.
+            Compilation allocates zero weights with the same shape as the population positions.
 
         """
 
@@ -39,49 +45,24 @@ class SMA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-        Args:
-            space: A Space object containing meta-information.
-        """
-
         self.weight = np.zeros((space.n_agents, space.n_variables, space.n_dimensions))
 
-    def _update_weight(self, agents: List[Agent]):
-        """Updates the weight of slime mould (eq. 2.5).
-
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _update_weight(self, agents: list[Agent]):
+        # Updates the weight of slime mould (eq. 2.5)
         best, worst = agents[0].fit, agents[-1].fit
 
         n_agents = len(agents)
 
         for i in range(n_agents):
 
-            r1 = np.random.uniform(
-                0, 1, (agents[i].n_variables, agents[i].n_dimensions)
-            )
+            r1 = np.random.uniform(0, 1, (agents[i].n_variables, agents[i].n_dimensions))
 
             if i <= int(n_agents / 2):
-                self.weight[i] = 1 + r1 * np.log10(
-                    (best - agents[i].fit) / ((best - worst) + c.EPSILON) + 1
-                )
+                self.weight[i] = 1 + r1 * np.log10((best - agents[i].fit) / ((best - worst) + c.EPSILON) + 1)
             else:
-                self.weight[i] = 1 - r1 * np.log10(
-                    (best - agents[i].fit) / ((best - worst) + c.EPSILON) + 1
-                )
+                self.weight[i] = 1 - r1 * np.log10((best - agents[i].fit) / ((best - worst) + c.EPSILON) + 1)
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Slime Mould Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A function object.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
 
         self._update_weight(space.agents)
@@ -106,8 +87,7 @@ class SMA(Optimizer):
                     k = np.random.randint(0, len(space.agents), None)
                     l = r.integer(0, len(space.agents), exclude=k, size=None)
                     agent.position = space.agents[0].position + vb * (
-                        self.weight[i]
-                        * (space.agents[k].position - space.agents[l].position)
+                        self.weight[i] * (space.agents[k].position - space.agents[l].position)
                     )
                 else:
                     agent.position *= vc

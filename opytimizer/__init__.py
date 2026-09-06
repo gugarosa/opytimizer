@@ -1,5 +1,8 @@
-"""Opytimizer main library. Note that it consists
-of several modules and sub-modules.
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Expose the optimization entry point and release version.
+
 """
 
 from opytimizer.opytimizer import Opytimizer

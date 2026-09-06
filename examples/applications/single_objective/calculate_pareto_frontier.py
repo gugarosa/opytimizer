@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer import Opytimizer
@@ -7,20 +10,16 @@ from opytimizer.spaces import ParetoSpace
 # Random seed for experimental consistency
 np.random.seed(0)
 
-# Defines the number of points `n` and the number of objectives `k`
 n_points = 100
 n_objectives = 3
 
-# Defines the agents to be initialized within the ParetoSpace
-# Note they are a multi-dimensional vector of shape [n, k],
+# Each row is one candidate's objective vector, not a decision-variable position
 data_points = np.random.uniform(size=(n_points, n_objectives))
 
-# Creates the space and optimizer
 space = ParetoSpace(data_points)
 optimizer = NDS()
 
-# Bundles every piece into Opytimizer class
+# NDS ranks the supplied objective vectors without calling the objective
 opt = Opytimizer(space, optimizer, lambda _: 0, save_agents=False)
 
-# Runs the optimization task
 opt.start()

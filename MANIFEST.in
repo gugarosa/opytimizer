@@ -1,0 +1,4 @@
+include CONVENTIONS.md
+include tools/format_python.py
+include tests/test_conventions.py
+include tests/tools/test_format_python.py

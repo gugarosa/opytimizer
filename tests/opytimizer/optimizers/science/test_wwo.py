@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
 import numpy as np
 
 from opytimizer.optimizers.science import wwo
@@ -21,9 +24,7 @@ def test_wwo_params():
 
 
 def test_wwo_compile():
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)
@@ -33,9 +34,7 @@ def test_wwo_propagate_wave():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)
@@ -49,16 +48,12 @@ def test_wwo_refract_wave():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)
 
-    height, length = new_wwo._refract_wave(
-        search_space.agents[0], search_space.best_agent, square, 0
-    )
+    height, length = new_wwo._refract_wave(search_space.agents[0], search_space.best_agent, square, 0)
 
     assert height == 5
     assert length != 0
@@ -68,9 +63,7 @@ def test_wwo_break_wave():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)
@@ -81,9 +74,7 @@ def test_wwo_break_wave():
 
 
 def test_wwo_update_wave_length():
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)
@@ -95,9 +86,7 @@ def test_wwo_update():
     def square(x):
         return np.sum(x**2)
 
-    search_space = search.SearchSpace(
-        n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10]
-    )
+    search_space = search.SearchSpace(n_agents=50, n_variables=2, lower_bound=[0, 0], upper_bound=[10, 10])
 
     new_wwo = wwo.WWO()
     new_wwo.compile(search_space)

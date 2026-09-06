@@ -1,7 +1,17 @@
-"""Aquila Optimizer."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Aquila Optimizer.
+
+References:
+    L. Abualigah et al. Aquila Optimizer: A novel meta-heuristic optimization Algorithm.
+    Computers & Industrial Engineering (2021).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,21 @@ from opytimizer.core.space import Space
 
 
 class AO(Optimizer):
-    """An AO class, inherited from Optimizer.
-
-    This is the designed class to define AO-related
-    variables and methods.
-
-    References:
-        L. Abualigah et al. Aquila Optimizer: A novel meta-heuristic optimization Algorithm.
-        Computers & Industrial Engineering (2021).
+    """Implement Aquila Optimizer.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure Aquila exploration and exploitation.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            Supported keys are ``alpha`` (0.1), the best-to-average exploitation weight,
+            and ``delta`` (0.1), the bound-based exploitation weight.
+            ``n_cycles`` (10) sets the spiral radius offset, ``U`` (0.00565) scales its
+            variable-dependent growth, and ``w`` (0.005) scales its angular decrease.
 
         """
 
@@ -42,19 +51,7 @@ class AO(Optimizer):
 
         self.build(params)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Aquila Optimizer over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         average = np.mean([agent.position for agent in space.agents], axis=0)
 
         for agent in space.agents:
@@ -67,13 +64,11 @@ class AO(Optimizer):
 
                 if r1 <= 0.5:
                     # Updates temporary agent's position (eq. 3)
-                    a.position = space.best_agent.position * (
-                        1 - (iteration / n_iterations)
-                    ) + (average - space.best_agent.position * r2)
-                else:
-                    levy = d.generate_levy_distribution(
-                        size=(agent.n_variables, agent.n_dimensions)
+                    a.position = space.best_agent.position * (1 - (iteration / n_iterations)) + (
+                        average - space.best_agent.position * r2
                     )
+                else:
+                    levy = d.generate_levy_distribution(size=(agent.n_variables, agent.n_dimensions))
                     idx = np.random.randint(0, len(space.agents), None)
 
                     D = np.linspace(1, agent.n_variables, agent.n_variables)
@@ -90,11 +85,7 @@ class AO(Optimizer):
                     y = cycle * np.cos(theta)
 
                     # Updates temporary agent's position (eq. 5)
-                    a.position = (
-                        space.best_agent.position * levy
-                        + space.agents[idx].position
-                        + (y - x) * r2
-                    )
+                    a.position = space.best_agent.position * levy + space.agents[idx].position + (y - x) * r2
             else:
                 r2 = np.random.uniform(0.0, 1.0, 1)
                 if r2 <= 0.5:
@@ -103,9 +94,7 @@ class AO(Optimizer):
 
                     # Updates temporary agent's position (eq. 13)
                     a.position = (
-                        (space.best_agent.position - average) * self.alpha
-                        - r2
-                        + ((ub - lb) * r2 + lb) * self.delta
+                        (space.best_agent.position - average) * self.alpha - r2 + ((ub - lb) * r2 + lb) * self.delta
                     )
                 else:
                     # Calculates both motions (eq. 16 and 17)
@@ -115,17 +104,10 @@ class AO(Optimizer):
                     # Calculates quality function (eq. 15)
                     QF = iteration ** (G1 / (1 - n_iterations) ** 2)
 
-                    levy = d.generate_levy_distribution(
-                        size=(agent.n_variables, agent.n_dimensions)
-                    )
+                    levy = d.generate_levy_distribution(size=(agent.n_variables, agent.n_dimensions))
 
                     # Updates temporary agent's position (eq. 14)
-                    a.position = (
-                        QF * space.best_agent.position
-                        - (G1 * a.position * r2)
-                        - G2 * levy
-                        + r2 * G1
-                    )
+                    a.position = QF * space.best_agent.position - (G1 * a.position * r2) - G2 * levy + r2 * G1
 
             a.clip_by_bound()
 

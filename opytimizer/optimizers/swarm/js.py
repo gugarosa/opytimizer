@@ -1,6 +1,25 @@
-"""Jellyfish Search-based algorithms."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
-from typing import Any, Dict, List, Optional
+"""Jellyfish Search-based algorithms.
+
+Compilation replaces agent positions with a logistic-map sequence in the unit interval, without rescaling
+to the search bounds. For ``x`` in ``[0, 1]``, ``x * (1 - x)`` lies in ``[0, 1/4]``.
+Requiring ``0 < eta <= 4`` therefore keeps the recurrence in ``[0, 1]``.
+Larger coefficients can leave this interval and diverge. This bound does not imply chaotic behavior
+for every supported coefficient or starting point.
+
+NBJS uses the same initialization and ocean current but omits the bounds' span from type A motion.
+
+References:
+    J.-S. Chou and D.-N. Truong. A novel metaheuristic optimizer inspired by behavior of jellyfish in ocean.
+    Applied Mathematics and Computation (2020).
+    NBJS: publication pending.
+
+"""
+
+from numbers import Real
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +29,25 @@ from opytimizer.core.space import Space
 
 
 class JS(Optimizer):
-    """A JS class, inherited from Optimizer.
-
-    This is the designed class to define JS-related
-    variables and methods.
-
-    References:
-        J.-S. Chou and D.-N. Truong. A novel metaheuristic optimizer inspired by behavior of jellyfish in ocean.
-        Applied Mathematics and Computation (2020).
+    """Search with jellyfish ocean-current and local-motion dynamics.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure jellyfish initialization and motion coefficients.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Raises:
+            TypeError: A coefficient is not a real scalar.
+            ValueError: A coefficient is nonpositive, nonfinite, or ``eta`` exceeds four.
+
+        Notes:
+            ``eta`` (4.0) is the logistic-map coefficient and requires ``0 < eta <= 4``.
+            ``beta`` (3.0) scales the population mean in the ocean current, and ``gamma`` (0.1) scales
+            type A motion. Both require finite positive real values without an artificial upper bound.
+            Coefficients are checked before initialization or movement can mutate agents.
 
         """
 
@@ -36,15 +58,19 @@ class JS(Optimizer):
         self.gamma = 0.1
 
         self.build(params)
+        self._validate_parameters()
 
-    def _initialize_chaotic_map(self, agents: List[Agent]) -> None:
-        """Initializes a set of agents using a logistic chaotic map.
+    def _validate_parameters(self) -> None:
+        for name in ("eta", "beta", "gamma"):
+            value = getattr(self, name)
+            if not isinstance(value, Real):
+                raise TypeError(f"`{name}` must be a real scalar.")
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f"`{name}` must be finite and positive.")
+        if self.eta > 4:
+            raise ValueError("`eta` must not exceed 4 to keep the logistic map in the unit interval.")
 
-        Args:
-            agents: List of agents.
-
-        """
-
+    def _initialize_chaotic_map(self, agents: list[Agent]) -> None:
         for i, agent in enumerate(agents):
             if i == 0:
                 for j in range(agent.n_variables):
@@ -52,34 +78,13 @@ class JS(Optimizer):
             else:
                 for j in range(agent.n_variables):
                     # Calculates its position using logistic chaotic map (eq. 18)
-                    agent.position[j] = (
-                        self.eta
-                        * agents[i - 1].position[j]
-                        * (1 - agents[i - 1].position[j])
-                    )
+                    agent.position[j] = self.eta * agents[i - 1].position[j] * (1 - agents[i - 1].position[j])
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
+        self._validate_parameters()
         self._initialize_chaotic_map(space.agents)
 
-    def _ocean_current(self, agents: List[Agent], best_agent: Agent) -> np.ndarray:
-        """Calculates the ocean current (eq. 9).
-
-        Args:
-            agents: List of agents.
-            best_agent: Best agent.
-
-        Returns:
-            (np.ndarray): A trend value for the ocean current.
-
-        """
-
+    def _ocean_current(self, agents: list[Agent], best_agent: Agent) -> np.ndarray:
         r1 = np.random.uniform(0.0, 1.0, 1)
         u = np.mean([agent.position for agent in agents])
 
@@ -89,34 +94,13 @@ class JS(Optimizer):
         return trend
 
     def _motion_a(self, lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
-        """Calculates type A motion (eq. 12).
-
-        Args:
-            lb: Array of lower bounds.
-            ub: Array of upper bounds.
-
-        Returns:
-            (np.ndarray): A type A motion array.
-
-        """
-
+        # Type A motion scales with the bounds' span (eq. 12)
         r1 = np.random.uniform(0.0, 1.0, 1)
         motion = self.gamma * r1 * (np.expand_dims(ub, -1) - np.expand_dims(lb, -1))
 
         return motion
 
     def _motion_b(self, agent_i: Agent, agent_j: Agent) -> np.ndarray:
-        """Calculates type B motion (eq. 15).
-
-        Args:
-            agent_i: Current agent to be updated.
-            agent_j: Selected agent.
-
-        Returns:
-            (np.ndarray): A type B motion array.
-
-        """
-
         r1 = np.random.uniform(0.0, 1.0, 1)
 
         if agent_i.fit >= agent_j.fit:
@@ -131,14 +115,7 @@ class JS(Optimizer):
         return motion
 
     def update(self, space: Space, iteration: int, n_iterations: int) -> None:
-        """Wraps Jellyfish Search over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
+        self._validate_parameters()
 
         for agent in space.agents:
             r1 = np.random.uniform(0.0, 1.0, 1)
@@ -166,38 +143,26 @@ class JS(Optimizer):
 
 
 class NBJS(JS):
-    """An NBJS class, inherited from JS.
-
-    This is the designed class to define NBJS-related
-    variables and methods.
-
-    References:
-        Publication pending.
+    """Apply jellyfish search with a bound-independent type A motion.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure the bound-independent jellyfish variant.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``eta`` (4.0) controls the logistic map, ``beta`` (3.0) scales the ocean current's population mean,
+            and ``gamma`` (0.1) scales type A motion without multiplying by the bounds' span.
+            The coefficient domains and validation behavior are inherited from :class:`JS`.
 
         """
 
         super(NBJS, self).__init__(params)
 
     def _motion_a(self, lb: np.ndarray, ub: np.ndarray) -> np.ndarray:
-        """Calculates type A motion.
-
-        Args:
-            lb: Array of lower bounds.
-            ub: Array of upper bounds.
-
-        Returns:
-            (np.ndarray): A type A motion array.
-
-        """
-
         r1 = np.random.uniform(0.0, 1.0, 1)
         motion = self.gamma * r1
 

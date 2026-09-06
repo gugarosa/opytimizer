@@ -1,7 +1,17 @@
-"""Artificial Flora."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Artificial Flora.
+
+References:
+    L. Cheng, W. Xue-han and Y. Wang. Artificial flora (AF) optimization algorithm.
+    Applied Sciences (2018).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -10,22 +20,20 @@ from opytimizer.core.space import Space
 
 
 class AF(Optimizer):
-    """An AF class, inherited from Optimizer.
-
-    This is the designed class to define AF-related
-    variables and methods.
-
-    References:
-        L. Cheng, W. Xue-han and Y. Wang. Artificial flora (AF) optimization algorithm.
-        Applied Sciences (2018).
+    """Search with offspring dispersal and fitness-based flora selection.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure artificial flora propagation.
 
         Args:
             params: Contains key-value parameters to the meta-heuristics.
+
+        Notes:
+            ``c1`` (0.75) weights grandparent distance and ``c2`` (1.25) weights parent distance.
+            ``m`` (10) is the number of offspring per agent, and ``Q`` (0.75) scales selection probability.
+            Compilation samples per-agent ``p_distance`` and ``g_distance`` uniformly in ``[0, 1)``.
 
         """
 
@@ -41,25 +49,10 @@ class AF(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.p_distance = np.random.uniform(0.0, 1.0, space.n_agents)
         self.g_distance = np.random.uniform(0.0, 1.0, space.n_agents)
 
     def update(self, space: Space, function: Callable) -> None:
-        """Wraps Artificial Flora over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-
-        """
-
         space.agents.sort(key=lambda x: x.fit)
         new_agents = []
 
@@ -72,14 +65,9 @@ class AF(Optimizer):
                 r3 = np.random.uniform(0.0, 1.0, 1)
 
                 # Calculates the new distance (eq. 1)
-                distance = (
-                    self.g_distance[i] * r1 * self.c1
-                    + self.p_distance[i] * r2 * self.c2
-                )
+                distance = self.g_distance[i] * r1 * self.c1 + self.p_distance[i] * r2 * self.c2
 
-                D = np.random.normal(
-                    0, distance, (space.n_variables, space.n_dimensions)
-                )
+                D = np.random.normal(0, distance, (space.n_variables, space.n_dimensions))
 
                 # Updates offspring's position (eq. 5)
                 a.position += D

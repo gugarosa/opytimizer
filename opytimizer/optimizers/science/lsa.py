@@ -1,7 +1,17 @@
-"""Lightning Search Algorithm."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Lightning Search Algorithm.
+
+References:
+    H. Shareef, A. Ibrahim and A. Mutlag. Lightning search algorithm.
+    Applied Soft Computing (2015).
+
+"""
 
 import copy
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -11,22 +21,21 @@ from opytimizer.core.space import Space
 
 
 class LSA(Optimizer):
-    """An LSA class, inherited from Optimizer.
-
-    This is the designed class to define LSA-related
-    variables and methods.
-
-    References:
-        H. Shareef, A. Ibrahim and A. Mutlag. Lightning search algorithm.
-        Applied Soft Computing (2015).
+    """Implement Lightning Search Algorithm.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Configure lightning channel lifetime and energy.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Attribute overrides applied without copying their values.
+
+        Notes:
+            ``max_time`` (10) is the update interval for replacing the worst agent with the best.
+            ``E`` (2.05) sets the energy offset and ``p_fork`` (0.01) is the probability
+            of testing a random fork after a successful move.
+            Compilation resets elapsed time and samples the shared direction array.
 
         """
 
@@ -39,52 +48,21 @@ class LSA(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.time = 0
 
-        self.direction = np.sign(
-            np.random.uniform(-1, 1, (space.n_variables, space.n_dimensions))
-        )
+        self.direction = np.sign(np.random.uniform(-1, 1, (space.n_variables, space.n_dimensions)))
 
     def _update_direction(self, agent: Agent, function: Callable) -> None:
-        """Updates the direction array by shaking agent's direction.
-
-        Args:
-            agent: An agent instance.
-            function: A callable that will be used as the objective function.
-
-        """
-
         for j in range(agent.n_variables):
             direction = copy.deepcopy(agent)
-            direction.position[j] += (
-                self.direction[j] * 0.005 * (agent.ub[j] - agent.lb[j])
-            )
+            direction.position[j] += self.direction[j] * 0.005 * (agent.ub[j] - agent.lb[j])
             direction.clip_by_bound()
 
             direction.fit = function(direction.position)
             if direction.fit > agent.fit:
                 self.direction[j] *= -1
 
-    def _update_position(
-        self, agent: Agent, best_agent: Agent, function: Callable, energy: float
-    ) -> None:
-        """Updates agent's position.
-
-        Args:
-            agent: An agent instance.
-            best_agent: A best agent instance.
-            function: A callable that will be used as the objective function.
-            energy: Current energy value.
-
-        """
-
+    def _update_position(self, agent: Agent, best_agent: Agent, function: Callable, energy: float) -> None:
         a = copy.deepcopy(agent)
 
         distance = agent.position - best_agent.position
@@ -96,9 +74,7 @@ class LSA(Optimizer):
                     a.position[j][k] += self.direction[j][k] * r1
                 else:
                     if distance[j][k] < 0:
-                        a.position[j][k] += np.random.exponential(
-                            np.fabs(distance[j][k])
-                        )
+                        a.position[j][k] += np.random.exponential(np.fabs(distance[j][k]))
                     else:
                         a.position[j][k] -= np.random.exponential(distance[j][k])
         a.clip_by_bound()
@@ -118,19 +94,7 @@ class LSA(Optimizer):
                     agent.position = copy.deepcopy(a.position)
                     agent.fit = copy.deepcopy(a.fit)
 
-    def update(
-        self, space: Space, function: Callable, iteration: int, n_iterations: int
-    ) -> None:
-        """Wraps Lightning Search Algorithm over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-            function: A callable that will be used as the objective function.
-            iteration: Current iteration.
-            n_iterations: Maximum number of iterations.
-
-        """
-
+    def update(self, space: Space, function: Callable, iteration: int, n_iterations: int) -> None:
         self.time += 1
         if self.time >= self.max_time:
             space.agents.sort(key=lambda x: x.fit)

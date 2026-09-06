@@ -1,76 +1,63 @@
-"""Hypercomplex-based mathematical helpers."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
+"""Hypercomplex-based mathematical helpers.
+
+"""
+
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, List, Tuple, Union
+from typing import TypeVar
 
 import numpy as np
+from numpy.typing import ArrayLike
+
+_T = TypeVar("_T")
 
 
 def span(
     array: np.ndarray,
-    lower_bound: Union[List[Any], Tuple[Any, Any], np.ndarray],
-    upper_bound: Union[List, Tuple, np.ndarray],
+    lower_bound: ArrayLike,
+    upper_bound: ArrayLike,
 ) -> np.ndarray:
     """Spans a hypercomplex number between lower and upper bounds.
 
     Args:
         array: A 2-dimensional input array.
-        lb: Lower bounds to be spanned.
-        ub: Upper bounds to be spanned.
+        lower_bound: Lower bounds to be spanned.
+        upper_bound: Upper bounds to be spanned.
 
     Returns:
-        (np.ndarray): Spanned values that can be used as decision variables.
+        Spanned values that can be used as decision variables.
 
     """
 
     lb = np.asarray(lower_bound)
     ub = np.asarray(upper_bound)
 
-    array_span = (ub - lb) * (
-        np.linalg.norm(array, axis=1) / np.sqrt(array.shape[1])
-    ) + lb
+    array_span = (ub - lb) * (np.linalg.norm(array, axis=1) / np.sqrt(array.shape[1])) + lb
 
     return array_span
 
 
 def span_to_hyper_value(
-    lb: Union[List[Any], Tuple[Any, Any], np.ndarray],
-    ub: Union[List[Any], Tuple[Any, Any], np.ndarray],
-) -> np.ndarray:
-    """Spans a hyper-value between lower and upper bounds.
+    lb: ArrayLike,
+    ub: ArrayLike,
+) -> Callable[[Callable[[np.ndarray], _T]], Callable[[np.ndarray], _T]]:
+    """Decorate an objective to span its hypercomplex input between bounds.
 
     Args:
         lb: Lower bounds.
         ub: Upper bounds.
 
     Returns:
-        (np.ndarray): The output of the incoming objective function with a spanned input.
+        Decorator preserving the objective's result while spanning its input.
 
     """
 
-    def _span_to_hyper_value(f: callable) -> callable:
-        """Actually decorates the incoming objective function.
-
-        Args:
-            f: Incoming objective function.
-
-        Returns:
-            (callable): The wrapped objective function.
-
-        """
-
+    def _span_to_hyper_value(f: Callable[[np.ndarray], _T]) -> Callable[[np.ndarray], _T]:
         @wraps(f)
-        def __span_to_hyper_value(x: np.ndarray) -> np.ndarray:
-            """Wraps the objective function for calculating its output.
-
-            Args:
-                x: Array of hyper-values.
-
-            Returns:
-                (np.ndarray): The objective function itself.
-
-            """
-
+        def __span_to_hyper_value(x: np.ndarray) -> _T:
             x = span(x, lb, ub)
 
             return f(x)

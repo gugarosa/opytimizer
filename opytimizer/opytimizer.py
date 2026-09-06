@@ -1,8 +1,18 @@
-"""Optimization entry point."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
 
+"""Coordinate optimization strategies and per-run callbacks.
+
+"""
+
+from __future__ import annotations
+
+import operator
 import time
+from collections.abc import Callable, Sequence
 from inspect import signature
-from typing import Any, Callable, List, Optional
+from os import PathLike
+from typing import Any, SupportsIndex
 
 import dill
 
@@ -12,14 +22,15 @@ from opytimizer.utils.callback import Callback
 from opytimizer.utils.history import History
 
 
-def _emit(callbacks: Optional[List[Callback]], event: str, *args) -> None:
-    for callback in callbacks or []:
+def _emit(callbacks: Sequence[Callback] | None, event: str, *args: Any) -> None:
+    if callbacks is None:
+        return
+    for callback in callbacks:
         getattr(callback, event)(*args)
 
 
 class Opytimizer:
-    """An Opytimizer class holds all the information needed
-    in order to perform an optimization task.
+    """Coordinate a mutable population, optimization strategy, and objective.
 
     """
 
@@ -30,24 +41,33 @@ class Opytimizer:
         function: Callable,
         save_agents: bool = False,
     ) -> None:
-        """Initialization method.
+        """Bind an initialized space and compile the optimizer's state.
+
+        The space and optimizer are retained, not copied. Construction compiles once and can reset shared buffers.
+        Repeated runs continue optimizer state and append history. Use separate instances for independent tasks.
 
         Args:
-            space: Space-child instance.
-            optimizer: Optimizer-child instance.
-            function: Objective callable.
-            save_agents: Saves all agents in the search space.
+            space: Initialized ``Space`` instance with its configured population.
+            optimizer: Strategy whose space-dependent state is compiled during construction.
+            function: Scalar objective receiving an array of shape ``(n_variables, n_dimensions)``.
+            save_agents: Whether to retain population snapshots in addition to the best-agent history.
+
+        Raises:
+            TypeError: Supplied objects or the history option have invalid types.
+            RuntimeError: The space has not initialized its population.
 
         """
 
         if not isinstance(space, Space):
-            raise TypeError("`space` should be a Space")
+            raise TypeError("`space` must be a Space.")
         if len(space.agents) != space.n_agents:
-            raise RuntimeError("`space` should be initialized")
+            raise RuntimeError("`space` must be initialized.")
         if not isinstance(optimizer, Optimizer):
-            raise TypeError("`optimizer` should be an Optimizer")
+            raise TypeError("`optimizer` must be an Optimizer.")
         if not callable(function):
-            raise TypeError("`function` should be callable")
+            raise TypeError("`function` must be callable.")
+
+        history = History(save_agents=save_agents)
 
         self.space = space
 
@@ -56,17 +76,14 @@ class Opytimizer:
 
         self.function = function
 
-        self.history = History(save_agents=save_agents)
+        self.history = history
 
         self.iteration = 0
         self.total_iterations = 0
 
     @property
-    def evaluate_args(self) -> List[Any]:
-        """Converts the optimizer `evaluate` arguments into real variables.
-
-        Returns:
-            (List[Any]): List of real-attribute variables.
+    def evaluate_args(self) -> list[Any]:
+        """Return current model attributes requested by the evaluator in signature order.
 
         """
 
@@ -75,11 +92,8 @@ class Opytimizer:
         return [getattr(self, v) for v in args]
 
     @property
-    def update_args(self) -> List[Any]:
-        """Converts the optimizer `update` arguments into real variables.
-
-        Returns:
-            (List[Any]): List of real-attribute variables.
+    def update_args(self) -> list[Any]:
+        """Return current model attributes requested by the updater in signature order.
 
         """
 
@@ -87,11 +101,13 @@ class Opytimizer:
 
         return [getattr(self, v) for v in args]
 
-    def evaluate(self, callbacks: Optional[List[Callback]] = None) -> None:
-        """Wraps the `evaluate` pipeline with its corresponding callbacks.
+    def evaluate(self, callbacks: Sequence[Callback] | None = None) -> None:
+        """Evaluate the population between the before/after evaluation hooks.
+
+        Objective errors propagate and prevent the after hook from running.
 
         Args:
-            callbacks: List of callbacks.
+            callbacks: Callbacks invoked in sequence order, or ``None``.
 
         """
 
@@ -99,11 +115,13 @@ class Opytimizer:
         self.optimizer.evaluate(*self.evaluate_args)
         _emit(callbacks, "on_evaluate_after", *self.evaluate_args)
 
-    def update(self, callbacks: Optional[List[Callback]] = None) -> None:
-        """Wraps the `update` pipeline with its corresponding callbacks.
+    def update(self, callbacks: Sequence[Callback] | None = None) -> None:
+        """Update candidates, dispatch update hooks, then clip positions.
+
+        The after-update hook precedes driver clipping. Errors propagate without rolling back changed state.
 
         Args:
-            callbacks: List of callbacks.
+            callbacks: Callbacks invoked in sequence order, or ``None``.
 
         """
 
@@ -111,33 +129,53 @@ class Opytimizer:
         self.optimizer.update(*self.update_args)
         _emit(callbacks, "on_update_after", *self.update_args)
 
-        # Regardless of callbacks or not, every update on the search space
-        # must meet the bounds limits
         self.space.clip_by_bound()
 
     def start(
         self,
-        n_iterations: int = 1,
-        callbacks: Optional[List[Callback]] = None,
+        n_iterations: SupportsIndex = 1,
+        callbacks: Sequence[Callback] | None = None,
     ) -> None:
-        """Starts the optimization task.
+        """Run additional iterations in place without recompiling the optimizer.
+
+        A zero budget performs initial evaluation and task hooks without updates.
+        Results remain in ``space`` and ``history`` rather than a separate return object.
 
         Args:
-            n_iterations: Maximum number of iterations.
-            callbacks: List of callbacks.
+            n_iterations: Non-negative Python or NumPy integer budget.
+            callbacks: Ordered callbacks for this invocation, supplied again when resuming a checkpoint.
+
+        Raises:
+            TypeError: The budget does not support integer indexing.
+            ValueError: The budget is negative.
+
+        Notes:
+            The loop sets ``iteration`` to a zero-based index for each update.
+            Before the first update it retains its previous value.
+            ``total_iterations`` is incremented before each iteration-begin hook and is cumulative across calls.
+            History is appended after evaluation, before iteration-end hooks.
+            Elapsed time includes callbacks but excludes construction.
+            Exceptions propagate without rollback. Task-end hooks and elapsed history require normal completion.
 
         """
 
-        self.n_iterations = n_iterations
-        callbacks = callbacks or []
+        try:
+            iterations = operator.index(n_iterations)
+        except TypeError as error:
+            raise TypeError("`n_iterations` must be an integer.") from error
+        if iterations < 0:
+            raise ValueError("`n_iterations` must be non-negative.")
 
-        start = time.time()
+        self.n_iterations = n_iterations
+        callbacks = [] if callbacks is None else callbacks
+
+        start = time.perf_counter()
 
         _emit(callbacks, "on_task_begin", self)
 
         self.evaluate(callbacks)
 
-        for t in range(n_iterations):
+        for t in range(iterations):
             self.total_iterations += 1
             self.iteration = t
 
@@ -146,24 +184,24 @@ class Opytimizer:
             self.update(callbacks)
             self.evaluate(callbacks)
 
-            self.history.dump(
-                agents=self.space.agents, best_agent=self.space.best_agent
-            )
+            self.history.dump(agents=self.space.agents, best_agent=self.space.best_agent)
 
             _emit(callbacks, "on_iteration_end", self.total_iterations, self)
 
         _emit(callbacks, "on_task_end", self)
 
-        end = time.time()
-        opt_time = end - start
+        elapsed = time.perf_counter() - start
+        self.history.dump(time=elapsed)
 
-        self.history.dump(time=opt_time)
+    def save(self, file_path: str | PathLike[str]) -> None:
+        """Write this model's state to a dill checkpoint, replacing the file.
 
-    def save(self, file_path: str) -> None:
-        """Saves the optimization model to a dill (pickle) file.
+        Filesystem and serialization errors propagate.
+        State includes the space, optimizer, objective, history, and counters.
+        The driver does not register its callback sequence as model state.
 
         Args:
-            file_path: Path of file to be saved.
+            file_path: Text path or path-like object whose parent directory already exists.
 
         """
 
@@ -171,16 +209,20 @@ class Opytimizer:
             dill.dump(self, output_file)
 
     @classmethod
-    def load(cls, file_path: str) -> "Opytimizer":
-        """Loads the optimization model from a dill (pickle) file without needing
-        to instantiate the class.
+    def load(cls, file_path: str | PathLike[str]) -> Opytimizer:
+        """Restore optimization state from a trusted dill checkpoint.
 
         Args:
-            file_path: Path of file to be loaded.
+            file_path: Text path or path-like object containing a saved model.
+
+        Returns:
+            The saved model without recompiling its optimizer or registering per-run callbacks.
+
+        Warning:
+            Dill uses pickle-based serialization and can execute code while
+            loading. Never load checkpoints from untrusted sources.
 
         """
 
         with open(file_path, "rb") as input_file:
-            opt_model = dill.load(input_file)
-
-            return opt_model
+            return dill.load(input_file)

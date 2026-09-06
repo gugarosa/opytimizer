@@ -1,7 +1,20 @@
-"""Non-Dominated Sorting."""
+# Copyright (c) 2019-2026 Opytimizer contributors.
+# Licensed under the Apache License, Version 2.0.
+
+"""Non-Dominated Sorting.
+
+Compilation initializes domination counts, pairwise domination sets, and unknown statuses
+of -1. Updates rank successive frontiers and count first-frontier points. Domination compares
+agent position vectors using maximization: no objective is smaller and at least one is larger.
+
+References:
+    P. Godfrey, R. Shipley and J. Gryz.
+    Algorithms and Analyses for Maximal Vector Computation. The VLDB Journal (2007).
+
+"""
 
 import copy
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 
@@ -11,23 +24,19 @@ from opytimizer.core.space import Space
 
 
 class NDS(Optimizer):
-    """An NDS class, inherited from Optimizer.
-
-    This is the designed class to define NDS-related
-    variables and methods.
-
-    References:
-        P. Godfrey, R. Shipley and J. Gryz.
-        Algorithms and Analyses for Maximal Vector Computation.
-        The VLDB Journal (2007).
+    """Rank a population by successive non-dominated frontiers.
 
     """
 
-    def __init__(self, params: Optional[Dict[str, Any]] = None) -> None:
-        """Initialization method.
+    def __init__(self, params: dict[str, Any] | None = None) -> None:
+        """Initialize the Pareto point counter.
 
         Args:
-            params: Contains key-value parameters to the meta-heuristics.
+            params: Overrides for the supported optimizer parameters.
+
+        Notes:
+            The supported key is ``n_pareto_points`` (initial first-frontier point count, 0).
+            Updates accumulate this counter rather than resetting it.
 
         """
 
@@ -38,32 +47,12 @@ class NDS(Optimizer):
         self.build(params)
 
     def compile(self, space: Space) -> None:
-        """Compiles additional information that is used by this optimizer.
-
-        Args:
-            space: A Space object containing meta-information.
-
-        """
-
         self.count = np.zeros(space.n_agents)
         self.set = np.zeros((space.n_agents, space.n_agents))
 
-        # Array of pareto status
-        # -1 = unknown, 0 = pareto, 1 = non-pareto
         self.status = np.full(space.n_agents, -1)
 
     def _compare_domination(self, agent_i: Agent, agent_j: Agent) -> bool:
-        """Calculates whether `i` dominates `j`.
-
-        Args:
-            agent_i: Agent `i`.
-            agent_j: Agent `j`.
-
-        Returns:
-            (bool): Boolean indicating whether `i` dominated `j` or not.
-
-        """
-
         gt, gte = 0, 0
 
         n_objectives = agent_i.position.shape[0]
@@ -77,13 +66,6 @@ class NDS(Optimizer):
         return gte == n_objectives and gt > 0
 
     def update(self, space: Space) -> None:
-        """Wraps Non-Dominated Sorting over all agents and variables.
-
-        Args:
-            space: Space containing agents and update-related information.
-
-        """
-
         temp_agents = copy.deepcopy(space.agents)
         temp_status = -10
 
@@ -95,34 +77,27 @@ class NDS(Optimizer):
 
         archive = []
         for i, agent in enumerate(space.agents):
-            # If the solution is non-dominant, it should be
-            # added to the frontier
             if self.count[i] == 0:
                 self.status[i] = temp_status
                 archive.append(i)
 
                 self.n_pareto_points += 1
 
-        # Finds the subsequence archives (frontiers)
         aux_archive = []
         while len(archive) != 0:
             temp_status -= 1
 
             for f in archive:
-                # Checks solutions that are dominated by current solution
                 for s in self.set[f].nonzero()[0]:
                     self.count[s] -= 1
 
-                    # Adds to the auxiliary frontier if solution is non-dominant
                     if self.count[s] == 0:
                         aux_archive.append(s)
                         self.status[s] = temp_status
 
-            # When current frontier is explored, resets the auxiliary frontier
             archive = aux_archive
             aux_archive = []
 
-        # Adjusts the rankings based on the found frontiers
         for i, agent in enumerate(space.agents):
             old_status = self.status[i]
 
